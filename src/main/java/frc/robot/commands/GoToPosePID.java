@@ -56,8 +56,8 @@ public class GoToPosePID extends Command {
 
   @Override
     public boolean isFinished() {
-        // TODO: 2024, create instances of the PID controllers in this class
-        // TODO: the current PID values don't allow the command to finish 2023
+        // TODO: create instances of the PID controllers in this class
+        // TODO: the current PID values don't allow the command to finish (2023)
         return drive.getXController().atSetpoint() && drive.getYController().atSetpoint() && drive.getRotationController().atSetpoint();
     }
 }
