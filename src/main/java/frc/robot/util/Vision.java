@@ -510,18 +510,18 @@ public class Vision {
       Transform3d robotToCamera = photonPoseEstimator.getRobotToCameraTransform();
 
       // Get the tag position relative to the robot, assuming the robot is on the ground
-      Translation3d translation = new Translation3d(1, new Rotation3d(0, -Units.degreesToRadians(target.getPitch()), -Units.degreesToRadians(target.getYaw())));
-      translation = translation.rotateBy(robotToCamera.getRotation());
-      translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ());
-      translation = translation.plus(robotToCamera.getTranslation());
-      translation = translation.rotateBy(new Rotation3d(0, 0, yaw));
+      Translation3d translation = target.getBestCameraToTarget().getTranslation()
+        .rotateBy(robotToCamera.getRotation());
+      translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ())
+        .plus(robotToCamera.getTranslation())
+        .rotateBy(new Rotation3d(0, 0, yaw))
 
       // Invert it to get the robot position relative to the April tag
-      translation = translation.times(-1);
+        .times(-1)
       // Multiply by a constant. I don't know why this works, but it was consistently 10% off in 2023 Fall Semester
-      translation = translation.times(VisionConstants.DISTANCE_SCALE);
+        .times(VisionConstants.DISTANCE_SCALE)
       // Get the field relative robot pose
-      translation = translation.plus(targetPose.getTranslation());
+        .plus(targetPose.getTranslation());
       // Return as a Pose2d
       return new Pose2d(translation.toTranslation2d(), new Rotation2d(yaw));
     }
