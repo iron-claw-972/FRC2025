@@ -29,12 +29,12 @@ public class VisionConstants {
   /**
    * If April tag vision is enabled on the robot
    */
-  public static final boolean ENABLED = true;
+  public static final boolean ENABLED = false;
 
   /**
    * If object detection should be enabled
    */
-  public static final boolean OBJECT_DETECTION_ENABLED = false;
+  public static final boolean OBJECT_DETECTION_ENABLED = true;
 
   /** If odometry should be updated using vision during auto */
   public static final boolean ENABLED_AUTO = true;
