@@ -40,13 +40,14 @@ import frc.robot.constants.swerve.DriveConstants;
 
 // Vision and it's commands are adapted from Iron Claw's FRC2023
 public class Vision {
-  // private NetworkTable m_objectDetectionTable;
+  private NetworkTable m_objectDetectionTable;
 
-  // private NetworkTableEntry m_xOffset;
-  // private NetworkTableEntry m_yOffset;
-  // private NetworkTableEntry m_objectDistance;
-  // private NetworkTableEntry m_objectClass;
-  // private NetworkTableEntry m_cameraIndex;
+  private NetworkTableEntry m_xOffset;
+  private NetworkTableEntry m_yOffset;
+  private NetworkTableEntry m_objectDistance;
+  private NetworkTableEntry m_objectClass;
+  private NetworkTableEntry m_cameraIndex;
+  private NetworkTableEntry m_validTarget;
   
   // The field layout. Instance variable
   private AprilTagFieldLayout m_aprilTagFieldLayout;
@@ -61,18 +62,19 @@ public class Vision {
    * Creates a new instance of Vision and sets up the cameras and field layout
    */
   public Vision(ArrayList<Pair<String, Transform3d>> camList) {
-    // // // Initialize object_detection NetworkTable
-    // m_objectDetectionTable = NetworkTableInstance.getDefault().getTable("object_detection");
+    // // Initialize object_detection NetworkTable
+    m_objectDetectionTable = NetworkTableInstance.getDefault().getTable("limelight");
 
-    // // From the object_detection NetworkTable, get the entries
-    // m_objectDistance = m_objectDetectionTable.getEntry("distance");
-    // m_xOffset = m_objectDetectionTable.getEntry("x_offset");
-    // m_yOffset = m_objectDetectionTable.getEntry("y_offset");
+    // From the object detection NetworkTable, get the entries
+    m_objectDistance = m_objectDetectionTable.getEntry("distance");
+    m_xOffset = m_objectDetectionTable.getEntry("tx");
+    m_yOffset = m_objectDetectionTable.getEntry("ty");
+    m_validTarget = m_objectDetectionTable.getEntry("tv");
     // m_objectClass = m_objectDetectionTable.getEntry("class");
     // m_cameraIndex = m_objectDetectionTable.getEntry("index");
 
     // Start NetworkTables server
-    // NetworkTableInstance.getDefault().startServer();
+    NetworkTableInstance.getDefault().startServer();
 
     // Load field layout
     m_aprilTagFieldLayout = new AprilTagFieldLayout(FieldConstants.APRIL_TAGS, FieldConstants.kFieldLength, FieldConstants.kFieldWidth);
@@ -99,114 +101,125 @@ public class Vision {
   }
 
 
-  // /**
-  //  * Get the horizontal offsets from the crosshair to the targets
-  //  * @return An array of offsets in degrees
-  //  */
-  // public double[] getHorizontalOffset(){
-  //   if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-  //     return new double[0];
-  //   }
-  //   return m_xOffset.getDoubleArray(new double[0]);
-  // }
+  /**
+   * Get the horizontal offsets from the crosshair to the targets
+   * @return An array of offsets in degrees
+   */
+  public double[] getHorizontalOffset(){
+    if(validObjectDetected()){
+      return new double[]{m_xOffset.getDouble(0)};
+    }else{
+      return new double[0];
+    }
+    // if(!VisionConstants.OBJECT_DETECTION_ENABLED){
+    //   return new double[0];
+    // }
+    // return m_xOffset.getDoubleArray(new double[0]);
+  }
 
-  // /**
-  //  * Get the vertical offsets from the crosshair to the targets
-  //  * @return An array of offsets in degrees
-  //  */
-  // public double[] getVerticalOffset(){
-  //   if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-  //     return new double[0];
-  //   }
-  //   return m_yOffset.getDoubleArray(new double[0]);
-  // }
+  /**
+   * Get the vertical offsets from the crosshair to the targets
+   * @return An array of offsets in degrees
+   */
+  public double[] getVerticalOffset(){
+    if(validObjectDetected()){
+      return new double[]{m_yOffset.getDouble(0)};
+    }else{
+      return new double[0];
+    }
+    // if(!VisionConstants.OBJECT_DETECTION_ENABLED){
+    //   return new double[0];
+    // }
+    // return m_yOffset.getDoubleArray(new double[0]);
+  }
 
-  // /**
-  //  * Get the target distances
-  //  * @return Distance in meters
-  //  */
-  // public double[] getDistance(){
-  //   if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-  //     return new double[0];
-  //   }
-  //   return m_objectDistance.getDoubleArray(new double[0]);
-  // }
+  /**
+   * Get the target distances
+   * @return Distance in meters
+   */
+  public double[] getDistance(){
+    if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
+      return new double[0];
+    }
+    return m_objectDistance.getDoubleArray(new double[0]);
+  }
 
-  // /**
-  //  * Returns whether or not a valid object is detected
-  //  * @return true or false
-  //  */
-  // public boolean validObjectDetected(){
-  //   return getHorizontalOffset().length > 0;
-  // }
+  /**
+   * Returns whether or not a valid object is detected
+   * @return true or false
+   */
+  public boolean validObjectDetected(){
+    return m_validTarget.getInteger(0)==1;
+    // return getHorizontalOffset().length > 0;
+  }
 
-  // /**
-  //  * Returns what types of object are detected
-  //  * @return The object types as a String array
-  //  */
-  // public long[] getDetectedObjectClass(){
-  //   if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-  //     return new long[0];
-  //   }
-  //   return m_objectClass.getIntegerArray(new long[0]);
-  // }
+  /**
+   * Returns what types of object are detected
+   * @return The object types as a String array
+   */
+  public long[] getDetectedObjectClass(){
+    if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
+      return new long[0];
+    }
+    return m_objectClass.getIntegerArray(new long[0]);
+  }
 
   /**
    * Gets the camera indices (which camera sees the object)
    * @return The indices as a long array (method returns long array instead of int array)
    */
-  // public long[] getCameraIndex(){
-  //   if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-  //     return new long[0];
-  //   }
-  //   return m_cameraIndex.getIntegerArray(new long[0]);
-  // }
+  public long[] getCameraIndex(){
+    if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
+      return new long[0];
+    }
+    return m_cameraIndex.getIntegerArray(new long[0]);
+  }
 
   /**
    * Stores all of the detected objects in an array
    * @return The array of DetectedObjects
    */
-  // public DetectedObject[] getDetectedObjects(){
-  //   if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-  //     return new DetectedObject[0];
-  //   }
-  //   double[] xOffset = getHorizontalOffset();
-  //   double[] yOffset = getVerticalOffset();
-  //   // double[] distance = getDistance();
-  //   long[] objectClass = getDetectedObjectClass();
-  //   // long[] cameraIndex = getCameraIndex();
-  //   DetectedObject[] objects = new DetectedObject[xOffset.length];
-  //   for(int i = 0; i < objects.length; i++){
-  //     objects[i] = new DetectedObject(
-  //       Units.degreesToRadians(xOffset[i]),
-  //       Units.degreesToRadians(yOffset[i]),
-  //       // distance[i],
-  //       objectClass[i],
-  //       // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
-  //       VisionConstants.OBJECT_DETECTION_CAMERAS.get(0)
-  //     );
-  //   }
-  //   return objects;
-  // }
+  public DetectedObject[] getDetectedObjects(){
+    if(!VisionConstants.OBJECT_DETECTION_ENABLED){
+      return new DetectedObject[0];
+    }
+    double[] xOffset = getHorizontalOffset();
+    double[] yOffset = getVerticalOffset();
+    // double[] distance = getDistance();
+    // long[] objectClass = getDetectedObjectClass();
+    // long[] cameraIndex = getCameraIndex();
+    DetectedObject[] objects = new DetectedObject[xOffset.length];
+    for(int i = 0; i < objects.length; i++){
+      objects[i] = new DetectedObject(
+        Units.degreesToRadians(xOffset[i]),
+        Units.degreesToRadians(yOffset[i]),
+        // distance[i],
+        0, // objectClass[i],
+        // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
+        VisionConstants.OBJECT_DETECTION_CAMERAS.get(0)
+      );
+    }
+    return objects;
+  }
 
   /**
    * Returns the closest game piece in front of the robot
-   * @param maxAngle The maximum angle from the front of the robot to use
+   * @param maxAngle The maximum angle from the front of the robot to use, in radians
    * @return The best DetectedObject
    */
-  // public DetectedObject getBestGamePiece(double maxAngle){
-  //   DetectedObject[] objects = getDetectedObjects();
-  //   DetectedObject best = null;
-  //   double closest = Double.POSITIVE_INFINITY;
-  //   for(DetectedObject object : objects){
-  //     double dist = object.getDistance();
-  //     if(object.isGamePiece() && Math.abs(object.getRelativeAngle()) < maxAngle && dist < closest){
-  //       closest = dist;
-  //       best = object;
-  //     }
-  //   }
-  //   return best;
-  // }
+  public DetectedObject getBestGamePiece(double maxAngle){
+    DetectedObject[] objects = getDetectedObjects();
+    DetectedObject best = null;
+    double closest = Double.POSITIVE_INFINITY;
+    for(DetectedObject object : objects){
+      double dist = object.getDistance();
+      if(object.isGamePiece() && Math.abs(object.getRelativeAngle()) < maxAngle && dist < closest){
+        closest = dist;
+        best = object;
+      }
+    }
+    return best;
+  }
 
   /**
    * Gets the pose as a Pose2d using PhotonVision

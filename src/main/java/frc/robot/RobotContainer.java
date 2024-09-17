@@ -72,13 +72,8 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
-        index = new StorageIndex();
-        shooter = new Shooter();
-        break;
-
       case TestBed2:
-        intake = new Intake();
-        index = new StorageIndex();
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         break;
       case Vertigo:
           drive = new Drivetrain(vision);

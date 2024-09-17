@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
@@ -16,7 +17,18 @@ public class DetectedObject {
     private static Drivetrain drive;
     public final Pose3d pose;
     public final ObjectType type;
-    public enum ObjectType{NOTE, RED_ROBOT, BLUE_ROBOT, NONE};
+    public enum ObjectType{
+        NOTE(Units.inchesToMeters(1)),
+        RED_ROBOT(0),
+        BLUE_ROBOT(0),
+        NONE(0);
+
+        public final double height;
+
+        private ObjectType(double h){
+            height = h;
+        }
+    };
 
     /**
      * Sets the drivetrain to use for pose calculations
@@ -90,7 +102,7 @@ public class DetectedObject {
         translation = translation.rotateBy(robotToCamera.getRotation());
         // Scale it so that the object will be on the ground (- because translation's z will be negative)
         if(!isRobot()){
-            translation = translation.times(-robotToCamera.getZ()/translation.getZ());
+            translation = translation.times(-(robotToCamera.getZ()-type.height)/translation.getZ());
         }else{
             // Assume all robots are ~3m from the camera
             translation = translation.times(3);

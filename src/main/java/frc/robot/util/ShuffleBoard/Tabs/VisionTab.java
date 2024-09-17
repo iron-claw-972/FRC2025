@@ -11,7 +11,7 @@ import frc.robot.commands.vision.AimAtTag;
 import frc.robot.commands.vision.AlignToTag;
 import frc.robot.commands.vision.CalculateStdDevs;
 // import frc.robot.commands.vision.CalculateStdDevs;
-// import frc.robot.commands.vision.ReturnData;
+import frc.robot.commands.vision.ReturnData;
 // import frc.robot.commands.vision.TestVisionDistance;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.Vision;
@@ -50,7 +50,7 @@ public class VisionTab extends ShuffleBoardTabs {
         SmartDashboard.putData("Vision align to tag", new AlignToTag(drive));
         tab.add("Align to tag", new AlignToTag(drive));
         // SmartDashboard.putData("Return vision data", new ReturnData(vision));
-        // tab.add("Return data", new ReturnData(vision));
+        tab.add("Return data", new ReturnData(vision));
     }
 
 }
