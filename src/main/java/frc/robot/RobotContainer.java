@@ -5,6 +5,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeNote;
@@ -19,8 +21,10 @@ import frc.robot.subsystems.gpm.Arm;
 import frc.robot.subsystems.gpm.Intake;
 import frc.robot.subsystems.gpm.Shooter;
 import frc.robot.subsystems.gpm.StorageIndex;
+import frc.robot.subsystems.gpm.Turret;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
+import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 import frc.robot.util.Vision;
 import lib.controllers.GameController.RumbleStatus;
 
@@ -45,6 +49,7 @@ public class RobotContainer {
   private Shooter shooter = null;
   private Intake intake = null;
   private StorageIndex index = null;
+  private Turret turret = null;  
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -68,12 +73,17 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
-    // dispatch on the robot
+    turret = new Turret();
+    SmartDashboard.putData("0", new InstantCommand(() -> turret.setAngle(0)));
+    SmartDashboard.putData("90", new InstantCommand(() -> turret.setAngle(90)));
+    SmartDashboard.putData("180", new InstantCommand(() -> turret.setAngle(180)));
+    SmartDashboard.putData("270", new InstantCommand(() -> turret.setAngle(270)));
     switch (robotId) {
 
       case TestBed1:
         index = new StorageIndex();
         shooter = new Shooter();
+        
         break;
 
       case TestBed2:
@@ -166,7 +176,6 @@ public class RobotContainer {
   }
 
   public void registerCommands() {
-
     // Stuff used in Choreo Paths
     NamedCommands.registerCommand("Intake", new IntakeNote(intake, index, arm, (ignored) -> {}).withTimeout(1));
 
