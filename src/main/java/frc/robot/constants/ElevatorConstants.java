@@ -5,4 +5,22 @@
 package frc.robot.constants;
 
 /** Add your docs here. */
-public class ElevatorConstants {}
+public class ElevatorConstants {
+    
+    public static final int leftMotorID = 0;
+    public static final int rightMotorID = 0;
+
+    public static final int numberOfStages = 3;
+
+
+    public static final int maxHeight = 4;
+    
+    //gear ratio for state 3
+    public static final int gearRatio = 18 * numberOfStages;
+
+    public static final double spoolDiameter = 0.0325374;
+
+    public static final double spoolcircumfrince = spoolDiameter * Math.PI;
+
+
+}
