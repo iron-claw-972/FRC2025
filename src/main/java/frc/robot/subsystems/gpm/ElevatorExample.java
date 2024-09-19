@@ -5,4 +5,4 @@
 package frc.robot.subsystems.gpm;
 
 /** Add your docs here. */
-public class ElevaterExample {}
+public class ElevatorExample {}
