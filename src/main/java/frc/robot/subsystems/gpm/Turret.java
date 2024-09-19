@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
@@ -24,6 +25,8 @@ import frc.robot.constants.Constants;
 
 public class Turret extends SubsystemBase {
     
+    public DigitalInput hall; //GET BACK TO THIS JOCAOB
+    public Boolean hallTriggered;
     private DutyCycleEncoder encoder;
     private PIDController pid = new PIDController (.2, 0, 0);
     private CANSparkMax sparkMotor;
@@ -47,6 +50,7 @@ public class Turret extends SubsystemBase {
           );
        
     public Turret() {
+        hall = new DigitalInput(1); //TODO: Change port later
         //Display
         simulationMechanism = new Mechanism2d(3, 3);
         mechanismRoot = simulationMechanism.getRoot("Turret", 1.5, 1.5);
@@ -57,13 +61,19 @@ public class Turret extends SubsystemBase {
         sparkMotor = new CANSparkMax(18, MotorType.kBrushless); // TODO: Change to actual id 
         encoderSim = new DutyCycleEncoderSim(encoder); 
         SmartDashboard.putData("PID", pid); 
+        SmartDashboard.putData("Turret Sim", simulationMechanism);
     } 
 
     @Override
     public void periodic() {
-        double current = encoder.getDistance(); 
-        double power = pid.calculate(current); 
+        hallTriggered = true;
+        double currentPosition = encoder.getDistance(); 
+        double power = pid.calculate(currentPosition); 
         sparkMotor.set(MathUtil.clamp(power, -.25, .25)); 
+        SmartDashboard.putNumber("Turet VIN Voltage", RoboRioSim.getVInVoltage());
+        SmartDashboard.putNumber("Turret Current Draw", turretSim.getCurrentDrawAmps());
+        SmartDashboard.putBoolean("Hall is triggered", hallTriggered);
+
     }
 
     @Override
@@ -72,7 +82,7 @@ public class Turret extends SubsystemBase {
         turretSim.update(0.020); 
         encoderSim.setDistance(turretSim.getAngleRads());
         RoboRioSim.setVInVoltage(
-        BatterySim.calculateDefaultBatteryLoadedVoltage(turretSim.getCurrentDrawAmps()));
+            BatterySim.calculateDefaultBatteryLoadedVoltage(turretSim.getCurrentDrawAmps()));
         simLigament.setAngle(Units.radiansToDegrees(turretSim.getAngleRads()));
     }
     
@@ -80,7 +90,8 @@ public class Turret extends SubsystemBase {
      * Sets angle of turret
      */
     public void setAngle(double angle) {
+        double numRotations = angle / 360;
         pid.reset();
-        pid.setSetpoint(Units.degreesToRadians(angle));
+        pid.setSetpoint(Units.rotationsToRadians(numRotations));
     }
 }
