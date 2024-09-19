@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -22,10 +23,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.util.LogManager;
 
 public class Turret extends SubsystemBase {
     
-    public DigitalInput hall; //GET BACK TO THIS JOCAOB
+    public DigitalInput hall; 
     public Boolean hallTriggered;
     private DutyCycleEncoder encoder;
     private PIDController pid = new PIDController (.2, 0, 0);
@@ -70,10 +72,13 @@ public class Turret extends SubsystemBase {
         double currentPosition = encoder.getDistance(); 
         double power = pid.calculate(currentPosition); 
         sparkMotor.set(MathUtil.clamp(power, -.25, .25)); 
+        //Put Data to SmartDashboard
         SmartDashboard.putNumber("Turet VIN Voltage", RoboRioSim.getVInVoltage());
         SmartDashboard.putNumber("Turret Current Draw", turretSim.getCurrentDrawAmps());
         SmartDashboard.putBoolean("Hall is triggered", hallTriggered);
-
+        //Log Data 
+        LogManager.add("Turret Current", () -> turretSim.getCurrentDrawAmps());
+        LogManager.add("Voltage With Turret", () -> RoboRioSim.getVInVoltage());
     }
 
     @Override
