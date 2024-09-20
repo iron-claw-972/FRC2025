@@ -20,20 +20,19 @@ public class DriverAssistIntake extends Command {
     }
 
     @Override
-    public void initialize(){
-    }
+    public void initialize(){}
 
     @Override
     public void execute(){
-        DetectedObject closest = vision.getBestGamePiece(Units.degreesToRadians(20));
         double xTranslation = driver.getForwardTranslation();
         double yTranslation = driver.getSideTranslation();
-        if(closest == null){
+        DetectedObject object = vision.getBestGamePiece(Units.degreesToRadians(15));
+        if(object == null){
             double rotation = driver.getRotation();
             drive.drive(xTranslation, yTranslation, rotation, true, false);
             return;
         }
-        double angle = closest.getAngle();
+        double angle = object.getAngle();
         double speed = Math.hypot(xTranslation, yTranslation);
         double velocityAngle = Math.atan2(yTranslation, xTranslation);
         double parallelSpeed = speed * Math.cos(angle-velocityAngle);

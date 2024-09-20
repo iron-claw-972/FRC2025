@@ -1,10 +1,12 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
@@ -194,17 +196,22 @@ public class DetectedObject {
     }
 
     /**
-     * Gets the angle relative to the robot (0 is in front, positive counterclockwise)
+     * Gets the angle relative to the front of the robot (0 is in front, positive counterclockwise)
      * @return The relative angle in radians
      */
     public double getRelativeAngle(){
         double angle = getAngle()-drive.getYaw().getRadians();
-        if(angle > Math.PI){
-            angle -= Math.PI*2;
-        }else if(angle < -Math.PI){
-            angle += Math.PI*2;
-        }
-        return angle;
+        return MathUtil.angleModulus(angle);
+    }
+
+    /**
+     * Gets the angle of the object relative to the robot's velocity (0 is in front, positive counterclockwise)
+     * @return The relative angle in radians
+     */
+    public double getVelocityRelativeAngle(){
+        ChassisSpeeds speeds = drive.getChassisSpeeds();
+        double angle = getRelativeAngle() - Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+        return MathUtil.angleModulus(angle);
     }
 
     public String toString(){

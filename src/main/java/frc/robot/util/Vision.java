@@ -213,7 +213,7 @@ public class Vision {
     double closest = Double.POSITIVE_INFINITY;
     for(DetectedObject object : objects){
       double dist = object.getDistance();
-      if(object.isGamePiece() && Math.abs(object.getRelativeAngle()) < maxAngle && dist < closest){
+      if(object.isGamePiece() && Math.abs(object.getVelocityRelativeAngle()) < maxAngle && dist < closest){
         closest = dist;
         best = object;
       }
