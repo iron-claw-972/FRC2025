@@ -4,6 +4,7 @@
 
 package frc.robot.util.ShuffleBoard.Tabs;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -14,6 +15,7 @@ import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 public class ElevatorTab extends ShuffleBoardTabs {
 
     private Elevator elevator;
+    private GenericEntry setpoint;
 
     public ElevatorTab(Elevator elevator){
         this.elevator = elevator;
@@ -21,16 +23,18 @@ public class ElevatorTab extends ShuffleBoardTabs {
 
     public void createEntries(){
         tab = Shuffleboard.getTab("Elevator");
+        setpoint = tab.add("Elevater setpoint", 0).getEntry();
         addCommands(tab);
     }
 
     public void update(){
-
+        elevator.setSetpoint(setpoint.getDouble(0));
     }
 
     public void addCommands(ShuffleboardTab tab){
         if(RobotBase.isSimulation()){
             tab.add("Elevator", elevator.getMechanism2d());
+            setpoint = tab.add("setpoint", 0).getEntry();
         }
     }
 
