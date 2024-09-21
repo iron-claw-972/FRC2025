@@ -23,18 +23,19 @@ public class ElevatorTab extends ShuffleBoardTabs {
 
     public void createEntries(){
         tab = Shuffleboard.getTab("Elevator");
-        setpoint = tab.add("Elevater setpoint", 0).getEntry();
         addCommands(tab);
     }
 
     public void update(){
+        if (RobotBase.isSimulation()){
         elevator.setSetpoint(setpoint.getDouble(0));
+        }
     }
 
     public void addCommands(ShuffleboardTab tab){
         if(RobotBase.isSimulation()){
             tab.add("Elevator", elevator.getMechanism2d());
-            setpoint = tab.add("setpoint", 0).getEntry();
+            setpoint = tab.add("Elevater setpoint", 0).getEntry();
         }
     }
 
