@@ -204,7 +204,7 @@ public class Vision {
 
   /**
    * Returns the closest game piece in front of the robot
-   * @param maxAngle The maximum angle from the front of the robot to use, in radians
+   * @param maxAngle The maximum angle between the angle to the object and the robot's heading to use, in radians
    * @return The best DetectedObject
    */
   public DetectedObject getBestGamePiece(double maxAngle){

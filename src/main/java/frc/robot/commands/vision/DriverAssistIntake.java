@@ -1,5 +1,6 @@
 package frc.robot.commands.vision;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controls.BaseDriverConfig;
@@ -24,19 +25,36 @@ public class DriverAssistIntake extends Command {
 
     @Override
     public void execute(){
+        // Get driver inputs
         double xTranslation = driver.getForwardTranslation();
         double yTranslation = driver.getSideTranslation();
+        // Get the closest game piece within 15 degrees of the robot's heading
         DetectedObject object = vision.getBestGamePiece(Units.degreesToRadians(15));
+        // If no object is detected, drive normally
         if(object == null){
-            double rotation = driver.getRotation();
-            drive.drive(xTranslation, yTranslation, rotation, true, false);
+            normalDrive(xTranslation, yTranslation);
             return;
         }
+        // Get field-relative angle from the robot to the object
         double angle = object.getAngle();
+        // The speed the driver wants to drive at
         double speed = Math.hypot(xTranslation, yTranslation);
+        // The angle the driver wants to drive at
         double velocityAngle = Math.atan2(yTranslation, xTranslation);
+        // If this angle is too different from the angle to the object, drive normally
+        if(Math.abs(MathUtil.angleModulus(angle-velocityAngle)) < Units.degreesToRadians(45)){
+            normalDrive(xTranslation, yTranslation);
+            return;
+        }
+        // The component of speed in the driection of the object
         double parallelSpeed = speed * Math.cos(angle-velocityAngle);
+        // Drive using only the parallel component of the speed
         drive.driveHeading(parallelSpeed * Math.cos(angle), parallelSpeed * Math.sin(angle), angle, true);
+    }
+
+    private void normalDrive(double x, double y){
+        double rotation = driver.getRotation();
+        drive.drive(x, y, rotation, true, false);
     }
 
     @Override
