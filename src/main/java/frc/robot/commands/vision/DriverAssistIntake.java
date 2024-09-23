@@ -49,7 +49,7 @@ public class DriverAssistIntake extends Command {
         // The component of speed in the driection of the object
         double parallelSpeed = speed * Math.cos(angle-velocityAngle);
         // Drive using only the parallel component of the speed
-        drive.driveHeading(parallelSpeed * Math.cos(angle), parallelSpeed * Math.sin(angle), angle, true);
+        drive.driveHeading(parallelSpeed * Math.cos(angle), parallelSpeed * Math.sin(angle), Math.PI+angle, true);
     }
 
     private void normalDrive(double x, double y){

@@ -19,6 +19,7 @@ import frc.robot.subsystems.gpm.Arm;
 import frc.robot.subsystems.gpm.Intake;
 import frc.robot.subsystems.gpm.Shooter;
 import frc.robot.subsystems.gpm.StorageIndex;
+import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
@@ -98,7 +99,7 @@ public class RobotContainer {
         operator = new Operator(intake, arm, index, shooter, drive, consumer);
 
         // Detected objects need access to the drivetrain
-        //DetectedObject.setDrive(drive);
+        DetectedObject.setDrive(drive);
         
         //SignalLogger.start();
 

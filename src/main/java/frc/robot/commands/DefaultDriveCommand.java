@@ -36,7 +36,6 @@ public class DefaultDriveCommand extends Command {
 
     @Override
     public void execute() {
-
         double forwardTranslation = driver.getForwardTranslation();
         double sideTranslation = driver.getSideTranslation();
         double rotation = -driver.getRotation();
