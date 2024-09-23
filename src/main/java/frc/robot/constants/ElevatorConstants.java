@@ -20,4 +20,8 @@ public class ElevatorConstants {
     public static final double START_HEIGHT = MIN_HEIGHT; // meters
     public static final double CARRIAGE_MASS = 2.72155; // kilograms
     public static final double DRUM_RADIUS = 0.0162687; // meters
+    public static final double SPRING_FORCE = 24.910067711605; //Newtons
+    public static final double Gravity_Accel = CARRIAGE_MASS*9.8 - SPRING_FORCE;
+
+    
 }

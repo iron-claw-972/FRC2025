@@ -7,6 +7,7 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.NumericalIntegration;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import frc.robot.constants.ElevatorConstants;
 
 public class AngledElevatorSim extends ElevatorSim {
     private double angle;
@@ -59,7 +60,7 @@ public class AngledElevatorSim extends ElevatorSim {
                 Matrix<N2, N1> xdot = m_plant.getA().times(x).plus(m_plant.getB().times(_u));
                 if (simulateGravity) {
                     // This is the only line that is different
-                    xdot = xdot.plus(VecBuilder.fill(0, -9.8*Math.cos(angle)));
+                    xdot = xdot.plus(VecBuilder.fill(0, -ElevatorConstants.Gravity_Accel*Math.cos(angle)));
                 }
                 return xdot;
                 },
