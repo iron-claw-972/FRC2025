@@ -49,13 +49,13 @@ public class AutoTab extends ShuffleBoardTabs {
     public void createEntries(){  
         tab = Shuffleboard.getTab("Auto");
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
-        autoCommand.addOption("5 piece (original-tested)", new FollowPathCommand("5 piece (original-tested)",true, drive));
-        autoCommand.addOption("5.5 piece (original-tested)", new FollowPathCommand("5.5 piece (original-tested)",true, drive));
-        autoCommand.addOption("3 piece [v3]", new FollowPathCommand("3 piece [v3]",true, drive));
-        autoCommand.addOption("6 piece (new)", new FollowPathCommand("6 piece (new)",true, drive));
-        autoCommand.addOption("5 piece (original-tested) [V2]", new FollowPathCommand("5 piece (original-tested) [V2]",true, drive));
-        autoCommand.addOption("3.5 piece [V2]", new FollowPathCommand("3.5 piece [V2]",true, drive));
-        autoCommand.addOption("1 piece", new SequentialCommandGroup(prepare(),new WaitCommand(3),index(),new WaitCommand(2),new PrepareShooter(shooter, 0)));
+        // autoCommand.addOption("5 piece (original-tested)", new FollowPathCommand("5 piece (original-tested)",true, drive));
+        // autoCommand.addOption("5.5 piece (original-tested)", new FollowPathCommand("5.5 piece (original-tested)",true, drive));
+        // autoCommand.addOption("3 piece [v3]", new FollowPathCommand("3 piece [v3]",true, drive));
+        // autoCommand.addOption("6 piece (new)", new FollowPathCommand("6 piece (new)",true, drive));
+        // autoCommand.addOption("5 piece (original-tested) [V2]", new FollowPathCommand("5 piece (original-tested) [V2]",true, drive));
+        // autoCommand.addOption("3.5 piece [V2]", new FollowPathCommand("3.5 piece [V2]",true, drive));
+        // autoCommand.addOption("1 piece", new SequentialCommandGroup(prepare(),new WaitCommand(3),index(),new WaitCommand(2),new PrepareShooter(shooter, 0)));
        
 //         autoCommand.addOption("Choreo Center 6",
 //                 new SequentialCommandGroup(
@@ -69,13 +69,13 @@ public class AutoTab extends ShuffleBoardTabs {
 //                         intakeAndSubwooferShot("Center 6.5")
 //                 ));
 
-        autoCommand.addOption("Choreo Source 3", new SequentialCommandGroup(
-                prepare(),
-                index(),
+        // autoCommand.addOption("Choreo Source 3", new SequentialCommandGroup(
+        //         prepare(),
+        //         index(),
 
-                intakeAndSubwooferShot("Source 3.1"),
-                intakeAndSubwooferShot("Source 3.2")
-        ));
+        //         intakeAndSubwooferShot("Source 3.1"),
+        //         intakeAndSubwooferShot("Source 3.2")
+        // ));
 
 // //        autoCommand.addOption("Choreo Distance Center 6", new SequentialCommandGroup(
 // //                prepare(),
