@@ -20,7 +20,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -69,7 +68,6 @@ public class ElevatorExample extends SubsystemBase {
           DCMotor.getKrakenX60Foc(2), kCarriageMass, kDrumRadius, kElevatorGearing);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
-  @SuppressWarnings("unchecked")
   private final KalmanFilter<N2, N1, N1> m_observer =
       new KalmanFilter<>(
           Nat.N2(),
@@ -82,7 +80,6 @@ public class ElevatorExample extends SubsystemBase {
           0.020);
 
   // A LQR uses feedback to create voltage commands.
-  @SuppressWarnings("unchecked")
   private final LinearQuadraticRegulator<N2, N1, N1> m_controller =
       new LinearQuadraticRegulator<>(
           (LinearSystem<N2, N1, N1>) m_elevatorPlant,
@@ -99,7 +96,6 @@ public class ElevatorExample extends SubsystemBase {
   // lower if using notifiers.
 
   // The state-space loop combines a controller, observer, feedforward and plant for easy control.
-  @SuppressWarnings("unchecked")
   private final LinearSystemLoop<N2, N1, N1> m_loop =
       new LinearSystemLoop<>(
           (LinearSystem<N2, N1, N1>) m_elevatorPlant,

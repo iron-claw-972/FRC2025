@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.gpm;
 
-import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -16,7 +15,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -43,7 +41,7 @@ public class Elevator extends SubsystemBase {
 
   private final LinearSystem<N2, N1, N1> m_elevatorPlant =
       LinearSystemId.createElevatorSystem(
-          DCMotor.getKrakenX60Foc(2), ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.GEARING);
+          ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.GEARING);
 
   private final KalmanFilter<N2, N1, N1> m_observer =
       new KalmanFilter<>(
@@ -54,7 +52,7 @@ public class Elevator extends SubsystemBase {
           // think our model is, in meters and meters/second.
           VecBuilder.fill(0.001), // How accurate we think our encoder position
           // data is. In this case we very highly trust our encoder position reading.
-          0.020);
+          Constants.LOOP_TIME);
 
   private final LinearQuadraticRegulator<N2, N1, N1> m_controller =
       new LinearQuadraticRegulator<>(
@@ -67,17 +65,16 @@ public class Elevator extends SubsystemBase {
           VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
           // heavily penalize control effort, or make the controller less aggressive. 12 is a good
           // starting point because that is the (approximate) maximum voltage of a battery.
-          0.020); // Nominal time between loops. 0.020 for TimedRobot, but can be
+          Constants.LOOP_TIME); // Nominal time between loops. 0.020 for TimedRobot, but can be
   
   // The state-space loop combines a controller, observer, feedforward and plant for easy control.
-  @SuppressWarnings("unchecked")
   private final LinearSystemLoop<N2, N1, N1> m_loop =
       new LinearSystemLoop<>(
           (LinearSystem<N2, N1, N1>) m_elevatorPlant,
           m_controller,
           m_observer,
           12.0,
-          0.020);
+          Constants.LOOP_TIME);
 
           
 
@@ -88,7 +85,6 @@ public class Elevator extends SubsystemBase {
   
     
     if(RobotBase.isSimulation()){
-      System.out.println("running");
       sim = new AngledElevatorSim(ElevatorConstants.MOTOR, ElevatorConstants.GEARING, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true, ElevatorConstants.START_HEIGHT, ElevatorConstants.ANGLE);
       double width = ElevatorConstants.MAX_HEIGHT * Math.sin(ElevatorConstants.ANGLE);
       double height = ElevatorConstants.MAX_HEIGHT * Math.cos(ElevatorConstants.ANGLE);
@@ -108,7 +104,7 @@ public class Elevator extends SubsystemBase {
 
     goal = new TrapezoidProfile.State(setpoint, 0.0);
 
-    m_lastProfiledReference = m_profile.calculate(0.020, m_lastProfiledReference, goal);
+    m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
@@ -116,7 +112,7 @@ public class Elevator extends SubsystemBase {
 
     // Update our LQR to generate new voltage commands and use the voltages to predict the next
     // state with out Kalman filter.
-    m_loop.predict(0.020);
+    m_loop.predict(Constants.LOOP_TIME);
 
     // Send the new calculated voltage to the motors.
     // voltage = duty cycle * battery voltage, so
@@ -124,8 +120,10 @@ public class Elevator extends SubsystemBase {
     double nextVoltage = m_loop.getU(0);
     
     motor.setVoltage(nextVoltage);
-    System.out.println(nextVoltage);
-    sim.setInputVoltage(nextVoltage);
+
+    if(RobotBase.isSimulation()){
+      sim.setInputVoltage(nextVoltage);
+    }
   }
 
   @Override
