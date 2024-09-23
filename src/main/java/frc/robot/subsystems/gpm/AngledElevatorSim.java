@@ -14,6 +14,7 @@ public class AngledElevatorSim extends ElevatorSim {
     private boolean simulateGravity;
     private double minHeight;
     private double maxHeight;
+    private double springAccel;
 
     public AngledElevatorSim(
       DCMotor gearbox,
@@ -25,12 +26,14 @@ public class AngledElevatorSim extends ElevatorSim {
       boolean simulateGravity,
       double startingHeightMeters,
       Matrix<N1, N1> measurementStdDevs,
-      double angleRads) {
+      double angleRads,
+      double springForceNewtons) {
         super(gearbox, gearing, carriageMassKg, drumRadiusMeters, minHeightMeters, maxHeightMeters, simulateGravity, startingHeightMeters, measurementStdDevs);
         angle = angleRads;
         this.simulateGravity = simulateGravity;
         minHeight = minHeightMeters;
         maxHeight = maxHeightMeters;
+        springAccel = springForceNewtons/carriageMassKg;
     }
 
     public AngledElevatorSim(
@@ -42,12 +45,14 @@ public class AngledElevatorSim extends ElevatorSim {
       double maxHeightMeters,
       boolean simulateGravity,
       double startingHeightMeters,
-      double angleRads) {
+      double angleRads,
+      double springForceNewtons) {
         super(gearbox, gearing, carriageMassKg, drumRadiusMeters, minHeightMeters, maxHeightMeters, simulateGravity, startingHeightMeters);
         angle = angleRads;
         this.simulateGravity = simulateGravity;
         minHeight = minHeightMeters;
         maxHeight = maxHeightMeters;
+        springAccel = springForceNewtons/carriageMassKg;
     }
 
     // Copied from ElevatorSim with one difference
@@ -60,7 +65,7 @@ public class AngledElevatorSim extends ElevatorSim {
                 Matrix<N2, N1> xdot = m_plant.getA().times(x).plus(m_plant.getB().times(_u));
                 if (simulateGravity) {
                     // This is the only line that is different
-                    xdot = xdot.plus(VecBuilder.fill(0, -ElevatorConstants.Gravity_Accel*Math.cos(angle)));
+                    xdot = xdot.plus(VecBuilder.fill(0, springAccel-9.8*Math.cos(angle)));
                 }
                 return xdot;
                 },
