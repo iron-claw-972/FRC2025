@@ -195,6 +195,9 @@ public class DriveConstants {
      */
     public static void update(RobotId robotId) {
         if (robotId == RobotId.Vertigo) {
+            
+ 
+            
             kTrackWidth = Units.inchesToMeters(22.75);//22.75 swerve bot, 20.75 comp bot
             
             kPigeon = 13;
@@ -215,6 +218,10 @@ public class DriveConstants {
         } 
         else if (robotId == RobotId.SwerveTest) {
 
+            kDriveMotorCAN = Constants.RIO_CAN;
+            kSteerMotorCAN = Constants.RIO_CAN;
+            kSteerEncoderCAN = Constants.RIO_CAN;
+            kPigeonCAN = Constants.RIO_CAN;
             kTrackWidth = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
 
             kPigeon = 13;
