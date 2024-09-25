@@ -37,6 +37,7 @@ public class Turret extends SubsystemBase {
     MechanismLigament2d simLigament;
     private Mechanism2d simulationMechanism;
     MechanismRoot2d mechanismRoot;  
+    private boolean ledState;
 
     //Physics Turret Sim
     private final SingleJointedArmSim turretSim =
@@ -54,6 +55,7 @@ public class Turret extends SubsystemBase {
     public Turret() {
         hall = new DigitalInput(1); //TODO: Change port later
         //Display
+
         simulationMechanism = new Mechanism2d(3, 3);
         mechanismRoot = simulationMechanism.getRoot("Turret", 1.5, 1.5);
         simLigament = mechanismRoot.append(
@@ -63,12 +65,14 @@ public class Turret extends SubsystemBase {
         sparkMotor = new CANSparkMax(18, MotorType.kBrushless); // TODO: Change to actual id 
         encoderSim = new DutyCycleEncoderSim(encoder); 
         SmartDashboard.putData("PID", pid); 
-        SmartDashboard.putData("Turret Sim", simulationMechanism);
-    } 
+
+    }
 
     @Override
     public void periodic() {
         hallTriggered = true;
+        ledState = hallTriggered;
+
         double currentPosition = encoder.getDistance(); 
         double power = pid.calculate(currentPosition); 
         sparkMotor.set(MathUtil.clamp(power, -.25, .25)); 
@@ -76,6 +80,7 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("Turet VIN Voltage", RoboRioSim.getVInVoltage());
         SmartDashboard.putNumber("Turret Current Draw", turretSim.getCurrentDrawAmps());
         SmartDashboard.putBoolean("Hall is triggered", hallTriggered);
+        SmartDashboard.putBoolean("LED state is on", ledState);
         //Log Data 
         LogManager.add("Turret Current", () -> turretSim.getCurrentDrawAmps());
         LogManager.add("Voltage With Turret", () -> RoboRioSim.getVInVoltage());
