@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.gpm;
 
+import com.ctre.phoenix6.controls.compound.Diff_VoltageOut_Position;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -18,6 +19,7 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -26,7 +28,13 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 
 public class Elevator extends SubsystemBase {
-  private TalonFX motor = new TalonFX(ElevatorConstants.MOTOR_ID);
+  private TalonFX rightMotor = new TalonFX(ElevatorConstants.MOTOR_ID);
+  private TalonFX leftMotor = new TalonFX(0);
+
+  private DigitalInput topLimitSwitch = new DigitalInput(29);
+  private DigitalInput bottomLimitSwitch = new DigitalInput(30);
+
+
   private AngledElevatorSim sim;
   private double setpoint = ElevatorConstants.START_HEIGHT;
   private Mechanism2d mechanism;
@@ -42,18 +50,16 @@ public class Elevator extends SubsystemBase {
   private final LinearSystem<N2, N1, N1> m_elevatorPlant =
       LinearSystemId.createElevatorSystem(
           ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.GEARING);
-
   private final KalmanFilter<N2, N1, N1> m_observer =
       new KalmanFilter<>(
           Nat.N2(),
           Nat.N1(),
           (LinearSystem<N2, N1, N1>) m_elevatorPlant,
-          VecBuilder.fill(Units.inchesToMeters(2), Units.inchesToMeters(40)), // How accurate we
+          VecBuilder.fill(Units.inchesToMeters(2), Units.inchesToMeters(20)), // How accurate we
           // think our model is, in meters and meters/second.
           VecBuilder.fill(0.001), // How accurate we think our encoder position
           // data is. In this case we very highly trust our encoder position reading.
           Constants.LOOP_TIME);
-
   private final LinearQuadraticRegulator<N2, N1, N1> m_controller =
       new LinearQuadraticRegulator<>(
           (LinearSystem<N2, N1, N1>) m_elevatorPlant,
@@ -82,6 +88,7 @@ public class Elevator extends SubsystemBase {
   public Elevator() {
     // TODO: This assumes elevator always starts at starting position, use different sensor instead
     resetEncoder(ElevatorConstants.START_HEIGHT);
+    
   
     
     if(RobotBase.isSimulation()){
@@ -118,9 +125,8 @@ public class Elevator extends SubsystemBase {
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
-    
-    motor.setVoltage(nextVoltage);
-
+    rightMotor.setVoltage(nextVoltage);
+    System.out.println(nextVoltage);
     if(RobotBase.isSimulation()){
       sim.setInputVoltage(nextVoltage);
     }
@@ -133,15 +139,23 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetEncoder(double height){
-    motor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
+    rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
   }
 
   public double getPosition(){
     if(RobotBase.isReal()){
-      return motor.getPosition().getValueAsDouble()/ElevatorConstants.GEARING*(2*Math.PI*ElevatorConstants.DRUM_RADIUS);
+      return rightMotor.getPosition().getValueAsDouble()/ElevatorConstants.GEARING*(2*Math.PI*ElevatorConstants.DRUM_RADIUS);
     }else{
       return sim.getPositionMeters();
     }
+  }
+
+  public Boolean getBottomLimitSwitch(){
+    return bottomLimitSwitch.get();
+  }
+
+  public Boolean getTopLimitSwitch(){
+    return topLimitSwitch.get();
   }
 
   public void setSetpoint(double setpoint){
