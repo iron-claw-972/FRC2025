@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.gpm;
 
-import com.ctre.phoenix6.controls.compound.Diff_VoltageOut_Position;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -18,22 +18,25 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.gpm.CalibrateElevator;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 
 public class Elevator extends SubsystemBase {
-  private TalonFX rightMotor = new TalonFX(ElevatorConstants.MOTOR_ID);
-  private TalonFX leftMotor = new TalonFX(0);
+  private TalonFX rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID);
+  private TalonFX leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID);
 
   private DigitalInput topLimitSwitch = new DigitalInput(29);
   private DigitalInput bottomLimitSwitch = new DigitalInput(30);
 
+  private boolean calibrated = false;;
 
   private AngledElevatorSim sim;
   private double setpoint = ElevatorConstants.START_HEIGHT;
@@ -45,7 +48,7 @@ public class Elevator extends SubsystemBase {
           new TrapezoidProfile.Constraints(
               Units.feetToMeters(3.0),
               Units.feetToMeters(6.0))); // Max elevator speed and acceleration.
-  private TrapezoidProfile.State m_lastProfiledReference = new TrapezoidProfile.State();
+  private State m_lastProfiledReference = new State();
 
   private final LinearSystem<N2, N1, N1> m_elevatorPlant =
       LinearSystemId.createElevatorSystem(
@@ -82,14 +85,12 @@ public class Elevator extends SubsystemBase {
           12.0,
           Constants.LOOP_TIME);
 
-          
-
   /** Creates a new Elevator. */
   public Elevator() {
     // TODO: This assumes elevator always starts at starting position, use different sensor instead
     resetEncoder(ElevatorConstants.START_HEIGHT);
     
-  
+    leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
     
     if(RobotBase.isSimulation()){
       sim = new AngledElevatorSim(ElevatorConstants.MOTOR, ElevatorConstants.GEARING, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true, ElevatorConstants.START_HEIGHT, ElevatorConstants.ANGLE, ElevatorConstants.SPRING_FORCE);
@@ -101,15 +102,27 @@ public class Elevator extends SubsystemBase {
     }
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
     m_lastProfiledReference =
-        new TrapezoidProfile.State(getPosition(), 0);
+        new State(getPosition(), 0);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    TrapezoidProfile.State goal;
+    // Calibrate as soon as possible
+    if(!calibrated){
+      CalibrateElevator c = new CalibrateElevator(this);
+      c.schedule();
+      calibrated = c.isScheduled();
+    }
 
-    goal = new TrapezoidProfile.State(setpoint, 0.0);
+    // If it hits the limit switch, reset the encoder
+    if(getBottomLimitSwitch()){
+      resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
+    }else if(getTopLimitSwitch()){
+      resetEncoder(ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT);
+    }
+
+    // This method will be called once per scheduler run
+    State goal = new State(setpoint, 0.0);
 
     m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
@@ -126,7 +139,6 @@ public class Elevator extends SubsystemBase {
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
     rightMotor.setVoltage(nextVoltage);
-    System.out.println(nextVoltage);
     if(RobotBase.isSimulation()){
       sim.setInputVoltage(nextVoltage);
     }
@@ -139,7 +151,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetEncoder(double height){
-    rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
+    if(RobotBase.isReal()){
+      rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
+    }
+    // This is not necessary on sim
   }
 
   public double getPosition(){
@@ -150,12 +165,20 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  public Boolean getBottomLimitSwitch(){
-    return bottomLimitSwitch.get();
+  public boolean getBottomLimitSwitch(){
+    if(RobotBase.isReal()){
+      return bottomLimitSwitch.get();
+    }else{
+      return Math.abs(getPosition()-ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE;
+    }
   }
 
-  public Boolean getTopLimitSwitch(){
-    return topLimitSwitch.get();
+  public boolean getTopLimitSwitch(){
+    if(RobotBase.isReal()){
+      return topLimitSwitch.get();
+    }else{
+      return Math.abs(getPosition()-ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE;
+    }
   }
 
   public void setSetpoint(double setpoint){
