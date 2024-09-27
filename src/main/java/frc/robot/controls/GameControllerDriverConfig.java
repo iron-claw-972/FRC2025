@@ -7,10 +7,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.GoToPose;
 import frc.robot.commands.OuttakeAmp;
-import frc.robot.commands.SysIDDriveCommand;
 import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.commands.vision.DriverAssistIntake;
-//import frc.robot.commands.vision.AcquireGamePiece;
 import frc.robot.constants.Constants;
 import frc.robot.constants.miscConstants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -23,7 +21,6 @@ import frc.robot.util.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
-import lib.controllers.GameController.DPad;
 
 /**
  * Driver controls for the generic game controller.
@@ -32,7 +29,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   private final GameController kDriver = new GameController(Constants.DRIVER_JOY);
   private Vision vision;
   private Arm arm;
-  private Intake intake;
+  // private Intake intake;
   private StorageIndex index;
   private Shooter shooter;
 
@@ -41,7 +38,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     this.vision = vision;
     this.arm = arm;
     this.index = index;
-    this.intake = intake;
+    // this.intake = intake;
     this.shooter = shooter;
   }
 

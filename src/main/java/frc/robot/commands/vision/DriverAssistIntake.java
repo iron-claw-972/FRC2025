@@ -42,7 +42,7 @@ public class DriverAssistIntake extends Command {
         // The angle the driver wants to drive at
         double velocityAngle = Math.atan2(yTranslation, xTranslation);
         // If this angle is too different from the angle to the object, drive normally
-        if(Math.abs(MathUtil.angleModulus(angle-velocityAngle)) < Units.degreesToRadians(45)){
+        if(Math.abs(MathUtil.angleModulus(angle-velocityAngle)) > Units.degreesToRadians(45)){
             normalDrive(xTranslation, yTranslation);
             return;
         }
@@ -53,7 +53,7 @@ public class DriverAssistIntake extends Command {
     }
 
     private void normalDrive(double x, double y){
-        double rotation = driver.getRotation();
+        double rotation = -driver.getRotation();
         drive.drive(x, y, rotation, true, false);
     }
 

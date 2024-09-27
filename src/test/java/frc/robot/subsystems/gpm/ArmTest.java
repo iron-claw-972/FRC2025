@@ -1,13 +1,10 @@
 package frc.robot.subsystems.gpm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import edu.wpi.first.math.util.Units;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 
@@ -61,6 +58,7 @@ public class ArmTest {
      * @param setpoint arm setpoint in radians
      * @return true if the value is acceptable.
      */
+    @SuppressWarnings("unused")
     private static boolean rangeCheck(double setpoint) {
         return ArmConstants.MIN_ANGLE_RADS <= setpoint && setpoint <= ArmConstants.MAX_ANGLE_RADS;
     }

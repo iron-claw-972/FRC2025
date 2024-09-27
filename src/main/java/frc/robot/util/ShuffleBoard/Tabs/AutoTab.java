@@ -11,11 +11,9 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.ArmToPos;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.ChoreoPathCommand;
-import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.auto_comm.MoveArmForShoot;
 import frc.robot.commands.gpm.IntakeNote;
 import frc.robot.commands.gpm.PrepareShooter;
-import frc.robot.commands.gpm.SetShooterSpeed;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -188,6 +186,7 @@ public class AutoTab extends ShuffleBoardTabs {
         return autoCommand;
     }
 
+    @SuppressWarnings("unused")
     private ParallelCommandGroup intakeAndSubwooferShot(String pathName) {
         return new ParallelCommandGroup(
                 new IntakeNote(intake, indexer, arm, (ignored) -> {})
@@ -197,6 +196,7 @@ public class AutoTab extends ShuffleBoardTabs {
         );
     }
 
+    @SuppressWarnings("unused")
     private ParallelCommandGroup intakeAndDistanceShot(String pathName) {
         return new ParallelCommandGroup(
                 new ArmToPos(arm, ArmConstants.stowedSetpoint)
@@ -214,6 +214,7 @@ public class AutoTab extends ShuffleBoardTabs {
                        .andThen(new InstantCommand(() -> indexer.stopIndex()));
     }
 
+    @SuppressWarnings("unused")
     private Command prepare() {
         return new SequentialCommandGroup(
                 new PrepareShooter(shooter, Shooter.addSlip(Shooter.shooterSpeedToRPM(ShooterConstants.SHOOT_SPEED_MPS-1.0))),

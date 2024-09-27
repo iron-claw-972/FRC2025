@@ -4,7 +4,6 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.IntegerLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-import frc.robot.constants.Constants;
 
 import java.time.Duration;
 import java.util.ArrayList;

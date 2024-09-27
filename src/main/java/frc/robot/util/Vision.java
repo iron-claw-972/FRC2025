@@ -15,9 +15,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -137,6 +134,7 @@ public class Vision {
    * Get the target distances
    * @return Distance in meters
    */
+  @SuppressWarnings("unused")
   public double[] getDistance(){
     if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
       return new double[0];
@@ -157,6 +155,7 @@ public class Vision {
    * Returns what types of object are detected
    * @return The object types as a String array
    */
+  @SuppressWarnings("unused")
   public long[] getDetectedObjectClass(){
     if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
       return new long[0];
@@ -168,6 +167,7 @@ public class Vision {
    * Gets the camera indices (which camera sees the object)
    * @return The indices as a long array (method returns long array instead of int array)
    */
+  @SuppressWarnings("unused")
   public long[] getCameraIndex(){
     if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
       return new long[0];
@@ -335,6 +335,7 @@ public class Vision {
    * Updates the robot's odometry with vision
    * @param poseEstimator The pose estimator to update
    */
+  @SuppressWarnings("unused")
   public void updateOdometry(SwerveDrivePoseEstimator poseEstimator){
     // Simulate vision
     if(RobotBase.isSimulation() && VisionConstants.ENABLED_SIM){
