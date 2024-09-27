@@ -3,6 +3,7 @@ package frc.robot.commands.vision;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.DetectedObject;
@@ -29,7 +30,7 @@ public class DriverAssistIntake extends Command {
         double xTranslation = driver.getForwardTranslation();
         double yTranslation = driver.getSideTranslation();
         // Get the closest game piece within 15 degrees of the robot's heading
-        DetectedObject object = vision.getBestGamePiece(Units.degreesToRadians(15));
+        DetectedObject object = vision.getBestGamePiece(Units.degreesToRadians(60));
         // If no object is detected, drive normally
         if(object == null){
             normalDrive(xTranslation, yTranslation);
@@ -42,19 +43,21 @@ public class DriverAssistIntake extends Command {
         // The angle the driver wants to drive at
         double velocityAngle = Math.atan2(yTranslation, xTranslation);
         // If this angle is too different from the angle to the object, drive normally
-        if(Math.abs(MathUtil.angleModulus(angle-velocityAngle)) > Units.degreesToRadians(45)){
+        if(Math.abs(MathUtil.angleModulus(angle-velocityAngle)) > Units.degreesToRadians(90)){
             normalDrive(xTranslation, yTranslation);
             return;
         }
         // The component of speed in the driection of the object
-        double parallelSpeed = speed * Math.cos(angle-velocityAngle);
+        double slowFactor = driver.getIsSlowMode() ? DriveConstants.kSlowDriveFactor : 1;
+        double parallelSpeed = speed * Math.cos(angle-velocityAngle) * slowFactor;
         // Drive using only the parallel component of the speed
         drive.driveHeading(parallelSpeed * Math.cos(angle), parallelSpeed * Math.sin(angle), Math.PI+angle, true);
     }
 
     private void normalDrive(double x, double y){
         double rotation = -driver.getRotation();
-        drive.drive(x, y, rotation, true, false);
+        double slowFactor = driver.getIsSlowMode() ? DriveConstants.kSlowDriveFactor : 1;
+        drive.drive(x * slowFactor, y * slowFactor, rotation * slowFactor, true, false);
     }
 
     @Override

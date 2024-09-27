@@ -58,7 +58,7 @@ public class DetectedObject {
     public DetectedObject(double xOffset, double yOffset, double distance, ObjectType type, Transform3d robotToCamera){
         this.type = type;
         // Get the position relative to the camera
-        Translation3d translation = new Translation3d(distance, new Rotation3d(0, yOffset, -xOffset))
+        Translation3d translation = new Translation3d(distance, new Rotation3d(0, -yOffset, -xOffset))
         // Rotate and translate it to get the position relative to the robot
             .rotateBy(robotToCamera.getRotation())
             .plus(robotToCamera.getTranslation());
@@ -98,7 +98,7 @@ public class DetectedObject {
     public DetectedObject(double xOffset, double yOffset, ObjectType type, Transform3d robotToCamera){
         this.type = type;
         // Get the position relative to the camera
-        Translation3d translation = new Translation3d(1, new Rotation3d(0, yOffset, -xOffset))
+        Translation3d translation = new Translation3d(1, new Rotation3d(0, -yOffset, -xOffset))
         // Rotate it to get the position relative to the rotated camera
             .rotateBy(robotToCamera.getRotation());
         // Scale it so that the object will be on the ground (- because translation's z will be negative)

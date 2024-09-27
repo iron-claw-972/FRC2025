@@ -77,7 +77,10 @@ public class Field {
 
     private Pose2d[] getObjectPoses(){
         DetectedObject[] objects = vision.getDetectedObjects();
-        Pose2d[] result = (Pose2d[])Arrays.stream(objects).map((o)->o.pose.toPose2d()).toArray();
+        Pose2d[] result = new Pose2d[objects.length];
+        for(int i = 0; i < objects.length; i++){
+            result[i] = objects[i].pose.toPose2d();
+        }
         return result;
     }
 }
