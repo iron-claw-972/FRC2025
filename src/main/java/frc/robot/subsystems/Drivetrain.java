@@ -169,10 +169,14 @@ public class Drivetrain extends SubsystemBase {
             modules[i].close();
         }
     }
-
+    double  prevAccel = 0;
     @Override
     public void periodic() {
         updateOdometry();
+        LogManager.add("angular accel", pigeon.getAccelerationX().getValue());
+        if(prevAccel!=pigeon.getAccelerationX().getValue()){
+            prevAccel = Math.max(prevAccel, pigeon.getAccelerationX().getValue());
+        }
     }
 
     // DRIVE
@@ -348,6 +352,7 @@ public class Drivetrain extends SubsystemBase {
         // outputs in deg/s, so convert to rad/s
         return Units.degreesToRadians(speed);
     }
+
 
     /**
      * Gets an array of SwerveModulePositions, which store the distance travleled by the drive and the steer angle.
