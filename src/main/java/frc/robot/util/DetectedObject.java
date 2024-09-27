@@ -58,19 +58,18 @@ public class DetectedObject {
     public DetectedObject(double xOffset, double yOffset, double distance, ObjectType type, Transform3d robotToCamera){
         this.type = type;
         // Get the position relative to the camera
-        Translation3d translation = new Translation3d(distance, new Rotation3d(0, yOffset, -xOffset));
+        Translation3d translation = new Translation3d(distance, new Rotation3d(0, yOffset, -xOffset))
         // Rotate and translate it to get the position relative to the robot
-        translation = translation.rotateBy(robotToCamera.getRotation());
-        translation = translation.plus(robotToCamera.getTranslation());
+            .rotateBy(robotToCamera.getRotation())
+            .plus(robotToCamera.getTranslation());
         // If the drivetrain exists, rotate and translate it to get the field relative position
         if(drive != null){
+            Translation2d drivePose = drive.getPose().getTranslation();
             translation = translation.rotateBy(new Rotation3d(
                 0,
                 0,
                 drive.getYaw().getRadians()
-            ));
-            Translation2d drivePose = drive.getPose().getTranslation();
-            translation = translation.plus(new Translation3d(
+            )).plus(new Translation3d(
                 drivePose.getX(),
                 drivePose.getY(),
                 0
@@ -86,7 +85,7 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, double distance, long type, Transform3d robotToCamera){
+    public DetectedObject(double xOffset, double yOffset, double distance, int type, Transform3d robotToCamera){
         this(xOffset, yOffset, distance, getType(type), robotToCamera);
     }
     /**
@@ -99,9 +98,9 @@ public class DetectedObject {
     public DetectedObject(double xOffset, double yOffset, ObjectType type, Transform3d robotToCamera){
         this.type = type;
         // Get the position relative to the camera
-        Translation3d translation = new Translation3d(1, new Rotation3d(0, yOffset, -xOffset));
+        Translation3d translation = new Translation3d(1, new Rotation3d(0, yOffset, -xOffset))
         // Rotate it to get the position relative to the rotated camera
-        translation = translation.rotateBy(robotToCamera.getRotation());
+            .rotateBy(robotToCamera.getRotation());
         // Scale it so that the object will be on the ground (- because translation's z will be negative)
         if(!isRobot()){
             translation = translation.times(-(robotToCamera.getZ()-type.height)/translation.getZ());
@@ -113,13 +112,12 @@ public class DetectedObject {
         translation = translation.plus(robotToCamera.getTranslation());
         // If the drivetrain exists, rotate and translate it to be field relative
         if(drive != null){
+            Translation2d drivePose = drive.getPose().getTranslation();
             translation = translation.rotateBy(new Rotation3d(
                 0,
                 0,
                 drive.getYaw().getRadians()
-            ));
-            Translation2d drivePose = drive.getPose().getTranslation();
-            translation = translation.plus(new Translation3d(
+            )).plus(new Translation3d(
                 drivePose.getX(),
                 drivePose.getY(),
                 0
@@ -134,7 +132,7 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, long type, Transform3d robotToCamera){
+    public DetectedObject(double xOffset, double yOffset, int type, Transform3d robotToCamera){
         this(xOffset, yOffset, getType(type), robotToCamera);
     }
 
@@ -143,12 +141,8 @@ public class DetectedObject {
      * @param type The type as a String
      * @return The type as an ObjectType
      */
-    public static ObjectType getType(long type){
-        return
-            type==0?ObjectType.NOTE:
-            type==1?ObjectType.RED_ROBOT:
-            type==2?ObjectType.BLUE_ROBOT:
-            ObjectType.NONE;
+    public static ObjectType getType(int type){
+        return ObjectType.values()[type];
     }
 
     /**

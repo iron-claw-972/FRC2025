@@ -4,6 +4,8 @@
 
 package frc.robot.util.ShuffleBoard;
 
+import java.util.Arrays;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,17 +14,21 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.constants.miscConstants.FieldConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.util.DetectedObject;
+import frc.robot.util.Vision;
 
 /** Add your docs here. */
 public class Field {
     private Drivetrain drive;
+    private Vision vision;
     private Field2d field = new Field2d();
     private Pose2d chassisPose = new Pose2d();
     private Pose2d[] modulePositions = new Pose2d[4];
     private Pose2d[] aprilTagPoses;
     
-    public Field(Drivetrain drive){
+    public Field(Drivetrain drive, Vision vision){
         this.drive = drive;
+        this.vision = vision;
         Shuffleboard.getTab("Swerve").add(field);
         aprilTagPoses = getTagPoses();
     } 
@@ -63,8 +69,15 @@ public class Field {
     public void updateFeild(){
         updateModulePositions();
         field.setRobotPose(chassisPose);
-        field.getObject("modules").setPoses(modulePositions);
-        field.getObject("april tags").setPoses(aprilTagPoses);
+        field.getObject("Modules").setPoses(modulePositions);
+        field.getObject("AprilTags").setPoses(aprilTagPoses);
+        // For testing, TODO: remove before merging
+        field.getObject("Detected objects").setPoses(getObjectPoses());
     }
 
+    private Pose2d[] getObjectPoses(){
+        DetectedObject[] objects = vision.getDetectedObjects();
+        Pose2d[] result = (Pose2d[])Arrays.stream(objects).map((o)->o.pose.toPose2d()).toArray();
+        return result;
+    }
 }
