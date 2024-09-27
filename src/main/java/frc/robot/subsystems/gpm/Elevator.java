@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -108,7 +109,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // Calibrate as soon as possible
-    if(!calibrated){
+    if(!calibrated && RobotState.isEnabled()){
       CalibrateElevator c = new CalibrateElevator(this);
       c.schedule();
       calibrated = c.isScheduled();
@@ -183,6 +184,9 @@ public class Elevator extends SubsystemBase {
 
   public void setSetpoint(double setpoint){
     this.setpoint = MathUtil.clamp(setpoint, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT);
+  }
+  public double getSetpoint(){
+    return setpoint;
   }
 
   public Mechanism2d getMechanism2d(){

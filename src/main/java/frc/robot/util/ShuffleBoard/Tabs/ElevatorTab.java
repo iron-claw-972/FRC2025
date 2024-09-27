@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.commands.gpm.CalibrateElevator;
 import frc.robot.subsystems.gpm.Elevator;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
@@ -16,6 +17,7 @@ public class ElevatorTab extends ShuffleBoardTabs {
 
     private Elevator elevator;
     private GenericEntry setpoint;
+    private double previousSetpoint;
 
     public ElevatorTab(Elevator elevator){
         this.elevator = elevator;
@@ -28,7 +30,12 @@ public class ElevatorTab extends ShuffleBoardTabs {
 
     public void update(){
         if (RobotBase.isSimulation()){
-        elevator.setSetpoint(setpoint.getDouble(0));
+            if(elevator.getSetpoint() != previousSetpoint){
+                setpoint.setDouble(elevator.getSetpoint());
+            }else{
+                elevator.setSetpoint(setpoint.getDouble(0));
+            }
+            previousSetpoint = elevator.getSetpoint();
         }
     }
 
@@ -37,6 +44,7 @@ public class ElevatorTab extends ShuffleBoardTabs {
             tab.add("Elevator", elevator.getMechanism2d());
             setpoint = tab.add("Elevater setpoint", 0).getEntry();
         }
+        tab.add("Calibrate elevator", new CalibrateElevator(elevator));
     }
 
 }

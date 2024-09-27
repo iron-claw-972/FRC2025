@@ -26,7 +26,7 @@ public class CalibrateElevator extends Command {
         if(position - start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT - ElevatorConstants.MIN_HEIGHT){
             movingUp = false;
         }
-        elevator.setSetpoint(position + (movingUp ? 0.01 : -0.01));
+        elevator.setSetpoint(position + (movingUp ? 0.02 : -0.02));
     }
 
     @Override
