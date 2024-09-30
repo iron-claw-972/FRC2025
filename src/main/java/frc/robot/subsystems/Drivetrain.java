@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -11,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -89,6 +91,8 @@ public class Drivetrain extends SubsystemBase {
 
     private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
 
+    // The pose buffer, used to store and get previous poses
+    private TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(2);
 
 
     /**
@@ -268,6 +272,9 @@ public class Drivetrain extends SubsystemBase {
             //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
             resetOdometry(pose2);
         }
+
+        // Store the current pose in the buffer
+        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
     }
 
     /**
@@ -483,6 +490,20 @@ public class Drivetrain extends SubsystemBase {
         if (vision == null) return true;
 
         return vision.canSeeTag() || !visionEnabled || !VisionConstants.ENABLED;
+    }
+
+    /**
+     * Gets the pose at a previous time
+     * @param timestamp The timestamp of the pose to get
+     * @return The pose, or null if there are no poses yet
+     */
+    public Pose2d getPoseAt(double timestamp){
+        Optional<Pose2d> pose = poseBuffer.getSample(timestamp);
+        if(pose.isPresent()){
+            return pose.get();
+        }else{
+            return null;
+        }
     }
 
     /**
