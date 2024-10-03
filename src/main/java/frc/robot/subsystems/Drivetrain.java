@@ -177,14 +177,10 @@ public class Drivetrain extends SubsystemBase {
             modules[i].close();
         }
     }
-    double  prevAccel = 0;
+
     @Override
     public void periodic() {
         updateOdometry();
-        LogManager.add("angular accel", pigeon.getAccelerationX().getValue());
-        if(prevAccel!=pigeon.getAccelerationX().getValue()){
-            prevAccel = Math.max(prevAccel, pigeon.getAccelerationX().getValue());
-        }
     }
 
     // DRIVE

@@ -52,7 +52,7 @@ public class DetectedObjectTest {
   public void testObjectPoseWithoutDistance(){
     DetectedObject object = new DetectedObject(
       0,
-      Units.degreesToRadians(20),
+      -Units.degreesToRadians(20),
       ObjectType.NONE,
       new Transform3d(new Translation3d(0, 0, 1), new Rotation3d(0, Units.degreesToRadians(25), 0))
     );
