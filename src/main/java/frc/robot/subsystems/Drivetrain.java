@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
@@ -72,6 +74,8 @@ public class Drivetrain extends SubsystemBase {
     private final PIDController xController;
     private final PIDController yController;
     private final PIDController rotationController;
+
+
 
     // If vision is enabled for drivetrain odometry updating
     // DO NOT CHANGE THIS HERE TO DISABLE VISION, change VisionConstants.ENABLED instead
@@ -402,6 +406,10 @@ public class Drivetrain extends SubsystemBase {
         return DriveConstants.KINEMATICS.toChassisSpeeds(
                 Arrays.stream(modules).map(Module::getState).toArray(SwerveModuleState[]::new)
         );
+    }
+
+    public SwerveSetpoint getCurrSetpoint(){
+        return currentSetpoint;
     }
 
     /**

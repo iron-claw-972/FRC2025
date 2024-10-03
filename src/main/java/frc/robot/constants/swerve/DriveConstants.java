@@ -52,6 +52,10 @@ public class DriveConstants {
     // TODO: tune this better.
     public static double kMaxAngularAccel = 8 * 2 * Math.PI; // 8 rotations per second per second
 
+    public static final double COSF = 1.1;
+
+    public static double maxLinearAccel = COSF * 9.81;
+
     /** Pigeon2 IMU CAN Id. */
     public static int kPigeon = 13;
 
