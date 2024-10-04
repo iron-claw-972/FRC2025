@@ -21,7 +21,7 @@ import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 public class DriverAssist {
 
     Drivetrain drive;
-    //robot relative
+    //
     Pose2d desiredPose = new Pose2d();
 
     private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
@@ -30,43 +30,41 @@ public class DriverAssist {
     TrapezoidProfile yProfile = new TrapezoidProfile(new Constraints(5.38, 10.8));
     TrapezoidProfile omegaProfile = new TrapezoidProfile(new Constraints(5.38, 10.8));
 
-    public DriverAssist(Drivetrain drive){
+    public DriverAssist(Drivetrain drive) {
         this.drive = drive;
     }
 
+    // TODO make sure the feild relativce or robot relative is consastant
+    public ChassisSpeeds calculate(ChassisSpeeds driverInput) {
+        ChassisSpeeds driverChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(driverInput, drive.getYaw());
+        SwerveSetpoint nextChassisSpeed = setpointGenerator.generateSetpoint(
+                new ModuleLimits(DriveConstants.kMaxSpeed, Double.MAX_VALUE, Double.MAX_VALUE),
+                drive.getCurrSetpoint(), driverChassisSpeeds,
+                Constants.LOOP_TIME);
 
-    public ChassisSpeeds calculate(ChassisSpeeds driverInput){
-       SwerveSetpoint nextChassisSpeed = setpointGenerator.generateSetpoint(
-            new ModuleLimits(DriveConstants.kMaxSpeed, Double.MAX_VALUE, Double.MAX_VALUE),
-            drive.getCurrSetpoint(), ChassisSpeeds.fromFieldRelativeSpeeds(driverInput,drive.getYaw()),
-            Constants.LOOP_TIME);
+        ChassisSpeeds accel = nextChassisSpeed.chassisSpeeds().minus(drive.getChassisSpeeds()).div(Constants.LOOP_TIME);
+        xProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.vxMetersPerSecond));
+        yProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.vyMetersPerSecond));
+        omegaProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.omegaRadiansPerSecond));
 
-            ChassisSpeeds accel = nextChassisSpeed.chassisSpeeds().minus(drive.getChassisSpeeds()).div(Constants.LOOP_TIME);
-            xProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.vxMetersPerSecond));
-            yProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.vyMetersPerSecond));
-            omegaProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.omegaRadiansPerSecond));
+        double xError = xProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getX(), 0),
+                new State(drive.getPose().getX(), drive.getChassisSpeeds().vxMetersPerSecond)).velocity
+                - driverChassisSpeeds.vxMetersPerSecond;
+        double yError = yProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getY(), 0),
+                new State(drive.getPose().getY(), drive.getChassisSpeeds().vxMetersPerSecond)).velocity
+                - driverChassisSpeeds.vyMetersPerSecond;
+        double omegaError = omegaProfile.calculate(Constants.LOOP_TIME,
+                new State(desiredPose.getRotation().getRadians(), 0),
+                new State(drive.getPose().getRotation().getRadians(),
+                        drive.getChassisSpeeds().omegaRadiansPerSecond)).velocity
+                - driverChassisSpeeds.omegaRadiansPerSecond;
 
-            double xError = 
-            xProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getX(),0),
-            new State(drive.getPose().getX(),drive.getChassisSpeeds().vxMetersPerSecond)).velocity 
-            - driverInput.vxMetersPerSecond;
-            double yError = 
-            yProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getY(),0),
-            new State(drive.getPose().getY(),drive.getChassisSpeeds().vxMetersPerSecond)).velocity 
-            - driverInput.vyMetersPerSecond;
-             double omegaError = 
-            omegaProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getRotation().getRadians(),0),
-            new State(drive.getPose().getRotation().getRadians(), drive.getChassisSpeeds().omegaRadiansPerSecond)).velocity 
-            - driverInput.omegaRadiansPerSecond;
-            
-        return new ChassisSpeeds(xError, yError, omegaError).div(DriveConstants.kMaxSpeed);
-        
+        return ChassisSpeeds.fromRobotRelativeSpeeds(xError, yError, omegaError, drive.getYaw())
+                .div(DriveConstants.kMaxSpeed);
+
     }
 
-    
-    
-
-    public void setDesiredPose(Pose2d dPose2d){
+    public void setDesiredPose(Pose2d dPose2d) {
         desiredPose = dPose2d;
     }
 
