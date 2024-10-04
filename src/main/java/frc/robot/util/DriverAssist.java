@@ -46,8 +46,20 @@ public class DriverAssist {
             yProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.vyMetersPerSecond));
             omegaProfile = new TrapezoidProfile(new Constraints(Double.MAX_VALUE, accel.omegaRadiansPerSecond));
 
-            double xError = xProfile.calculate(Constants.LOOP_TIME,new State(desiredPose.getX(),0),new State(drive.getPose().getX(),drive.getChassisSpeeds().vxMetersPerSecond)).velocity -1; 
-        return driverInput;
+            double xError = 
+            xProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getX(),0),
+            new State(drive.getPose().getX(),drive.getChassisSpeeds().vxMetersPerSecond)).velocity 
+            - driverInput.vxMetersPerSecond;
+            double yError = 
+            yProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getY(),0),
+            new State(drive.getPose().getY(),drive.getChassisSpeeds().vxMetersPerSecond)).velocity 
+            - driverInput.vyMetersPerSecond;
+             double omegaError = 
+            omegaProfile.calculate(Constants.LOOP_TIME, new State(desiredPose.getRotation().getRadians(),0),
+            new State(drive.getPose().getRotation().getRadians(), drive.getChassisSpeeds().omegaRadiansPerSecond)).velocity 
+            - driverInput.omegaRadiansPerSecond;
+            
+        return new ChassisSpeeds(xError, yError, omegaError).div(DriveConstants.kMaxSpeed);
         
     }
 
