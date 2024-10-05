@@ -42,7 +42,7 @@ public class PathPlannerCommand extends SequentialCommandGroup {
       List.of(
         waypoints.get(0),
         waypoints.get(1)),
-      new PathConstraints(AutoConstants.MAX_AUTO_SPEED, AutoConstants.MAX_AUTO_ACCEL, DriveConstants.kMaxAngularSpeed, DriveConstants.kMaxAngularAccel),
+      new PathConstraints(AutoConstants.MAX_AUTO_SPEED, AutoConstants.MAX_AUTO_ACCEL, DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL),
       new GoalEndState(0, waypoints.get(1).rotationTarget.getTarget())
     ))), 0, drive, false, useAllianceColor, true);
   }
@@ -52,7 +52,7 @@ public class PathPlannerCommand extends SequentialCommandGroup {
       List.of(
         waypoints.get(0),
         waypoints.get(1)),
-      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.kMaxAngularAccel),
+      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL),
       new GoalEndState(0, waypoints.get(1).rotationTarget.getTarget())
     ))), 0, drive, false, useAllianceColor, true);
   }
@@ -79,7 +79,7 @@ public class PathPlannerCommand extends SequentialCommandGroup {
   public PathPlannerCommand(List<Pose2d> poses, Drivetrain drive, Rotation2d endRotation, double maxSpeed, double maxAccel){
     this(
       poses,
-      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.kMaxAngularAccel),
+      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL),
       0, endRotation, drive, false, false, false
     );
   }

@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotId;
 import frc.robot.constants.Constants;
+import frc.robot.util.SwerveStuff.ModuleLimits;
 import lib.COTSFalconSwerveConstants;
 
 /**
@@ -49,12 +50,11 @@ public class DriveConstants {
     // To do so, divide by the radius. The radius is the diagonal of the square chassis, diagonal = sqrt(2) * side_length.
     public static double kMaxAngularSpeed = kMaxSpeed / ((kTrackWidth / 2) * Math.sqrt(2));
 
-    // TODO: tune this better.
-    public static double kMaxAngularAccel = 8 * 2 * Math.PI; // 8 rotations per second per second
-
+    
     public static final double COSF = 1.1;
-
-    public static double maxLinearAccel = COSF * 9.81;
+    
+    public static double MAX_LINEAR_ACCEL = COSF * 9.81;
+    public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * kTrackWidth * Math.sqrt(2) / 2;
 
     /** Pigeon2 IMU CAN Id. */
     public static int kPigeon = 13;
@@ -193,6 +193,8 @@ public class DriveConstants {
 
     public static final double kSlowDriveFactor = 0.2;
     public static final double kSlowRotFactor = 0.1;
+
+    public static final ModuleLimits MODULE_LIMITS = new ModuleLimits(kMaxSpeed, MAX_LINEAR_ACCEL, Double.POSITIVE_INFINITY);
 
     /**
      * Updates the constants if the RobotId is not the competition robot.

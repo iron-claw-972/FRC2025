@@ -66,7 +66,7 @@ public class GoToPose extends SequentialCommandGroup {
     }
     Command command = AutoBuilder.pathfindToPose(
       pose,
-      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.kMaxAngularAccel),
+      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL),
       0
     );
 
