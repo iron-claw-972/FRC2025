@@ -22,29 +22,24 @@ public class DriverAssist {
     // 0 = return unchanged driver inputs, 1 = return calculated speed without driver input
     private static final double CORRECTION_FACTOR = 0.2;
 
-    // The drivetrain
-    private Drivetrain drive;
-
-    // The pose to drive to
-    private Pose2d desiredPose;
-
     // The setpoint generator, which limits the acceleration
-    private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
+    private static SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
 
-    private TrapezoidProfile xProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
-    private TrapezoidProfile yProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
-    private TrapezoidProfile angleProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL));
-
-    public DriverAssist(Drivetrain drive) {
-        this.drive = drive;
-    }
+    private static TrapezoidProfile xProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
+    private static TrapezoidProfile yProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
+    private static TrapezoidProfile angleProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL));
 
     /**
      * Combines the driver input with a speed calculated using a trapezoidal profile
      * @param driverInput The driver input speed
      * @return The new speed
      */
-    public ChassisSpeeds calculate(ChassisSpeeds driverInput) {
+    public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
+        // Do nothing if there is no pose
+        if(desiredPose == null){
+            return driverInput;
+        }
+
         // Store current states
         Pose2d currentPose = drive.getPose();
         Rotation2d yaw = drive.getYaw();
@@ -77,14 +72,29 @@ public class DriverAssist {
                 DriveConstants.MODULE_LIMITS,
                 drive.getCurrSetpoint(), ChassisSpeeds.fromFieldRelativeSpeeds(goal, yaw),
                 Constants.LOOP_TIME);
-
         ChassisSpeeds nextChassisSpeed = ChassisSpeeds.fromRobotRelativeSpeeds(nextSetpoint.chassisSpeeds(), yaw);
 
-        return nextChassisSpeed.times(CORRECTION_FACTOR).plus(driverInput.times(1-CORRECTION_FACTOR));
-    }
+        // This is the speed the driver will be able to get next frame
+        // Both speeds need to be obtainable in 1 frame or the driver speed will always be farther away
+        SwerveSetpoint driverSetpoint = setpointGenerator.generateSetpoint(
+                DriveConstants.MODULE_LIMITS,
+                drive.getCurrSetpoint(), driverInput,
+                Constants.LOOP_TIME);
+        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(driverSetpoint.chassisSpeeds(), yaw);
 
-    public void setDesiredPose(Pose2d dPose2d) {
-        desiredPose = dPose2d;
-    }
+        // The difference between the 2 speeds
+        ChassisSpeeds error = nextChassisSpeed.minus(driverSpeeds);
+        
+        // 1.2*1.5^-distance decreases the amount it correct by as distance increases
+        double distanceFactor = 1.2*Math.pow(1.5, -currentPose.getTranslation().getDistance(desiredPose.getTranslation()));
 
+        // Driver input speed
+        double driverInputSpeed = Math.hypot(driverInput.vxMetersPerSecond, driverInput.vyMetersPerSecond);
+
+        // The amount to correct by
+        ChassisSpeeds correction = error.times(Math.min(CORRECTION_FACTOR * distanceFactor * driverInputSpeed / DriveConstants.kMaxSpeed, 1));
+        
+        return driverSpeeds.plus(correction);
+        // return nextChassisSpeed.times(CORRECTION_FACTOR).plus(driverInput.times(1-CORRECTION_FACTOR));
+    }
 }
