@@ -547,4 +547,8 @@ public class Drivetrain extends SubsystemBase {
     public PIDController getRotationController() {
         return rotationController;
     }
+
+    public Pose2d getDesiredPose(){
+        return null;
+    }
 }

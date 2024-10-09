@@ -16,11 +16,13 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
-/** Add your docs here. */
+/** 
+ * A util class to assist the driver drive to a pose with 1 method
+ */
 public class DriverAssist {
     // The amount to correct the driver's inpus by
     // 0 = return unchanged driver inputs, 1 = return calculated speed without driver input
-    private static final double CORRECTION_FACTOR = 0.2;
+    private static final double CORRECTION_FACTOR = 0.75;
 
     // The setpoint generator, which limits the acceleration
     private static SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
@@ -78,15 +80,15 @@ public class DriverAssist {
         // Both speeds need to be obtainable in 1 frame or the driver speed will always be farther away
         SwerveSetpoint driverSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                drive.getCurrSetpoint(), driverInput,
+                drive.getCurrSetpoint(), ChassisSpeeds.fromFieldRelativeSpeeds(driverInput, yaw),
                 Constants.LOOP_TIME);
         ChassisSpeeds driverSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(driverSetpoint.chassisSpeeds(), yaw);
 
         // The difference between the 2 speeds
         ChassisSpeeds error = nextChassisSpeed.minus(driverSpeeds);
         
-        // 1.2*1.5^-distance decreases the amount it correct by as distance increases
-        double distanceFactor = 1.2*Math.pow(1.5, -currentPose.getTranslation().getDistance(desiredPose.getTranslation()));
+        // 1.2*1.2^-distance decreases the amount it correct by as distance increases
+        double distanceFactor = 1.2*Math.pow(1.2, -currentPose.getTranslation().getDistance(desiredPose.getTranslation()));
 
         // Driver input speed
         double driverInputSpeed = Math.hypot(driverInput.vxMetersPerSecond, driverInput.vyMetersPerSecond);
