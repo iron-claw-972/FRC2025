@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -95,6 +96,8 @@ public class Drivetrain extends SubsystemBase {
     // The pose buffer, used to store and get previous poses
     private TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(2);
 
+    // The pose supplier to drive to
+    private Supplier<Pose2d> desiredPoSupplier = ()->null;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -548,7 +551,14 @@ public class Drivetrain extends SubsystemBase {
         return rotationController;
     }
 
+    public void setDesiredPose(Supplier<Pose2d> supplier){
+        desiredPoSupplier = supplier;
+    }
+    public void setDesiredPose(Pose2d pose){
+        setDesiredPose(()->pose);
+    }
+
     public Pose2d getDesiredPose(){
-        return null;
+        return desiredPoSupplier.get();
     }
 }
