@@ -10,11 +10,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+import dev.doglog.DogLog;
+
 /**
  * Utilty class for logging data to the DataLogManager.
  * View logs using MechanicalAdvantage's advantage scope (<a href="https://github.com/Mechanical-Advantage/AdvantageScope">...</a>)
  */
-public class LogManager {
+public class LogManager extends DogLog {
 
   public static DataLog DATA_LOG = DataLogManager.getLog();
 
@@ -24,9 +26,9 @@ public class LogManager {
     logs.add(log);
   }
 
-  public static <T> void add(String name, T value) {
-    add(name, ()->value);
-  }
+  // public static <T> void add(String name, T value) {
+  //   add(name, ()->value);
+  // }
   public static <T> void add(String name, Supplier<T> value) {
     add(new Log<>(name, value));
   }

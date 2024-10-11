@@ -6,6 +6,8 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import dev.doglog.DogLog;
+
 public class Log<T> {
     private final String name;
     private final Supplier<T> supplier;
@@ -13,7 +15,8 @@ public class Log<T> {
     private final Duration delay;
     private long lastUpdate = 0;
 
-    private final DataLogEntry logEntry;
+    // private final DataLogEntry logEntry;
+
 
     public Log(String name, Supplier<T> supplier, Duration delay) {
         this.name = name;
@@ -22,17 +25,19 @@ public class Log<T> {
 
         this.value = supplier.get();
 
-        if (isInteger()) {
-            logEntry = new IntegerLogEntry(LogManager.DATA_LOG, name);
-        } else if (isDouble()) {
-            logEntry = new DoubleLogEntry(LogManager.DATA_LOG, name);
-        } else if (isIntegerArray()) {
-            logEntry = new IntegerArrayLogEntry(LogManager.DATA_LOG, name);
-        } else if (isDoubleArray()) {
-            logEntry = new DoubleArrayLogEntry(LogManager.DATA_LOG, name);
-        } else {
-            throw new IllegalArgumentException("Unsupported log type: " + value.getClass());
-        }
+
+        // if (isInteger()) {
+            
+            // logEntry = new IntegerLogEntry(LogManager.DATA_LOG, name);
+        // } else if (isDouble()) {
+        //     // logEntry = new DoubleLogEntry(LogManager.DATA_LOG, name);
+        // } else if (isIntegerArray()) {
+        //     // logEntry = new IntegerArrayLogEntry(LogManager.DATA_LOG, name);
+        // } else if (isDoubleArray()) {
+        //     // logEntry = new DoubleArrayLogEntry(LogManager.DATA_LOG, name);
+        // } else {
+        //     throw new IllegalArgumentException("Unsupported log type: " + value.getClass());
+        // }
     }
 
     public Log(String name, Supplier<T> value) {
@@ -43,16 +48,17 @@ public class Log<T> {
         if (System.currentTimeMillis() - lastUpdate > delay.toMillis()) {
             value = supplier.get();
             lastUpdate = System.currentTimeMillis();
+
             if (isInteger()) {
-                ((IntegerLogEntry) logEntry).append((Integer) value);
+                DogLog.log(name, (Integer) value);
             } else if (isDouble()) {
-                ((DoubleLogEntry) logEntry).append((Double) value);
+                ((DoubleLogEntry) logEntry).append((Double) value); // TODO: Fix this 
             } else if (isIntegerArray()) {
-                var array = Arrays.stream((Integer[]) value).mapToLong(Integer::longValue).toArray();
-                ((IntegerArrayLogEntry) logEntry).append(array);
+                long[] array = Arrays.stream((Integer[]) value).mapToLong(Integer::longValue).toArray();
+                DogLog.log(name, array);
             } else if (isDoubleArray()) {
                 var array = Arrays.stream((Double[]) value).mapToDouble(Double::doubleValue).toArray();
-                ((DoubleArrayLogEntry) logEntry).append(array);
+                ((DoubleArrayLogEntry) logEntry).append(array); // TODO: Fix this like above
             }
         }
     }
@@ -74,7 +80,7 @@ public class Log<T> {
     }
 
     public DataLogEntry getLogEntry() {
-        return logEntry;
+        return logEntry; // TODO remove this 
     }
 
     private boolean isInteger() {
