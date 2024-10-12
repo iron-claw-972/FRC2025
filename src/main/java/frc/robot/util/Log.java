@@ -50,15 +50,15 @@ public class Log<T> {
             lastUpdate = System.currentTimeMillis();
 
             if (isInteger()) {
-                DogLog.log(name, (Integer) value); // TODO: Call LogManager instead
+                LogManager.log(name, (Integer) value); 
             } else if (isDouble()) {
-                ((DoubleLogEntry) logEntry).append((Double) value); // TODO: Fix this 
+                LogManager.log(name, (Double) value);
             } else if (isIntegerArray()) {
                 long[] array = Arrays.stream((Integer[]) value).mapToLong(Integer::longValue).toArray();
-                DogLog.log(name, array); // TODO: Call LogManager instead
+                LogManager.log(name, array);
             } else if (isDoubleArray()) {
                 var array = Arrays.stream((Double[]) value).mapToDouble(Double::doubleValue).toArray();
-                ((DoubleArrayLogEntry) logEntry).append(array); // TODO: Fix this like above
+                LogManager.log(name, array); 
             }
         }
     }
@@ -77,10 +77,6 @@ public class Log<T> {
 
     public Duration getDelay() {
         return delay;
-    }
-
-    public DataLogEntry getLogEntry() {
-        return logEntry; // TODO remove this 
     }
 
     private boolean isInteger() {

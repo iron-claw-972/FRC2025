@@ -26,14 +26,21 @@ public class LogManager extends DogLog {
     logs.add(log);
   }
 
-  public static <T> void add(String name, T value) { // TODO: Change this method to call log() for backwards compatability
+  public static <T> void add(String name, T value) { 
     Class<?> type = value.getClass(); // Get class
-    
-    add(name, ()->value); // TODO: Remove this
 
     if (type == Integer.class) { // Check the type
       log(name, (Integer) value); // Since we know this is an integer, cast this to an integer
-    } // TODO: Do this for Double, Boolean, and Long.
+    }
+    if (type == Double.class) { // Check the type
+      log(name, (Double) value);
+    }
+    if (type == Boolean.class) { // Check the type
+      log(name, (Boolean) value);
+    }
+    if (type == Long.class) { // Check the type
+      log(name, (Long) value);
+    }
   }
 
 
@@ -52,7 +59,7 @@ public class LogManager extends DogLog {
   }
 
   public static <T> void add(String name, Supplier<T> value, Duration duration) {
-    add(new Log<>(name, value, duration));
+    add(new Log<>(name, value, duration)); //todo
   }
 
   public static void update() {
