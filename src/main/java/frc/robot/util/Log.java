@@ -50,12 +50,12 @@ public class Log<T> {
             lastUpdate = System.currentTimeMillis();
 
             if (isInteger()) {
-                DogLog.log(name, (Integer) value);
+                DogLog.log(name, (Integer) value); // TODO: Call LogManager instead
             } else if (isDouble()) {
                 ((DoubleLogEntry) logEntry).append((Double) value); // TODO: Fix this 
             } else if (isIntegerArray()) {
                 long[] array = Arrays.stream((Integer[]) value).mapToLong(Integer::longValue).toArray();
-                DogLog.log(name, array);
+                DogLog.log(name, array); // TODO: Call LogManager instead
             } else if (isDoubleArray()) {
                 var array = Arrays.stream((Double[]) value).mapToDouble(Double::doubleValue).toArray();
                 ((DoubleArrayLogEntry) logEntry).append(array); // TODO: Fix this like above

@@ -26,11 +26,29 @@ public class LogManager extends DogLog {
     logs.add(log);
   }
 
-  // public static <T> void add(String name, T value) {
-  //   add(name, ()->value);
-  // }
-  public static <T> void add(String name, Supplier<T> value) {
+  public static <T> void add(String name, T value) { // TODO: Change this method to call log() for backwards compatability
+    Class<?> type = value.getClass(); // Get class
+    
+    add(name, ()->value); // TODO: Remove this
+
+    if (type == Integer.class) { // Check the type
+      log(name, (Integer) value); // Since we know this is an integer, cast this to an integer
+    } // TODO: Do this for Double, Boolean, and Long.
+  }
+
+
+  public static <T> void log(String name, Supplier<T> value) {
     add(new Log<>(name, value));
+  }
+
+  /**
+   * @deprecated Use log() instead
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged 
+   */
+  public static <T> void add(String name, Supplier<T> value) {
+    log(name, value);
   }
 
   public static <T> void add(String name, Supplier<T> value, Duration duration) {
