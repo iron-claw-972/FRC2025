@@ -10,14 +10,11 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
-
-import java.time.Duration;
 
 public class Shooter extends SubsystemBase {
 	// each of the shooter shafts is driven by one Neo Vortex motor
@@ -105,16 +102,16 @@ public class Shooter extends SubsystemBase {
 		}
 		
 		if (Constants.DO_LOGGING) {
-			LogManager.add("Shooter/MotorSpeedDifference", () -> getMotorSpeedDifference(), Duration.ofSeconds(1));
-			LogManager.add("Shooter/LeftSpeedError", () -> leftPID.getSetpoint() - getLeftMotorSpeed(), Duration.ofSeconds(1));
-			LogManager.add("Shooter/RightSpeedError", () -> rightPID.getSetpoint() - getRightMotorSpeed(), Duration.ofSeconds(1));
+			LogManager.log("Shooter/MotorSpeedDifference", () -> getMotorSpeedDifference(), 1000);
+			LogManager.log("Shooter/LeftSpeedError", () -> leftPID.getSetpoint() - getLeftMotorSpeed(), 1000);
+			LogManager.log("Shooter/RightSpeedError", () -> rightPID.getSetpoint() - getRightMotorSpeed(), 1000);
 
-			LogManager.add("Shooter/VoltsLeft", () -> leftMotor.get() * Constants.ROBOT_VOLTAGE, Duration.ofSeconds(1));	
+			LogManager.log("Shooter/VoltsLeft", () -> leftMotor.get() * Constants.ROBOT_VOLTAGE, 1000);	
 			
-			LogManager.add("Shooter/VoltsRight", () -> rightMotor.get() * Constants.ROBOT_VOLTAGE, Duration.ofSeconds(1));
+			LogManager.log("Shooter/VoltsRight", () -> rightMotor.get() * Constants.ROBOT_VOLTAGE, 1000);
 		
-			LogManager.add("Shooter/Leftspd", () -> leftPID.getSetpoint() - getLeftMotorSpeed());
-			LogManager.add("Shooter/Rightspd", () -> getRightMotorSpeed());
+			LogManager.log("Shooter/Leftspd", () -> leftPID.getSetpoint() - getLeftMotorSpeed());
+			LogManager.log("Shooter/Rightspd", () -> getRightMotorSpeed());
 		}
 	}
 
