@@ -30,7 +30,7 @@ public class DriverAssistIntake extends Command {
         double xTranslation = driver.getForwardTranslation();
         double yTranslation = driver.getSideTranslation();
         // Get the closest game piece within 15 degrees of the robot's heading
-        DetectedObject object = vision.getBestGamePiece(Units.degreesToRadians(60));
+        DetectedObject object = vision.getBestGamePiece(Units.degreesToRadians(45), true);
         // If no object is detected, drive normally
         if(object == null){
             normalDrive(xTranslation, yTranslation);

@@ -528,7 +528,8 @@ public class Drivetrain extends SubsystemBase {
         }
         if (!drive_turning){
             rotationController.setSetpoint(currentHeading);
-            rot = Math.abs(rotationController.calculate(getYaw().getRadians())) > Math.abs(rot) ? rotationController.calculate(getYaw().getRadians()) : rot;
+            double output = rotationController.calculate(getYaw().getRadians());
+            rot = Math.abs(output) > Math.abs(rot) ? output : rot;
         }
         return rot;
     }

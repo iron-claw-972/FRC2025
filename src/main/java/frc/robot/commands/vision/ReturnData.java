@@ -43,20 +43,19 @@ public class ReturnData extends Command{
         // SmartDashboard.putNumberArray("Object Y offsets degrees", yOffset); 
         // SmartDashboard.putNumberArray("Object Distances", m_vision.getDistance()); 
 
-        DetectedObject bestGamePiece = m_vision.getBestGamePiece(Math.PI);
+        DetectedObject bestGamePiece = m_vision.getBestGamePiece(Math.PI, false);
         if(bestGamePiece!=null){
-        //   SmartDashboard.putString("Vision best game piece", bestGamePiece.toString());
-        System.out.println("\n\nBest game piece: "+bestGamePiece);
+          // SmartDashboard.putString("Vision best game piece", bestGamePiece.toString());
+          System.out.println("\n\nBest game piece: "+bestGamePiece);
         }
         
-        if (xOffset.length != 0 && yOffset.length != 0) {
+        if ((xOffset.length != 0) == (yOffset.length != 0)) {
           for (int i = 0; i < xOffset.length; i++) {
             System.out.printf("\nx: %.2f, y: %.2f, type: %s\n", xOffset[i], yOffset[i], DetectedObject.getType(0));
-            DetectedObject object = new DetectedObject(Units.degreesToRadians(xOffset[i]), Units.degreesToRadians(yOffset[i]), 0, VisionConstants.APRIL_TAG_CAMERAS.get(0).getSecond());
+            DetectedObject object = new DetectedObject(Units.degreesToRadians(xOffset[i]), Units.degreesToRadians(yOffset[i]), 0, VisionConstants.OBJECT_DETECTION_CAMERAS.get(0));
             System.out.printf("Object: %s\nDistance: %.2f, Angle: %.2f\n", object, object.getDistance(), Units.radiansToDegrees(object.getAngle()));
           }
-        } 
-        else {
+        }else {
           System.out.println("One of the arrays is empty!");
         }
       }

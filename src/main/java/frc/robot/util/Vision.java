@@ -204,16 +204,17 @@ public class Vision {
 
   /**
    * Returns the closest game piece in front of the robot
-   * @param maxAngle The maximum angle between the angle to the object and the robot's heading to use, in radians
+   * @param maxAngle The maximum angle between the angle to the object and the robot's heading or rotation to use, in radians
+   * @param relativeToVelocity Whether to compare the angle to the robot's heading or rotation, true for heading
    * @return The best DetectedObject
    */
-  public DetectedObject getBestGamePiece(double maxAngle){
+  public DetectedObject getBestGamePiece(double maxAngle, boolean relativeToVelocity){
     DetectedObject[] objects = getDetectedObjects();
     DetectedObject best = null;
     double closest = Double.POSITIVE_INFINITY;
     for(DetectedObject object : objects){
       double dist = object.getDistance();
-      if(object.isGamePiece() && Math.abs(object.getVelocityRelativeAngle()) < maxAngle && dist < closest){
+      if(object.isGamePiece() && Math.abs(relativeToVelocity ? object.getVelocityRelativeAngle() : object.getAngle()) < maxAngle && dist < closest){
         closest = dist;
         best = object;
       }
