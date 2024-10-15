@@ -7,10 +7,10 @@ public class Log<T> {
     private final String name;
     private final Supplier<T> supplier;
     private T value;
-    private final long delay;
+    private final int delay;
     private long lastUpdate = 0;
 
-    public Log(String name, Supplier<T> supplier, long delay) {
+    public Log(String name, Supplier<T> supplier, int delay) {
         this.name = name;
         this.supplier = supplier;
         this.delay = delay;
@@ -68,7 +68,7 @@ public class Log<T> {
         return value;
     }
 
-    public long getDelay() {
+    public int getDelay() {
         return delay;
     }
 }
