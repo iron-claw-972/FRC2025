@@ -24,8 +24,6 @@ public class Log<T> {
         this.delay = delay;
 
         this.value = supplier.get();
-
-
         // if (isInteger()) {
             
             // logEntry = new IntegerLogEntry(LogManager.DATA_LOG, name);
@@ -49,17 +47,19 @@ public class Log<T> {
             value = supplier.get();
             lastUpdate = System.currentTimeMillis();
 
-            if (isInteger()) {
-                LogManager.log(name, (Integer) value); 
-            } else if (isDouble()) {
-                LogManager.log(name, (Double) value);
-            } else if (isIntegerArray()) {
-                long[] array = Arrays.stream((Integer[]) value).mapToLong(Integer::longValue).toArray();
-                LogManager.log(name, array);
-            } else if (isDoubleArray()) {
-                var array = Arrays.stream((Double[]) value).mapToDouble(Double::doubleValue).toArray();
-                LogManager.log(name, array); 
-            }
+            LogManager.log(name, value);
+
+        //     if (isInteger()) {
+        //         LogManager.log(name, (Integer) value); 
+        //     } else if (isDouble()) {
+        //         LogManager.log(name, (Double) value);
+        //     } else if (isIntegerArray()) {
+        //         long[] array = Arrays.stream((Integer[]) value).mapToLong(Integer::longValue).toArray();
+        //         LogManager.log(name, array);
+        //     } else if (isDoubleArray()) {
+        //         var array = Arrays.stream((Double[]) value).mapToDouble(Double::doubleValue).toArray();
+        //         LogManager.log(name, array); 
+        //     }
         }
     }
 
@@ -77,21 +77,5 @@ public class Log<T> {
 
     public Duration getDelay() {
         return delay;
-    }
-
-    private boolean isInteger() {
-        return value.getClass() == Integer.class;
-    }
-
-    private boolean isDouble() {
-        return value.getClass() == Double.class;
-    }
-
-    private boolean isIntegerArray() {
-        return value.getClass() == Integer[].class;
-    }
-
-    private boolean isDoubleArray() {
-        return value.getClass() == Double[].class;
     }
 }

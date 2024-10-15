@@ -22,7 +22,7 @@ public class Constants {
     public static final String CANIVORE_CAN = "CANivore";
     public static final String RIO_CAN = "rio";
 
-    public static final boolean DO_LOGGING = false;
+    public static final boolean DO_LOGGING = true;
     public static final boolean USE_TELEMETRY = true;
 
     // port for the LED controller, the Blinkin
