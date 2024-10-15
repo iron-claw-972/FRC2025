@@ -47,7 +47,7 @@ public class LogManager extends DogLog {
   }
 
   public static <T> void log(String name, Supplier<T> value, Duration duration) {
-    log(new Log<>(name, value, duration)); //todo
+    log(new Log<T>(name, value, duration)); //todo
   }
 
   
@@ -57,12 +57,13 @@ public class LogManager extends DogLog {
   public static <T> void add(Log<T> log) {
     log(log);
   }
-
+  
   /**
    * @deprecated Use {@link frc.robot.util.LogManager#log(String name, T value)} instead
    * @param <T> Type of item being logged
    * @param name Name (key) of item being logged
    * @param value Supplier for value being logged 
+   * @param updateDelay The amount of time, in milliseconds, between logs
    */
    public static <T> void add(String name, T value) {
     log(name, value);
