@@ -28,9 +28,9 @@ public class DefaultDriveCommand extends Command {
     public void initialize() {
         swerve.setStateDeadband(true);
         if (Constants.DO_LOGGING) {
-            LogManager.add("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
-            LogManager.add("DriveControls/SideTranslation", () -> driver.getSideTranslation());
-            LogManager.add("DriveControls/Rotation", () -> driver.getRotation());
+            LogManager.log("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
+            LogManager.log("DriveControls/SideTranslation", () -> driver.getSideTranslation());
+            LogManager.log("DriveControls/Rotation", () -> driver.getRotation());
         }
     }
 
