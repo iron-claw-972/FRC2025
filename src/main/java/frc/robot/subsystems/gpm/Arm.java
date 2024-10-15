@@ -27,7 +27,6 @@ import frc.robot.constants.Constants;
 import frc.robot.subsystems.PowerPanel;
 import frc.robot.util.LogManager;
 
-import java.time.Duration;
 import java.util.ArrayList;
 
 /**
@@ -128,7 +127,7 @@ public class Arm extends SubsystemBase {
     //private PowerPanel m_powerPanel = new PowerPanel();
 
     public Arm() {
-        //LogManager.add("fudge facotr", ()->{return ArmConstants.armFudgeFactor;});
+        //LogManager.log("fudge facotr", ()->{return ArmConstants.armFudgeFactor;});
         // set the PID tolerance
         pid.setTolerance(TOLERANCE);
 
@@ -201,7 +200,7 @@ public class Arm extends SubsystemBase {
         // TODO: remove when not needed.
         // Add some test commands
         if (Constants.DO_LOGGING) {
-            LogManager.add("Arm/PositionError", () -> getAngleRad() - pid.getSetpoint(), Duration.ofSeconds(1));
+            LogManager.log("Arm/PositionError", () -> getAngleRad() - pid.getSetpoint(), 1000);
             // pid setpoint and get radians
 
             ArrayList<Double> slave_errors = new ArrayList<Double>();
@@ -209,7 +208,7 @@ public class Arm extends SubsystemBase {
                 slave_errors.add(each_talon.getPosition().getValue()-motors[0].getPosition().getValue());
             }
 
-            // LogManager.add("Arm/SlaveErrors(ticks)", () -> slave_errors);
+            // LogManager.log("Arm/SlaveErrors(ticks)", () -> slave_errors);
         }
     
 	//SmartDashboard.putBoolean("Arm Enabled", armEnabled);

@@ -1,24 +1,16 @@
 package frc.robot.util;
 
-import edu.wpi.first.util.datalog.*;
-
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.function.Supplier;
-
-import dev.doglog.DogLog;
 
 public class Log<T> {
     private final String name;
     private final Supplier<T> supplier;
     private T value;
-    private final Duration delay;
+    private final long delay;
     private long lastUpdate = 0;
 
-    // private final DataLogEntry logEntry;
-
-
-    public Log(String name, Supplier<T> supplier, Duration delay) {
+    public Log(String name, Supplier<T> supplier, long delay) {
         this.name = name;
         this.supplier = supplier;
         this.delay = delay;
@@ -39,13 +31,14 @@ public class Log<T> {
     }
 
     public Log(String name, Supplier<T> value) {
-        this(name, value, Duration.ofMillis(20));
+        this(name, value, 10); // Although this is 10, update will be called every 20ms
     }
 
     public void update() {
-        if (System.currentTimeMillis() - lastUpdate > delay.toMillis()) {
+        long time = System.currentTimeMillis();
+        if (time - lastUpdate > delay) {
             value = supplier.get();
-            lastUpdate = System.currentTimeMillis();
+            lastUpdate = time;
 
             LogManager.log(name, value);
 
@@ -75,7 +68,7 @@ public class Log<T> {
         return value;
     }
 
-    public Duration getDelay() {
+    public long getDelay() {
         return delay;
     }
 }
