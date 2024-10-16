@@ -1,8 +1,8 @@
 package frc.robot.constants;
 
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import frc.robot.constants.swerve.DriveConstants;
 
@@ -17,20 +17,20 @@ public class AutoConstants {
     public static final double MAX_AUTO_SPEED = 5.2; // m/s
     public static final double MAX_AUTO_ACCEL = 4.8; // m/s^2
 
-    // TODO: Tune these
-    public static final PIDConstants translationConstants = new PIDConstants(5,0,0);
-    public static final PIDConstants rotationConstants = new PIDConstants(5,0,0);
+    public static RobotConfig  config;
+    public static final PPHolonomicDriveController autoController = new PPHolonomicDriveController( 
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            );
 
-    public static final ReplanningConfig replanningConfig = new ReplanningConfig(false, false);
-
-    public static final HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-        translationConstants,
-        rotationConstants,
-        MAX_AUTO_SPEED,
-        Math.sqrt(2)*DriveConstants.kTrackWidth/2,
-        replanningConfig
-    );
+   
 
     private AutoConstants() {
+        try{
+            config = RobotConfig.fromGUISettings();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

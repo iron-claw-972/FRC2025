@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.controllers.PathFollowingController;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -151,7 +153,7 @@ public class RobotContainer {
   }
 
   public void initializeAutoBuilder() {
-    AutoBuilder.configureHolonomic(
+    AutoBuilder.configure(
         () -> drive.getPose(),
         (pose) -> {
           drive.resetOdometry(pose);
@@ -160,6 +162,7 @@ public class RobotContainer {
         (chassisSpeeds) -> {
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
+        AutoConstants.autoController,
         AutoConstants.config,
         getAllianceColorBooleanSupplier(),
         drive);
