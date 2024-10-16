@@ -3,6 +3,8 @@ package frc.robot.util;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import edu.wpi.first.util.struct.StructSerializable;
+
 public class Log<T> {
     private final String name;
     private final Supplier<T> supplier;
@@ -28,8 +30,10 @@ public class Log<T> {
             value = supplier.get();
             lastUpdate = time;
 
-            if (isInteger()) {
-                LogManager.log(name, (Integer) value); 
+            if(value == null) {
+                // Do nothing; we don't need to record null
+            } else if (isInteger()) {
+                LogManager.log(name, (Integer) value);
             } else if (isDouble()) {
                 LogManager.log(name, (Double) value);
             } else if (isLong()) {
@@ -46,26 +50,44 @@ public class Log<T> {
                 LogManager.log(name, array);
             } else if (isDoubleArray()) {
                 double[] array = Arrays.stream((Double[]) value).mapToDouble(Double::doubleValue).toArray();
-                LogManager.log(name, array); 
+                LogManager.log(name, array);
             } else if (isDoubleArray2()) {
-                LogManager.log(name, (double[]) value); 
+                LogManager.log(name, (double[]) value);
             } else if (isLongArray()) {
                 long[] array = Arrays.stream((Long[]) value).mapToLong(l->l).toArray();
-                LogManager.log(name, array); 
+                LogManager.log(name, array);
             } else if (isLongArray2()) {
-                LogManager.log(name, (long[]) value); 
+                LogManager.log(name, (long[]) value);
+            } else if (isFloatArray()) {
+                // For some reason, Java does not have FloatStreams or mapToFloat
+                Float[] a = (Float[]) value;
+                float[] array = new float[a.length];
+                for(int i = 0; i < a.length; i++){
+                    array[i] = a[i];
+                }
+                LogManager.log(name, array);
+            } else if (isFloatArray2()) {
+                LogManager.log(name, (float[]) value);
             } else if (isBooleanArray()) {
-                // For some reason, Java does not have BooleanStreams
+                // For some reason, Java does not have BooleanStreams or mapToBoolean
                 Boolean[] a = (Boolean[]) value;
                 boolean[] array = new boolean[a.length];
                 for(int i = 0; i < a.length; i++){
                     array[i] = a[i];
                 }
-                LogManager.log(name, array); 
+                LogManager.log(name, array);
             } else if (isBooleanArray2()) {
-                LogManager.log(name, (long[]) value); 
+                LogManager.log(name, (long[]) value);
             } else if (isStringArray()) {
-                LogManager.log(name, (String[]) value); 
+                LogManager.log(name, (String[]) value);
+            } else if (isEnum()) {
+                LogManager.log(name, (Enum<?>) value);
+            } else if (isEnumArray()) {
+                LogManager.log(name, (Enum[]) value);
+            } else if (isStruct()) {
+                LogManager.log(name, (StructSerializable) value);
+            } else if (isStructArray()) {
+                LogManager.log(name, (StructSerializable[]) value);
             }else{
                 throw new IllegalArgumentException("Unsupported log type: " + value.getClass().getName());
             }
@@ -89,58 +111,82 @@ public class Log<T> {
     }
 
     private boolean isInteger() {
-        return value.getClass() == Integer.class;
+        return value instanceof Integer;
     }
 
     private boolean isDouble() {
-        return value.getClass() == Double.class;
+        return value instanceof Double;
     }
 
     private boolean isLong() {
-        return value.getClass() == Long.class;
+        return value instanceof Long;
     }
 
     private boolean isBoolean() {
-        return value.getClass() == Boolean.class;
+        return value instanceof Boolean;
     }
 
     private boolean isString() {
-        return value.getClass() == String.class;
+        return value instanceof String;
     }
 
     private boolean isIntegerArray() {
-        return value.getClass() == Integer[].class;
+        return value instanceof Integer[];
     }
 
     private boolean isIntArray() {
-        return value.getClass() == int[].class;
+        return value instanceof int[];
     }
 
     private boolean isDoubleArray() {
-        return value.getClass() == Double[].class;
+        return value instanceof Double[];
     }
 
     private boolean isDoubleArray2() {
-        return value.getClass() == double[].class;
+        return value instanceof double[];
     }
 
     private boolean isLongArray() {
-        return value.getClass() == Long[].class;
+        return value instanceof Long[];
     }
 
     private boolean isLongArray2() {
-        return value.getClass() == long[].class;
+        return value instanceof long[];
     }
     
     private boolean isBooleanArray() {
-        return value.getClass() == Boolean[].class;
+        return value instanceof Boolean[];
     }
 
     private boolean isBooleanArray2() {
-        return value.getClass() == boolean[].class;
+        return value instanceof boolean[];
     }
 
     private boolean isStringArray() {
-        return value.getClass() == String[].class;
+        return value instanceof String[];
+    }
+
+    private boolean isFloatArray() {
+        return value instanceof Float[];
+    }
+
+    private boolean isFloatArray2() {
+        return value instanceof float[];
+    }
+
+    private boolean isEnum() {
+        return value instanceof Enum;
+    }
+
+    private boolean isEnumArray() {
+        return value instanceof Enum[];
+    }
+
+    private boolean isStruct() {
+        return value instanceof StructSerializable;
+    }
+
+    private boolean isStructArray() {
+        return value instanceof StructSerializable[];
     }
 }

@@ -28,10 +28,10 @@ public class LogManager extends DogLog {
    * @param name Name (key) of item being logged
    * @param value Supplier for value being logged 
    */
-  public static <T> void log(String name, Supplier<T> value) {
+  public static <T> void logSupplier(String name, Supplier<T> value) {
     log(new Log<>(name, value));
   }
-  
+
   /**
    * Log a supplier periodically
    * @param <T> Type of item being logged
@@ -39,7 +39,7 @@ public class LogManager extends DogLog {
    * @param value Supplier for value being logged 
    * @param updateDelay The amount of time, in milliseconds, between logs
    */
-  public static <T> void log(String name, Supplier<T> value, int updateDelay) {
+  public static <T> void logSupplier(String name, Supplier<T> value, int updateDelay) {
     log(new Log<>(name, value, updateDelay));
   }
 

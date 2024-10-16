@@ -200,7 +200,7 @@ public class Arm extends SubsystemBase {
         // TODO: remove when not needed.
         // Add some test commands
         if (Constants.DO_LOGGING) {
-            LogManager.log("Arm/PositionError", () -> getAngleRad() - pid.getSetpoint(), 1000);
+            LogManager.logSupplier("Arm/PositionError", () -> getAngleRad() - pid.getSetpoint(), 1000);
             // pid setpoint and get radians
 
             ArrayList<Double> slave_errors = new ArrayList<Double>();
