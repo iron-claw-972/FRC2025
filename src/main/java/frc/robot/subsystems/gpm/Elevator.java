@@ -22,11 +22,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.gpm.CalibrateElevator;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 
@@ -37,12 +35,18 @@ public class Elevator extends SubsystemBase {
   private DigitalInput topLimitSwitch = new DigitalInput(29);
   private DigitalInput bottomLimitSwitch = new DigitalInput(30);
 
-  private boolean calibrated = false;;
+  // Calibration variables
+  private boolean calibrated;
+  private boolean movingUp;
+  private double start;
 
-  private AngledElevatorSim sim;
   private double setpoint = ElevatorConstants.START_HEIGHT;
+
+  // Sim variables
+  private AngledElevatorSim sim;
   private Mechanism2d mechanism;
   private MechanismLigament2d ligament;
+  private double voltage;
 
   private final TrapezoidProfile m_profile =
       new TrapezoidProfile(
@@ -88,11 +92,13 @@ public class Elevator extends SubsystemBase {
 
   /** Creates a new Elevator. */
   public Elevator() {
-    // TODO: This assumes elevator always starts at starting position, use different sensor instead
     resetEncoder(ElevatorConstants.START_HEIGHT);
+    calibrate();
     
+    // Left motor follows right motor in the opposite direction
     leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
     
+    // This increases both the time and memory efficiency of the code when running on a real robot; do not remove this if statement
     if(RobotBase.isSimulation()){
       sim = new AngledElevatorSim(ElevatorConstants.MOTOR, ElevatorConstants.GEARING, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true, ElevatorConstants.START_HEIGHT, ElevatorConstants.ANGLE, ElevatorConstants.SPRING_FORCE);
       double width = ElevatorConstants.MAX_HEIGHT * Math.sin(ElevatorConstants.ANGLE);
@@ -108,18 +114,27 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Calibrate as soon as possible
-    if(!calibrated && RobotState.isEnabled()){
-      CalibrateElevator c = new CalibrateElevator(this);
-      c.schedule();
-      calibrated = c.isScheduled();
-    }
-
     // If it hits the limit switch, reset the encoder
     if(getBottomLimitSwitch()){
       resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
+      calibrated = true;
     }else if(getTopLimitSwitch()){
       resetEncoder(ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT);
+      calibrated = true;
+    }
+
+    // If it isn't calibrated yet, try to find the limit switch
+    if(!calibrated){
+      // Slightly higher voltage to move up than down because of gravity, TODO: tune these voltages
+      if(movingUp){
+        set(2);
+        if(getPosition()-start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT){
+          movingUp = false;
+        }
+      }else{
+        set(-1);
+      }
+      return;
     }
 
     // This method will be called once per scheduler run
@@ -139,26 +154,27 @@ public class Elevator extends SubsystemBase {
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
-    rightMotor.setVoltage(nextVoltage);
-    if(RobotBase.isSimulation()){
-      sim.setInputVoltage(nextVoltage);
-    }
+    set(nextVoltage);
   }
 
   @Override
   public void simulationPeriodic(){
+    sim.setInputVoltage(voltage);
     sim.update(Constants.LOOP_TIME);
     ligament.setLength(getPosition());
   }
 
+  private void set(double volts){
+    rightMotor.setVoltage(volts);
+    voltage = volts;
+  }
+
   public void resetEncoder(double height){
-    if(RobotBase.isReal()){
-      rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
-    }
-    // This is not necessary on sim
+    rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
   }
 
   public double getPosition(){
+    // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
     if(RobotBase.isReal()){
       return rightMotor.getPosition().getValueAsDouble()/ElevatorConstants.GEARING*(2*Math.PI*ElevatorConstants.DRUM_RADIUS);
     }else{
@@ -167,6 +183,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean getBottomLimitSwitch(){
+    // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
     if(RobotBase.isReal()){
       return bottomLimitSwitch.get();
     }else{
@@ -175,6 +192,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean getTopLimitSwitch(){
+    // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
     if(RobotBase.isReal()){
       return topLimitSwitch.get();
     }else{
@@ -191,5 +209,20 @@ public class Elevator extends SubsystemBase {
 
   public Mechanism2d getMechanism2d(){
     return mechanism;
+  }
+
+  /**
+   * Starts the elevator calibration.
+   * <p>Note: The elevator will probably break if the code is deployed and enabled when the elvator is above the top limit switch
+   */
+  public void calibrate(){
+    calibrated = false;
+    start = getPosition();
+    // This prevents it from breaking on a second calibration
+    movingUp = start <= ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT;
+  }
+
+  public boolean isCalibrated(){
+    return calibrated;
   }
 }
