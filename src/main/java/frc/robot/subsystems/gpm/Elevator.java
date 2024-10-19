@@ -91,10 +91,7 @@ public class Elevator extends SubsystemBase {
           Constants.LOOP_TIME);
 
   /** Creates a new Elevator. */
-  public Elevator() {
-    resetEncoder(ElevatorConstants.START_HEIGHT);
-    calibrate();
-    
+  public Elevator() {    
     // Left motor follows right motor in the opposite direction
     leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
     
@@ -110,6 +107,9 @@ public class Elevator extends SubsystemBase {
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
     m_lastProfiledReference =
         new State(getPosition(), 0);
+
+    resetEncoder(ElevatorConstants.START_HEIGHT);
+    calibrate();
   }
 
   @Override
