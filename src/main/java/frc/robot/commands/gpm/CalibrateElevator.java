@@ -6,8 +6,6 @@ import frc.robot.subsystems.gpm.Elevator;
 
 public class CalibrateElevator extends Command {
     private Elevator elevator;
-    private double start;
-    private boolean movingUp;
 
     public CalibrateElevator(Elevator elevator){
         this.elevator = elevator;
@@ -16,17 +14,7 @@ public class CalibrateElevator extends Command {
 
     @Override
     public void initialize(){
-        movingUp = true;
-        start = elevator.getPosition();
-    }
-
-    @Override
-    public void execute(){
-        double position = elevator.getPosition();
-        if(position - start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT - ElevatorConstants.MIN_HEIGHT){
-            movingUp = false;
-        }
-        elevator.setSetpoint(position + (movingUp ? 0.02 : -0.02));
+        elevator.calibrate();;
     }
 
     @Override
@@ -36,12 +24,6 @@ public class CalibrateElevator extends Command {
 
     @Override
     public boolean isFinished(){
-        return elevator.getBottomLimitSwitch() || elevator.getTopLimitSwitch();
-    }
-
-    // This command should not be interrupted by other commands
-    @Override
-    public InterruptionBehavior getInterruptionBehavior(){
-        return InterruptionBehavior.kCancelIncoming;
+        return elevator.isCalibrated();
     }
 }

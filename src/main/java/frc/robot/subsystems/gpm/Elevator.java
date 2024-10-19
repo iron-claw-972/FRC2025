@@ -115,7 +115,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // If it hits the limit switch, reset the encoder
-    if(getBottomLimitSwitch()){
+    if(getBottomLimitSwitch() && (calibrated || !movingUp)){
       resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
       calibrated = true;
     }else if(getTopLimitSwitch()){
@@ -174,7 +174,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getPosition(){
-    // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
+    // There is no easy, efficient way of getting sensor outputs from a simulated TalonFX without isReal()
     if(RobotBase.isReal()){
       return rightMotor.getPosition().getValueAsDouble()/ElevatorConstants.GEARING*(2*Math.PI*ElevatorConstants.DRUM_RADIUS);
     }else{
@@ -184,6 +184,7 @@ public class Elevator extends SubsystemBase {
 
   public boolean getBottomLimitSwitch(){
     // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
+    // The only other solution is to store a boolean and update it at the end of periodic() and in simulationPeriodic(), but that delays inputs for real robots by 0.02 seconds
     if(RobotBase.isReal()){
       return bottomLimitSwitch.get();
     }else{
@@ -193,6 +194,7 @@ public class Elevator extends SubsystemBase {
 
   public boolean getTopLimitSwitch(){
     // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
+    // The only other solution is to store a boolean and update it at the end of periodic() and in simulationPeriodic(), but that delays inputs for real robots by 0.02 seconds
     if(RobotBase.isReal()){
       return topLimitSwitch.get();
     }else{

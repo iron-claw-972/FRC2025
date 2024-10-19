@@ -7,7 +7,6 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.NumericalIntegration;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import frc.robot.constants.ElevatorConstants;
 
 public class AngledElevatorSim extends ElevatorSim {
     private double angle;
