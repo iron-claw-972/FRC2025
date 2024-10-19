@@ -81,8 +81,8 @@ public class Turret extends SubsystemBase {
         }
 
         SmartDashboard.putData("PID", pid); 
-        SmartDashboard.putData("Turret Sim", simulationMechanism);
-    } 
+
+    }
 
     @Override
     public void periodic() {
@@ -104,6 +104,7 @@ public class Turret extends SubsystemBase {
         // we may not be simulating...
         // SmartDashboard.putNumber("Turret Current Draw", turretSim.getCurrentDrawAmps());
         SmartDashboard.putBoolean("Hall is triggered", hallTriggered);
+        // SmartDashboard.putBoolean("LED state is on", ledState);
         //Log Data 
         // LogManager.add("Turret Current", () -> turretSim.getCurrentDrawAmps());
         // LogManager.add("Voltage With Turret", () -> RoboRioSim.getVInVoltage());
