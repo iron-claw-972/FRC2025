@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotId;
 import frc.robot.constants.Constants;
@@ -29,8 +30,12 @@ public class DriveConstants {
     /** Radius of the drive wheels [meters]. */
     public static double kWheelRadius = Units.inchesToMeters(2);
 
+    public static double wheelMOI = 1.452; //in^2 lb
+
     /** Distance between the left and right wheels [meters]. */
     public static double kTrackWidth = Units.inchesToMeters(20.75);//22.75 swerve bot, 20.75 comp bot
+
+    public static final DCMotor MOTOR = DCMotor.getKrakenX60(1);
 
     // Mk4i gear ratios
     // https://www.swervedrivespecialties.com/products/mk4i-swerve-module
@@ -118,8 +123,8 @@ public class DriveConstants {
     public static final double kAnglePeakCurrentDuration = 0.01;
     public static final boolean kAngleEnableCurrentLimit = true;
 
-    public static final int kDriveContinuousCurrentLimit = 80;
-    public static final int kDrivePeakCurrentLimit = 80;
+    public static final int kDriveContinuousCurrentLimit = 68;
+    public static final int kDrivePeakCurrentLimit = 68;
     public static final double kDrivePeakCurrentDuration = 0.01;
     public static final boolean kDriveEnableCurrentLimit = true;
 

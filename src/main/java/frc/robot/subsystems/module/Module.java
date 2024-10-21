@@ -43,6 +43,7 @@ public class Module extends SubsystemBase {
     private final TalonFX driveMotor;
     private final CANcoder CANcoder;
     private SwerveModuleState desiredState;
+    private SwerveModuleState prevDesiredState;
 
     protected boolean stateDeadband = true;
 
@@ -94,6 +95,7 @@ public class Module extends SubsystemBase {
          * This is a custom optimize function, since default WPILib optimize assumes
          * continuous controller which CTRE and Rev onboard is not
          */
+        prevDesiredState = desiredState;
         desiredState = optimizeStates ? CTREModuleState.optimize(wantedState, getState().angle) : wantedState;
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
@@ -106,10 +108,13 @@ public class Module extends SubsystemBase {
         } else {
             double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.kWheelCircumference,
                 DriveConstants.kDriveGearRatio), 1)/60;
+            
+            
             // TODO: This curently doesn't use the feedforward.
             driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)));
+
         }
-        if (Constants.DO_LOGGING) {
+        if (true) {
             String directory_name = "Drivetrain/Module" + type.name();
             LogManager.add(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
                 DriveConstants.kDriveGearRatio), Duration.ofSeconds(1));
@@ -118,6 +123,7 @@ public class Module extends SubsystemBase {
             LogManager.add(directory_name +"/AngleActual/", () -> getAngle().getRadians(), Duration.ofSeconds(1));
             LogManager.add(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), Duration.ofSeconds(1));
             LogManager.add(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, Duration.ofSeconds(1));
+            LogManager.add(directory_name +"/VelocityError/", () -> getDesiredVelocity()-getState().speedMetersPerSecond, Duration.ofSeconds(1));
             LogManager.add(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValue(), Duration.ofSeconds(1));
             LogManager.add(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValue(), Duration.ofSeconds(1));
         }
