@@ -35,7 +35,7 @@ public class Turret extends SubsystemBase {
     private boolean hallTriggered = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.5, 0.0, 0.0);
+    private final PIDController pid = new PIDController (0.4, 0.0, 0.0);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
@@ -74,8 +74,6 @@ public class Turret extends SubsystemBase {
      * that meshes with the (140-tooth) turret gear.
      */
     public Turret() {
-        // put the Mechanism2D display on the SmartDashboard
-        SmartDashboard.putData("turret display", simulationMechanism);
 
         if (RobotBase.isSimulation()) {
             // get the simulation object from the motor
@@ -87,8 +85,8 @@ public class Turret extends SubsystemBase {
                 totalGearRatio,
                 1.01403,
                 .127,
-                Units.degreesToRadians(0.0),
-                Units.degreesToRadians(360.0),
+                Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY,
                 false,
                 0.0);
 
@@ -100,6 +98,12 @@ public class Turret extends SubsystemBase {
 
         // TODO: the PID is not normally displayed.
         SmartDashboard.putData("PID", pid); 
+
+        // put the Mechanism2D display on the SmartDashboard
+        SmartDashboard.putData("turret display", simulationMechanism);
+
+        // Enable continuous pid input because there are no hard stops 
+        pid.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
@@ -118,7 +122,7 @@ public class Turret extends SubsystemBase {
         // get the motor position in rotations
         // TODO: For some reason, the value of getRotorPosition() is negative! Figure out why.
         // TODO: Phoenix 6 refresh issue (only 4 Hz!) Make sure the encoder updates often.
-        double motorPosition = - motor.getRotorPosition().getValueAsDouble();
+        double motorPosition = - motor.getPosition().getValueAsDouble();
 
         // convert the motor position to a turret position in radians
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
@@ -127,7 +131,7 @@ public class Turret extends SubsystemBase {
         double power = pid.calculate(currentPosition);
         // System.out.printf("%8.3f %8.3f %8.3f power\n", currentPosition, pid.getSetpoint(), power);
 
-        motor.set(MathUtil.clamp(power, -.25, .25));
+        motor.set(MathUtil.clamp(power, -1, 1));
 
         // Put Data to SmartDashboard
 
