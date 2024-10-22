@@ -34,6 +34,7 @@ public class Elevator extends SubsystemBase {
 
   private DigitalInput topLimitSwitch = new DigitalInput(29);
   private DigitalInput bottomLimitSwitch = new DigitalInput(30);
+  private boolean limitSwitchPressed = false;
 
   // Calibration variables
   private boolean calibrated;
@@ -116,13 +117,21 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // If it hits the limit switch, reset the encoder
     if(getBottomLimitSwitch() && (calibrated || !movingUp)){
-      resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
+      if(!limitSwitchPressed){
+        resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
+      }
       calibrated = true;
+      limitSwitchPressed = true;
     }else if(getTopLimitSwitch()){
-      resetEncoder(ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT);
+      if(!limitSwitchPressed){
+        resetEncoder(ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT);
+      }
       calibrated = true;
+      limitSwitchPressed = true;
+    }else{
+      limitSwitchPressed = false;
     }
-
+    
     // If it isn't calibrated yet, try to find the limit switch
     if(!calibrated){
       // Slightly higher voltage to move up than down because of gravity, TODO: tune these voltages
@@ -170,7 +179,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetEncoder(double height){
-    rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
+    // Without the if statement, this causes loop overruns in simulation
+    if(RobotBase.isReal()){
+      rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
+    }
   }
 
   public double getPosition(){
