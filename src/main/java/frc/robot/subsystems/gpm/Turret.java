@@ -96,7 +96,6 @@ public class Turret extends SubsystemBase {
             hallSim.setValue(true);
         }
 
-        // TODO: the PID is not normally displayed.
         SmartDashboard.putData("PID", pid); 
 
         // put the Mechanism2D display on the SmartDashboard
@@ -121,7 +120,7 @@ public class Turret extends SubsystemBase {
 
         // get the motor position in rotations
         // TODO: For some reason, the value of getRotorPosition() is negative! Figure out why.
-        // TODO: Phoenix 6 refresh issue (only 4 Hz!) Make sure the encoder updates often.
+        // TODO: Fix this on sim by changing encoderSim.Orientation instead of inverting it for both real and simulated robots
         double motorPosition = - motor.getPosition().getValueAsDouble();
 
         // convert the motor position to a turret position in radians
@@ -129,21 +128,19 @@ public class Turret extends SubsystemBase {
 
         // calculate motor power to turn turret
         double power = pid.calculate(currentPosition);
-        // System.out.printf("%8.3f %8.3f %8.3f power\n", currentPosition, pid.getSetpoint(), power);
 
         motor.set(MathUtil.clamp(power, -1, 1));
 
-        // Put Data to SmartDashboard
-
         // update the Mechanism2d display based on measured position
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
-
+        
+        // Put Data to SmartDashboard
         SmartDashboard.putNumber("Turret VIN Voltage", RoboRioSim.getVInVoltage());
         // we may not be simulating...
         // SmartDashboard.putNumber("Turret Current Draw", turretSim.getCurrentDrawAmps());
         SmartDashboard.putBoolean("Hall is triggered", hallTriggered);
         // SmartDashboard.putBoolean("LED state is on", ledState);
-        //Log Data 
+        //Log Data, TODO: move to constructor if using suppliers
         // LogManager.add("Turret Current", () -> turretSim.getCurrentDrawAmps());
         // LogManager.add("Voltage With Turret", () -> RoboRioSim.getVInVoltage());
     }
@@ -153,7 +150,7 @@ public class Turret extends SubsystemBase {
         // find input voltage to the motor
         turretSim.setInput(motor.get() * Constants.ROBOT_VOLTAGE); 
 
-        turretSim.update(0.020);
+        turretSim.update(Constants.LOOP_TIME);
 
         // set the encoder
         // get the turret position in rotations
