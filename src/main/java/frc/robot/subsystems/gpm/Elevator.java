@@ -6,6 +6,7 @@ package frc.robot.subsystems.gpm;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.ChassisReference;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,6 +36,8 @@ public class Elevator extends SubsystemBase {
 
   private DigitalInput topLimitSwitch = new DigitalInput(29);
   private DigitalInput bottomLimitSwitch = new DigitalInput(30);
+  private DIOSim topLimitSwitchSim;
+  private DIOSim bottomLimitSwitchSim;
   private boolean limitSwitchPressed = false;
 
   // Calibration variables
@@ -104,6 +108,12 @@ public class Elevator extends SubsystemBase {
       double size = Math.max(width, height);
       mechanism = new Mechanism2d(size, size);
       ligament = mechanism.getRoot("base", size/2-width/2, size/2-height/2).append(new MechanismLigament2d("elevator", ElevatorConstants.START_HEIGHT, 90-Units.radiansToDegrees(Math.abs(ElevatorConstants.ANGLE))));
+
+      topLimitSwitchSim = new DIOSim(topLimitSwitch);
+      bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
+
+      // Prevent negative values in sim
+      rightMotor.getSimState().Orientation = ChassisReference.Clockwise_Positive;
     }
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
     m_lastProfiledReference =
@@ -131,29 +141,31 @@ public class Elevator extends SubsystemBase {
     }else{
       limitSwitchPressed = false;
     }
+
+    // The final state that the elevator is trying to get to
+    State goal = new State(setpoint, 0.0);
+
+    double currentPosition = getPosition();
     
     // If it isn't calibrated yet, try to find the limit switch
     if(!calibrated){
-      // Slightly higher voltage to move up than down because of gravity, TODO: tune these voltages
+      double v = -0.25;
       if(movingUp){
-        set(2);
-        if(getPosition()-start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT){
+        // This is only to get above the limit switch, so it can move faster
+        v = 0.5;
+        if(currentPosition-start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT){
           movingUp = false;
         }
-      }else{
-        set(-1);
       }
-      return;
+      goal = new State(currentPosition + v*Constants.LOOP_TIME, v);
     }
 
-    // This method will be called once per scheduler run
-    State goal = new State(setpoint, 0.0);
 
     m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
-    m_loop.correct(VecBuilder.fill(getPosition()));
+    m_loop.correct(VecBuilder.fill(currentPosition));
 
     // Update our LQR to generate new voltage commands and use the voltages to predict the next
     // state with out Kalman filter.
@@ -171,6 +183,9 @@ public class Elevator extends SubsystemBase {
     sim.setInputVoltage(voltage);
     sim.update(Constants.LOOP_TIME);
     ligament.setLength(getPosition());
+    topLimitSwitchSim.setValue(Math.abs(getPosition()-ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
+    bottomLimitSwitchSim.setValue(Math.abs(getPosition()-ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
+    rightMotor.getSimState().setRawRotorPosition(sim.getPositionMeters()/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
   }
 
   private void set(double volts){
@@ -179,39 +194,22 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetEncoder(double height){
-    // Without the if statement, this causes loop overruns in simulation
+    // Without the if statement, this causes loop overruns in simulation, and this code does nothing anyway on sim (it sets the position to itself)
     if(RobotBase.isReal()){
       rightMotor.setPosition(height/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
     }
   }
 
   public double getPosition(){
-    // There is no easy, efficient way of getting sensor outputs from a simulated TalonFX without isReal()
-    if(RobotBase.isReal()){
-      return rightMotor.getPosition().getValueAsDouble()/ElevatorConstants.GEARING*(2*Math.PI*ElevatorConstants.DRUM_RADIUS);
-    }else{
-      return sim.getPositionMeters();
-    }
+    return rightMotor.getPosition().getValueAsDouble()/ElevatorConstants.GEARING*(2*Math.PI*ElevatorConstants.DRUM_RADIUS);
   }
 
   public boolean getBottomLimitSwitch(){
-    // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
-    // The only other solution is to store a boolean and update it at the end of periodic() and in simulationPeriodic(), but that delays inputs for real robots by 0.02 seconds
-    if(RobotBase.isReal()){
-      return bottomLimitSwitch.get();
-    }else{
-      return Math.abs(getPosition()-ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE;
-    }
+    return bottomLimitSwitch.get();
   }
 
   public boolean getTopLimitSwitch(){
-    // There is no easy, efficient way of getting sensor outputs from a TalonFX without isReal()
-    // The only other solution is to store a boolean and update it at the end of periodic() and in simulationPeriodic(), but that delays inputs for real robots by 0.02 seconds
-    if(RobotBase.isReal()){
-      return topLimitSwitch.get();
-    }else{
-      return Math.abs(getPosition()-ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE;
-    }
+    return topLimitSwitch.get();
   }
 
   public void setSetpoint(double setpoint){
@@ -234,6 +232,8 @@ public class Elevator extends SubsystemBase {
     start = getPosition();
     // This prevents it from breaking on a second calibration
     movingUp = start <= ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT;
+    // If it is already at the limit switch, it can reset the encoder
+    limitSwitchPressed = false;
   }
 
   public boolean isCalibrated(){
