@@ -85,7 +85,7 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, double distance, int type, Transform3d robotToCamera){
+    public DetectedObject(double xOffset, double yOffset, double distance, long type, Transform3d robotToCamera){
         this(xOffset, yOffset, distance, getType(type), robotToCamera);
     }
     /**
@@ -132,7 +132,7 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, int type, Transform3d robotToCamera){
+    public DetectedObject(double xOffset, double yOffset, long type, Transform3d robotToCamera){
         this(xOffset, yOffset, getType(type), robotToCamera);
     }
 
@@ -141,8 +141,8 @@ public class DetectedObject {
      * @param type The type as a String
      * @return The type as an ObjectType
      */
-    public static ObjectType getType(int type){
-        return ObjectType.values()[type];
+    public static ObjectType getType(long type){
+        return ObjectType.values()[(int)type];
     }
 
     /**

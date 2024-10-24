@@ -44,11 +44,10 @@ public class Vision {
   private NetworkTableEntry m_objectDistance;
   private NetworkTableEntry m_objectClass;
   private NetworkTableEntry m_cameraIndex;
-  private NetworkTableEntry m_validTarget;
   
   // The field layout. Instance variable
   private AprilTagFieldLayout m_aprilTagFieldLayout;
-  // A list of the cameras on the robot. TODO: Why is this nested? 
+  // A list of the cameras on the robot.
   private ArrayList<VisionCamera> m_cameras = new ArrayList<>();
 
   private VisionSystemSim visionSim;
@@ -60,15 +59,14 @@ public class Vision {
    */
   public Vision(ArrayList<Pair<String, Transform3d>> camList) {
     // // Initialize object_detection NetworkTable
-    m_objectDetectionTable = NetworkTableInstance.getDefault().getTable("limelight");
+    m_objectDetectionTable = NetworkTableInstance.getDefault().getTable("object_detection");
 
     // From the object detection NetworkTable, get the entries
     m_objectDistance = m_objectDetectionTable.getEntry("distance");
-    m_xOffset = m_objectDetectionTable.getEntry("tx");
-    m_yOffset = m_objectDetectionTable.getEntry("ty");
-    m_validTarget = m_objectDetectionTable.getEntry("tv");
-    // m_objectClass = m_objectDetectionTable.getEntry("class");
-    // m_cameraIndex = m_objectDetectionTable.getEntry("index");
+    m_xOffset = m_objectDetectionTable.getEntry("x_offset");
+    m_yOffset = m_objectDetectionTable.getEntry("y_offset");
+    m_objectClass = m_objectDetectionTable.getEntry("class");
+    m_cameraIndex = m_objectDetectionTable.getEntry("index");
 
     // Start NetworkTables server
     NetworkTableInstance.getDefault().startServer();
@@ -103,15 +101,10 @@ public class Vision {
    * @return An array of offsets in degrees
    */
   public double[] getHorizontalOffset(){
-    if(validObjectDetected()){
-      return new double[]{m_xOffset.getDouble(0)};
-    }else{
+    if(!VisionConstants.OBJECT_DETECTION_ENABLED){
       return new double[0];
     }
-    // if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-    //   return new double[0];
-    // }
-    // return m_xOffset.getDoubleArray(new double[0]);
+    return m_xOffset.getDoubleArray(new double[0]);
   }
 
   /**
@@ -119,15 +112,10 @@ public class Vision {
    * @return An array of offsets in degrees
    */
   public double[] getVerticalOffset(){
-    if(validObjectDetected()){
-      return new double[]{m_yOffset.getDouble(0)};
-    }else{
+    if(!VisionConstants.OBJECT_DETECTION_ENABLED){
       return new double[0];
     }
-    // if(!VisionConstants.OBJECT_DETECTION_ENABLED){
-    //   return new double[0];
-    // }
-    // return m_yOffset.getDoubleArray(new double[0]);
+    return m_yOffset.getDoubleArray(new double[0]);
   }
 
   /**
@@ -147,8 +135,7 @@ public class Vision {
    * @return true or false
    */
   public boolean validObjectDetected(){
-    return m_validTarget.getInteger(0)==1;
-    // return getHorizontalOffset().length > 0;
+    return getHorizontalOffset().length > 0;
   }
 
   /**
@@ -186,7 +173,7 @@ public class Vision {
     double[] xOffset = getHorizontalOffset();
     double[] yOffset = getVerticalOffset();
     // double[] distance = getDistance();
-    // long[] objectClass = getDetectedObjectClass();
+    long[] objectClass = getDetectedObjectClass();
     // long[] cameraIndex = getCameraIndex();
     DetectedObject[] objects = new DetectedObject[Math.min(xOffset.length, yOffset.length)];
     for(int i = 0; i < objects.length; i++){
@@ -194,7 +181,7 @@ public class Vision {
         Units.degreesToRadians(xOffset[i]),
         Units.degreesToRadians(yOffset[i]),
         // distance[i],
-        0, // objectClass[i],
+        objectClass[i],
         // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
         VisionConstants.OBJECT_DETECTION_CAMERAS.get(0)
       );
