@@ -47,6 +47,7 @@ public class DetectedObject {
         pose = new Pose3d();
         type = ObjectType.NONE;
     }
+
     /**
      * Creates a new DetectedObject
      * @param xOffset The x offset from the camera to the object in radians
@@ -77,6 +78,7 @@ public class DetectedObject {
         }
         pose = new Pose3d(translation, new Rotation3d());
     }
+    
     /**
      * Creates a new DetectedObject
      * @param xOffset The x offset from the camera to the object in radians
@@ -85,9 +87,22 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, double distance, long type, Transform3d robotToCamera){
+    public DetectedObject(double xOffset, double yOffset, double distance, int type, Transform3d robotToCamera){
         this(xOffset, yOffset, distance, getType(type), robotToCamera);
     }
+
+    /**
+     * Creates a new DetectedObject
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param distance The distance from the camera to the object in meters
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     */
+    public DetectedObject(double xOffset, double yOffset, double distance, String type, Transform3d robotToCamera){
+        this(xOffset, yOffset, distance, getType(type), robotToCamera);
+    }
+    
     /**
      * Creates a new DetectedObject, assuming the object is on the ground
      * @param xOffset The x offset from the camera to the object in radians
@@ -125,6 +140,7 @@ public class DetectedObject {
         }
         pose = new Pose3d(translation, new Rotation3d());
     }
+    
     /**
      * Creates a new DetectedObject, assuming the object is on the ground
      * @param xOffset The x offset from the camera to the object in radians
@@ -132,8 +148,32 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, long type, Transform3d robotToCamera){
+    public DetectedObject(double xOffset, double yOffset, int type, Transform3d robotToCamera){
         this(xOffset, yOffset, getType(type), robotToCamera);
+    }
+
+    /**
+     * Creates a new DetectedObject, assuming the object is on the ground
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     */
+    public DetectedObject(double xOffset, double yOffset, String type, Transform3d robotToCamera){
+        this(xOffset, yOffset, getType(type), robotToCamera);
+    }
+
+    /**
+     * Converts an int to an ObjectType
+     * @param type The type as an int, between 0 and the number of object types - 1
+     * @return The type as an ObjectType
+     */
+    public static ObjectType getType(int type){
+        ObjectType[] values = ObjectType.values();
+        if(type < 0 || type >= values.length){
+            return ObjectType.NONE;
+        }
+        return values[type];
     }
 
     /**
@@ -141,13 +181,14 @@ public class DetectedObject {
      * @param type The type as a String
      * @return The type as an ObjectType
      */
-    public static ObjectType getType(long type){
-        return ObjectType.values()[(int)type];
+    public static ObjectType getType(String type){
+        ObjectType result = ObjectType.valueOf(type.toUpperCase());
+        return result==null ? ObjectType.NONE : result;
     }
 
     /**
      * Returns if the object is a game piece
-     * @return True if the object is a note, false otherwise
+     * @return True if the object is a game piece, false otherwise
      */
     public boolean isGamePiece(){
         return type==ObjectType.NOTE;

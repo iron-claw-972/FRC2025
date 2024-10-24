@@ -143,11 +143,13 @@ public class Vision {
    * @return The object types as a String array
    */
   @SuppressWarnings("unused")
-  public long[] getDetectedObjectClass(){
+  public String[] getDetectedObjectClass(){
     if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
-      return new long[0];
+      return new String[0];
+      // return new long[0];
     }
-    return m_objectClass.getIntegerArray(new long[0]);
+    return m_objectClass.getStringArray(new String[0]);
+    // return m_objectClass.getIntegerArray(new long[0]);
   }
 
   /**
@@ -173,7 +175,7 @@ public class Vision {
     double[] xOffset = getHorizontalOffset();
     double[] yOffset = getVerticalOffset();
     // double[] distance = getDistance();
-    long[] objectClass = getDetectedObjectClass();
+    String[] objectClass = getDetectedObjectClass();
     // long[] cameraIndex = getCameraIndex();
     DetectedObject[] objects = new DetectedObject[Math.min(xOffset.length, yOffset.length)];
     for(int i = 0; i < objects.length; i++){
