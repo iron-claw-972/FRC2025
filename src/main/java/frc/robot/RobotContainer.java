@@ -93,6 +93,7 @@ public class RobotContainer {
         intake = new Intake();
         index = new StorageIndex();
         shooter = new Shooter();
+      
  
       case SwerveTest:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
@@ -111,7 +112,7 @@ public class RobotContainer {
         operator.configureControls();
         initializeAutoBuilder();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        //registerCommands();
+        registerCommands();
         PathGroupLoader.loadPathGroups();
  
         shuffleboardManager = new ShuffleBoardManager(drive, vision, shooter, arm, index, intake);

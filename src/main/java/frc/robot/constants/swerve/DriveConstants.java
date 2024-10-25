@@ -224,15 +224,15 @@ public class DriveConstants {
 
             kPigeon = 13;
         
-            kSteerOffsetFrontLeft = 121.463-180;
+            kSteerOffsetFrontLeft = 121.463;
 
-            kSteerOffsetFrontRight = 284.242;
+            kSteerOffsetFrontRight = 284.242-180;
             // kSteerOffsetFrontRight = 10.957+90;
 
-            kSteerOffsetBackLeft = 157.676;
+            kSteerOffsetBackLeft = 157.676+180;
             // [new one] kSteerOffsetBackLeft = 339.689;
 
-            kSteerOffsetBackRight = 77.199;
+            kSteerOffsetBackRight = 77.199+180;
             // Talon Speed
             Constants.MAX_RPM = 6080.0;
 
