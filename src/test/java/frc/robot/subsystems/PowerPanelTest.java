@@ -21,8 +21,12 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
  * The PowerDistribution class work for both the PDP and the PDH.
  * <p>
  * The RoboRioSim class fails completely.
+ * After working on some other issues, some tests started working!
+ * I can set the simulated voltage.
+ * I do not know why.
  * <p>
  * The RobotController class fails but some methods work.
+ * I can set a voltage with RoboRioSim and then read a changed simulated voltage.
  * <p>
  * Looks like some code may work with Simulation but not Unit Tests.
  */
@@ -128,9 +132,13 @@ public class PowerPanelTest {
     }
 
     // TODO: RoboRioSim.getVInVoltage() FAILS!
-    @Disabled
+    // OMG. It started working now! (After PDH tests?)
+    // @Disabled
     @Test
     public void roboRioSimTest() {
+        // set a voltage different than 12.0...
+        double V = 10.8;
+
         // RoboRioSim is a final class with static methods
         // https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/RoboRioSim.html
 
@@ -139,29 +147,34 @@ public class PowerPanelTest {
         // Unexpected exception thrown.
         // org.gradle.internal.remote.internal.MessageIOException: Could not write '/127.0.0.1:53566'.
         // Possible explanation: the method wants the Driver Station to display the simulated voltage.
-        RoboRioSim.setVInVoltage(12.0);
+        RoboRioSim.setVInVoltage(V);
 
         // another place to get the battery voltage
         // Unexpected exception thrown
-        assertEquals(12.0, RoboRioSim.getVInVoltage(), 0.01);
+        assertEquals(V, RoboRioSim.getVInVoltage(), 0.01);
+
+        // Now the RobotController should report that voltage
+        assertEquals(V, RobotController.getBatteryVoltage(), 0.01);
     }
 
     @Test
+    @Disabled
     public void roboRioSimMethodsTest() {
         // These results suggest the GUI simulator must be running
 
         // There is a RoboRioSim.setSerialNumber()
         // fails: access violation
-        // RoboRioSim.setSerialNumber("12345");
+        RoboRioSim.setSerialNumber("12345");
         // fails: could not write /127.0.0.1:55494.
-        // assertEquals("12345", RoboRioSim.getSerialNumber());
+        assertEquals("12345", RoboRioSim.getSerialNumber());
 
         // fails: could not write /127.0.0.1:55609.
         // RoboRioSim.getTeamNumber();
     }
  
     // TODO: RobotController.getBatteryVoltage() FAILS!
-    @Disabled
+    // Works now! Do not know why it failed earlier.
+    // @Disabled
     @Test
     public void robotControllerTest() {
         // RobotController is final class with static methods.
@@ -169,11 +182,13 @@ public class PowerPanelTest {
 
         // one place is to get the battery voltage from RobotController
         // Produces EXCEPTION_ACCESS_VIOLATION
-        // Perhaps this asks the RoboRIO to report its voltage, so it should only be called in real mode
+        // Perhaps this asks the RoboRIO to report its voltage, so it should only be called in real mode?
+        // 
+        // Simulator advice was suggesting to do RoboRioSim.setVInVoltage()
+        // and then using RobotController.getBatteryVoltage().
+        // .see https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/BatterySim.html#calculateLoadedBatteryVoltage(double,double,double...)
+        // 
         assertEquals(12.0, RobotController.getBatteryVoltage(), 0.01);
-
-        // Simplify the test: just ask for the battery voltage -- still fails
-        // RobotController.getBatteryVoltage();
     }
 
     // See if some other part of RobotController is functional in simulation
