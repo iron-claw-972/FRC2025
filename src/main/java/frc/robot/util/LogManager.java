@@ -43,6 +43,14 @@ public class LogManager extends DogLog {
     log(new Log<>(name, value, updateDelay));
   }
 
+  public static void log(String name, int value, int min, int max) {
+    log(name, value);
+    
+    if (value <= min || value >= max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+
   /**
    * Update logs
    */
