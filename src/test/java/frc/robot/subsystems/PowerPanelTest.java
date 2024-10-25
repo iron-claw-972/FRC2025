@@ -131,9 +131,8 @@ public class PowerPanelTest {
         pdp.close();
     }
 
-    // TODO: RoboRioSim.getVInVoltage() FAILS!
+    // RoboRioSim.getVInVoltage() was failing!
     // OMG. It started working now! (After PDH tests?)
-    // @Disabled
     @Test
     public void roboRioSimTest() {
         // set a voltage different than 12.0...
@@ -172,9 +171,8 @@ public class PowerPanelTest {
         // RoboRioSim.getTeamNumber();
     }
  
-    // TODO: RobotController.getBatteryVoltage() FAILS!
+    // RobotController.getBatteryVoltage() was failing!
     // Works now! Do not know why it failed earlier.
-    // @Disabled
     @Test
     public void robotControllerTest() {
         // RobotController is final class with static methods.
@@ -183,12 +181,13 @@ public class PowerPanelTest {
         // one place is to get the battery voltage from RobotController
         // Produces EXCEPTION_ACCESS_VIOLATION
         // Perhaps this asks the RoboRIO to report its voltage, so it should only be called in real mode?
+        // Works now!
         // 
         // Simulator advice was suggesting to do RoboRioSim.setVInVoltage()
         // and then using RobotController.getBatteryVoltage().
         // .see https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/BatterySim.html#calculateLoadedBatteryVoltage(double,double,double...)
         // 
-        assertEquals(12.0, RobotController.getBatteryVoltage(), 0.01);
+        assertEquals(12.0, RobotController.getBatteryVoltage(), 0.001);
     }
 
     // See if some other part of RobotController is functional in simulation
@@ -207,16 +206,33 @@ public class PowerPanelTest {
         // does return HALUtil.getFPGARevision();
         // System.out.println(RobotController.getFPGARevision());
         assertEquals(0, RobotController.getFPGARevision());
+    }
+
+    @Test
+    public void robotControllerSerialNumberTest() {
+        // make a fake serial number
+        String str = "123ABC";
+
+        // Try setting the serial number
+        RoboRioSim.setSerialNumber(str);
 
         // May not ask for the Serial Number.
         // Crashes in native code. Probably trying to connect to the RoboRIO: HALUtil.getSerialNumber();
+        // works now!
         // System.out.println(RobotController.getSerialNumber());
-        // assertEquals(0, RobotController.getSerialNumber());
+        assertEquals(str, RobotController.getSerialNumber());
+    }
+
+    @Test
+    public void robotControllerTeamTest() {
+        // Set the team number
+        RoboRioSim.setTeamNumber(972);
 
         // Get the team number
         // Access violation
+        // Now works!
         // System.out.println(RobotController.getTeamNumber());
-        // assertEquals(972, RobotController.getTeamNumber());
+        assertEquals(972, RobotController.getTeamNumber());
     }
    
 }
