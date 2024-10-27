@@ -122,7 +122,8 @@ public class PowerPanelTest {
         PDPSim pdhSim = new PDPSim(pdh);
 
         // check the type
-        // TODO: PDH getType() FAILS!
+        // TODO: PDH getType() FAILS; returns kCTRE.
+        // System.out.println(pdh.getType());
         // assertEquals(ModuleType.kRev, pdh.getType());
 
         // check the CAN id
