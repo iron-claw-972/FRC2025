@@ -18,7 +18,10 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
@@ -107,14 +110,21 @@ public class Flywheel extends SubsystemBase {
   private final LinearSystemLoop<N1, N1, N1> rightLoop =
     new LinearSystemLoop<>(rightFlywheelPlant, rightController, rightObserver, 12.0, Constants.LOOP_TIME);
   
-  private final CANSparkFlex leftMotor = new CANSparkFlex(ShooterConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-  private final CANSparkFlex rightMotor = new CANSparkFlex(ShooterConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+  // The shooter's motor ids are already used, so this has to use different ones
+  private final CANSparkFlex leftMotor = new CANSparkFlex(ShooterConstants.LEFT_MOTOR_ID+10, MotorType.kBrushless);
+  private final CANSparkFlex rightMotor = new CANSparkFlex(ShooterConstants.RIGHT_MOTOR_ID+10, MotorType.kBrushless);
   
   private final RelativeEncoder leftMotorEncoder = leftMotor.getEncoder();
   private final RelativeEncoder rightMotorEncoder = rightMotor.getEncoder();
 
+  private double leftVoltage;
+  private double rightVoltage;
+
   private FlywheelSim leftSim;
   private FlywheelSim rightSim;
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("Flywheel");
+  private GenericEntry setpointEntry = tab.add("Setpoint", 0).getEntry();
 
   public Flywheel() {
     leftLoop.reset(VecBuilder.fill(leftMotorEncoder.getVelocity()));
@@ -128,19 +138,24 @@ public class Flywheel extends SubsystemBase {
       leftSim = new FlywheelSim(leftFlywheelPlant, gearbox, gearing);
       rightSim = new FlywheelSim(rightFlywheelPlant, gearbox, gearing);
     }
+
+    tab.addDouble("Left speed", ()->getLeftSpeed());
+    tab.addDouble("Right speed", ()->getRightSpeed());
   }
 
 
   @Override
   public void periodic() {
+    setSpeed(setpointEntry.getDouble(0));
+
     // Sets the target speed of our flywheel. This is similar to setting the setpoint of a
     // PID controller.
     leftLoop.setNextR(VecBuilder.fill(leftSetpoint));
     rightLoop.setNextR(VecBuilder.fill(rightSetpoint));
     
     // Correct our Kalman filter's state vector estimate with encoder data.
-    leftLoop.correct(VecBuilder.fill(leftMotorEncoder.getVelocity()));
-    rightLoop.correct(VecBuilder.fill(rightMotorEncoder.getVelocity()));
+    leftLoop.correct(VecBuilder.fill(getLeftSpeed()));
+    rightLoop.correct(VecBuilder.fill(getRightSpeed()));
 
     // Update our LQR to generate new voltage commands and use the voltages to predict the next
     // state with out Kalman filter.
@@ -150,16 +165,16 @@ public class Flywheel extends SubsystemBase {
     // Send the new calculated voltage to the motors.
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
-    double nextVoltage = leftLoop.getU(0);
-    leftMotor.setVoltage(nextVoltage);
-    nextVoltage = rightLoop.getU(0);
-    rightMotor.setVoltage(nextVoltage);
+    leftVoltage = leftLoop.getU(0);
+    leftMotor.setVoltage(leftVoltage);
+    rightVoltage = rightLoop.getU(0);
+    rightMotor.setVoltage(rightVoltage);
   }
 
   @Override
   public void simulationPeriodic(){
-    leftSim.setInputVoltage(leftMotor.getBusVoltage());
-    rightSim.setInputVoltage(leftMotor.getBusVoltage());
+    leftSim.setInputVoltage(leftVoltage);
+    rightSim.setInputVoltage(rightVoltage);
     leftSim.update(Constants.LOOP_TIME);
     rightSim.update(Constants.LOOP_TIME);
   }

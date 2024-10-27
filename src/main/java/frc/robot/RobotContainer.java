@@ -16,6 +16,7 @@ import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Arm;
+import frc.robot.subsystems.gpm.Flywheel;
 import frc.robot.subsystems.gpm.Intake;
 import frc.robot.subsystems.gpm.Shooter;
 import frc.robot.subsystems.gpm.StorageIndex;
@@ -45,6 +46,7 @@ public class RobotContainer {
   private Shooter shooter = null;
   private Intake intake = null;
   private StorageIndex index = null;
+  private Flywheel flywheel = null;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -93,6 +95,7 @@ public class RobotContainer {
         intake = new Intake();
         index = new StorageIndex();
         shooter = new Shooter();
+        flywheel = new Flywheel();
  
       case SwerveTest:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
