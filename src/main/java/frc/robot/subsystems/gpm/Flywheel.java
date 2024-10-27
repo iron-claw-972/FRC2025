@@ -66,10 +66,10 @@ public class Flywheel extends SubsystemBase {
   // TODO: Can multiple controllers use teh same plant?
   private final LinearSystem<N1, N1, N1> leftFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      DCMotor.getNeoVortex(1), MOI_SHAFT, gearing);
+      gearbox, MOI_SHAFT, gearing);
   private final LinearSystem<N1, N1, N1> rightFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      DCMotor.getNeoVortex(1), MOI_SHAFT, gearing);
+      gearbox, MOI_SHAFT, gearing);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
   // TODO: Can both sides us the same filter?
@@ -139,8 +139,8 @@ public class Flywheel extends SubsystemBase {
   private GenericEntry setpointEntry = tab.add("Setpoint", 0).getEntry();
 
   public Flywheel() {
-    leftLoop.reset(VecBuilder.fill(leftMotorEncoder.getVelocity()));
-    rightLoop.reset(VecBuilder.fill(leftMotorEncoder.getVelocity()));
+    leftLoop.reset(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(leftMotorEncoder.getVelocity())));
+    rightLoop.reset(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(leftMotorEncoder.getVelocity())));
     leftSetpoint = 0;
     rightMotor.follow(leftMotor);
     rightMotor.setInverted(false);
