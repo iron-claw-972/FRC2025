@@ -203,13 +203,13 @@ public class Flywheel extends SubsystemBase {
     if(RobotBase.isSimulation()){
       return leftSim.getAngularVelocityRPM();
     }
-    return leftMotorEncoder.getVelocity();
+    return leftMotorEncoder.getVelocity() / gearing;
   }
   public double getRightSpeed(){
     // I couldn't find a class that supports simulated encoder velocities for a RelativeEncoder. TODO: Find one if it exists
     if(RobotBase.isSimulation()){
       return rightSim.getAngularVelocityRPM();
     }
-    return rightMotorEncoder.getVelocity();
+    return rightMotorEncoder.getVelocity() / gearing;
   }
 }
