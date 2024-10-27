@@ -18,6 +18,7 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -39,12 +40,23 @@ public class Flywheel extends SubsystemBase {
   // 1 motor per side
   private static final DCMotor gearbox = DCMotor.getNeoVortex(1);
 
-  // TODO: Check if this is for 1 side or both sides
-  private static final double momentOfInertia = 0.00032; // kg * m^2
+  // 4-inch Colson wheels
+	// private static final double MASS_COLSON = 0.245;
+	// private static final double RADIUS_COLSON = Units.inchesToMeters(2.0);
+	// private static final double MOI_COLSON = 0.5 * MASS_COLSON * RADIUS_COLSON * RADIUS_COLSON;
 
+	// 4-inch Stealth
+	// mass is 0.097 kg. About half of that is in the rim.
+	// steel insert is 0.365 kg with radius of 3.25 inches and a 0.875 hole.
+	private static final double MASS_RIM = 0.5 * 0.097;
+	private static final double RADIUS_STEALTH = Units.inchesToMeters(2.0);
+	private static final double MOI_STEALTH = MASS_RIM * RADIUS_STEALTH * RADIUS_STEALTH;
+
+	// each motor spins 6 stealth wheels
+	protected static final double MOI_SHAFT = MOI_STEALTH * 6;
   // Reduction between motors and encoder, as output over input. If the flywheel spins slower than
   // the motors, this number should be greater than one.
-  private static final double gearing = 1.0;
+  private static final double gearing = 0.5;
 
   // The plant holds a state-space model of our flywheel. This system has the following properties:
   //
@@ -54,10 +66,10 @@ public class Flywheel extends SubsystemBase {
   // TODO: Can multiple controllers use teh same plant?
   private final LinearSystem<N1, N1, N1> leftFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      DCMotor.getNeoVortex(1), momentOfInertia, gearing);
+      DCMotor.getNeoVortex(1), MOI_SHAFT, gearing);
   private final LinearSystem<N1, N1, N1> rightFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      DCMotor.getNeoVortex(1), momentOfInertia, gearing);
+      DCMotor.getNeoVortex(1), MOI_SHAFT, gearing);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
   // TODO: Can both sides us the same filter?
@@ -150,12 +162,12 @@ public class Flywheel extends SubsystemBase {
 
     // Sets the target speed of our flywheel. This is similar to setting the setpoint of a
     // PID controller.
-    leftLoop.setNextR(VecBuilder.fill(leftSetpoint));
-    rightLoop.setNextR(VecBuilder.fill(rightSetpoint));
+    leftLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(leftSetpoint)));
+    rightLoop.setNextR(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(rightSetpoint)));
     
     // Correct our Kalman filter's state vector estimate with encoder data.
-    leftLoop.correct(VecBuilder.fill(getLeftSpeed()));
-    rightLoop.correct(VecBuilder.fill(getRightSpeed()));
+    leftLoop.correct(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(getLeftSpeed())));
+    rightLoop.correct(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(getRightSpeed())));
 
     // Update our LQR to generate new voltage commands and use the voltages to predict the next
     // state with out Kalman filter.
