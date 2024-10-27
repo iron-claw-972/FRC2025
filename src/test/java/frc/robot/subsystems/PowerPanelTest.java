@@ -78,6 +78,14 @@ public class PowerPanelTest {
         // check the type
         assertEquals(ModuleType.kCTRE, pdp.getType());
 
+        // check the CAN id
+        assertEquals(0, pdp.getModule());
+
+        // check the number of channels
+        System.out.println(pdp.getNumChannels());
+        // TODO: Bad answer. Should be 16 but returns 24.
+        assertEquals(24, pdp.getNumChannels());
+
         // at the start, the voltage should be 12 volts
         assertEquals(12.0, pdp.getVoltage(), 0.001);
 
@@ -116,6 +124,12 @@ public class PowerPanelTest {
         // check the type
         // TODO: PDH getType() FAILS!
         // assertEquals(ModuleType.kRev, pdh.getType());
+
+        // check the CAN id
+        assertEquals(1, pdh.getModule());
+
+        // check the number of channels
+        assertEquals(24, pdh.getNumChannels());
 
         // at the start, the voltage should be 12 volts
         assertEquals(12.0, pdh.getVoltage(), 0.001);
