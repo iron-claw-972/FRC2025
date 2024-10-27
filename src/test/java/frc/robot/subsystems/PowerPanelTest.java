@@ -75,6 +75,9 @@ public class PowerPanelTest {
         // make its simulator
         PDPSim pdpSim = new PDPSim(pdp);
 
+        // check the type
+        assertEquals(ModuleType.kCTRE, pdp.getType());
+
         // at the start, the voltage should be 12 volts
         assertEquals(12.0, pdp.getVoltage(), 0.001);
 
@@ -109,6 +112,10 @@ public class PowerPanelTest {
 
         // make its simulator
         PDPSim pdhSim = new PDPSim(pdh);
+
+        // check the type
+        // TODO: PDH getType() FAILS!
+        // assertEquals(ModuleType.kRev, pdh.getType());
 
         // at the start, the voltage should be 12 volts
         assertEquals(12.0, pdh.getVoltage(), 0.001);
