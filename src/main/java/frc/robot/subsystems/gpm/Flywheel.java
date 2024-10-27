@@ -54,10 +54,10 @@ public class Flywheel extends SubsystemBase {
   // TODO: Can multiple controllers use teh same plant?
   private final LinearSystem<N1, N1, N1> leftFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      DCMotor.getNeoVortex(1), momentOfInertia, gearing);
+      gearbox, momentOfInertia, gearing);
   private final LinearSystem<N1, N1, N1> rightFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      DCMotor.getNeoVortex(1), momentOfInertia, gearing);
+      gearbox, momentOfInertia, gearing);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
   // TODO: Can both sides us the same filter?
@@ -191,13 +191,13 @@ public class Flywheel extends SubsystemBase {
     if(RobotBase.isSimulation()){
       return leftSim.getAngularVelocityRPM();
     }
-    return leftMotorEncoder.getVelocity();
+    return leftMotorEncoder.getVelocity() / gearing;
   }
   public double getRightSpeed(){
     // I couldn't find a class that supports simulated encoder velocities for a RelativeEncoder. TODO: Find one if it exists
     if(RobotBase.isSimulation()){
       return rightSim.getAngularVelocityRPM();
     }
-    return rightMotorEncoder.getVelocity();
+    return rightMotorEncoder.getVelocity() / gearing;
   }
 }
