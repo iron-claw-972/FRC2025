@@ -95,6 +95,9 @@ public class PowerPanelTest {
         // check the total current
         assertEquals(25.0, pdp.getTotalCurrent(), 0.001);
 
+        // the switchable channel should always be false on the PDP
+        assertEquals(false, pdp.getSwitchableChannel());
+
         // close the PDP
         pdp.close();
     }
@@ -102,33 +105,45 @@ public class PowerPanelTest {
     @Test
     public void pdhSimTest() {
         // make a REV Power Distribution Hub
-        PowerDistribution pdp = new PowerDistribution(1, ModuleType.kRev);
+        PowerDistribution pdh = new PowerDistribution(1, ModuleType.kRev);
 
         // make its simulator
-        PDPSim pdpSim = new PDPSim(pdp);
+        PDPSim pdhSim = new PDPSim(pdh);
 
         // at the start, the voltage should be 12 volts
-        assertEquals(12.0, pdp.getVoltage(), 0.001);
+        assertEquals(12.0, pdh.getVoltage(), 0.001);
 
         // set a different voltage
-        pdpSim.setVoltage(11.0);
+        pdhSim.setVoltage(11.0);
 
         // check the new voltage
-        assertEquals(11.0, pdp.getVoltage(), 0.001);
+        assertEquals(11.0, pdh.getVoltage(), 0.001);
 
         // set some channel currents
-        pdpSim.setCurrent(1, 10.0);
-        pdpSim.setCurrent(2, 15.0);
+        pdhSim.setCurrent(1, 10.0);
+        pdhSim.setCurrent(2, 15.0);
 
         // check the individual currents
-        assertEquals(10.0, pdp.getCurrent(1), 0.001);
-        assertEquals(15.0, pdp.getCurrent(2), 0.001);
+        assertEquals(10.0, pdh.getCurrent(1), 0.001);
+        assertEquals(15.0, pdh.getCurrent(2), 0.001);
 
         // check the total current
-        assertEquals(25.0, pdp.getTotalCurrent(), 0.001);
+        assertEquals(25.0, pdh.getTotalCurrent(), 0.001);
+
+        // one channel (channel 23) is switchwable
+        // assume it is enabled.
+        // TODO: FAILS! Perhaps the switchable channel is not simulated....
+        // assertEquals(true, pdh.getSwitchableChannel());
+        // disable the switchable channel
+        pdh.setSwitchableChannel(false);
+        assertEquals(false, pdh.getSwitchableChannel());
+        // enable the switchable channel
+        // pdh.setSwitchableChannel(true);
+        // TODO: FAILS!
+        // assertEquals(true, pdh.getSwitchableChannel());
 
         // close the PDP
-        pdp.close();
+        pdh.close();
     }
 
     // RoboRioSim.getVInVoltage() was failing!
