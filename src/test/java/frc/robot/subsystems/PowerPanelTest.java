@@ -85,6 +85,29 @@ public class PowerPanelTest {
         System.out.println(pdp.getNumChannels());
         // TODO: Bad answer. Should be 16 but returns 24.
         assertEquals(24, pdp.getNumChannels());
+        // Notes.
+        // Source code for PowerDistribution is
+        // https://github.com/wpilibsuite/allwpilib/blob/main/wpilibj/src/main/java/edu/wpi/first/wpilibj/PowerDistribution.java
+        // which does return PowerDistributionJNI.getNumChannels(m_handle);
+        // One would think that would give the correct answer
+        // https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/hal/PowerDistributionJNI.html
+        // which leads to HAL_GetPowerDistributionNumChannels
+        // https://github.com/wpilibsuite/allwpilib/blob/main/hal/src/main/native/cpp/jni/PowerDistributionJNI.cpp
+        // .. auto result = HAL_GetPowerDistributionNumChannels(handle, &status);
+        //
+        // PDPSim does not do much other than remember the module number.
+        // https://github.com/wpilibsuite/allwpilib/blob/main/wpilibj/src/main/java/edu/wpi/first/wpilibj/simulation/PDPSim.java
+        // there is .getInitialized() and .setInitialized()
+        // see PowerDistributionDataJNI.getInitialized(m_index);
+        // similar interfaces for currents and voltages
+        // https://github.com/wpilibsuite/allwpilib/blob/main/hal/src/main/native/cpp/jni/simulation/PowerDistributionDataJNI.cpp
+        // .. HALSIM_SetPowerDistributionVoltage(index, value);
+        // Takes us to the Promised Land:
+        // https://github.com/wpilibsuite/allwpilib/blob/main/hal/src/main/native/sim/PowerDistribution.cpp
+        // lines 102 to 110 show that kNumREVPDHChannels is always returned!
+        // lines 97 to 108 show that HAL_PowerDistributionType_kCTRE is always returned!
+        // lines 182 to 183 do nothing for setSwitchableChannel
+        // lines 185 to 188 always return false for getSwitchableChannel
 
         // at the start, the voltage should be 12 volts
         assertEquals(12.0, pdp.getVoltage(), 0.001);
@@ -122,7 +145,7 @@ public class PowerPanelTest {
         PDPSim pdhSim = new PDPSim(pdh);
 
         // check the type
-        // TODO: PDH getType() FAILS; returns kCTRE.
+        // TODO: PDH getType() FAILS; returns kCTRE. The reason is explained above.
         // System.out.println(pdh.getType());
         // assertEquals(ModuleType.kRev, pdh.getType());
 
@@ -154,14 +177,14 @@ public class PowerPanelTest {
 
         // one channel (channel 23) is switchwable
         // assume it is enabled.
-        // TODO: FAILS! Perhaps the switchable channel is not simulated....
+        // TODO: FAILS! Perhaps the switchable channel is not simulated. The reason is explained above.
         // assertEquals(true, pdh.getSwitchableChannel());
         // disable the switchable channel
         pdh.setSwitchableChannel(false);
         assertEquals(false, pdh.getSwitchableChannel());
         // enable the switchable channel
         // pdh.setSwitchableChannel(true);
-        // TODO: FAILS!
+        // TODO: FAILS! getSwitchableChannel() always returns false. The reason is explained above.
         // assertEquals(true, pdh.getSwitchableChannel());
 
         // close the PDP
