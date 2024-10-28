@@ -31,45 +31,24 @@ import frc.robot.constants.ShooterConstants;
 /**
  * This is a sample program to demonstrate how to use a state-space controller to control a
  * flywheel.
+ * <p> It extends Shooter to work with 2024's code
  */
-public class Flywheel extends SubsystemBase {
-
+public class Flywheel extends Shooter {
   private double leftSetpoint;
   private double rightSetpoint;
 
-  // 1 motor per side
-  private static final DCMotor gearbox = DCMotor.getNeoVortex(1);
-
-  // 4-inch Colson wheels
-	// private static final double MASS_COLSON = 0.245;
-	// private static final double RADIUS_COLSON = Units.inchesToMeters(2.0);
-	// private static final double MOI_COLSON = 0.5 * MASS_COLSON * RADIUS_COLSON * RADIUS_COLSON;
-
-	// 4-inch Stealth
-	// mass is 0.097 kg. About half of that is in the rim.
-	// steel insert is 0.365 kg with radius of 3.25 inches and a 0.875 hole.
-	private static final double MASS_RIM = 0.5 * 0.097;
-	private static final double RADIUS_STEALTH = Units.inchesToMeters(2.0);
-	private static final double MOI_STEALTH = MASS_RIM * RADIUS_STEALTH * RADIUS_STEALTH;
-
-	// each motor spins 6 stealth wheels
-	protected static final double MOI_SHAFT = MOI_STEALTH * 6;
-  // Reduction between motors and encoder, as output over input. If the flywheel spins slower than
-  // the motors, this number should be greater than one.
-  private static final double gearing = 0.5;
-
   // The plant holds a state-space model of our flywheel. This system has the following properties:
   //
-  // States: [velocity], in rotations per minute.
+  // States: [velocity], in radians per second.
   // Inputs (what we can "put in"): [voltage], in volts.
-  // Outputs (what we can measure): [velocity], in rotations per minute.
+  // Outputs (what we can measure): [velocity], in radians per second.
   // TODO: Can multiple controllers use teh same plant?
   private final LinearSystem<N1, N1, N1> leftFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      gearbox, MOI_SHAFT, gearing);
+      gearbox, MOI_SHAFT, gearRatio);
   private final LinearSystem<N1, N1, N1> rightFlywheelPlant =
     LinearSystemId.createFlywheelSystem(
-      gearbox, MOI_SHAFT, gearing);
+      gearbox, MOI_SHAFT, gearRatio);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
   // TODO: Can both sides us the same filter?
@@ -121,14 +100,7 @@ public class Flywheel extends SubsystemBase {
     new LinearSystemLoop<>(leftFlywheelPlant, leftController, leftObserver, 12.0, Constants.LOOP_TIME);
   private final LinearSystemLoop<N1, N1, N1> rightLoop =
     new LinearSystemLoop<>(rightFlywheelPlant, rightController, rightObserver, 12.0, Constants.LOOP_TIME);
-  
-  // The shooter's motor ids are already used, so this has to use different ones
-  private final CANSparkFlex leftMotor = new CANSparkFlex(ShooterConstants.LEFT_MOTOR_ID+10, MotorType.kBrushless);
-  private final CANSparkFlex rightMotor = new CANSparkFlex(ShooterConstants.RIGHT_MOTOR_ID+10, MotorType.kBrushless);
-  
-  private final RelativeEncoder leftMotorEncoder = leftMotor.getEncoder();
-  private final RelativeEncoder rightMotorEncoder = rightMotor.getEncoder();
-
+    
   private double leftVoltage;
   private double rightVoltage;
 
@@ -137,6 +109,9 @@ public class Flywheel extends SubsystemBase {
 
   private ShuffleboardTab tab = Shuffleboard.getTab("Flywheel");
   private GenericEntry setpointEntry = tab.add("Setpoint", 0).getEntry();
+  private double prevSetpointEntry = 0;
+
+  private static final double tolerance = 20; // RPM
 
   public Flywheel() {
     leftLoop.reset(VecBuilder.fill(Units.rotationsPerMinuteToRadiansPerSecond(leftMotorEncoder.getVelocity())));
@@ -147,8 +122,8 @@ public class Flywheel extends SubsystemBase {
 	  leftMotor.setInverted(true);
 
     if(RobotBase.isSimulation()){
-      leftSim = new FlywheelSim(leftFlywheelPlant, gearbox, gearing);
-      rightSim = new FlywheelSim(rightFlywheelPlant, gearbox, gearing);
+      leftSim = new FlywheelSim(leftFlywheelPlant, gearbox, gearRatio);
+      rightSim = new FlywheelSim(rightFlywheelPlant, gearbox, gearRatio);
     }
 
     tab.addDouble("Left speed", ()->getLeftSpeed());
@@ -158,7 +133,16 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    setSpeed(setpointEntry.getDouble(0));
+    double currentSetpointEntry = setpointEntry.getDouble(0);
+    if(currentSetpointEntry != prevSetpointEntry){
+      // If the value on Shuffleboard changed, update the setpoint
+      setSpeed(currentSetpointEntry);
+      prevSetpointEntry = currentSetpointEntry;
+    }else{
+      // If it didn't change, update it to the current setpoint. This allows commands to change the setpoint
+      prevSetpointEntry = leftSetpoint/2 + rightSetpoint/2;
+      setpointEntry.setDouble(prevSetpointEntry);
+    }
 
     // Sets the target speed of our flywheel. This is similar to setting the setpoint of a
     // PID controller.
@@ -196,20 +180,44 @@ public class Flywheel extends SubsystemBase {
     rightSetpoint = rightSpeed;
   }
   public void setSpeed(double speed){
-    setSpeed(speed, speed);
+    // Use the "slip" code in Shooter
+    // This is actually more likely caused by conservation of momentum in the collision between the notes and shooter than slip, but the coefficient still works
+    setTargetRPM(speed);
   }
   public double getLeftSpeed(){
     // I couldn't find a class that supports simulated encoder velocities for a RelativeEncoder. TODO: Find one if it exists
     if(RobotBase.isSimulation()){
       return leftSim.getAngularVelocityRPM();
     }
-    return leftMotorEncoder.getVelocity() / gearing;
+    return leftMotorEncoder.getVelocity() / gearRatio;
   }
   public double getRightSpeed(){
     // I couldn't find a class that supports simulated encoder velocities for a RelativeEncoder. TODO: Find one if it exists
     if(RobotBase.isSimulation()){
       return rightSim.getAngularVelocityRPM();
     }
-    return rightMotorEncoder.getVelocity() / gearing;
+    return rightMotorEncoder.getVelocity() / gearRatio;
   }
+
+  // Methods to make previously existing commands work
+
+  @Override
+  public void setTargetRPM(double left, double right){
+    setSpeed(left, right);
+  }
+  @Override
+  public boolean atSetpoint(){
+    return Math.abs(leftSetpoint - getLeftSpeed()) < tolerance
+      && Math.abs(rightSetpoint - getRightSpeed()) < tolerance;
+  }
+  @Override
+  public double getLeftMotorRPM(){
+    return getLeftSpeed();
+  }
+  @Override
+  public double getRightMotorRPM(){
+    return getRightSpeed();
+  }
+
+  // All other methods in Shooter call these
 }

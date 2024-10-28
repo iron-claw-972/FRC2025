@@ -67,8 +67,8 @@ public class Shooter extends SubsystemBase {
 	protected static final double MOI_SHAFT = MOI_STEALTH * 6;
 
 	// left motor
-	private final CANSparkFlex leftMotor = new CANSparkFlex(ShooterConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-	private final RelativeEncoder leftMotorEncoder = leftMotor.getEncoder();
+	protected final CANSparkFlex leftMotor = new CANSparkFlex(ShooterConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+	protected final RelativeEncoder leftMotorEncoder = leftMotor.getEncoder();
 	/** PID controller uses RPM as input and outputs motor power */
 	protected final PIDController leftPID = new PIDController(P, leftI, D);
 	private FlywheelSim leftFlywheelSim;
@@ -76,8 +76,8 @@ public class Shooter extends SubsystemBase {
 	private double leftPower = 0.0;
 
 	// right motor
-	private final CANSparkFlex rightMotor = new CANSparkFlex(ShooterConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-	private final RelativeEncoder rightMotorEncoder = rightMotor.getEncoder();
+	protected final CANSparkFlex rightMotor = new CANSparkFlex(ShooterConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+	protected final RelativeEncoder rightMotorEncoder = rightMotor.getEncoder();
 	/** PID controller uses RPM as input and outputs motor power */
 	protected final PIDController rightPID = new PIDController(P, I, D);
 	private FlywheelSim rightFlywheelSim;

@@ -75,7 +75,7 @@ public class RobotContainer {
 
       case TestBed1:
         index = new StorageIndex();
-        shooter = new Shooter();
+        shooter = new Flywheel();
         break;
 
       case TestBed2:
@@ -94,8 +94,7 @@ public class RobotContainer {
         arm = new Arm();
         intake = new Intake();
         index = new StorageIndex();
-        shooter = new Shooter();
-        flywheel = new Flywheel();
+        shooter = new Flywheel();
  
       case SwerveTest:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
