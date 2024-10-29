@@ -10,7 +10,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ShooterConstants;
@@ -83,8 +82,6 @@ public class Shooter extends SubsystemBase {
 	private FlywheelSim rightFlywheelSim;
 	private double rightMotorSpeedSim = 0.0;
 	private double rightPower = 0.0;
-	private static double slipCoefficient = 0.91;
-	private int spinRemainder = 0;
 
 	// TODO: TUNE THIS
 	private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(S, V);
