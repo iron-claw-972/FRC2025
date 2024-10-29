@@ -125,6 +125,8 @@ public class Robot extends TimedRobot {
         if (autoCommand != null) {
             autoCommand.cancel();
         }
+
+        LogManager.logSupplier("Test/Value2", () -> 8, 2, 5);
     }
 
     /**
@@ -132,6 +134,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+        LogManager.log("Test/Value1", 3, 1, 2);
     }
 
     /**
