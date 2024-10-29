@@ -33,10 +33,12 @@ public class LogManager extends DogLog {
   }
 
     /**
-   * Log a supplier every 20ms
+   * Log a supplier every 20ms with a minimum and a maxium, and if the value is outside of the min or max, it will log a fault.
    * @param <T> Type of item being logged
    * @param name Name (key) of item being logged
    * @param value Supplier for value being logged 
+   * @param min The minimum that the value can be
+   * @param min The maximum that the value can be
    */
   public static <T> void logSupplier(String name, Supplier<T> value, T min, T max) {
     log(new Log<>(name, value, min, max));
@@ -53,6 +55,21 @@ public class LogManager extends DogLog {
   public static <T> void logSupplier(String name, Supplier<T> value, int updateDelay) {
     log(new Log<>(name, value, updateDelay));
   }
+
+    /**
+   * Log a supplier periodically with a minimum and a maxium, and if the value is outside of the min or max, it will log a fault. 
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged 
+   * @param updateDelay The amount of time, in milliseconds, between logs
+   * @param min The minimum that the value can be
+   * @param min The maximum that the value can be
+
+   */
+  public static <T> void logSupplier(String name, Supplier<T> value, int updateDelay, T min, T max) {
+    log(new Log<>(name, value, updateDelay, min, max));
+  }
+
 
   public static void log(String name, int value, int min, int max) {
     log(name, value);

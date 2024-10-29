@@ -24,9 +24,15 @@ public class Log<T> {
         this.max = max;
     }
 
+    
+
     public Log(String name, Supplier<T> value) {
         this(name, value, 10); // Although this is 10, update will be called every 20ms
     }
+    public Log(String name, Supplier<T> value, T min, T max) {
+        this(name, value, 10, min, max); // Although this is 10, update will be called every 20ms
+    }
+
 
     public Log(String name, Supplier<T> supplier, int delay) {
         this.name = name;
@@ -48,19 +54,19 @@ public class Log<T> {
             if(value == null) {
                 // Do nothing; we don't need to record null
             } else if (isInteger()) {
-                if (!(min == null) && !(max == null)){
+                if ((min != null) && (max != null)){
                     LogManager.log(name, (Integer) value, (Integer) min, (Integer) max);
                 }else{
                     LogManager.log(name, (Integer) value);
                 }
             } else if (isDouble()) {
-                if (!(min == null) && !(max == null)){
+                if ((min != null) && (max != null)){
                     LogManager.log(name, (Double) value, (Double) min, (Double) max);
                 }else{
                     LogManager.log(name, (Double) value);
                 }
             } else if (isLong()) {
-                if (!(min == null) && !(max == null)){
+                if ((min != null) && (max != null)){
                     LogManager.log(name, (Long) value, (Long) min, (Long) max);
                 }else{
                     LogManager.log(name, (Long) value);
