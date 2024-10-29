@@ -32,6 +32,17 @@ public class LogManager extends DogLog {
     log(new Log<>(name, value));
   }
 
+    /**
+   * Log a supplier every 20ms
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged 
+   */
+  public static <T> void logSupplier(String name, Supplier<T> value, T min, T max) {
+    log(new Log<>(name, value, min, max));
+  }
+
+
   /**
    * Log a supplier periodically
    * @param <T> Type of item being logged
@@ -44,6 +55,30 @@ public class LogManager extends DogLog {
   }
 
   public static void log(String name, int value, int min, int max) {
+    log(name, value);
+    
+    if (value <= min || value >= max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+
+  public static void log(String name, double value, double min, double max) {
+    log(name, value);
+    
+    if (value <= min || value >= max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+
+  public static void log(String name, long value, long min, long max) {
+    log(name, value);
+    
+    if (value <= min || value >= max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+
+  public static void log(String name, float value, float min, float max) {
     log(name, value);
     
     if (value <= min || value >= max) {

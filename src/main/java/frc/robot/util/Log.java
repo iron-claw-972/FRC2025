@@ -11,6 +11,22 @@ public class Log<T> {
     private T value;
     private final int delay;
     private long lastUpdate = 0;
+    private final T min;
+    private final T max;
+
+    public Log(String name, Supplier<T> supplier, int delay, T min, T max) {
+        this.name = name;
+        this.supplier = supplier;
+        this.delay = delay;
+
+        this.value = supplier.get();
+        this.min = min;
+        this.max = max;
+    }
+
+    public Log(String name, Supplier<T> value) {
+        this(name, value, 10); // Although this is 10, update will be called every 20ms
+    }
 
     public Log(String name, Supplier<T> supplier, int delay) {
         this.name = name;
@@ -18,11 +34,10 @@ public class Log<T> {
         this.delay = delay;
 
         this.value = supplier.get();
+        this.min = null;
+        this.max = null;
     }
 
-    public Log(String name, Supplier<T> value) {
-        this(name, value, 10); // Although this is 10, update will be called every 20ms
-    }
 
     public void update() {
         long time = System.currentTimeMillis();
@@ -33,11 +48,23 @@ public class Log<T> {
             if(value == null) {
                 // Do nothing; we don't need to record null
             } else if (isInteger()) {
-                LogManager.log(name, (Integer) value);
+                if (!(min == null) && !(max == null)){
+                    LogManager.log(name, (Integer) value, (Integer) min, (Integer) max);
+                }else{
+                    LogManager.log(name, (Integer) value);
+                }
             } else if (isDouble()) {
-                LogManager.log(name, (Double) value);
+                if (!(min == null) && !(max == null)){
+                    LogManager.log(name, (Double) value, (Double) min, (Double) max);
+                }else{
+                    LogManager.log(name, (Double) value);
+                }
             } else if (isLong()) {
-                LogManager.log(name, (Long) value);
+                if (!(min == null) && !(max == null)){
+                    LogManager.log(name, (Long) value, (Long) min, (Long) max);
+                }else{
+                    LogManager.log(name, (Long) value);
+                }
             } else if (isBoolean()) {
                 LogManager.log(name, (Boolean) value);
             } else if (isString()) {
@@ -111,7 +138,7 @@ public class Log<T> {
     }
 
     private boolean isInteger() {
-        return value instanceof Integer;
+        return value instanceof Integer;      
     }
 
     private boolean isDouble() {
