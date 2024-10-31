@@ -15,7 +15,6 @@ import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.auto_comm.MoveArmForShoot;
 import frc.robot.commands.gpm.IntakeNote;
 import frc.robot.commands.gpm.PrepareShooter;
-import frc.robot.commands.gpm.SetShooterSpeed;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.subsystems.Drivetrain;

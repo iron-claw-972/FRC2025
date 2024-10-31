@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.commands.GoToPose;
 import frc.robot.commands.OuttakeAmp;
-import frc.robot.commands.SysIDDriveCommand;
 import frc.robot.commands.drive_comm.SetFormationX;
 //import frc.robot.commands.vision.AcquireGamePiece;
 import frc.robot.constants.Constants;
@@ -21,7 +20,6 @@ import frc.robot.util.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
-import lib.controllers.GameController.DPad;
 
 /**
  * Driver controls for the generic game controller.

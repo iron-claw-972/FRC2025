@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.PowerPanel;
 import frc.robot.util.LogManager;
 
 import java.time.Duration;
