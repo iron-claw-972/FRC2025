@@ -36,13 +36,13 @@ public class Turret extends SubsystemBase {
     private boolean hallTriggered = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.4, 0.0, 0.0);
+    private final PIDController pid = new PIDController (0.1, 0.0, 0.0);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
     // ... or run the simulator to see which ones are created.
     /** Motor that controls the turret */
-    private final TalonFX motor = new TalonFX(1);
+    private final TalonFX motor = new TalonFX(20);
     private final DCMotor turretGearBox = DCMotor.getFalcon500(1);
     /** object to set the motor's encoder during simulation */
     private TalonFXSimState encoderSim;
@@ -123,7 +123,6 @@ public class Turret extends SubsystemBase {
         }
 
         // get the motor position in rotations
-        // TODO: For some reason, the value of getRotorPosition() is negative! Figure out why.
         double motorPosition = motor.getPosition().getValueAsDouble();
 
         // convert the motor position to a turret position in radians
