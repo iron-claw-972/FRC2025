@@ -1,6 +1,7 @@
 package frc.robot.subsystems.gpm;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -97,12 +98,14 @@ public class Turret extends SubsystemBase {
         }
 
         SmartDashboard.putData("PID", pid); 
-
         // put the Mechanism2D display on the SmartDashboard
         SmartDashboard.putData("turret display", simulationMechanism);
 
         // Enable continuous pid input because there are no hard stops 
         pid.enableContinuousInput(-Math.PI, Math.PI);
+
+        //Invert direction of simulation encoder to get correct position value in simultion
+        encoderSim.Orientation = ChassisReference.Clockwise_Positive;
     }
 
     @Override
@@ -113,15 +116,15 @@ public class Turret extends SubsystemBase {
             if (!hall.get()) {
                 // Hall-effect sensor sees a magnet
                 hallTriggered = true;
-
                 // TODO: the turrent angle is now known, so set the encoder offset...
+                motor.setPosition(0); 
+                
             }
         }
 
         // get the motor position in rotations
         // TODO: For some reason, the value of getRotorPosition() is negative! Figure out why.
-        // TODO: Fix this on sim by changing encoderSim.Orientation instead of inverting it for both real and simulated robots
-        double motorPosition = - motor.getPosition().getValueAsDouble();
+        double motorPosition = motor.getPosition().getValueAsDouble();
 
         // convert the motor position to a turret position in radians
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
