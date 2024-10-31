@@ -52,7 +52,7 @@ public class Turret extends SubsystemBase {
     private final MechanismRoot2d mechanismRoot = simulationMechanism.getRoot("Turret", 1.5, 1.5);
     /** pointer that shows the turret direction */
     private final MechanismLigament2d simLigament = mechanismRoot.append(
-            new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kYellow)));
+        new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kYellow)));
 
     /** Gear ratio for the planetary gearbox. The motor is attached to a VersaPlanetary gearbox. */
     private final double versaPlanetaryGearRatio = 5.0;
@@ -105,7 +105,7 @@ public class Turret extends SubsystemBase {
         pid.enableContinuousInput(-Math.PI, Math.PI);
 
         //Invert direction of simulation encoder to get correct position value in simultion
-        encoderSim.Orientation = ChassisReference.Clockwise_Positive;
+        // encoderSim.Orientation = ChassisReference.Clockwise_Positive;
     }
 
     @Override
@@ -176,4 +176,5 @@ public class Turret extends SubsystemBase {
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
     }
+
 }   
