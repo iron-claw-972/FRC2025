@@ -323,9 +323,6 @@ public class Arm extends SubsystemBase {
         // update the DutyCycleEncoder
         encoderSim.setDistance(simulation.getAngleRads());
 
-        // Calculate the current drawn by one of the motors
-        double ampsPerMotor = simulation.getCurrentDrawAmps() / 4;
-
         // see https://docs.google.com/spreadsheets/d/1UiHZFYeZiHPAPIu39uRrskQuQYfvJ03UjLeQVq--Mzg/edit#gid=0
         // Arm motors uses channels 1, 2, 4, 5
         // m_powerPanel.setCurrent(1, ampsPerMotor);
