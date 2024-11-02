@@ -104,8 +104,6 @@ public class Turret extends SubsystemBase {
 
         // Enable continuous pid input because there are no hard stops 
         pid.enableContinuousInput(-Math.PI, Math.PI);
-
-        //Invert direction of simulation encoder to get correct position value in simultion
     }
 
     @Override
@@ -115,7 +113,12 @@ public class Turret extends SubsystemBase {
                 motor.setPosition(0);
                 // Hall-effect sensor sees a magnet
                 if(!hallTriggered) {
-                    motor.setPosition(0);
+                    if(motor.getVelocity().getValueAsDouble() > 0) {
+                        motor.setPosition(0);
+                    }
+                    else {
+                        motor.setPosition(0.138346);
+                    }
                 }
                 hallTriggered = true;
             }
@@ -148,8 +151,14 @@ public class Turret extends SubsystemBase {
         // LogManager.add("Turret Current", () -> turretSim.getCurrentDrawAmps());
         // LogManager.add("Voltage With Turret", () -> RoboRioSim.getVInVoltage());
         
-        //Position
+        //Position in degrees
         SmartDashboard.putNumber("Turret Position", Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio)); 
+
+        //Encoder Position
+        SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
+
+        //Motor velocity
+        SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble())
     }
 
     @Override
