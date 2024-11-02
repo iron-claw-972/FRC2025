@@ -189,7 +189,7 @@ public class Turret extends SubsystemBase {
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
     }
-    /***
+    /**
      * Returns angle of Turret in degrees 
      * @return
      */
@@ -197,7 +197,7 @@ public class Turret extends SubsystemBase {
         return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
     }
 
-    /***
+    /**
      * Returns if turret is at setpoint to tolerance of 1.5 degrees
      * @return
      */
