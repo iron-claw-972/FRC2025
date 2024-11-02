@@ -158,7 +158,7 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
 
         //Motor velocity
-        SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble())
+        SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
     }
 
     @Override
