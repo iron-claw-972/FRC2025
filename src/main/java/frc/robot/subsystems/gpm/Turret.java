@@ -27,16 +27,15 @@ import frc.robot.constants.Constants;
  * 
  */
 public class Turret extends SubsystemBase {
-    // TODO: change Hall-effect port later
     /** A Hall-effect sensor determines a known position of the turret. */
-    private final DigitalInput hall = new DigitalInput(1);
+    private final DigitalInput hall = new DigitalInput(0);
     /** Simulation resource for the Hall-effect sensor */
     private DIOSim hallSim;
     /** whether the Hall effect sensor has been seen */
     private boolean hallTriggered = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.1, 0.0, 0.0);
+    private final PIDController pid = new PIDController (0.1, 0.0, 0);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
@@ -52,7 +51,7 @@ public class Turret extends SubsystemBase {
     private final MechanismRoot2d mechanismRoot = simulationMechanism.getRoot("Turret", 1.5, 1.5);
     /** pointer that shows the turret direction */
     private final MechanismLigament2d simLigament = mechanismRoot.append(
-            new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kYellow)));
+        new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kYellow)));
 
     /** Gear ratio for the planetary gearbox. The motor is attached to a VersaPlanetary gearbox. */
     private final double versaPlanetaryGearRatio = 5.0;
@@ -105,7 +104,6 @@ public class Turret extends SubsystemBase {
         pid.enableContinuousInput(-Math.PI, Math.PI);
 
         //Invert direction of simulation encoder to get correct position value in simultion
-        encoderSim.Orientation = ChassisReference.Clockwise_Positive;
     }
 
     @Override

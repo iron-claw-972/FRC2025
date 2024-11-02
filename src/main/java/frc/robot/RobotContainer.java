@@ -78,7 +78,6 @@ public class RobotContainer {
     SmartDashboard.putData("90", new InstantCommand(() -> turret.setAngle(90)));
     SmartDashboard.putData("180", new InstantCommand(() -> turret.setAngle(180)));
     SmartDashboard.putData("270", new InstantCommand(() -> turret.setAngle(270)));
-    SmartDashboard.putData("360", new InstantCommand(() -> turret.setAngle(360)));
     switch (robotId) {
 
       case TestBed1:
