@@ -27,6 +27,7 @@ import frc.robot.constants.Constants;
  * 
  */
 public class Turret extends SubsystemBase {
+    // TODO: change Hall-effect port later
     /** A Hall-effect sensor determines a known position of the turret. */
     private final DigitalInput hall = new DigitalInput(0);
     /** Simulation resource for the Hall-effect sensor */
@@ -35,7 +36,7 @@ public class Turret extends SubsystemBase {
     private boolean hallTriggered = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.1, 0.0, 0);
+    private final PIDController pid = new PIDController (0.18, 0.0, 0.0006);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
@@ -51,10 +52,11 @@ public class Turret extends SubsystemBase {
     private final MechanismRoot2d mechanismRoot = simulationMechanism.getRoot("Turret", 1.5, 1.5);
     /** pointer that shows the turret direction */
     private final MechanismLigament2d simLigament = mechanismRoot.append(
+
         new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kYellow)));
 
     /** Gear ratio for the planetary gearbox. The motor is attached to a VersaPlanetary gearbox. */
-    private final double versaPlanetaryGearRatio = 5.0;
+    private final double versaPlanetaryGearRatio = 1;
     /** 
      * Gear ratio for the turret. 
      * The VersaPlanetary drives a (10-tooth 10DP) pinion gear that engages the 140 teeth on the turret.
@@ -94,6 +96,7 @@ public class Turret extends SubsystemBase {
             hallSim = new DIOSim(hall);
             // make sure the Hall-effect sensor state is set
             hallSim.setValue(true);
+            // encoderSim.Orientation = ChassisReference.Clockwise_Positive;
         }
 
         SmartDashboard.putData("PID", pid); 
@@ -108,17 +111,19 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (!hallTriggered) {
-            // the Hall-effect sensor has not been triggered yet.
-            // check to see if it is active
             if (!hall.get()) {
-                // Hall-effect sensor sees a magnet
-                hallTriggered = true;
                 // TODO: the turrent angle is now known, so set the encoder offset...
-                motor.setPosition(0); 
-                
+                motor.setPosition(0);
+                // Hall-effect sensor sees a magnet
+                if(!hallTriggered) {
+                    motor.setPosition(0);
+                }
+                hallTriggered = true;
             }
-        }
+            else {
+                hallTriggered = false; 
+            }
+        
 
         // get the motor position in rotations
         double motorPosition = motor.getPosition().getValueAsDouble();
@@ -143,6 +148,9 @@ public class Turret extends SubsystemBase {
         //Log Data, TODO: move to constructor if using suppliers
         // LogManager.add("Turret Current", () -> turretSim.getCurrentDrawAmps());
         // LogManager.add("Voltage With Turret", () -> RoboRioSim.getVInVoltage());
+        
+        //Position
+        SmartDashboard.putNumber("Turret Position", Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio)); 
     }
 
     @Override
