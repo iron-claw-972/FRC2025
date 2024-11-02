@@ -43,7 +43,7 @@ public class Turret extends SubsystemBase {
     // ... or run the simulator to see which ones are created.
     /** Motor that controls the turret */
     private final TalonFX motor = new TalonFX(20);
-    private final DCMotor turretGearBox = DCMotor.getFalcon500(1);
+    private final DCMotor turretGearBox = DCMotor.getFalcon500(20);
     /** object to set the motor's encoder during simulation */
     private TalonFXSimState encoderSim;
 
