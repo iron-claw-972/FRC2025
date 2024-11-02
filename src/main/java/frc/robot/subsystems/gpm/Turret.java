@@ -110,10 +110,14 @@ public class Turret extends SubsystemBase {
     public void periodic() {
             if (!hall.get()) {
                 // TODO: the turrent angle is now known, so set the encoder offset...
-                motor.setPosition(0);
                 // Hall-effect sensor sees a magnet
                 if(!hallTriggered) {
+                    if(motor.getVelocity().getValueAsDouble() > 0) {
                     motor.setPosition(0);
+                    }
+                    else{   
+                        motor.setPosition(0.14);
+                    }
                 }
                 hallTriggered = true;
             }
@@ -131,7 +135,7 @@ public class Turret extends SubsystemBase {
         // calculate motor power to turn turret
         double power = pid.calculate(currentPosition);
 
-        motor.set(MathUtil.clamp(power, -1, 1));
+        motor.set(MathUtil.clamp(power, -.2, .2));
 
         // update the Mechanism2d display based on measured position
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
@@ -185,5 +189,22 @@ public class Turret extends SubsystemBase {
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
     }
+    /***
+     * Returns angle of Turret in degrees 
+     * @return
+     */
+    public double getAngle() {
+        return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
+    }
 
+    /***
+     * Returns if turret is at setpoint to tolerance of 1.5 degrees
+     * @return
+     */
+    public boolean atSetpoint() {
+        if(Math.abs(getAngle() - Units.radiansToDegrees(pid.getSetpoint())) < 1.5) {
+            return true; 
+        }
+        return false; 
+    }
 }   
