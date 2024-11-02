@@ -113,12 +113,7 @@ public class Turret extends SubsystemBase {
                 motor.setPosition(0);
                 // Hall-effect sensor sees a magnet
                 if(!hallTriggered) {
-                    if(motor.getVelocity().getValueAsDouble() > 0) {
-                        motor.setPosition(0);
-                    }
-                    else {
-                        motor.setPosition(0.138346);
-                    }
+                    motor.setPosition(0);
                 }
                 hallTriggered = true;
             }
