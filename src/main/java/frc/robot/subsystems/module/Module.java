@@ -74,6 +74,19 @@ public class Module extends SubsystemBase {
         configDriveMotor();
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
+    
+    if (Constants.DO_LOGGING) {
+            String directory_name = "Drivetrain/Module" + type.name();
+            LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
+                DriveConstants.kDriveGearRatio), 1000);
+            LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
+            LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
+            LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000);
+            LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 1000);
+            LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
+            LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValue(), 1000);
+            LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValue(), 1000);
+        }
     }
 
     public void close() {
@@ -107,18 +120,7 @@ public class Module extends SubsystemBase {
             // TODO: This curently doesn't use the feedforward.
             driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)));
         }
-        if (Constants.DO_LOGGING) {
-            String directory_name = "Drivetrain/Module" + type.name();
-            LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
-                DriveConstants.kDriveGearRatio), 1000);
-            LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
-            LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
-            LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000);
-            LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 1000);
-            LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
-            LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValue(), 1000);
-            LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValue(), 1000);
-        }
+        
     }
 
     private void setAngle(SwerveModuleState desiredState) {

@@ -126,7 +126,8 @@ public class Robot extends TimedRobot {
             autoCommand.cancel();
         }
 
-        LogManager.logSupplier("Test/Value2", () -> 8, 2, 5);
+        // TODO: Remove these
+        // LogManager.logSupplier("Test/Value2", () -> 8, 2, 5);
     }
 
     /**
@@ -134,7 +135,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        LogManager.log("Test/Value1", 3, 1, 2);
+        // TODO: remove these
+        // LogManager.log("Test/Value1", 3, 1, 2);
     }
 
     /**
