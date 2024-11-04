@@ -57,7 +57,8 @@ public class Intake extends SubsystemBase {
     private static final DCMotor dcMotorCentering = DCMotor.getNEO(1);
     
     // Beam break sensor detects whether a note is present 
-    private final DigitalInput sensor  = new DigitalInput(IntakeConstants.SENSOR_ID);
+    // Changed because same port as Turret 
+    private final DigitalInput sensor  = new DigitalInput(10);
 
     private double motorRPMSim;
     private double centeringMotorRPMSim;
