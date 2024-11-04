@@ -139,9 +139,6 @@ public class Intake extends SubsystemBase {
         flywheelSim.update(0.020);
         centeringFlywheelSim.update(0.020);
 
-        flywheelSim.getAngularVelocityRPM();
-        centeringFlywheelSim.getAngularVelocityRPM();
-
         // Changes sensor values every 1/2 second
         if (countSim++ > 25) {
             countSim = 0;
