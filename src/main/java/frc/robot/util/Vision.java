@@ -280,11 +280,11 @@ public class Vision {
             );
             estimatedPoses.add(estimatedPose);
             if(Constants.DO_LOGGING){
-              LogManager.logSupplier("Vision/camera " + i + "/estimated pose2d", () -> new Double[] {
+              LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
                 pose.getX(),
                 pose.getY(),
                 pose.getRotation().getRadians()
-              }, 1000);
+              });
             }
           }catch(Exception e){
             System.out.println(e.getStackTrace());
