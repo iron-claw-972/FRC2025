@@ -9,6 +9,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
@@ -189,8 +190,9 @@ public class Turret extends SubsystemBase {
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
     }
+
     /**
-     * Returns angle of Turret in degrees 
+     * Returns the current angle of turret in degrees
      * @return
      */
     public double getAngle() {
@@ -207,4 +209,20 @@ public class Turret extends SubsystemBase {
         }
         return false; 
     }
+
+
+    /**
+     * Turns the turret by a full revolution
+     * @return
+     */
+    public void turnFullRevolution() {
+        pid.reset();
+        
+        pid.disableContinuousInput();
+
+        pid.setSetpoint(Units.degreesToRadians(getAngle()) + Units.degreesToRadians(360));
+        
+        pid.enableContinuousInput(-Math.PI, Math.PI);
+    }
+
 }   
