@@ -79,7 +79,6 @@ public class RobotContainer {
     SmartDashboard.putData("90", new InstantCommand(() -> turret.setAngle(90)));
     SmartDashboard.putData("180", new InstantCommand(() -> turret.setAngle(180)));
     SmartDashboard.putData("270", new InstantCommand(() -> turret.setAngle(270)));
-    SmartDashboard.putData("Full Revolution", new InstantCommand(() -> turret.turnFullRevolution()));
     SmartDashboard.putNumber("Angle To Turn", 0);
     SmartDashboard.putData("Turn to input angle", new InstantCommand(() -> turret.setAngle(SmartDashboard.getNumber("Angle To Turn", 0))));
     switch (robotId) {

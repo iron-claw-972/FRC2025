@@ -220,14 +220,6 @@ public class Turret extends SubsystemBase {
      * Turns the turret by a full revolution
      * @return
      */
-    public void turnFullRevolution() {
-        pid.reset();
-        
-        pid.disableContinuousInput();
-
-        pid.setSetpoint(Units.degreesToRadians(getAngle()) + Units.degreesToRadians(360));
-    
-    }
 
     public void calibrate() {
         if(calibrated = false) {
