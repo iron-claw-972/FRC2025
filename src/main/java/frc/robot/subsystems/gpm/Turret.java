@@ -128,9 +128,11 @@ public class Turret extends SubsystemBase {
             else {
                 hallTriggered = false; 
             }
-        
-        calibrate();
-        
+        if (calibrated = false) {
+            calibrate();
+            System.out.println("hamburger");
+        }
+        else {
         // get the motor position in rotations
         double motorPosition = motor.getPosition().getValueAsDouble();
 
@@ -163,6 +165,7 @@ public class Turret extends SubsystemBase {
 
         //Motor velocity
         SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
+        }
     }
 
     @Override
@@ -223,8 +226,7 @@ public class Turret extends SubsystemBase {
 
     public void calibrate() {
         if(calibrated = false) {
-            motor.set(.01);
-            calibrated = true;
+            motor.set(0.01);
         }
         else {
             motor.stopMotor();
