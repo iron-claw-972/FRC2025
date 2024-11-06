@@ -36,6 +36,8 @@ public class Turret extends SubsystemBase {
     /** whether the Hall effect sensor has been seen */
     private boolean hallTriggered = false;
 
+    private boolean calibrated = false;
+
     /** PID controller for the turret. */
     private final PIDController pid = new PIDController (0.18, 0.0, 0.0006);
 
@@ -121,12 +123,14 @@ public class Turret extends SubsystemBase {
                     }
                 }
                 hallTriggered = true;
+                calibrated = true;
             }
             else {
                 hallTriggered = false; 
             }
         
-
+        calibrate();
+        
         // get the motor position in rotations
         double motorPosition = motor.getPosition().getValueAsDouble();
 
@@ -187,6 +191,7 @@ public class Turret extends SubsystemBase {
      * @param angle (degrees)
      */
     public void setAngle(double angle) {
+        pid.enableContinuousInput(-Math.PI, Math.PI);
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
     }
@@ -221,8 +226,17 @@ public class Turret extends SubsystemBase {
         pid.disableContinuousInput();
 
         pid.setSetpoint(Units.degreesToRadians(getAngle()) + Units.degreesToRadians(360));
-        
-        pid.enableContinuousInput(-Math.PI, Math.PI);
+    
+    }
+
+    public void calibrate() {
+        if(calibrated = false) {
+            motor.set(.01);
+            calibrated = true;
+        }
+        else {
+            motor.stopMotor();
+        }
     }
 
 }   
