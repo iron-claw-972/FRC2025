@@ -25,11 +25,11 @@ public class DriverAssist {
     private static final double CORRECTION_FACTOR = 0.75;
 
     // The setpoint generator, which limits the acceleration
-    private static SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
+    private static final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
 
-    private static TrapezoidProfile xProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
-    private static TrapezoidProfile yProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
-    private static TrapezoidProfile angleProfile1 = new TrapezoidProfile(new Constraints(DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL));
+    private static final TrapezoidProfile xProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
+    private static final TrapezoidProfile yProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
+    private static final TrapezoidProfile angleProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL));
 
     /**
      * Combines the driver input with a speed calculated using a trapezoidal profile
@@ -63,9 +63,9 @@ public class DriverAssist {
 
         // Calculate ideal speeds for next frame
         ChassisSpeeds goal = new ChassisSpeeds(
-            xProfile1.calculate(Constants.LOOP_TIME, xState, xGoal).velocity,
-            yProfile1.calculate(Constants.LOOP_TIME, yState, yGoal).velocity,
-            angleProfile1.calculate(Constants.LOOP_TIME, angleState, angleGoal).velocity
+            xProfile.calculate(Constants.LOOP_TIME, xState, xGoal).velocity,
+            yProfile.calculate(Constants.LOOP_TIME, yState, yGoal).velocity,
+            angleProfile.calculate(Constants.LOOP_TIME, angleState, angleGoal).velocity
         );
 
         // This calculates the actual acceleration we can get

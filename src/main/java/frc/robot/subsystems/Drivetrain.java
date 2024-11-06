@@ -503,9 +503,12 @@ public class Drivetrain extends SubsystemBase {
     /**
      * Gets the pose at a previous time
      * @param timestamp The timestamp of the pose to get
-     * @return The pose, or null if there are no poses yet
+     * @return The pose, null if there are no poses yet, or the current pose if timestamp < 0
      */
     public Pose2d getPoseAt(double timestamp){
+        if(timestamp < 0){
+            return getPose();
+        }
         Optional<Pose2d> pose = poseBuffer.getSample(timestamp);
         if(pose.isPresent()){
             return pose.get();
