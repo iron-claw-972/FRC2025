@@ -128,7 +128,7 @@ public class Turret extends SubsystemBase {
             else {
                 hallTriggered = false; 
             }
-        if (calibrated = false) {
+        if (!calibrated) {
             calibrate();
             System.out.println("hamburger");
         }
@@ -225,12 +225,9 @@ public class Turret extends SubsystemBase {
      */
 
     public void calibrate() {
-        if(calibrated = false) {
-            motor.set(0.01);
-        }
-        else {
+        motor.set(.01); 
+        if (calibrated) {
             motor.stopMotor();
         }
     }
-
 }   
