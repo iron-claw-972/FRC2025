@@ -6,7 +6,6 @@ package frc.robot.subsystems.gpm;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.sim.ChassisReference;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
@@ -34,8 +33,8 @@ public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID);
   private TalonFX leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID);
 
-  private DigitalInput topLimitSwitch = new DigitalInput(29);
-  private DigitalInput bottomLimitSwitch = new DigitalInput(30);
+  private DigitalInput topLimitSwitch = new DigitalInput(0);
+  private DigitalInput bottomLimitSwitch = new DigitalInput(1);
   private DIOSim topLimitSwitchSim;
   private DIOSim bottomLimitSwitchSim;
   private boolean limitSwitchPressed = false;
@@ -111,9 +110,6 @@ public class Elevator extends SubsystemBase {
 
       topLimitSwitchSim = new DIOSim(topLimitSwitch);
       bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
-
-      // Prevent negative values in sim
-      rightMotor.getSimState().Orientation = ChassisReference.Clockwise_Positive;
     }
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
     m_lastProfiledReference =
@@ -183,8 +179,8 @@ public class Elevator extends SubsystemBase {
     sim.setInputVoltage(voltage);
     sim.update(Constants.LOOP_TIME);
     ligament.setLength(getPosition());
-    topLimitSwitchSim.setValue(Math.abs(getPosition()-ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
-    bottomLimitSwitchSim.setValue(Math.abs(getPosition()-ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) < ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
+    topLimitSwitchSim.setValue(Math.abs(getPosition()-ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
+    bottomLimitSwitchSim.setValue(Math.abs(getPosition()-ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
     rightMotor.getSimState().setRawRotorPosition(sim.getPositionMeters()/(2*Math.PI*ElevatorConstants.DRUM_RADIUS)*ElevatorConstants.GEARING);
   }
 
@@ -205,11 +201,11 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean getBottomLimitSwitch(){
-    return bottomLimitSwitch.get();
+    return !bottomLimitSwitch.get();
   }
 
   public boolean getTopLimitSwitch(){
-    return topLimitSwitch.get();
+    return !topLimitSwitch.get();
   }
 
   public void setSetpoint(double setpoint){

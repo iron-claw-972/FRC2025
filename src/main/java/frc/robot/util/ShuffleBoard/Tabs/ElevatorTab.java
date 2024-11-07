@@ -45,6 +45,7 @@ public class ElevatorTab extends ShuffleBoardTabs {
             setpoint = tab.add("Elevater setpoint", 0).getEntry();
         }
         tab.add("Calibrate elevator", new CalibrateElevator(elevator));
+        tab.addDouble("Position", ()->elevator.getPosition());
     }
 
 }
