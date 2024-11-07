@@ -39,7 +39,7 @@ public class Turret extends SubsystemBase {
     private boolean calibrated = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.18, 0.0, 0.0006);
+    private final PIDController pid = new PIDController (0.21, 0.7, 0.0008);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
@@ -100,8 +100,12 @@ public class Turret extends SubsystemBase {
             hallSim.setValue(true);
             // encoderSim.Orientation = ChassisReference.Clockwise_Positive;
         }
-
+        // Set I zone for PID
+        pid.setIZone(Units.degreesToRadians(5)); 
+        
+        // put PID on Smart Dashboard 
         SmartDashboard.putData("PID", pid); 
+
         // put the Mechanism2D display on the SmartDashboard
         SmartDashboard.putData("turret display", simulationMechanism);
 
@@ -130,7 +134,6 @@ public class Turret extends SubsystemBase {
             }
         if (!calibrated) {
             calibrate();
-            System.out.println("hamburger");
         }
         else {
         // get the motor position in rotations
@@ -225,9 +228,6 @@ public class Turret extends SubsystemBase {
      */
 
     public void calibrate() {
-        motor.set(.01); 
-        if (calibrated) {
-            motor.stopMotor();
-        }
+        motor.set(.015); 
     }
 }   
