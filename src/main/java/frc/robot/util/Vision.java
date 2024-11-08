@@ -1,4 +1,4 @@
-package frc.robot.util;
+epackage frc.robot.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -297,12 +297,7 @@ public class Vision {
         // April tags that don't exist might return a result that is present but doesn't have a pose
         if (estimatedPose.isPresent() && estimatedPose.get().estimatedPose != null) {
           estimatedPoses.add(estimatedPose.get());
-          if(Constants.DO_LOGGING){
-            LogManager.logSupplier("Vision/camera " + i + "/estimated pose2d", () -> new Double[] {
-              estimatedPose.get().estimatedPose.getX(),
-              estimatedPose.get().estimatedPose.getY(),
-              estimatedPose.get().estimatedPose.getRotation().getZ()
-            }, 1000);
+          
           }
         }
       }
@@ -550,4 +545,10 @@ public class Vision {
       onlyUse = ids;
     }
   }
+  if(Constants.DO_LOGGING){
+            LogManager.logSupplier("Vision/camera " + i + "/estimated pose2d", () -> new Double[] {
+              estimatedPose.get().estimatedPose.getX(),
+              estimatedPose.get().estimatedPose.getY(),
+              estimatedPose.get().estimatedPose.getRotation().getZ()
+            }, 1000);
 }
