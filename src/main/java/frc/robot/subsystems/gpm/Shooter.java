@@ -20,6 +20,7 @@ import java.time.Duration;
 
 public class Shooter extends SubsystemBase {
 	// each of the shooter shafts is driven by one Neo Vortex motor
+	// Some variables in this class are protected so Flywheel can use them
 	protected static final DCMotor gearbox = DCMotor.getNeoVortex(1);
 	/**
 	 * Shooter gearing.
