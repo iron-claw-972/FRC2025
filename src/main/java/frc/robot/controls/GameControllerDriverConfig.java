@@ -13,11 +13,9 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.miscConstants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Arm;
-import frc.robot.subsystems.gpm.Intake;
 import frc.robot.subsystems.gpm.Shooter;
 import frc.robot.subsystems.gpm.StorageIndex;
 import frc.robot.util.MathUtils;
-import frc.robot.util.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
@@ -27,18 +25,14 @@ import lib.controllers.GameController.Button;
  */
 public class GameControllerDriverConfig extends BaseDriverConfig {
   private final GameController kDriver = new GameController(Constants.DRIVER_JOY);
-  private Vision vision;
   private Arm arm;
-  // private Intake intake;
   private StorageIndex index;
   private Shooter shooter;
 
-  public GameControllerDriverConfig(Drivetrain drive, Vision vision, Arm arm, Intake intake, StorageIndex index, Shooter shooter) {
+  public GameControllerDriverConfig(Drivetrain drive, Arm arm, StorageIndex index, Shooter shooter) {
     super(drive);
-    this.vision = vision;
     this.arm = arm;
     this.index = index;
-    // this.intake = intake;
     this.shooter = shooter;
   }
 

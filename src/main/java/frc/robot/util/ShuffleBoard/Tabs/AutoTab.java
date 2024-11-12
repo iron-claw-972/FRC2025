@@ -8,13 +8,10 @@ import com.choreo.lib.Choreo;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.commands.ArmToPos;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.ChoreoPathCommand;
-import frc.robot.commands.auto_comm.MoveArmForShoot;
 import frc.robot.commands.gpm.IntakeNote;
 import frc.robot.commands.gpm.PrepareShooter;
-import frc.robot.constants.ArmConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Arm;
@@ -191,18 +188,6 @@ public class AutoTab extends ShuffleBoardTabs {
         return new ParallelCommandGroup(
                 new IntakeNote(intake, indexer, arm, (ignored) -> {})
                         .withTimeout(Choreo.getTrajectory(pathName).getTotalTime()),
-                new ChoreoPathCommand(pathName, true, drive)
-                        .andThen(index())
-        );
-    }
-
-    @SuppressWarnings("unused")
-    private ParallelCommandGroup intakeAndDistanceShot(String pathName) {
-        return new ParallelCommandGroup(
-                new ArmToPos(arm, ArmConstants.stowedSetpoint)
-                        .andThen(new IntakeNote(intake, indexer, arm, (ignored) -> {})
-                                .withTimeout(Choreo.getTrajectory(pathName).getTotalTime()))
-                        .andThen(new MoveArmForShoot(pathName, arm)),
                 new ChoreoPathCommand(pathName, true, drive)
                         .andThen(index())
         );

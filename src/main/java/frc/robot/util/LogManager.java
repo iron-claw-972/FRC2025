@@ -1,13 +1,13 @@
 package frc.robot.util;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.function.Supplier;
+
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.IntegerLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.function.Supplier;
 
 /**
  * Utilty class for logging data to the DataLogManager.
