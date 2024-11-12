@@ -59,9 +59,6 @@ public class Intake extends SubsystemBase {
     // Beam break sensor detects whether a note is present 
     private final DigitalInput sensor  = new DigitalInput(IntakeConstants.SENSOR_ID);
 
-    private double motorRPMSim;
-    private double centeringMotorRPMSim;
-
     private int countSim = 0;
     private DIOSim IntakeSensorDioSim;
     private boolean simDIOValue = true;
@@ -141,9 +138,6 @@ public class Intake extends SubsystemBase {
 
         flywheelSim.update(0.020);
         centeringFlywheelSim.update(0.020);
-
-        motorRPMSim = flywheelSim.getAngularVelocityRPM();
-        centeringMotorRPMSim = centeringFlywheelSim.getAngularVelocityRPM();
 
         // Changes sensor values every 1/2 second
         if (countSim++ > 25) {
