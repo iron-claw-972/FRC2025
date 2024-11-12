@@ -6,18 +6,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.robot.commands.ArmToPos;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.constants.miscConstants.VisionConstants;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Arm;
-import frc.robot.subsystems.gpm.StorageIndex;
 
 public class MoveArmForShoot extends SequentialCommandGroup {
 
