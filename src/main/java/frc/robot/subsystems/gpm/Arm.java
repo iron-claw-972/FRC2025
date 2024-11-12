@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.PowerPanel;
 import frc.robot.util.LogManager;
 
 import java.time.Duration;
@@ -325,7 +324,7 @@ public class Arm extends SubsystemBase {
         encoderSim.setDistance(simulation.getAngleRads());
 
         // Calculate the current drawn by one of the motors
-        double ampsPerMotor = simulation.getCurrentDrawAmps() / 4;
+        // double ampsPerMotor = simulation.getCurrentDrawAmps() / 4;
 
         // see https://docs.google.com/spreadsheets/d/1UiHZFYeZiHPAPIu39uRrskQuQYfvJ03UjLeQVq--Mzg/edit#gid=0
         // Arm motors uses channels 1, 2, 4, 5
