@@ -315,6 +315,7 @@ public class Vision {
    * Updates the robot's odometry with vision
    * @param poseEstimator The pose estimator to update
    */
+  @SuppressWarnings("unused")
   public void updateOdometry(SwerveDrivePoseEstimator poseEstimator){
     // Simulate vision
     if(RobotBase.isSimulation() && VisionConstants.ENABLED_SIM){

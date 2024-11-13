@@ -80,9 +80,6 @@ public class Shooter extends SubsystemBase {
 	private FlywheelSim rightFlywheelSim;
 	private double rightMotorSpeedSim = 0.0;
 	private double rightPower = 0.0;
-	private static double slipCoefficient = 0.91;
-	private int spinRemainder = 0;
-
 	// TODO: TUNE THIS
 	private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(S, V);
 
