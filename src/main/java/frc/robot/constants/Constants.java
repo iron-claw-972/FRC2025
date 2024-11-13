@@ -4,6 +4,7 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.util.LogManager.LogLevel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,9 @@ public class Constants {
     public static final String CANIVORE_CAN = "CANivore";
     public static final String RIO_CAN = "rio";
 
+    // Logging 
     public static final boolean DO_LOGGING = true;
+    public static final LogLevel LOG_LEVEL = LogLevel.DEBUG;
     public static final boolean USE_TELEMETRY = true;
 
     // port for the LED controller, the Blinkin

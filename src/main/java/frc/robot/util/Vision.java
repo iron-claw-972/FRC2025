@@ -298,11 +298,11 @@ public class Vision {
         if (estimatedPose.isPresent() && estimatedPose.get().estimatedPose != null) {
           estimatedPoses.add(estimatedPose.get());
           if(Constants.DO_LOGGING){
-            LogManager.logSupplier("Vision/camera " + i + "/estimated pose2d", () -> new Double[] {
+            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
               estimatedPose.get().estimatedPose.getX(),
               estimatedPose.get().estimatedPose.getY(),
               estimatedPose.get().estimatedPose.getRotation().getZ()
-            }, 1000);
+            });
           }
         }
       }

@@ -126,4 +126,10 @@ public class LogManager extends DogLog {
     log("BuildData/Build Unix Time", BuildData.BUILD_UNIX_TIME);
     log("BuildData/Dirty", BuildData.DIRTY);
   }
+
+  public enum LogLevel {
+    DEBUG,
+    COMP,
+    NONE
+  }
 }
