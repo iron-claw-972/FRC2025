@@ -58,7 +58,7 @@ public class Turret extends SubsystemBase {
         new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kYellow)));
 
     /** Gear ratio for the planetary gearbox. The motor is attached to a VersaPlanetary gearbox. */
-    private final double versaPlanetaryGearRatio = 1;
+    private final double versaPlanetaryGearRatio = 5;
     /** 
      * Gear ratio for the turret. 
      * The VersaPlanetary drives a (10-tooth 10DP) pinion gear that engages the 140 teeth on the turret.
@@ -136,7 +136,7 @@ public class Turret extends SubsystemBase {
             calibrate();
         }
         else {
-        // get the motor position in rotations
+        // get the motor position in rotatio ns
         double motorPosition = motor.getPosition().getValueAsDouble();
 
         // convert the motor position to a turret position in radians
@@ -145,7 +145,7 @@ public class Turret extends SubsystemBase {
         // calculate motor power to turn turret
         double power = pid.calculate(currentPosition);
 
-        motor.set(MathUtil.clamp(power, -.2, .2));
+        motor.set(MathUtil.clamp(power, -1, 1));
 
         // update the Mechanism2d display based on measured position
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
@@ -228,6 +228,6 @@ public class Turret extends SubsystemBase {
      */
 
     public void calibrate() {
-        motor.set(.015); 
+        motor.set(.3); 
     }
 }   
