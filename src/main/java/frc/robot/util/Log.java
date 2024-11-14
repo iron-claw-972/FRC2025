@@ -38,8 +38,12 @@ public class Log<T> {
         this.name = name;
         this.supplier = supplier;
         this.delay = delay;
+        try {
+            this.value = supplier.get();
+        } catch (NullPointerException e) {
+            value = null;
+        }
 
-        this.value = supplier.get();
         this.min = null;
         this.max = null;
     }
@@ -48,7 +52,13 @@ public class Log<T> {
     public void update() {
         long time = System.currentTimeMillis();
         if (time - lastUpdate > delay) {
-            value = supplier.get();
+            
+            try {
+                value = supplier.get();
+            } catch (NullPointerException e) {
+                value = null;
+            } 
+            
             lastUpdate = time;
 
             if(value == null) {
