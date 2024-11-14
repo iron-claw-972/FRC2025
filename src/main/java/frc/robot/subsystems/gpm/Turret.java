@@ -228,6 +228,6 @@ public class Turret extends SubsystemBase {
      */
 
     public void calibrate() {
-        motor.set(.3); 
+        motor.set(.1); 
     }
 }   
