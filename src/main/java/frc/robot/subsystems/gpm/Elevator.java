@@ -20,8 +20,11 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -38,6 +41,14 @@ public class Elevator extends SubsystemBase {
   private DIOSim topLimitSwitchSim;
   private DIOSim bottomLimitSwitchSim;
   private boolean limitSwitchPressed = false;
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
+  private GenericEntry Voltage = tab.add("Voltage", 0).getEntry();
+  private GenericEntry height = tab.add("Height", 0).getEntry();
+  private GenericEntry leftMotorEncoder = tab.add("Voltage", 0).getEntry();
+  private GenericEntry rightMotorEncoder = tab.add("Height", 0).getEntry();
+  private GenericEntry Setpoint = tab.add("setpoint", 0).getEntry();
+  private GenericEntry FeedForward = tab.add("feedForward", 0).getEntry();
 
   // Calibration variables
   private boolean calibrated;
@@ -98,7 +109,6 @@ public class Elevator extends SubsystemBase {
   public Elevator() {    
     // Left motor follows right motor in the opposite direction
     leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
-    
     // This increases both the time and memory efficiency of the code when running on a real robot; do not remove this if statement
     if(RobotBase.isSimulation()){
       sim = new AngledElevatorSim(ElevatorConstants.MOTOR, ElevatorConstants.GEARING, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true, ElevatorConstants.START_HEIGHT, ElevatorConstants.ANGLE, ElevatorConstants.SPRING_FORCE);
@@ -110,6 +120,7 @@ public class Elevator extends SubsystemBase {
 
       topLimitSwitchSim = new DIOSim(topLimitSwitch);
       bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
+      tab.add("Elevator", getMechanism2d());
     }
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
     m_lastProfiledReference =
@@ -121,6 +132,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    setSetpoint(Setpoint.get().getDouble()); 
     // If it hits the limit switch, reset the encoder
     if(getBottomLimitSwitch() && (calibrated || !movingUp)){
       if(!limitSwitchPressed){
@@ -166,11 +178,14 @@ public class Elevator extends SubsystemBase {
     // Update our LQR to generate new voltage commands and use the voltages to predict the next
     // state with out Kalman filter.
     m_loop.predict(Constants.LOOP_TIME);
-
     // Send the new calculated voltage to the motors.
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
+    Voltage.setDouble(voltage);
+    height.setDouble(currentPosition);
+    leftMotorEncoder.setDouble(leftMotor.get());
+    rightMotorEncoder.setDouble(rightMotor.get());
     set(nextVoltage);
   }
 

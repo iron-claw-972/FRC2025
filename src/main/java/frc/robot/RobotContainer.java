@@ -91,33 +91,33 @@ public class RobotContainer {
         
       default:
       case SwerveCompetition:
-        arm = new Arm();
-        intake = new Intake();
-        index = new StorageIndex();
-        shooter = new Shooter();
+        // arm = new Arm();
+        // intake = new Intake();
+        // index = new StorageIndex();
+        // shooter = new Shooter();
  
       case SwerveTest:
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+       // vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
 
         elevator = new Elevator();
 
-        drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, arm, index, shooter);
-        operator = new Operator(intake, arm, index, shooter, drive, consumer);
+        // drive = new Drivetrain(vision);
+        // driver = new GameControllerDriverConfig(drive, arm, index, shooter);
+        // operator = new Operator(intake, arm, index, shooter, drive, consumer);
 
-        // Detected objects need access to the drivetrain
-        //DetectedObject.setDrive(drive);
+        // // Detected objects need access to the drivetrain
+        // //DetectedObject.setDrive(drive);
         
-        //SignalLogger.start();
+        // //SignalLogger.start();
 
-        driver.configureControls();
-        operator.configureControls();
-        initializeAutoBuilder();
-        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        registerCommands();
-        PathGroupLoader.loadPathGroups();
+        // driver.configureControls();
+        // operator.configureControls();
+        // initializeAutoBuilder();
+        // drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        // registerCommands();
+        // PathGroupLoader.loadPathGroups();
  
-        shuffleboardManager = new ShuffleBoardManager(drive, vision, shooter, arm, index, intake, elevator);
+        // shuffleboardManager = new ShuffleBoardManager(drive, vision, shooter, arm, index, intake, elevator);
         break;
       }
 
