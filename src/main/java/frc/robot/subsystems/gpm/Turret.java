@@ -39,7 +39,7 @@ public class Turret extends SubsystemBase {
     private boolean calibrated = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.8, 0.4, 0);
+    private final PIDController pid = new PIDController (0.8, 0.4, 0.0);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
@@ -126,33 +126,36 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-            if (!hall.get()) {
-                // TODO: the turrent angle is now known, so set the encoder offset...
-                // Hall-effect sensor sees a magnet
-                if(!hallTriggered) {
-                    if(motor.getVelocity().getValueAsDouble() > 0) {
+        // Hall-effect sensor sees a magnet
+        if (!hall.get()) {
+            if(!hallTriggered) {
+                if(motor.getVelocity().getValueAsDouble() > 0) {
+                    // Reset encoder position 
                     motor.setPosition(0);
-                    }
-                    else{   
-                        motor.setPosition(0.14);
-                    }
                 }
-                hallTriggered = true;
+                else{   
+                    // Reset encoder position with offset to account for sensor's wide detection gap 
+                    motor.setPosition(0.14);
+                }
             }
-            else {
-                hallTriggered = false; 
-            }
+            hallTriggered = true;
+        }
+        else {
+            hallTriggered = false; 
+        }
+        // Calibrate turret on start up 
         if (!calibrated) {
             calibrate();
         }
         else {
-        // get the motor position in rotatio ns
+        // get the motor position in rotations
         double motorPosition = motor.getPosition().getValueAsDouble();
 
         // convert the motor position to a turret position in radians
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
         
-    if (!useTimeConstraint || !calibrated) {
+        // Only calculate and set power to PID when time constraint is not being used 
+        if (!useTimeConstraint || !calibrated) {
             // calculate motor power to turn turret
             double power = pid.calculate(currentPosition);
 
@@ -190,45 +193,43 @@ public class Turret extends SubsystemBase {
         // }
     }
 
-
+        // Only runs once angle has been set with setAngleWithTime AND using time constraint 
         if (goalState != null && useTimeConstraint) {
-                        
+            // Initialize profile with constraints 
             TrapezoidProfile profile = new TrapezoidProfile(constraints);
-    
+            
+            // Determines setpoint and sets PID to that position 
             TrapezoidProfile.State setpoint = profile.calculate(Constants.LOOP_TIME, currentState, goalState);
-    
             pid.setSetpoint(setpoint.position);
     
             double motorPositionNow = getAngle();
             double currentPositionNow = Units.degreesToRadians(motorPositionNow);
-    
+            
+            // Calculates power based off current position and sets it to motors 
             double power = pid.calculate(currentPositionNow);
-    
             motor.set(MathUtil.clamp(power, -1, 1));
-    
+            
+            // Current state of trapezoid profile 
             currentState = new TrapezoidProfile.State(setpoint.position, setpoint.velocity);
         }
-        
-        
-        
-        
     }
 
     @Override
     public void simulationPeriodic() {
-        // find input voltage to the motor
+        // Find input voltage to the motor
         turretSim.setInput(motor.get() * Constants.ROBOT_VOLTAGE); 
 
+        // Up dates every 0.020 seconds 
         turretSim.update(Constants.LOOP_TIME);
 
-        // set the encoder
-        // get the turret position in rotations
+        // Set the encoder
+        // Get the turret position in rotations
         double turretRotations = Units.radiansToRotations(turretSim.getAngleRads());
-        // set the motor rotation by considering the gear ratio
+        // Set the motor rotation by considering the gear ratio
         encoderSim.setRawRotorPosition(turretRotations * totalGearRatio);
 
-        // simulate the Hall-effect sensor
-        // sensor goes false near 1/8 of a rotation
+        // Simulate the Hall-effect sensor
+        // Sensor goes false near 1/8 of a rotation
         hallSim.setValue(Math.abs(turretRotations - 0.125) > 0.01);
 
         RoboRioSim.setVInVoltage(
@@ -261,11 +262,13 @@ public class Turret extends SubsystemBase {
      */
     public boolean atSetpoint() {
         if (useTimeConstraint) {
+            // Use setpoint based off Trapezoidal Profile when using time constraint 
             if(Math.abs(getAngle() - Units.radiansToDegrees(goalState.position)) < 1.5) {
                 return true; 
             }
         }
         else {
+            // Use setpoint based of PID when only using PID 
             if(Math.abs(getAngle() - Units.radiansToDegrees(pid.getSetpoint())) < 1.5) {
                 return true; 
             }
@@ -275,9 +278,8 @@ public class Turret extends SubsystemBase {
 
 
     /**
-     * Turns the turret by a full revolution
+     * Spins turret to zero position and resets encoder on start up 
      */
-
     public void calibrate() {
         if (!hallTriggered) {
             motor.set(0.1); 
@@ -288,25 +290,39 @@ public class Turret extends SubsystemBase {
         }
     }
 
-    public void setAngleWithProfile(double targetAngle, double timeToReach) {
+    /**
+     * Sets the angle of turret in degrees with a time constraint in seconds  
+     *  
+     */
+    public void setAngleWithTime(double targetAngle, double timeToReach) {
+        // Calculate target setpoint, current angle, and distance 
         double targetRadians = Units.degreesToRadians(targetAngle);
         double currentRadians = currentState.position;
         double distance = Math.abs(targetRadians - currentRadians);
 
+        // Start timer  
         timer.reset();
         timer.start();
         
+        // Set max velocity to a high value so that it never runs at constant velocity 
         maxVelocity = 500; 
+        // Acceleratin derived from equation distance = (1/2)(a)(t)^2
         maxAcceleration = 4 * distance / Math.pow(timeToReach, 2);
-    
+        
+        // Create constraints based of calculated acceleration 
         constraints = new TrapezoidProfile.Constraints(
             maxVelocity, 
             maxAcceleration
         );
         
+        // Set goal state to target angle 
         goalState = new TrapezoidProfile.State(targetRadians, 0);
 
     }
+
+    /**
+     * Run method to switch between Trapezoidal Motion Profile and only PID 
+     */
     public void switchTimeConstraint() {
         useTimeConstraint = !useTimeConstraint; 
     }
