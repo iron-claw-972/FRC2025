@@ -39,7 +39,7 @@ public class Turret extends SubsystemBase {
     private boolean calibrated = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.21, 0.3, 0.002);
+    private final PIDController pid = new PIDController (0.8, 0.4, 0);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
@@ -77,9 +77,7 @@ public class Turret extends SubsystemBase {
     private double maxAcceleration;
 
     private Timer timer = new Timer();
-    private double time = 0;
-
-    private boolean useTimeConstraint = true; 
+    private boolean useTimeConstraint = false; 
 
     /**
      * Constructor for the Turret class.
@@ -140,7 +138,6 @@ public class Turret extends SubsystemBase {
                     }
                 }
                 hallTriggered = true;
-                calibrated = true;
             }
             else {
                 hallTriggered = false; 
@@ -155,7 +152,7 @@ public class Turret extends SubsystemBase {
         // convert the motor position to a turret position in radians
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
         
-        if (!useTimeConstraint) {
+    if (!useTimeConstraint || !calibrated) {
             // calculate motor power to turn turret
             double power = pid.calculate(currentPosition);
 
@@ -184,14 +181,17 @@ public class Turret extends SubsystemBase {
         //Motor velocity
         SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
 
-        SmartDashboard.putNumber("Time to reach position", time);
+        //Change between using time constrait and pid 
+        SmartDashboard.putBoolean("Use Time Constraint", useTimeConstraint); 
+        if (atSetpoint()) {
+            timer.stop(); 
+            SmartDashboard.putNumber("Time to reach setpoint", timer.get());
         }
+    }
 
 
         if (goalState != null && useTimeConstraint) {
-            timer.reset();
-            timer.start();
-            
+                        
             TrapezoidProfile profile = new TrapezoidProfile(constraints);
     
             TrapezoidProfile.State setpoint = profile.calculate(Constants.LOOP_TIME, currentState, goalState);
@@ -206,11 +206,6 @@ public class Turret extends SubsystemBase {
             motor.set(MathUtil.clamp(power, -1, 1));
     
             currentState = new TrapezoidProfile.State(setpoint.position, setpoint.velocity);
-
-            if (atSetpoint()) {
-                timer.stop();
-                time = timer.getFPGATimestamp();
-            }
         }
         
         
@@ -264,8 +259,15 @@ public class Turret extends SubsystemBase {
      * @return
      */
     public boolean atSetpoint() {
-        if(Math.abs(getAngle() - Units.radiansToDegrees(pid.getSetpoint())) < 1.5) {
-            return true; 
+        if (useTimeConstraint) {
+            if(Math.abs(getAngle() - Units.radiansToDegrees(goalState.position)) < 1.5) {
+                return true; 
+            }
+        }
+        else {
+            if(Math.abs(getAngle() - Units.radiansToDegrees(pid.getSetpoint())) < 1.5) {
+                return true; 
+            }
         }
         return false; 
     }
@@ -276,13 +278,22 @@ public class Turret extends SubsystemBase {
      */
 
     public void calibrate() {
-        motor.set(.1); 
+        if (!hallTriggered) {
+            motor.set(0.1); 
+        }
+        else {
+            motor.stopMotor(); 
+            calibrated = true; 
+        }
     }
 
     public void setAngleWithProfile(double targetAngle, double timeToReach) {
         double targetRadians = Units.degreesToRadians(targetAngle);
         double currentRadians = currentState.position;
         double distance = Math.abs(targetRadians - currentRadians);
+
+        timer.reset();
+        timer.start();
         
         maxVelocity = 500; 
         maxAcceleration = 4 * distance / Math.pow(timeToReach, 2);
@@ -295,7 +306,7 @@ public class Turret extends SubsystemBase {
         goalState = new TrapezoidProfile.State(targetRadians, 0);
 
     }
-
-    
-
+    public void switchTimeConstraint() {
+        useTimeConstraint = !useTimeConstraint; 
+    }
 }   
