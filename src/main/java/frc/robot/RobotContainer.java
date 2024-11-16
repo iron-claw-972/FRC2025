@@ -79,6 +79,13 @@ public class RobotContainer {
     SmartDashboard.putData("90", new InstantCommand(() -> turret.setAngle(90)));
     SmartDashboard.putData("180", new InstantCommand(() -> turret.setAngle(180)));
     SmartDashboard.putData("270", new InstantCommand(() -> turret.setAngle(270)));
+
+    SmartDashboard.putData("180 at 5 seconds", new InstantCommand(() -> turret.setAngleWithProfile(180, 5)));
+    SmartDashboard.putData("0 at 3 seconds", new InstantCommand(() -> turret.setAngleWithProfile(0, 3)));
+    SmartDashboard.putData("180 at 1 seconds", new InstantCommand(() -> turret.setAngleWithProfile(180, 1)));
+    SmartDashboard.putData("90 at 8 seconds", new InstantCommand(() -> turret.setAngleWithProfile(90, 8)));
+    SmartDashboard.putData("0 at 0.1 seconds", new InstantCommand(() -> turret.setAngleWithProfile(0, 0.1)));
+    
     SmartDashboard.putNumber("Angle To Turn", 0);
     SmartDashboard.putData("Turn to input angle", new InstantCommand(() -> turret.setAngle(SmartDashboard.getNumber("Angle To Turn", 0))));
     switch (robotId) {

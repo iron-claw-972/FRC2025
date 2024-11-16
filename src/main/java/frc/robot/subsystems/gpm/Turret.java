@@ -6,6 +6,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -39,7 +40,7 @@ public class Turret extends SubsystemBase {
     private boolean calibrated = false;
 
     /** PID controller for the turret. */
-    private final PIDController pid = new PIDController (0.21, 0.7, 0.0008);
+    private final PIDController pid = new PIDController (0.21, 0.3, 0.002);
 
     // TODO: change to actual motor id
     // Motor IDs should be specified in one place. Right now, I must check several files to see which motors are in use.
@@ -69,7 +70,14 @@ public class Turret extends SubsystemBase {
 
     /** Physics Turret Sim (only used during simulations) */
     private SingleJointedArmSim turretSim;
-     
+
+    private TrapezoidProfile.Constraints constraints;
+    private TrapezoidProfile.State goalState; // Target state (desired angle)
+    private TrapezoidProfile.State currentState; // Current state (current angle and velocity)
+    private double startTime;
+    private double maxVelocity;
+    private double maxAcceleration;
+
     /**
      * Constructor for the Turret class.
      * The GreyT turret (https://docs.wcproducts.com/greyt-turret-11in-id) has a
@@ -78,6 +86,8 @@ public class Turret extends SubsystemBase {
      * that meshes with the (140-tooth) turret gear.
      */
     public Turret() {
+
+        currentState = new TrapezoidProfile.State(0, 0); // Start at angle 0 with zero velocity
 
         if (RobotBase.isSimulation()) {
             // get the simulation object from the motor
@@ -169,6 +179,30 @@ public class Turret extends SubsystemBase {
         //Motor velocity
         SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
         }
+
+
+        if (goalState != null) {
+            double elapsedTime = Timer.getFPGATimestamp() - startTime;
+    
+            TrapezoidProfile profile = new TrapezoidProfile(constraints);
+    
+            TrapezoidProfile.State setpoint = profile.calculate(elapsedTime, currentState, goalState);
+    
+            pid.setSetpoint(setpoint.position);
+    
+            double motorPositionNow = motor.getPosition().getValueAsDouble();
+            double currentPositionNow = Units.rotationsToRadians(motorPositionNow / totalGearRatio);
+    
+            double power = pid.calculate(currentPositionNow);
+    
+            motor.set(MathUtil.clamp(power, -1, 1));
+    
+            currentState = new TrapezoidProfile.State(setpoint.position, setpoint.velocity);
+        }
+        
+        
+        
+        
     }
 
     @Override
@@ -230,4 +264,25 @@ public class Turret extends SubsystemBase {
     public void calibrate() {
         motor.set(.1); 
     }
+
+    public void setAngleWithProfile(double targetAngle, double timeToReach) {
+        double targetRadians = Units.degreesToRadians(targetAngle);
+        double currentRadians = currentState.position;
+        double distance = Math.abs(targetRadians - currentRadians);
+        
+                
+        maxVelocity = 500; 
+        maxAcceleration = 2 * distance / Math.pow(timeToReach, 2);
+    
+        constraints = new TrapezoidProfile.Constraints(
+            Units.degreesToRadians(maxVelocity), 
+            Units.degreesToRadians(maxAcceleration)
+        );
+        
+        goalState = new TrapezoidProfile.State(targetRadians, 0);
+        startTime = Timer.getFPGATimestamp();
+    }
+
+    
+
 }   
