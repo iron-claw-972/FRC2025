@@ -77,20 +77,22 @@ public class Vision {
     // Sets the origin to the right side of the blue alliance wall
     m_aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
 
-    // Puts the cameras in an array list
-    for (int i = 0; i < camList.size(); i++) {
-      m_cameras.add(new VisionCamera(camList.get(i).getFirst(), camList.get(i).getSecond()));
-    }
+    if(!VisionConstants.ENABLED){
+      // Puts the cameras in an array list
+      for (int i = 0; i < camList.size(); i++) {
+        m_cameras.add(new VisionCamera(camList.get(i).getFirst(), camList.get(i).getSecond()));
+      }
 
-    if(RobotBase.isSimulation()){
-      visionSim = new VisionSystemSim("Vision");
-      visionSim.addAprilTags(m_aprilTagFieldLayout);
-      for(VisionCamera c : m_cameras){
-        PhotonCameraSim cameraSim = new PhotonCameraSim(c.camera);
-        cameraSim.enableDrawWireframe(true);
-        cameraSim.prop.setAvgLatencyMs(30);
-        cameraSim.prop.setCalibration(720, 1280, Rotation2d.fromDegrees(78));
-        visionSim.addCamera(cameraSim, c.photonPoseEstimator.getRobotToCameraTransform());
+      if(RobotBase.isSimulation()){
+        visionSim = new VisionSystemSim("Vision");
+        visionSim.addAprilTags(m_aprilTagFieldLayout);
+        for(VisionCamera c : m_cameras){
+          PhotonCameraSim cameraSim = new PhotonCameraSim(c.camera);
+          cameraSim.enableDrawWireframe(true);
+          cameraSim.prop.setAvgLatencyMs(30);
+          cameraSim.prop.setCalibration(720, 1280, Rotation2d.fromDegrees(78));
+          visionSim.addCamera(cameraSim, c.photonPoseEstimator.getRobotToCameraTransform());
+        }
       }
     }
   }
@@ -181,9 +183,11 @@ public class Vision {
     for(int i = 0; i < objects.length; i++){
       objects[i] = new DetectedObject(
         Units.degreesToRadians(xOffset[i]),
-        Units.degreesToRadians(yOffset[i]),
+        -Units.degreesToRadians(yOffset[i]),
         // distance[i],
-        objectClass[i],
+        // TODO: Fix
+        // objectClass[i],
+        "cone",
         // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
         VisionConstants.OBJECT_DETECTION_CAMERAS.get(0)
       );

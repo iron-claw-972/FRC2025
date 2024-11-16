@@ -319,7 +319,7 @@ public class VisionConstants {
    */
   public static final ArrayList<Transform3d> OBJECT_DETECTION_CAMERAS = new ArrayList<>(List.of(
     new Transform3d(
-      new Translation3d(Units.inchesToMeters(-7), Units.inchesToMeters(-0.375), Units.inchesToMeters(24.6)),
-      new Rotation3d(0, Units.degreesToRadians(28), Math.PI))
+      new Translation3d(-0.33, 0.115, 0.54),
+      new Rotation3d(0, Units.degreesToRadians(31), Math.PI))
   ));
 }

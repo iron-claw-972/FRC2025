@@ -22,6 +22,8 @@ public class DetectedObject {
 
     public enum ObjectType{
         NOTE(Units.inchesToMeters(1)),
+        CONE(Units.inchesToMeters(4.5)),
+        CUBE(Units.inchesToMeters(4.5)),
         RED_ROBOT(0),
         BLUE_ROBOT(0),
         NONE(0);
@@ -267,7 +269,7 @@ public class DetectedObject {
      * @return True if the object is a game piece, false otherwise
      */
     public boolean isGamePiece(){
-        return type==ObjectType.NOTE;
+        return type==ObjectType.NOTE || type==ObjectType.CUBE || type==ObjectType.CONE;
     }
     /**
      * Returns if the object is a robot
