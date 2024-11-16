@@ -183,10 +183,11 @@ public class Turret extends SubsystemBase {
 
         //Change between using time constrait and pid 
         SmartDashboard.putBoolean("Use Time Constraint", useTimeConstraint); 
-        if (atSetpoint()) {
-            timer.stop(); 
-            SmartDashboard.putNumber("Time to reach setpoint", timer.get());
-        }
+        // TODO: FIX TIMER (CURRENTLY CAUSES ERROR; ROBOT CODE GETS MILK)
+        // if (atSetpoint()) {
+        //     timer.stop(); 
+        //     SmartDashboard.putNumber("Time to reach setpoint", timer.get());
+        // }
     }
 
 
