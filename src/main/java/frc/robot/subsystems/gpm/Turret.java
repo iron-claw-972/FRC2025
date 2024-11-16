@@ -76,6 +76,11 @@ public class Turret extends SubsystemBase {
     private double maxVelocity;
     private double maxAcceleration;
 
+    private Timer timer = new Timer();
+    private double time = 0;
+
+    private boolean useTimeConstraint = true; 
+
     /**
      * Constructor for the Turret class.
      * The GreyT turret (https://docs.wcproducts.com/greyt-turret-11in-id) has a
@@ -149,11 +154,13 @@ public class Turret extends SubsystemBase {
 
         // convert the motor position to a turret position in radians
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
+        
+        if (!useTimeConstraint) {
+            // calculate motor power to turn turret
+            double power = pid.calculate(currentPosition);
 
-        // calculate motor power to turn turret
-        // double power = pid.calculate(currentPosition);
-
-        // motor.set(MathUtil.clamp(power, -1, 1));
+            motor.set(MathUtil.clamp(power, -1, 1));
+        }
 
         // update the Mechanism2d display based on measured position
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
@@ -169,17 +176,22 @@ public class Turret extends SubsystemBase {
         // LogManager.add("Voltage With Turret", () -> RoboRioSim.getVInVoltage());
         
         //Position in degrees
-        SmartDashboard.putNumber("Turret Position", Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio)); 
+        SmartDashboard.putNumber("Turret Position", getAngle()); 
 
         //Encoder Position
         SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
 
         //Motor velocity
         SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
+
+        SmartDashboard.putNumber("Time to reach position", time);
         }
 
 
-        if (goalState != null) {
+        if (goalState != null && useTimeConstraint) {
+            timer.reset();
+            timer.start();
+            
             TrapezoidProfile profile = new TrapezoidProfile(constraints);
     
             TrapezoidProfile.State setpoint = profile.calculate(Constants.LOOP_TIME, currentState, goalState);
@@ -194,6 +206,11 @@ public class Turret extends SubsystemBase {
             motor.set(MathUtil.clamp(power, -1, 1));
     
             currentState = new TrapezoidProfile.State(setpoint.position, setpoint.velocity);
+
+            if (atSetpoint()) {
+                timer.stop();
+                time = timer.getFPGATimestamp();
+            }
         }
         
         
@@ -219,7 +236,9 @@ public class Turret extends SubsystemBase {
         hallSim.setValue(Math.abs(turretRotations - 0.125) > 0.01);
 
         RoboRioSim.setVInVoltage(
-            BatterySim.calculateDefaultBatteryLoadedVoltage(turretSim.getCurrentDrawAmps()));
+            BatterySim.calculateDefaultBatteryLoadedVoltage(turretSim.getCurrentDrawAmps())
+        );
+
     }
     
     /**
@@ -265,7 +284,6 @@ public class Turret extends SubsystemBase {
         double currentRadians = currentState.position;
         double distance = Math.abs(targetRadians - currentRadians);
         
-                
         maxVelocity = 500; 
         maxAcceleration = 4 * distance / Math.pow(timeToReach, 2);
     
@@ -275,6 +293,7 @@ public class Turret extends SubsystemBase {
         );
         
         goalState = new TrapezoidProfile.State(targetRadians, 0);
+
     }
 
     
