@@ -1,7 +1,6 @@
 package frc.robot.subsystems.gpm;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -74,7 +73,6 @@ public class Turret extends SubsystemBase {
     private TrapezoidProfile.Constraints constraints;
     private TrapezoidProfile.State goalState; // Target state (desired angle)
     private TrapezoidProfile.State currentState; // Current state (current angle and velocity)
-    private double startTime;
     private double maxVelocity;
     private double maxAcceleration;
 
@@ -153,9 +151,9 @@ public class Turret extends SubsystemBase {
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
 
         // calculate motor power to turn turret
-        double power = pid.calculate(currentPosition);
+        // double power = pid.calculate(currentPosition);
 
-        motor.set(MathUtil.clamp(power, -1, 1));
+        // motor.set(MathUtil.clamp(power, -1, 1));
 
         // update the Mechanism2d display based on measured position
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
@@ -182,16 +180,14 @@ public class Turret extends SubsystemBase {
 
 
         if (goalState != null) {
-            double elapsedTime = Timer.getFPGATimestamp() - startTime;
-    
             TrapezoidProfile profile = new TrapezoidProfile(constraints);
     
-            TrapezoidProfile.State setpoint = profile.calculate(elapsedTime, currentState, goalState);
+            TrapezoidProfile.State setpoint = profile.calculate(Constants.LOOP_TIME, currentState, goalState);
     
             pid.setSetpoint(setpoint.position);
     
-            double motorPositionNow = motor.getPosition().getValueAsDouble();
-            double currentPositionNow = Units.rotationsToRadians(motorPositionNow / totalGearRatio);
+            double motorPositionNow = getAngle();
+            double currentPositionNow = Units.degreesToRadians(motorPositionNow);
     
             double power = pid.calculate(currentPositionNow);
     
@@ -258,7 +254,6 @@ public class Turret extends SubsystemBase {
 
     /**
      * Turns the turret by a full revolution
-     * @return
      */
 
     public void calibrate() {
@@ -272,15 +267,14 @@ public class Turret extends SubsystemBase {
         
                 
         maxVelocity = 500; 
-        maxAcceleration = 2 * distance / Math.pow(timeToReach, 2);
+        maxAcceleration = 4 * distance / Math.pow(timeToReach, 2);
     
         constraints = new TrapezoidProfile.Constraints(
-            Units.degreesToRadians(maxVelocity), 
-            Units.degreesToRadians(maxAcceleration)
+            maxVelocity, 
+            maxAcceleration
         );
         
         goalState = new TrapezoidProfile.State(targetRadians, 0);
-        startTime = Timer.getFPGATimestamp();
     }
 
     
