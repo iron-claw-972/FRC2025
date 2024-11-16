@@ -113,8 +113,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public boolean getIsSlowMode() {
-    return true;
-    // return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
+    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
   }
 
   @Override
