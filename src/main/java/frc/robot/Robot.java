@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.miscConstants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
+import frc.robot.util.Log;
 import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -125,6 +127,7 @@ public class Robot extends TimedRobot {
         if (autoCommand != null) {
             autoCommand.cancel();
         }
+
     }
 
     /**

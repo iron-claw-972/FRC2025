@@ -61,7 +61,7 @@ public class Log<T> {
             
             lastUpdate = time;
 
-            if(value == null) {
+            if (value == null) {
                 // Do nothing; we don't need to record null
             } else if (isInteger()) {
                 if ((min != null) && (max != null)){

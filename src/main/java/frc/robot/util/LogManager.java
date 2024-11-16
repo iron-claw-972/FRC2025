@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import dev.doglog.DogLog;
+import frc.robot.constants.Constants;
 
 /**
  * Utilty class for logging data to the DataLogManager.
@@ -70,6 +71,84 @@ public class LogManager extends DogLog {
     log(new Log<>(name, value, updateDelay, min, max));
   }
 
+  /**
+   * Log a Log object periodically
+   * @param <T> Type of item being logged
+   * @param log The Log object to log
+   * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel}
+   */
+  public static <T> void log(Log<T> log, LogLevel minLogLevel) {
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+      logs.add(log);
+    else
+      return;
+  }
+  
+  /**
+   * Log a supplier every 20ms
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged
+   * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel} 
+   */
+  public static <T> void logSupplier(String name, Supplier<T> value, LogLevel minLogLevel) {
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+      log(new Log<>(name, value));
+    else
+      return;
+    
+  }
+
+    /**
+   * Log a supplier every 20ms with a minimum and a maxium, and if the value is outside of the min or max, it will log a fault.
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged 
+   * @param min The minimum that the value can be
+   * @param min The maximum that the value can be
+   * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel} 
+   */
+  public static <T> void logSupplier(String name, Supplier<T> value, T min, T max, LogLevel minLogLevel) {
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+      log(new Log<>(name, value, min, max));
+    else
+      return;
+  }
+
+
+  /**
+   * Log a supplier periodically
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged 
+   * @param updateDelay The amount of time, in milliseconds, between logs
+   * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel} 
+   */
+  public static <T> void logSupplier(String name, Supplier<T> value, int updateDelay, LogLevel minLogLevel) {
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+      log(new Log<>(name, value, updateDelay));
+    else
+      return;
+  }
+
+    /**
+   * Log a supplier periodically with a minimum and a maxium, and if the value is outside of the min or max, it will log a fault. 
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged 
+   * @param updateDelay The amount of time, in milliseconds, between logs
+   * @param min The minimum that the value can be
+   * @param min The maximum that the value can be
+   * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel} 
+
+   */
+  public static <T> void logSupplier(String name, Supplier<T> value, int updateDelay, T min, T max, LogLevel minLogLevel) {
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+      log(new Log<>(name, value, updateDelay, min, max));
+    else
+      return;
+  }
+
 
   public static void log(String name, int value, int min, int max) {
     log(name, value);
@@ -128,8 +207,21 @@ public class LogManager extends DogLog {
   }
 
   public enum LogLevel {
-    DEBUG,
-    COMP,
-    NONE
+    DEBUG(3),
+    INFO(2),
+    COMP(1),
+    NONE(0);
+
+    private int value;
+
+    private LogLevel(int level) {
+      this.value = level;
+    }
+
+    public int getValue() {
+      return value;
+    }
+
+
   }
 }
