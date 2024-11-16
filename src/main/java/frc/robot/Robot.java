@@ -128,6 +128,9 @@ public class Robot extends TimedRobot {
             autoCommand.cancel();
         }
 
+                LogManager.logSupplier("test/number1", () -> (Long) System.currentTimeMillis(), 0L, 100000L);
+
+
     }
 
     /**

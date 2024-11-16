@@ -12,6 +12,12 @@ import frc.robot.constants.Constants;
  */
 public class LogManager extends DogLog {
 
+  static {
+    if (Constants.LOG_LEVEL == LogLevel.NONE)
+      setEnabled(false);
+  }
+  
+  
   private static final ArrayList<Log<?>> logs = new ArrayList<>();
 
   /**
@@ -22,6 +28,52 @@ public class LogManager extends DogLog {
   public static <T> void log(Log<T> log) {
     logs.add(log);
   }
+
+  /**
+   * Log a Log object periodically
+   * @param <T> Type of item being logged
+   * @param log The Log object to log
+   * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel}
+   */
+  public static <T> void log(Log<T> log, LogLevel minLogLevel) {
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value && Constants.LOG_LEVEL.value != 0)
+      logs.add(log);
+    else
+      return;
+  }
+
+    public static void log(String name, int value, int min, int max) {
+    log(name, value);
+    
+    if (value < min || value > max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+
+  public static void log(String name, double value, double min, double max) {
+    log(name, value);
+    
+    if (value < min || value > max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+
+  public static void log(String name, long value, long min, long max) {
+    log(name, value);
+    
+    if (value < min || value > max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+
+  public static void log(String name, float value, float min, float max) {
+    log(name, value);
+    
+    if (value < min || value > max) {
+      logFault(name + " is out of specified range!");
+    }
+  }
+  
   
   /**
    * Log a supplier every 20ms
@@ -44,7 +96,6 @@ public class LogManager extends DogLog {
   public static <T> void logSupplier(String name, Supplier<T> value, T min, T max) {
     log(new Log<>(name, value, min, max));
   }
-
 
   /**
    * Log a supplier periodically
@@ -71,18 +122,6 @@ public class LogManager extends DogLog {
     log(new Log<>(name, value, updateDelay, min, max));
   }
 
-  /**
-   * Log a Log object periodically
-   * @param <T> Type of item being logged
-   * @param log The Log object to log
-   * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel}
-   */
-  public static <T> void log(Log<T> log, LogLevel minLogLevel) {
-    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
-      logs.add(log);
-    else
-      return;
-  }
   
   /**
    * Log a supplier every 20ms
@@ -92,7 +131,7 @@ public class LogManager extends DogLog {
    * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel} 
    */
   public static <T> void logSupplier(String name, Supplier<T> value, LogLevel minLogLevel) {
-    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value && Constants.LOG_LEVEL.value != 0)
       log(new Log<>(name, value));
     else
       return;
@@ -109,7 +148,7 @@ public class LogManager extends DogLog {
    * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel} 
    */
   public static <T> void logSupplier(String name, Supplier<T> value, T min, T max, LogLevel minLogLevel) {
-    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value && Constants.LOG_LEVEL.value != 0)
       log(new Log<>(name, value, min, max));
     else
       return;
@@ -125,7 +164,7 @@ public class LogManager extends DogLog {
    * @param minLogLevel Minimum log level needed to log this item @see {@link LogLevel} 
    */
   public static <T> void logSupplier(String name, Supplier<T> value, int updateDelay, LogLevel minLogLevel) {
-    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value && Constants.LOG_LEVEL.value != 0)
       log(new Log<>(name, value, updateDelay));
     else
       return;
@@ -143,44 +182,14 @@ public class LogManager extends DogLog {
 
    */
   public static <T> void logSupplier(String name, Supplier<T> value, int updateDelay, T min, T max, LogLevel minLogLevel) {
-    if (Constants.LOG_LEVEL.value >= minLogLevel.value)
+    if (Constants.LOG_LEVEL.value >= minLogLevel.value && Constants.LOG_LEVEL.value != 0)
       log(new Log<>(name, value, updateDelay, min, max));
     else
       return;
   }
 
 
-  public static void log(String name, int value, int min, int max) {
-    log(name, value);
-    
-    if (value <= min || value >= max) {
-      logFault(name + " is out of specified range!");
-    }
-  }
 
-  public static void log(String name, double value, double min, double max) {
-    log(name, value);
-    
-    if (value <= min || value >= max) {
-      logFault(name + " is out of specified range!");
-    }
-  }
-
-  public static void log(String name, long value, long min, long max) {
-    log(name, value);
-    
-    if (value <= min || value >= max) {
-      logFault(name + " is out of specified range!");
-    }
-  }
-
-  public static void log(String name, float value, float min, float max) {
-    log(name, value);
-    
-    if (value <= min || value >= max) {
-      logFault(name + " is out of specified range!");
-    }
-  }
 
   /**
    * Update logs
