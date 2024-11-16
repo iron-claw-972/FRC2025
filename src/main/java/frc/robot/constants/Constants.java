@@ -103,4 +103,6 @@ public class Constants {
     public static final boolean CONSTANT_HEADING_MAGNITUDE = false;
     public static final boolean INVERT = false;
 
+    public static final int CANDLE_ID = 1;
+    public static final String CANDLE_BUS = "rio";
 }
