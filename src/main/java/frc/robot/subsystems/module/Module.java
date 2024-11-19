@@ -22,7 +22,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
@@ -75,18 +74,18 @@ public class Module extends SubsystemBase {
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
     
-    if (Constants.DO_LOGGING) {
-            String directory_name = "Drivetrain/Module" + type.name();
-            LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
-            DriveConstants.kDriveGearRatio), 1000);
-            LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
-            LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
-            LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000);
-            LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 1000);
-            LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
-            LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValue(), 1000);
-            LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValue(), 1000);
-        }
+
+        String directory_name = "Drivetrain/Module" + type.name();
+        LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
+        DriveConstants.kDriveGearRatio), 1000);
+        LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
+        LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
+        LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000);
+        LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 1000);
+        LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
+        LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValue(), 1000);
+        LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValue(), 1000);
+
     }
 
     public void close() {

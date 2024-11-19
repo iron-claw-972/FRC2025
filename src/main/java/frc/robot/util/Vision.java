@@ -279,13 +279,13 @@ public class Vision {
               VisionConstants.POSE_STRATEGY
             );
             estimatedPoses.add(estimatedPose);
-            if(Constants.DO_LOGGING){
-              LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-                pose.getX(),
-                pose.getY(),
-                pose.getRotation().getRadians()
-              });
-            }
+
+            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+              pose.getX(),
+              pose.getY(),
+              pose.getRotation().getRadians()
+            });
+
           }catch(Exception e){
             System.out.println(e.getStackTrace());
             DriverStation.reportWarning("EXCEPTION THROWN:", true);
@@ -297,13 +297,13 @@ public class Vision {
         // April tags that don't exist might return a result that is present but doesn't have a pose
         if (estimatedPose.isPresent() && estimatedPose.get().estimatedPose != null) {
           estimatedPoses.add(estimatedPose.get());
-          if(Constants.DO_LOGGING){
-            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-              estimatedPose.get().estimatedPose.getX(),
-              estimatedPose.get().estimatedPose.getY(),
-              estimatedPose.get().estimatedPose.getRotation().getZ()
-            });
-          }
+
+          LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+            estimatedPose.get().estimatedPose.getX(),
+            estimatedPose.get().estimatedPose.getY(),
+            estimatedPose.get().estimatedPose.getRotation().getZ()
+          });
+
         }
       }
     }

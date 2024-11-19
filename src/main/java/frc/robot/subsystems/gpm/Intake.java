@@ -91,13 +91,13 @@ public class Intake extends SubsystemBase {
 
         waitTimer.start();
 
-        if (Constants.DO_LOGGING) {
-            LogManager.logSupplier("Intake/motorVolts", () -> motor.get() * Constants.ROBOT_VOLTAGE);
-            LogManager.logSupplier("Intake/centeringMotorVolts", () -> centeringMotor.get() * Constants.ROBOT_VOLTAGE);
-            
-            LogManager.logSupplier("Intake/motorRPM", () -> motor.getAbsoluteEncoder().getVelocity(), 1000);
-            LogManager.logSupplier("Intake/centeringMotorRPM", () -> centeringMotor.getAbsoluteEncoder().getVelocity(), 1000);            
-        }
+
+        LogManager.logSupplier("Intake/motorVolts", () -> motor.get() * Constants.ROBOT_VOLTAGE);
+        LogManager.logSupplier("Intake/centeringMotorVolts", () -> centeringMotor.get() * Constants.ROBOT_VOLTAGE);
+        
+        LogManager.logSupplier("Intake/motorRPM", () -> motor.getAbsoluteEncoder().getVelocity(), 1000);
+        LogManager.logSupplier("Intake/centeringMotorRPM", () -> centeringMotor.getAbsoluteEncoder().getVelocity(), 1000);            
+
 
     }
 

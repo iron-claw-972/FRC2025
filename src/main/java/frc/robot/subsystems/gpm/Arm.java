@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
-import frc.robot.constants.Constants;
 import frc.robot.util.LogManager;
 
 import java.util.ArrayList;
@@ -198,17 +197,17 @@ public class Arm extends SubsystemBase {
 
         // TODO: remove when not needed.
         // Add some test commands
-        if (Constants.DO_LOGGING) {
-            LogManager.logSupplier("Arm/PositionError", () -> getAngleRad() - pid.getSetpoint(), 1000);
-            // pid setpoint and get radians
 
-            ArrayList<Double> slave_errors = new ArrayList<Double>();
-            for (TalonFX each_talon: motors) { // could use TalonFX as it originally was. tomato tomahto
-                slave_errors.add(each_talon.getPosition().getValue()-motors[0].getPosition().getValue());
-            }
+        LogManager.logSupplier("Arm/PositionError", () -> getAngleRad() - pid.getSetpoint(), 1000);
+        // pid setpoint and get radians
 
-            // LogManager.log("Arm/SlaveErrors(ticks)", () -> slave_errors);
+        ArrayList<Double> slave_errors = new ArrayList<Double>();
+        for (TalonFX each_talon: motors) { // could use TalonFX as it originally was. tomato tomahto
+            slave_errors.add(each_talon.getPosition().getValue()-motors[0].getPosition().getValue());
         }
+
+        // LogManager.log("Arm/SlaveErrors(ticks)", () -> slave_errors);
+
     
 	//SmartDashboard.putBoolean("Arm Enabled", armEnabled);
     }

@@ -24,7 +24,6 @@ public class Constants {
     public static final String RIO_CAN = "rio";
 
     // Logging 
-    public static final boolean DO_LOGGING = true;
     public static final LogLevel LOG_LEVEL = LogLevel.DEBUG;
     public static final boolean USE_TELEMETRY = true;
 

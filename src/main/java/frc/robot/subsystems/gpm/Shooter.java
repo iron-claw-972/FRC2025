@@ -98,18 +98,18 @@ public class Shooter extends SubsystemBase {
 			rightFlywheelSim = new FlywheelSim(gearbox, gearRatio, MOI_SHAFT);
 		}
 		
-		if (Constants.DO_LOGGING) {
-			LogManager.logSupplier("Shooter/MotorSpeedDifference", () -> getMotorSpeedDifference(), 1000);
-			LogManager.logSupplier("Shooter/LeftSpeedError", () -> leftPID.getSetpoint() - getLeftMotorSpeed(), 1000);
-			LogManager.logSupplier("Shooter/RightSpeedError", () -> rightPID.getSetpoint() - getRightMotorSpeed(), 1000);
 
-			LogManager.logSupplier("Shooter/VoltsLeft", () -> leftMotor.get() * Constants.ROBOT_VOLTAGE, 1000);	
-			
-			LogManager.logSupplier("Shooter/VoltsRight", () -> rightMotor.get() * Constants.ROBOT_VOLTAGE, 1000);
+		LogManager.logSupplier("Shooter/MotorSpeedDifference", () -> getMotorSpeedDifference(), 1000);
+		LogManager.logSupplier("Shooter/LeftSpeedError", () -> leftPID.getSetpoint() - getLeftMotorSpeed(), 1000);
+		LogManager.logSupplier("Shooter/RightSpeedError", () -> rightPID.getSetpoint() - getRightMotorSpeed(), 1000);
+
+		LogManager.logSupplier("Shooter/VoltsLeft", () -> leftMotor.get() * Constants.ROBOT_VOLTAGE, 1000);	
 		
-			LogManager.logSupplier("Shooter/Leftspd", () -> leftPID.getSetpoint() - getLeftMotorSpeed());
-			LogManager.logSupplier("Shooter/Rightspd", () -> getRightMotorSpeed());
-		}
+		LogManager.logSupplier("Shooter/VoltsRight", () -> rightMotor.get() * Constants.ROBOT_VOLTAGE, 1000);
+	
+		LogManager.logSupplier("Shooter/Leftspd", () -> leftPID.getSetpoint() - getLeftMotorSpeed());
+		LogManager.logSupplier("Shooter/Rightspd", () -> getRightMotorSpeed());
+
 	}
 
 	@Override
