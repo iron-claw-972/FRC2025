@@ -42,7 +42,15 @@ public class LogManager extends DogLog {
       return;
   }
 
-    public static void log(String name, int value, int min, int max) {
+    /**
+   * Log a supplier and log if it is in the specified range
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Current int value being logged 
+   * @param min The minimum that the value can be
+   * @param max The maximum that the value can be
+   */ 
+  public static void log(String name, int value, int min, int max) {
     log(name, value);
     
     if (value < min || value > max) {
@@ -50,6 +58,14 @@ public class LogManager extends DogLog {
     }
   }
 
+  /**
+   * Log a supplier and log if it is in the specified range
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Current double value being logged 
+   * @param min The minimum that the value can be
+   * @param max The maximum that the value can be
+   */
   public static void log(String name, double value, double min, double max) {
     log(name, value);
     
@@ -58,6 +74,14 @@ public class LogManager extends DogLog {
     }
   }
 
+  /**
+   * Log a supplier and log if it is in the specified range
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Current long value being logged 
+   * @param min The minimum that the value can be
+   * @param max The maximum that the value can be
+   */
   public static void log(String name, long value, long min, long max) {
     log(name, value);
     
@@ -66,6 +90,14 @@ public class LogManager extends DogLog {
     }
   }
 
+    /**
+   * Log a supplier and log if it is in the specified range
+   * @param <T> Type of item being logged
+   * @param name Name (key) of item being logged
+   * @param value Supplier for value being logged 
+   * @param min The minimum that the value can be
+   * @param max The maximum that the value can be
+   */
   public static void log(String name, float value, float min, float max) {
     log(name, value);
     
@@ -74,8 +106,7 @@ public class LogManager extends DogLog {
     }
   }
   
-  
-  /**
+    /**
    * Log a supplier every 20ms
    * @param <T> Type of item being logged
    * @param name Name (key) of item being logged
@@ -187,9 +218,6 @@ public class LogManager extends DogLog {
     else
       return;
   }
-
-
-
 
   /**
    * Update logs
