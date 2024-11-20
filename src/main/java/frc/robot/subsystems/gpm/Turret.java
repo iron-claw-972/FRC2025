@@ -305,10 +305,16 @@ public class Turret extends SubsystemBase {
         timer.start();
         
         // Set max velocity to a high value so that it never runs at constant velocity 
-        maxVelocity = 500; 
+        // maxVelocity = 500; 
         // Acceleratin derived from equation distance = (1/2)(a)(t)^2
-        maxAcceleration = 4 * distance / Math.pow(timeToReach, 2);
+        // maxAcceleration = 4 * distance / Math.pow(timeToReach, 2);
         
+
+        // Calculations for more linear motion and constant acceleration always 
+        maxAcceleration = 20; // TODO: find good max acceleration near motor's rpm 
+        // Solved for v in the equation from x = -v^2 / a + vt
+        maxVelocity = ((maxAcceleration * timeToReach) + Math.sqrt((Math.pow(maxAcceleration, 2))*(Math.pow(timeToReach, 2)) - (4 * maxAcceleration * distance))) / 2;
+
         // Create constraints based of calculated acceleration 
         constraints = new TrapezoidProfile.Constraints(
             maxVelocity, 
