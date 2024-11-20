@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.LogManager;
 import frc.robot.util.MathUtils;
