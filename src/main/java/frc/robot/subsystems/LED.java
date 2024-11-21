@@ -38,7 +38,7 @@ public class LED extends SubsystemBase {
         // config.stripType = LEDStripType.RGB;
         // config.brightnessScalar = 1;
         // config.vBatOutputMode = VBatOutputMode.Modulated;
-        // // config.v5Enabled = false;
+        // config.v5Enabled = false;
 
         // candle.configAllSettings(config, 10000);
 
@@ -78,6 +78,10 @@ public class LED extends SubsystemBase {
 
         // candle.animate(new TwinkleOffAnimation(255, 127, 0, 0, 0.8, stripLength,
         // TwinkleOffPercent.Percent100));
+
+        candle.animate(null);
+
+        alternate(255, 0, 0, 0, 255, 0, 1, 5, stripLength);
 
     }
 
