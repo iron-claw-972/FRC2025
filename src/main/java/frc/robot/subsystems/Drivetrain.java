@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -88,6 +89,9 @@ public class Drivetrain extends SubsystemBase {
     private boolean drive_turning = false;
 
     private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
+    LaserCan lasercan = new LaserCan(0);
+    LaserCan.Measurement measurement = lasercan.getMeasurement();
+
 
 
 
@@ -173,6 +177,11 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         updateOdometry();
+        LaserCan.Measurement measurement = lasercan.getMeasurement();
+
+    if (measurement != null) {
+        System.out.println("The target is " + measurement.distance_mm + "mm away!");
+    }
     }
 
     // DRIVE
