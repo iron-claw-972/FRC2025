@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.ChoreoPathCommand;
-import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.gpm.IntakeNote;
 import frc.robot.commands.gpm.PrepareShooter;
 import frc.robot.constants.ShooterConstants;
@@ -44,7 +43,7 @@ public class AutoTab extends ShuffleBoardTabs {
     
     public void createEntries(){  
         tab = Shuffleboard.getTab("Auto");
-        // autoCommand.setDefaultOption("Do nothing", new DoNothing());
+        autoCommand.setDefaultOption("Do nothing", new DoNothing());
         // autoCommand.addOption("5 piece (original-tested)", new FollowPathCommand("5 piece (original-tested)",true, drive));
         // autoCommand.addOption("5.5 piece (original-tested)", new FollowPathCommand("5.5 piece (original-tested)",true, drive));
         // autoCommand.addOption("3 piece [v3]", new FollowPathCommand("3 piece [v3]",true, drive));
@@ -171,7 +170,7 @@ public class AutoTab extends ShuffleBoardTabs {
         
 
 //         Repleacement Auto, don't delete
-        autoCommand.addOption("lol", new FollowPathCommand("lol",true, drive));
+        // autoCommand.addOption("lol", new FollowPathCommand("lol",true, drive));
 
 
          tab.add(autoCommand);
@@ -184,6 +183,7 @@ public class AutoTab extends ShuffleBoardTabs {
         return autoCommand;
     }
 
+    @SuppressWarnings("unused") // TODO: Delete when deleting 2024 code
     private ParallelCommandGroup intakeAndSubwooferShot(String pathName) {
         return new ParallelCommandGroup(
                 new IntakeNote(intake, indexer, arm, (ignored) -> {})
@@ -199,6 +199,7 @@ public class AutoTab extends ShuffleBoardTabs {
                        .andThen(new InstantCommand(() -> indexer.stopIndex()));
     }
 
+    @SuppressWarnings("unused") // TODO: Delete when deleting 2024 code
     private Command prepare() {
         return new SequentialCommandGroup(
                 new PrepareShooter(shooter, Shooter.addSlip(Shooter.shooterSpeedToRPM(ShooterConstants.SHOOT_SPEED_MPS-1.0))),
