@@ -43,10 +43,10 @@ public class VisionConstants {
   public static final boolean ENABLED_GO_TO_POSE = true;
 
   /** If vision should be simulated */
-  public static final boolean ENABLED_SIM = false;
+  public static final boolean ENABLED_SIM = true;
 
   /** If vision should only return values if it can see 2 good targets */
-  public static final boolean ONLY_USE_2_TAGS = false;
+  public static final boolean ONLY_USE_2_TAGS = true;
 
   /** PoseStrategy to use in pose estimation */
   public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
@@ -67,14 +67,14 @@ public class VisionConstants {
    * <p>
    * To find this, set it to 1 and measure the actual distance and the calculated distance.
    */
-  public static final double DISTANCE_SCALE = 0.8;
+  public static final double DISTANCE_SCALE = 1;
 
   /**
    * The standard deviations to use for the vision
    */
   public static final Matrix<N3, N1> VISION_STD_DEVS = VecBuilder.fill(
-    0.007340, // x in meters (default=0.9)
-    0.00571, // y in meters (default=0.9)
+    0.9, // x in meters (default=0.9)
+    0.9, // y in meters (default=0.9)
     0.9  // heading in radians. The gyroscope is very accurate, so as long as it is reset correctly it is unnecessary to correct it with vision
   );
 

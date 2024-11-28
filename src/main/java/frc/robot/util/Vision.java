@@ -23,7 +23,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -44,12 +43,15 @@ public class Vision {
   
   // The field layout. Instance variable
   private AprilTagFieldLayout m_aprilTagFieldLayout;
-  // A list of the cameras on the robot. TODO: Why is this nested? 
+  // A list of the cameras on the robot.
   private ArrayList<VisionCamera> m_cameras = new ArrayList<>();
 
   private VisionSystemSim visionSim;
 
   private boolean sawTag = false;
+
+  // Array of tags to use, null or empty array to use all tags
+  private int[] onlyUse = null;
 
   /**
    * Creates a new instance of Vision and sets up the cameras and field layout
@@ -367,13 +369,11 @@ public class Vision {
     }
   }
   /**
-   * Sets the cameras to only use one April tag
-   * @param id The id of the tag to use
+   * Sets the cameras to only use April tag in the specified array
+   * @param ids The ids of the tags to use, null or empty array to use all
    */
   public void onlyUse(int[] ids){
-    for(VisionCamera c : m_cameras){
-      c.setOnlyUse(ids);
-    }
+    onlyUse = ids;
   }
 
   /**
@@ -391,7 +391,6 @@ public class Vision {
     Pose2d lastPose;
     double lastTimestamp = 0;
     boolean enabled = true;
-    int[] onlyUse = new int[0];
   
     /**
      * Stores information about a camera
@@ -434,11 +433,10 @@ public class Vision {
       List<PhotonTrackedTarget> targetsUsed = cameraResult.targets;
       for (int i = targetsUsed.size()-1; i >= 0; i--) {
         // found = only use is empty or this tag is in only use
-        boolean found = onlyUse.length == 0;
-        for(int id : onlyUse){
-          if(targetsUsed.get(i).getFiducialId() == id){
+        boolean found = onlyUse == null || onlyUse.length == 0;
+        for(int j = 0; !found && j < onlyUse.length; j++){
+          if(targetsUsed.get(i).getFiducialId() == onlyUse[j]){
             found = true;
-            break;
           }
         }
         // Set found to false if it is in the list of tags to ignore
@@ -505,18 +503,18 @@ public class Vision {
       Transform3d robotToCamera = photonPoseEstimator.getRobotToCameraTransform();
 
       // Get the tag position relative to the robot, assuming the robot is on the ground
-      Translation3d translation = new Translation3d(1, new Rotation3d(0, -Units.degreesToRadians(target.getPitch()), -Units.degreesToRadians(target.getYaw())));
-      translation = translation.rotateBy(robotToCamera.getRotation());
-      translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ());
-      translation = translation.plus(robotToCamera.getTranslation());
-      translation = translation.rotateBy(new Rotation3d(0, 0, yaw));
+      Translation3d translation = target.getBestCameraToTarget().getTranslation()
+        .rotateBy(robotToCamera.getRotation());
+      translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ())
+        .plus(robotToCamera.getTranslation())
+        .rotateBy(new Rotation3d(0, 0, yaw))
 
       // Invert it to get the robot position relative to the April tag
-      translation = translation.times(-1);
+        .times(-1)
       // Multiply by a constant. I don't know why this works, but it was consistently 10% off in 2023 Fall Semester
-      translation = translation.times(VisionConstants.DISTANCE_SCALE);
+        .times(VisionConstants.DISTANCE_SCALE)
       // Get the field relative robot pose
-      translation = translation.plus(targetPose.getTranslation());
+        .plus(targetPose.getTranslation());
       // Return as a Pose2d
       return new Pose2d(translation.toTranslation2d(), new Rotation2d(yaw));
     }
@@ -543,13 +541,6 @@ public class Vision {
      */
     public void enable(boolean enable){
       enabled = enable;
-    }
-    /**
-     * Sets the camera to only use 1 April tag
-     * @param id The id of the tag to use, or 0 to use all
-     */
-    public void setOnlyUse(int[] ids){
-      onlyUse = ids;
     }
   }
 }
