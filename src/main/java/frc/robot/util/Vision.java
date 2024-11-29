@@ -1,6 +1,5 @@
 package frc.robot.util;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.constants.Constants;
 import frc.robot.constants.miscConstants.FieldConstants;
 import frc.robot.constants.miscConstants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
@@ -282,13 +280,13 @@ public class Vision {
               VisionConstants.POSE_STRATEGY
             );
             estimatedPoses.add(estimatedPose);
-            if(Constants.DO_LOGGING){
-              LogManager.add("Vision/camera " + i + "/estimated pose2d", () -> new Double[] {
-                pose.getX(),
-                pose.getY(),
-                pose.getRotation().getRadians()
-              }, Duration.ofSeconds(1));
-            }
+
+            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+              pose.getX(),
+              pose.getY(),
+              pose.getRotation().getRadians()
+            });
+
           }catch(Exception e){
             System.out.println(e.getStackTrace());
             DriverStation.reportWarning("EXCEPTION THROWN:", true);
@@ -300,13 +298,13 @@ public class Vision {
         // April tags that don't exist might return a result that is present but doesn't have a pose
         if (estimatedPose.isPresent() && estimatedPose.get().estimatedPose != null) {
           estimatedPoses.add(estimatedPose.get());
-          if(Constants.DO_LOGGING){
-            LogManager.add("Vision/camera " + i + "/estimated pose2d", () -> new Double[] {
-              estimatedPose.get().estimatedPose.getX(),
-              estimatedPose.get().estimatedPose.getY(),
-              estimatedPose.get().estimatedPose.getRotation().getZ()
-            }, Duration.ofSeconds(1));
-          }
+
+          LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+            estimatedPose.get().estimatedPose.getX(),
+            estimatedPose.get().estimatedPose.getY(),
+            estimatedPose.get().estimatedPose.getRotation().getZ()
+          });
+
         }
       }
     }

@@ -174,5 +174,8 @@ ctre_sim/*
 # File that has git and version data
 src/main/java/frc/robot/util/BuildData.java
 
+# Log files from simulation
+logs/
+
 # IntelliJ IDEA files
 .idea/
