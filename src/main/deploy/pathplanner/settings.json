@@ -1,0 +1,21 @@
+{
+  "robotWidth": 0.875,
+  "robotLength": 0.875,
+  "holonomicMode": true,
+  "pathFolders": [],
+  "autoFolders": [],
+  "defaultMaxVel": 4.94,
+  "defaultMaxAccel": 9.8,
+  "defaultMaxAngVel": 759.4,
+  "defaultMaxAngAccel": 1000.0,
+  "robotMass": 65.8,
+  "robotMOI": 6.48,
+  "robotWheelbase": 0.537,
+  "robotTrackwidth": 0.527,
+  "driveWheelRadius": 0.048,
+  "driveGearing": 5.9,
+  "maxDriveSpeed": 4.94,
+  "driveMotorType": "krakenX60FOC",
+  "driveCurrentLimit": 68.0,
+  "wheelCOF": 1.0
+}
