@@ -45,7 +45,7 @@ public class RobotContainer {
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
-  private Operator operator =null;
+  private Operator operator = null;
   ShuffleBoardManager shuffleboardManager = null;
 
   Consumer<Boolean> consumer = bool -> {
@@ -81,7 +81,7 @@ public class RobotContainer {
         
       default:
       case SwerveCompetition:
-        arm = new Arm();
+        // arm = new Arm();
         intake = new Intake();
         index = new StorageIndex();
         shooter = new Shooter();

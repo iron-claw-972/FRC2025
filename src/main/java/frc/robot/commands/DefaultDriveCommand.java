@@ -4,7 +4,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.Drivetrain;
@@ -29,11 +28,9 @@ public class DefaultDriveCommand extends Command {
     @Override
     public void initialize() {
         swerve.setStateDeadband(true);
-        if (Constants.DO_LOGGING) {
-            LogManager.add("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
-            LogManager.add("DriveControls/SideTranslation", () -> driver.getSideTranslation());
-            LogManager.add("DriveControls/Rotation", () -> driver.getRotation());
-        }
+        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
+        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation());
+        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation());
     }
 
     @Override

@@ -154,18 +154,17 @@ public class Drivetrain extends SubsystemBase {
         rotationController = new PIDController(DriveConstants.kHeadingP, 0, DriveConstants.kHeadingD);
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
         rotationController.setTolerance(Units.degreesToRadians(0.25), Units.degreesToRadians(0.25));
-        if (Constants.DO_LOGGING) {
-            LogManager.add("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond);
-            LogManager.add("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond);
-            LogManager.add("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond));
-            LogManager.add("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond);
-        
-            LogManager.add("Drivetrain/Pose2d", () -> new Double[]{
-                getPose().getX(),
-                getPose().getY(),
-                getPose().getRotation().getRadians()
-                });
-            }
+
+        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond);
+        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond);
+        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond));
+        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond);
+    
+        LogManager.logSupplier("Drivetrain/Pose2d", () -> new Double[]{
+            getPose().getX(),
+            getPose().getY(),
+            getPose().getRotation().getRadians()
+            });
     }
 
     public void close() {
