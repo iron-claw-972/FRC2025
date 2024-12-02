@@ -16,8 +16,6 @@ import frc.robot.constants.ShooterConstants;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
 
-import java.time.Duration;
-
 public class Shooter extends SubsystemBase {
 	// each of the shooter shafts is driven by one Neo Vortex motor
 	protected static final DCMotor gearbox = DCMotor.getNeoVortex(1);
@@ -100,18 +98,18 @@ public class Shooter extends SubsystemBase {
 			rightFlywheelSim = new FlywheelSim(gearbox, gearRatio, MOI_SHAFT);
 		}
 		
-		if (Constants.DO_LOGGING) {
-			LogManager.add("Shooter/MotorSpeedDifference", () -> getMotorSpeedDifference(), Duration.ofSeconds(1));
-			LogManager.add("Shooter/LeftSpeedError", () -> leftPID.getSetpoint() - getLeftMotorSpeed(), Duration.ofSeconds(1));
-			LogManager.add("Shooter/RightSpeedError", () -> rightPID.getSetpoint() - getRightMotorSpeed(), Duration.ofSeconds(1));
 
-			LogManager.add("Shooter/VoltsLeft", () -> leftMotor.get() * Constants.ROBOT_VOLTAGE, Duration.ofSeconds(1));	
-			
-			LogManager.add("Shooter/VoltsRight", () -> rightMotor.get() * Constants.ROBOT_VOLTAGE, Duration.ofSeconds(1));
+		LogManager.logSupplier("Shooter/MotorSpeedDifference", () -> getMotorSpeedDifference(), 1000);
+		LogManager.logSupplier("Shooter/LeftSpeedError", () -> leftPID.getSetpoint() - getLeftMotorSpeed(), 1000);
+		LogManager.logSupplier("Shooter/RightSpeedError", () -> rightPID.getSetpoint() - getRightMotorSpeed(), 1000);
+
+		LogManager.logSupplier("Shooter/VoltsLeft", () -> leftMotor.get() * Constants.ROBOT_VOLTAGE, 1000);	
 		
-			LogManager.add("Shooter/Leftspd", () -> leftPID.getSetpoint() - getLeftMotorSpeed());
-			LogManager.add("Shooter/Rightspd", () -> getRightMotorSpeed());
-		}
+		LogManager.logSupplier("Shooter/VoltsRight", () -> rightMotor.get() * Constants.ROBOT_VOLTAGE, 1000);
+	
+		LogManager.logSupplier("Shooter/Leftspd", () -> leftPID.getSetpoint() - getLeftMotorSpeed());
+		LogManager.logSupplier("Shooter/Rightspd", () -> getRightMotorSpeed());
+
 	}
 
 	@Override
