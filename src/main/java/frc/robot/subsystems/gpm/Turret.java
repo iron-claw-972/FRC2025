@@ -311,9 +311,17 @@ public class Turret extends SubsystemBase {
         
 
         // Calculations for more linear motion and constant acceleration always 
-        maxAcceleration = 20; // TODO: find good max acceleration near motor's rpm 
+        maxAcceleration = Math.min(0.5, 4 * distance / Math.pow(timeToReach, 2)); // TODO: find good max acceleration near motor's rpm 
         // Solved for v in the equation from x = -v^2 / a + vt
-        maxVelocity = ((maxAcceleration * timeToReach) + Math.sqrt((Math.pow(maxAcceleration, 2))*(Math.pow(timeToReach, 2)) - (4 * maxAcceleration * distance))) / 2;
+        double discriminant = Math.pow(maxAcceleration * timeToReach, 2) - 4 * maxAcceleration * distance;
+
+        if (discriminant >= 0) {
+            maxVelocity = ((maxAcceleration * timeToReach) + Math.sqrt((Math.pow(maxAcceleration, 2))*(Math.pow(timeToReach, 2)) - (4 * maxAcceleration * distance))) / 2;
+        }
+        else {
+            maxVelocity = Math.sqrt(2 * maxAcceleration * distance);
+        }
+
 
         // Create constraints based of calculated acceleration 
         constraints = new TrapezoidProfile.Constraints(
