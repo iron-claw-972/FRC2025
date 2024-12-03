@@ -82,14 +82,14 @@ public class RobotContainer {
         break;
       case Vertigo:
           drive = new Drivetrain(vision);
-          driver = new GameControllerDriverConfig(drive, arm, index, shooter);
+          driver = new GameControllerDriverConfig(drive, arm, intake, index, shooter);
           driver.configureControls();
           drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
           break;
         
       default:
       case SwerveCompetition:
-        // arm = new Arm();
+        arm = new Arm();
         intake = new Intake();
         index = new StorageIndex();
         shooter = new Shooter();
@@ -99,8 +99,8 @@ public class RobotContainer {
 
 
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, arm, index, shooter);
-        operator = new Operator(intake, arm, index, shooter, drive, consumer);
+        driver = new GameControllerDriverConfig(drive, arm, intake, index, shooter);
+        // operator = new Operator(intake, arm, index, shooter, drive, consumer);
 
         // Detected objects need access to the drivetrain
         //DetectedObject.setDrive(drive);

@@ -1,12 +1,10 @@
 package frc.robot.subsystems.gpm;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -64,7 +62,6 @@ public class Arm extends SubsystemBase {
 
     // DutyCycle control
     // TODO: change to voltage control
-    private final DutyCycleOut m_request = new DutyCycleOut(0);
     public double dutyCycle = 0;
 
     /**
@@ -103,7 +100,6 @@ public class Arm extends SubsystemBase {
     public static final double S = 0;
     public static final double G = 0.02;
     public static final double V = 0;
-    private final ArmFeedforward feedforward = new ArmFeedforward(S, G, V);
 
     /** arm simulator */
     private SingleJointedArmSim simulation;
@@ -218,7 +214,8 @@ public class Arm extends SubsystemBase {
      */
     double getRadians() {
         // using the REV absolute sensor is easy
-        return encoder.getDistance();
+        // return encoder.getDistance();
+        return getAngleRad();
 
         // using the motor encoder is more difficult
         // refresh the position (needed because we want it more often than 4 Hz)
@@ -228,78 +225,8 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("abs value", encoder.getAbsolutePosition());
-        SmartDashboard.putNumber("arm fudge factor", ArmConstants.armFudgeFactor);
-        SmartDashboard.putNumber("arm fudge changes", ArmConstants.armFudgeFactorChanges);
-
-        if(Math.abs(pid.getSetpoint() - ArmConstants.stowedSetpoint) < 0.05 && pid.atSetpoint()) {
-				//motors[0].set(0);
-        }
-        SmartDashboard.putNumber("get Position", getPosition());
-        // SmartDashboard.putData("arm pid", pid);
-        // SmartDashboard.putBoolean("if at setpoint", pid.atSetpoint());
-        // Disable the arm if it is out of range
-		if (getAngleRad() < ArmConstants.MIN_ANGLE_RADS - ArmConstants.ANGLE_TOLERANCE || getAngleRad() > ArmConstants.MAX_ANGLE_RADS + ArmConstants.ANGLE_TOLERANCE) {
-			System.err.println("WARNING: THE ARM IS IN A SUPPOSEDLY UNREACHABLE POSITION AND HAS BEEN DISABLED. Found: " + getAngleRad() + ", Expected: " + ArmConstants.stowedSetpoint);
-			for (int i = 0; i < motors.length; i++) {
-				// irrelevant for next line: motors[i].setNeutralMode(NeutralModeValue.Coast);
-                System.err.println("hwat");
-			}
-            return;
-		}
-
-        // Clamp the PID setpoint in case an out of range value slips in ...
-        double setpoint = pid.getSetpoint();
-        if (setpoint < ArmConstants.MIN_ANGLE_RADS) {
-            pid.setSetpoint(ArmConstants.MIN_ANGLE_RADS);
-            setpoint = ArmConstants.MIN_ANGLE_RADS;
-        }
-        if (setpoint > ArmConstants.MAX_ANGLE_RADS) {
-            pid.setSetpoint(ArmConstants.MAX_ANGLE_RADS);
-            setpoint = ArmConstants.MAX_ANGLE_RADS;
-        }
-
-
-        // calculate the desired duty cycle
-        // if(encoder.getDistance() < ArmConstants.MAX_ANGLE_RADS + .2 && encoder.getDistance() > ArmConstants.MIN_ANGLE_RADS - .2)  {
-        dutyCycle = MathUtil.clamp(
-                        pid.calculate(getAngleRad()) + feedforward.calculate(pid.getSetpoint(), 0),
-                        -1,
-                        1);
-        // SmartDashboard.putNumber("pid output", pid.calculate(getAngleRad()));
-        // SmartDashboard.putNumber("duty cycle", dutyCycle);
-
-        // }
-        // else
-        // {
-        //     for(int i=0;i<motors.length;i++) {
-        //         motors[i].setNeutralMode(NeutralModeValue.Coast);
-        //     }
-
-        // }
-
-        // use the Phoenix 6 version of setting the motor "power"
-        motors[0].setControl(m_request.withOutput(dutyCycle));
-
-        // report the arm angle in radians
-
-
-        // TODO: Clean these up when not needed.
-        // report dutycycle
-       // SmartDashboard.putNumber("arm pow", dutyCycle);
-
-        // these use the motor's internal encoder (not the REV absolute encoder)
-        // report the rotor position. This should trigger an update so we get results faster than 4 times per second.)
-        // SmartDashboard.putNumber("Rotor Signal", Units.rotationsToRadians(rotorPositionSignal.getValue()));
-        // check the latency
-        // SmartDashboard.putNumber("Rotor delay", rotorPositionSignal.getTimestamp().getLatency());
-        
-        // report the absolute position in rotations. Use the abs rotations to set the OFFSET.
-        //SmartDashboard.putNumber("REV ABS", encoder.getAbsolutePosition());
-        //SmartDashboard.putNumber("get Position", getPosition());
-        // report whether the arm has reached its setpoint
-        //SmartDashboard.putBoolean("at setpoint?", atSetpoint());
-        // report the arm current
+        // The arm should not move for the demo
+        motors[0].set(0);
     }
 
     @Override
@@ -337,11 +264,6 @@ public class Arm extends SubsystemBase {
      * @param angle (in radians)
      */
     public void setAngle(double angle) {
-		if (!armEnabled) {
-			System.out.println("WARNING: Set failed because the arm is disabled.");
-			return;
-		}
-
         // zero the integrator portion of the PID controller
         pid.reset();
 
@@ -357,11 +279,7 @@ public class Arm extends SubsystemBase {
      * @returns arm angle in radians
      */
     public double getAngleRad() {
-        if(RobotBase.isSimulation()){
-            return encoder.getDistance();
-        }else{
-            return getPosition();
-        }
+        return ArmConstants.MIN_ANGLE_RADS;
     }
 
     /**
@@ -373,8 +291,7 @@ public class Arm extends SubsystemBase {
      */
     @Deprecated
     public double getPosition()  {
-        double angle = -Units.rotationsToRadians(encoder.getAbsolutePosition() - encoder.getPositionOffset());
-        return MathUtil.angleModulus(angle);
+        return getAngleRad();
     }
 
     /**
@@ -382,7 +299,7 @@ public class Arm extends SubsystemBase {
      * @return true when the setpoint is reached.
      */
     public boolean atSetpoint() {
-        return pid.atSetpoint();
+        return true;
     }
 
     /**
