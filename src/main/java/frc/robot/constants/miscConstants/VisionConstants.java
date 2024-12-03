@@ -1,7 +1,4 @@
 package frc.robot.constants.miscConstants;
-/**
- * Container class for vision constants.
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +22,9 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.swerve.DriveConstants;
 
+/**
+ * Container class for vision constants.
+ */
 public class VisionConstants {
   /**
    * If April tag vision is enabled on the robot

@@ -7,7 +7,7 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Units;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -22,7 +22,7 @@ public class SysIDDriveCommand extends SequentialCommandGroup {
     private SysId sysId;
     public SysIDDriveCommand(Drivetrain drive) {
         config = new Config(
-            Units.Volts.of(0.5).per(Units.Seconds.of(1)),
+            Units.Volts.of(0.5).per(Units.Seconds),
             Units.Volts.of(3),
             Units.Seconds.of(5),
             (x)->SignalLogger.writeString("state", x.toString())

@@ -37,18 +37,7 @@ public class RobotContainer {
   // Controllers are defined here
   private BaseDriverConfig driver = null;
   private Operator operator = null;
-  ShuffleBoardManager shuffleboardManager = null;
-
-  Consumer<Boolean> consumer = bool -> {
-    if (bool){
-        operator.getGameController().setRumble(RumbleStatus.RUMBLE_ON);
-      ((GameControllerDriverConfig) driver).getGameController().setRumble(RumbleStatus.RUMBLE_ON);
-    }
-    else{
-        operator.getGameController().setRumble(RumbleStatus.RUMBLE_OFF);
-        ((GameControllerDriverConfig) driver).getGameController().setRumble(RumbleStatus.RUMBLE_OFF);
-    }
-};
+  private ShuffleBoardManager shuffleboardManager = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -80,7 +69,7 @@ public class RobotContainer {
 
         drive = new Drivetrain(vision);
         driver = new GameControllerDriverConfig(drive);
-        operator = new Operator(drive, consumer);
+        operator = new Operator(drive);
 
         // Detected objects need access to the drivetrain
         //DetectedObject.setDrive(drive);

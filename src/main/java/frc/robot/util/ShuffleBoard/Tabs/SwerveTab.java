@@ -14,8 +14,6 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.module.Module;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
-
-
 /** Add your docs here. */
 public class SwerveTab extends ShuffleBoardTabs {
     
