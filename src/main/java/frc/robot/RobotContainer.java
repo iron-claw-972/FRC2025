@@ -81,10 +81,11 @@ public class RobotContainer {
         index = new StorageIndex();
         break;
       case Vertigo:
-          drive = new Drivetrain(vision);
-          driver = new GameControllerDriverConfig(drive, arm, index, shooter);
-          driver.configureControls();
-          drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        drive = new Drivetrain(vision);
+        driver = new GameControllerDriverConfig(drive, arm, index, shooter);
+        driver.configureControls();
+        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        shuffleboardManager = new ShuffleBoardManager(drive, vision, shooter, arm, index, intake);
           break;
         
       default:

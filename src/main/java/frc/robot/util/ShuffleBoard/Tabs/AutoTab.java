@@ -43,6 +43,7 @@ public class AutoTab extends ShuffleBoardTabs {
     }
     
     public void createEntries(){  
+        if(true)return;
         tab = Shuffleboard.getTab("Auto");
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
         autoCommand.addOption("5 piece (original-tested)", new FollowPathCommand("5 piece (original-tested)",true, drive));
