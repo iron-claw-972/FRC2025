@@ -27,6 +27,8 @@ import lib.controllers.GameController.RumbleStatus;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
