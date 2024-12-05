@@ -1,7 +1,5 @@
 package frc.robot.subsystems.gpm;
 
-import java.time.Duration;
-
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
@@ -93,13 +91,13 @@ public class Intake extends SubsystemBase {
 
         waitTimer.start();
 
-        if (Constants.DO_LOGGING) {
-            LogManager.add("Intake/motorVolts", () -> motor.get() * Constants.ROBOT_VOLTAGE);
-            LogManager.add("Intake/centeringMotorVolts", () -> centeringMotor.get() * Constants.ROBOT_VOLTAGE);
-            
-            LogManager.add("Intake/motorRPM", () -> motor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1));
-            LogManager.add("Intake/centeringMotorRPM", () -> centeringMotor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1));            
-        }
+
+        LogManager.logSupplier("Intake/motorVolts", () -> motor.get() * Constants.ROBOT_VOLTAGE);
+        LogManager.logSupplier("Intake/centeringMotorVolts", () -> centeringMotor.get() * Constants.ROBOT_VOLTAGE);
+        
+        LogManager.logSupplier("Intake/motorRPM", () -> motor.getAbsoluteEncoder().getVelocity(), 1000);
+        LogManager.logSupplier("Intake/centeringMotorRPM", () -> centeringMotor.getAbsoluteEncoder().getVelocity(), 1000);            
+
 
     }
 
