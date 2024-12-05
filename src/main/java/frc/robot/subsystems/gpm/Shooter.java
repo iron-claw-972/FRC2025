@@ -121,6 +121,11 @@ public class Shooter extends SubsystemBase {
 		double leftSpeed = getLeftMotorRPM();
 		double rightSpeed = getRightMotorRPM();
 
+		if(Math.abs(leftPID.getSetpoint())<2){
+			leftPID.reset();
+			rightPID.reset();
+		}
+
 		// A set and get of the NEO motors do not match, so keep powers around for simulation
 		leftPower = leftPID.calculate(leftSpeed) + feedforward.calculate(leftPID.getSetpoint());
 		rightPower = rightPID.calculate(rightSpeed) + feedforward.calculate(rightPID.getSetpoint());
