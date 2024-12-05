@@ -34,7 +34,7 @@ public class IntakeNote extends Command{
 		if (intake == null || storageIndex == null || arm == null || rumbleConsumer == null)
 			doStuff = false;
 		else {}
-//			addRequirements(intake, storageIndex, arm);
+        addRequirements(intake, storageIndex, arm);
     }
 
     @Override
