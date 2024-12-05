@@ -187,10 +187,10 @@ public class Turret extends SubsystemBase {
         //Change between using time constrait and pid 
         SmartDashboard.putBoolean("Use Time Constraint", useTimeConstraint); 
         // TODO: FIX TIMER (CURRENTLY CAUSES ERROR; ROBOT CODE GETS MILK)
-        // if (atSetpoint()) {
-        //     timer.stop(); 
-        //     SmartDashboard.putNumber("Time to reach setpoint", timer.get());
-        // }
+        if (atSetpoint()) {
+            timer.stop(); 
+            SmartDashboard.putNumber("Time To Reach Angle", timer.get());
+        }
     }
 
         // Only runs once angle has been set with setAngleWithTime AND using time constraint 
@@ -311,12 +311,12 @@ public class Turret extends SubsystemBase {
         
 
         // Calculations for more linear motion and constant acceleration always 
-        maxAcceleration = Math.min(0.5, 4 * distance / Math.pow(timeToReach, 2)); // TODO: find good max acceleration near motor's rpm 
+        maxAcceleration = Math.min(5.0, 4 * distance / Math.pow(timeToReach, 2)); // TODO: find good max acceleration near motor's rpm 
         // Solved for v in the equation from x = -v^2 / a + vt
         double discriminant = Math.pow(maxAcceleration * timeToReach, 2) - 4 * maxAcceleration * distance;
 
         if (discriminant >= 0) {
-            maxVelocity = ((maxAcceleration * timeToReach) + Math.sqrt((Math.pow(maxAcceleration, 2))*(Math.pow(timeToReach, 2)) - (4 * maxAcceleration * distance))) / 2;
+            maxVelocity = ((maxAcceleration * timeToReach) + Math.sqrt(discriminant)) / 2;
         }
         else {
             maxVelocity = Math.sqrt(2 * maxAcceleration * distance);
