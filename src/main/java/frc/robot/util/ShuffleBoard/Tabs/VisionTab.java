@@ -39,8 +39,10 @@ public class VisionTab extends ShuffleBoardTabs {
 
     public void addCommands(ShuffleboardTab tab){
         tab = Shuffleboard.getTab("Vision");
-        //SmartDashboard.putData("Calculate vision std devs", new CalculateStdDevs(1000, vision, drive));
-        tab.add("Calculate std devs", new CalculateStdDevs(1000, vision, drive));
+        if(vision != null){
+            //SmartDashboard.putData("Calculate vision std devs", new CalculateStdDevs(1000, vision, drive));
+            tab.add("Calculate std devs", new CalculateStdDevs(1000, vision, drive));
+        }
       //  SmartDashboard.putData("Vision aim at tag", new AimAtTag(drive));
         tab.add("Aim at tag", new AimAtTag(drive));
         // SmartDashboard.putData("Vision distance test (forward)", new TestVisionDistance(0.1, drive, vision));
