@@ -1,7 +1,5 @@
 package frc.robot.subsystems.module;
 
-import java.time.Duration;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -24,7 +22,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
@@ -76,6 +73,19 @@ public class Module extends SubsystemBase {
         configDriveMotor();
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
+    
+
+        String directory_name = "Drivetrain/Module" + type.name();
+        LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
+        DriveConstants.kDriveGearRatio), 1000);
+        LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
+        LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
+        LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000);
+        LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 1000);
+        LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
+        LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValue(), 1000);
+        LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValue(), 1000);
+
     }
 
     public void close() {
@@ -109,18 +119,7 @@ public class Module extends SubsystemBase {
             // TODO: This curently doesn't use the feedforward.
             driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)));
         }
-        if (Constants.DO_LOGGING) {
-            String directory_name = "Drivetrain/Module" + type.name();
-            LogManager.add(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
-                DriveConstants.kDriveGearRatio), Duration.ofSeconds(1));
-            LogManager.add(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, Duration.ofSeconds(1));
-            LogManager.add(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), Duration.ofSeconds(1));
-            LogManager.add(directory_name +"/AngleActual/", () -> getAngle().getRadians(), Duration.ofSeconds(1));
-            LogManager.add(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), Duration.ofSeconds(1));
-            LogManager.add(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, Duration.ofSeconds(1));
-            LogManager.add(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValue(), Duration.ofSeconds(1));
-            LogManager.add(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValue(), Duration.ofSeconds(1));
-        }
+        
     }
 
     private void setAngle(SwerveModuleState desiredState) {
