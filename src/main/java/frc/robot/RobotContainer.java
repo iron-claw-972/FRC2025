@@ -100,7 +100,7 @@ public class RobotContainer {
 
         drive = new Drivetrain(vision);
         driver = new GameControllerDriverConfig(drive, arm, intake, index, shooter);
-        // operator = new Operator(intake, arm, index, shooter, drive, consumer);
+        operator = new Operator(intake, arm, index, shooter, drive, consumer);
 
         // Detected objects need access to the drivetrain
         //DetectedObject.setDrive(drive);
