@@ -31,12 +31,11 @@ public class ShuffleBoardManager {
 
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Shooter shooter, Arm arm, StorageIndex index, Intake intake, Elevator elevator){
         
-        // swerveTab = new SwerveTab(drive);
+        //swerveTab = new SwerveTab(drive);
         autoTab = new AutoTab(drive, shooter, arm, index, intake);
-         //swerveTab = new SwerveTab(drive);
+        //swerveTab = new SwerveTab(drive);
         visionTab = new VisionTab(drive, vision);
         elevatorTab = new ElevatorTab(elevator);
-         //tabs.add(swerveTab);
         tabs.add(autoTab);
         tabs.add(visionTab);
         tabs.add(elevatorTab);

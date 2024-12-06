@@ -69,24 +69,24 @@ public class DriveConstants {
     public static int kDriveFrontLeft = 1;
     public static int kSteerFrontLeft = 2;
     public static int kEncoderFrontLeft = 3;
-    public static double kSteerOffsetFrontLeft = 100.184;//0.058291152119637;//-3.060285486280918+Math.PI;
+    public static double kSteerOffsetFrontLeft = 121.463;//0.058291152119637;//-3.060285486280918+Math.PI;
 
     public static int kDriveFrontRight = 10;
     public static int kSteerFrontRight = 11;
     public static int kEncoderFrontRight = 12;
-    public static double kSteerOffsetFrontRight = 224.293-180;//-2.994324445724487;//-3.001994334161282;
+    public static double kSteerOffsetFrontRight = 284.242-180;//-2.994324445724487;//-3.001994334161282;
 
     public static int kDriveBackLeft = 7;
     public static int kSteerBackLeft = 8;
     public static int kEncoderBackLeft = 9;
-    public static double kSteerOffsetBackLeft =304.795;//-2.540267050266266;//0.650406539440155+Math.PI;
+    public static double kSteerOffsetBackLeft = 157.676+180;//-2.540267050266266;//0.650406539440155+Math.PI;
 
     public static int kDriveBackRight = 4;
     public static int kSteerBackRight = 5;
     public static int kEncoderBackRight = 6;
-    public static double kSteerOffsetBackRight = 201.177;//2.626169800758362;//2.771897681057453;
+    public static double kSteerOffsetBackRight = 77.199+180;//2.626169800758362;//2.771897681057453;
 
-    // heading PID
+    // heading PID.  
     public static double kHeadingP = 5.5;
     public static double kHeadingD = 0;
 
@@ -215,19 +215,24 @@ public class DriveConstants {
         } 
         else if (robotId == RobotId.SwerveTest) {
 
+            kDriveMotorCAN = Constants.RIO_CAN;
+            kSteerMotorCAN = Constants.RIO_CAN;
+            kSteerEncoderCAN = Constants.RIO_CAN;
+            kPigeonCAN = Constants.RIO_CAN;
+
             kTrackWidth = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
 
             kPigeon = 13;
         
-            kSteerOffsetFrontLeft = -448.91;
+            kSteerOffsetFrontLeft = 121.463;
 
-            kSteerOffsetFrontRight = 112.473;
+            kSteerOffsetFrontRight = 284.242-180;
             // kSteerOffsetFrontRight = 10.957+90;
 
-            kSteerOffsetBackLeft = 180;
+            kSteerOffsetBackLeft = 157.676+180;
             // [new one] kSteerOffsetBackLeft = 339.689;
 
-            kSteerOffsetBackRight = 333.241;
+            kSteerOffsetBackRight = 77.199+180;
             // Talon Speed
             Constants.MAX_RPM = 6080.0;
 
