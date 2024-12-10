@@ -92,13 +92,13 @@ public class RobotContainer {
       default:
       case SwerveCompetition:
         // arm = new Arm();
-        intake = new Intake();
-        index = new StorageIndex();
-        shooter = new Shooter();
-        registerCommands();
+        // intake = new Intake();
+        // index = new StorageIndex();
+        // shooter = new Shooter();
+        // registerCommands();
  
       case SwerveTest:
-       // vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
 
         elevator = new Elevator();
 
