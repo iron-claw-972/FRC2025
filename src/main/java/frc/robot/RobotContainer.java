@@ -72,8 +72,7 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
-        index = new StorageIndex();
-        shooter = new Shooter();
+        
         break;
 
       case TestBed2:

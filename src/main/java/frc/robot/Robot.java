@@ -6,10 +6,13 @@ package frc.robot;
 
 import java.util.Optional;
 
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.miscConstants.VisionConstants;
@@ -25,6 +28,7 @@ import frc.robot.util.LogManager;
 public class Robot extends TimedRobot {
     private Command autoCommand;
     private RobotContainer robotContainer;
+    LaserCan lc;
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -37,6 +41,9 @@ public class Robot extends TimedRobot {
         //     changes networktables.json, networktables.json.bck (both Untracked)
         //   Uncomment the next line, set the desired RobotId, deploy, and then comment the line out
         //RobotId.setRobotId(RobotId.Vertigo);
+         
+    // Optionally initialise the settings of the LaserCAN, if you haven't already done so in GrappleHook
+   
         DriveConstants.update(RobotId.getRobotId());
         RobotController.setBrownoutVoltage(6);
         // obtain this robot's identity
@@ -62,7 +69,9 @@ public class Robot extends TimedRobot {
 
         // TODO: why is this here?
         robotContainer.updateShuffleBoard();
+        
 
+        
         CommandScheduler.getInstance().run();
         
         LogManager.update();
@@ -116,7 +125,16 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         // TODO: why is this here? Robot may not have vision.
+        lc = new LaserCan(0);
         robotContainer.setVisionEnabled(true);
+         try {
+      lc.setRangingMode(LaserCan.RangingMode.SHORT);
+      lc.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+      lc.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+      System.out.println("worked");
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
 
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
@@ -134,6 +152,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+        LaserCan.Measurement measurement = lc.getMeasurement();
+    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+      System.out.println("The target is " + measurement.distance_mm + "mm away!");
+    } 
     }
 
     /**

@@ -21,6 +21,7 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -89,8 +90,7 @@ public class Drivetrain extends SubsystemBase {
     private boolean drive_turning = false;
 
     private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
-    LaserCan lasercan = new LaserCan(0);
-    LaserCan.Measurement measurement = lasercan.getMeasurement();
+
 
 
 
@@ -100,6 +100,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public Drivetrain(Vision vision) {
         this.vision = vision;
+        SmartDashboard.putNumber("lasercan", 0);
 
         modules = new Module[4];
 
@@ -172,15 +173,12 @@ public class Drivetrain extends SubsystemBase {
             modules[i].close();
         }
     }
-
+    
     @Override
     public void periodic() {
         updateOdometry();
-        LaserCan.Measurement measurement = lasercan.getMeasurement();
 
-    if (measurement != null) {
-        System.out.println("The target is " + measurement.distance_mm + "mm away!");
-    }
+    
     }
 
     // DRIVE
