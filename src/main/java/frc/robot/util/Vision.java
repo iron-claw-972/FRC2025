@@ -59,7 +59,7 @@ public class Vision {
    * Creates a new instance of Vision and sets up the cameras and field layout
    */
   public Vision(ArrayList<Pair<String, Transform3d>> camList) {
-    // // Initialize object_detection NetworkTable
+    // Initialize object_detection NetworkTable
     m_objectDetectionTable = NetworkTableInstance.getDefault().getTable("object_detection");
 
     // From the object detection NetworkTable, get the entries
