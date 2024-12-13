@@ -1,5 +1,7 @@
 package frc.robot.subsystems.module;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -116,7 +118,8 @@ public class Module extends SubsystemBase {
             double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.kWheelCircumference,
                 DriveConstants.kDriveGearRatio), 1)/60;
             // TODO: This curently doesn't use the feedforward.
-            driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)));
+            // TODO: Maybe use current and next velocity instead of only 1 parameter
+            driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(RotationsPerSecond.of(velocity)).magnitude()));
         }
         
     }

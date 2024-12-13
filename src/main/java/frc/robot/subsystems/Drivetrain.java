@@ -16,7 +16,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -189,13 +188,11 @@ public class Drivetrain extends SubsystemBase {
     
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         rot = headingControl(rot, xSpeed, ySpeed);
-        setChassisSpeeds((
-                                 fieldRelative
-                                         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getYaw())
-                                         : new ChassisSpeeds(xSpeed, ySpeed, rot)
-                         ),
-                         isOpenLoop
-                        );
+        ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
+        if(fieldRelative){
+            speeds.toRobotRelativeSpeeds(getYaw());
+        }
+        setChassisSpeeds(speeds, isOpenLoop);
     }
 
     /**
@@ -208,13 +205,11 @@ public class Drivetrain extends SubsystemBase {
      */
     public void driveHeading(double xSpeed, double ySpeed, double heading, boolean fieldRelative) {
         double rot = rotationController.calculate(getYaw().getRadians(), heading);
-        setChassisSpeeds((
-                        fieldRelative
-                                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getYaw())
-                                : new ChassisSpeeds(xSpeed, ySpeed, rot)
-                ),
-                false
-        );
+        ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
+        if(fieldRelative){
+            speeds.toRobotRelativeSpeeds(getYaw());
+        }
+        setChassisSpeeds(speeds, false);
     }
 
     /**
