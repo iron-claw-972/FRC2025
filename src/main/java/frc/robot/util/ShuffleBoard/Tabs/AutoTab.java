@@ -11,7 +11,9 @@ import frc.robot.commands.DoNothing;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
-/** Add your docs here. */
+/**
+ * Class for storing and updating information on the auto tab in Shuffleboard
+*/
 public class AutoTab extends ShuffleBoardTabs {
 
     private final SendableChooser<Command> autoCommand = new SendableChooser<>();

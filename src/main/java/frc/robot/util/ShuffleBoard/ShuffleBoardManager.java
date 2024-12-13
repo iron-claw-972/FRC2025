@@ -27,7 +27,7 @@ public class ShuffleBoardManager {
         // swerveTab = new SwerveTab(drive);
         autoTab = new AutoTab(drive);
         visionTab = new VisionTab(drive, vision);
-         //tabs.add(swerveTab);
+        //tabs.add(swerveTab);
         tabs.add(autoTab);
         tabs.add(visionTab);
 
