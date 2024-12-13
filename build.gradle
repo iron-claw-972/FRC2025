@@ -73,15 +73,8 @@ dependencies {
 
     implementation "gov.nist.math:jama:1.0.3"
 
-    // CODE ADDED AUTOMATICALLY WHEN IMPORTING REPO
-    // testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
-    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // CODE ON MAIN, EXCEPT UPDATED TO 5.10.1
-    // JUnit 5. WPILIB wants to enable JUnit 5 by default
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 test {
