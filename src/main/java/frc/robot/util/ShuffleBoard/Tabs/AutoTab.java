@@ -170,10 +170,10 @@ public class AutoTab extends ShuffleBoardTabs {
         
 
 //         Repleacement Auto, don't delete
-//         autoCommand.addOption("lol", new FollowPathCommand("lol",true, drive));
+        // autoCommand.addOption("lol", new FollowPathCommand("lol",true, drive));
 
 
-        tab.add(autoCommand);
+         tab.add(autoCommand);
     }
 
     public void update(){
@@ -183,7 +183,7 @@ public class AutoTab extends ShuffleBoardTabs {
         return autoCommand;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") // TODO: Delete when deleting 2024 code
     private ParallelCommandGroup intakeAndSubwooferShot(String pathName) {
         return new ParallelCommandGroup(
                 new IntakeNote(intake, indexer, arm, (ignored) -> {})
@@ -199,7 +199,7 @@ public class AutoTab extends ShuffleBoardTabs {
                        .andThen(new InstantCommand(() -> indexer.stopIndex()));
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") // TODO: Delete when deleting 2024 code
     private Command prepare() {
         return new SequentialCommandGroup(
                 new PrepareShooter(shooter, Shooter.addSlip(Shooter.shooterSpeedToRPM(ShooterConstants.SHOOT_SPEED_MPS-1.0))),

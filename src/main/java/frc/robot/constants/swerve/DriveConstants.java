@@ -83,14 +83,14 @@ public class DriveConstants {
     public static int kDriveBackLeft = 7;
     public static int kSteerBackLeft = 8;
     public static int kEncoderBackLeft = 9;
-    public static double kSteerOffsetBackLeft =304.795;//-2.540267050266266;//0.650406539440155+Math.PI;
+    public static double kSteerOffsetBackLeft = 304.795;//-2.540267050266266;//0.650406539440155+Math.PI;
 
     public static int kDriveBackRight = 4;
     public static int kSteerBackRight = 5;
     public static int kEncoderBackRight = 6;
     public static double kSteerOffsetBackRight = 201.177;//2.626169800758362;//2.771897681057453;
 
-    // heading PID
+    // heading PID.  
     public static double kHeadingP = 5.5;
     public static double kHeadingD = 0;
 
@@ -232,15 +232,15 @@ public class DriveConstants {
 
             kPigeon = 13;
         
-            kSteerOffsetFrontLeft = -448.91;
+            kSteerOffsetFrontLeft = 121.463;
 
-            kSteerOffsetFrontRight = 112.473;
+            kSteerOffsetFrontRight = 284.242-180;
             // kSteerOffsetFrontRight = 10.957+90;
 
-            kSteerOffsetBackLeft = 180;
+            kSteerOffsetBackLeft = 157.676+180;
             // [new one] kSteerOffsetBackLeft = 339.689;
 
-            kSteerOffsetBackRight = 333.241;
+            kSteerOffsetBackRight = 77.199+180;
             // Talon Speed
             Constants.MAX_RPM = 6080.0;
 

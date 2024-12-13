@@ -73,11 +73,11 @@ public class RobotContainer {
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         break;
       case Vertigo:
-          drive = new Drivetrain(vision);
-          driver = new GameControllerDriverConfig(drive, arm, index, shooter, vision);
-          driver.configureControls();
-          drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-          break;
+        drive = new Drivetrain(vision);
+        driver = new GameControllerDriverConfig(drive, arm, index, shooter, vision);
+        driver.configureControls();
+        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        break;
         
       default:
       case SwerveCompetition:
@@ -85,6 +85,7 @@ public class RobotContainer {
         intake = new Intake();
         index = new StorageIndex();
         shooter = new Shooter();
+        registerCommands();
  
       case SwerveTest:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
@@ -103,7 +104,6 @@ public class RobotContainer {
         operator.configureControls();
         initializeAutoBuilder();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        registerCommands();
         PathGroupLoader.loadPathGroups();
  
         shuffleboardManager = new ShuffleBoardManager(drive, vision, shooter, arm, index, intake);
