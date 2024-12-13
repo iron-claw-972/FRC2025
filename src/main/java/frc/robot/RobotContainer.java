@@ -85,6 +85,7 @@ public class RobotContainer {
         driver = new GameControllerDriverConfig(drive, arm, index, shooter);
         driver.configureControls();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        shuffleboardManager = new ShuffleBoardManager(drive, vision, shooter, arm, index, intake);
         break;
         
       default:
