@@ -313,7 +313,7 @@ public class Drivetrain extends SubsystemBase {
         setModuleStates(swerveModuleStates, isOpenLoop);
     }
 
-    public void setDriveVoltages(Measure<Voltage> voltage){
+    public void setDriveVoltages(Voltage voltage){
         for (int i = 0; i<modules.length;i++){
             modules[i].setDriveVoltage(voltage);
         }

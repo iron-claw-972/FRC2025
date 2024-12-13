@@ -73,8 +73,15 @@ dependencies {
 
     implementation "gov.nist.math:jama:1.0.3"
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // CODE ADDED AUTOMATICALLY WHEN IMPORTING REPO
+    // testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // CODE ON MAIN, EXCEPT UPDATED TO 5.10.1
+    // JUnit 5. WPILIB wants to enable JUnit 5 by default
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
 }
 
 test {
@@ -91,7 +98,6 @@ wpi.sim.addDriverstation()
 // knows where to look for our Robot Class.
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    from sourceSets.main.allSource
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
@@ -101,6 +107,15 @@ deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+    srcDir       = "src/main/java/"
+    classPackage = "frc.robot.util"
+    className    = "BuildData"
+    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+    timeZone     = "PST"
+    indent       = "  "
+}
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'

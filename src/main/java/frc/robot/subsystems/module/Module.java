@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.swerve.DriveConstants;
@@ -132,7 +131,7 @@ public class Module extends SubsystemBase {
         angleMotor.setControl(new PositionDutyCycle(desiredState.angle.getRotations()*DriveConstants.kModuleConstants.angleGearRatio));
     }
 
-    public void setDriveVoltage(Measure<Voltage> voltage){
+    public void setDriveVoltage(Voltage voltage){
         driveMotor.setVoltage(voltage.baseUnitMagnitude());
     }
     public void setAngle(Rotation2d angle){
