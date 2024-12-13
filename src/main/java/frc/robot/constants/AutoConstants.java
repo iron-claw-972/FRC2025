@@ -1,9 +1,11 @@
 package frc.robot.constants;
 
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.system.plant.DCMotor;
 import frc.robot.constants.swerve.DriveConstants;
 
 /**
@@ -17,20 +19,20 @@ public class AutoConstants {
     public static final double MAX_AUTO_SPEED = 5.2; // m/s
     public static final double MAX_AUTO_ACCEL = 4.8; // m/s^2
 
-    // TODO: Tune these
-    public static final PIDConstants translationConstants = new PIDConstants(5,0,0);
-    public static final PIDConstants rotationConstants = new PIDConstants(5,0,0);
+    public static RobotConfig  config;
+    public static final PPHolonomicDriveController autoController = new PPHolonomicDriveController( 
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+        );
+   
 
-    public static final ReplanningConfig replanningConfig = new ReplanningConfig(false, false);
-
-    public static final HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-        translationConstants,
-        rotationConstants,
-        MAX_AUTO_SPEED,
-        Math.sqrt(2)*DriveConstants.kTrackWidth/2,
-        replanningConfig
-    );
-
-    private AutoConstants() {
+    static {
+        try{
+            config = RobotConfig.fromGUISettings();
+        }catch(Exception e){
+            e.printStackTrace();
+            // Although these values are probably wrong and auto might not work correctly, at least it won't cause NullPointerExceptions
+            config = new RobotConfig(50, 0.5, new ModuleConfig(50, MAX_AUTO_SPEED, 1.1, DCMotor.getKrakenX60(1).withReduction(DriveConstants.kDriveGearRatio), DriveConstants.kDriveContinuousCurrentLimit, 1), DriveConstants.kTrackWidth, DriveConstants.kTrackWidth);
+        }
     }
 }
