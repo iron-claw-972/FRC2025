@@ -116,7 +116,7 @@ public class RobotContainer {
   }
 
   public void initializeAutoBuilder() {
-    AutoBuilder.configureHolonomic(
+    AutoBuilder.configure(
         () -> drive.getPose(),
         (pose) -> {
           drive.resetOdometry(pose);
@@ -125,6 +125,7 @@ public class RobotContainer {
         (chassisSpeeds) -> {
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
+        AutoConstants.autoController,
         AutoConstants.config,
         getAllianceColorBooleanSupplier(),
         drive);
