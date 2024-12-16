@@ -110,10 +110,8 @@ public class MotorFactory {
             withSupplyCurrentLimitEnable(SupplyLimitEnable).withSupplyCurrentLimit(SupplyCurrentLimit).
             withSupplyCurrentThreshold(SupplyTriggerThreshold).withSupplyTimeThreshold(SupplyTriggerDuration);
 
-        // TODO: Previous variable doesn't exist, might or might not be correct
         config.Voltage = new VoltageConfigs().withPeakForwardVoltage(Constants.ROBOT_VOLTAGE);
 
-        // TODO: I can't find where these settings are
         talon.getConfigurator().apply(config);
         talon.setNeutralMode(NeutralModeValue.Brake);
         

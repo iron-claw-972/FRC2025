@@ -50,19 +50,16 @@ public class RobotContainer {
 
       case TestBed2:
         break;
-      case Vertigo:
-        drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive);
-        driver.configureControls();
-        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        break;
-        
+
       default:
       case SwerveCompetition:
- 
-      case SwerveTest:
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+      // Our competition subsystems go here
 
+      case Vivace:
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+ 
+      case Phil:
+      case Vertigo:
         drive = new Drivetrain(vision);
         driver = new GameControllerDriverConfig(drive);
         operator = new Operator(drive);

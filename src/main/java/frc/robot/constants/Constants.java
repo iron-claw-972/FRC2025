@@ -33,7 +33,7 @@ public class Constants {
     // falcon constants:
  
     public static final int FIRMWARE_VERSION = 5633; // version 22.1.1.0
-    public static final boolean BREAK_ON_WRONG_FIRMWARE = false; // TODO: fix issue that make the robot break
+    public static final boolean BREAK_ON_WRONG_FIRMWARE = false;
 
     public static final double RESOLUTION = 2048;
     // Kraken Speed

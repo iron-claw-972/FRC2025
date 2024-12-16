@@ -11,8 +11,8 @@ import frc.robot.constants.Constants;
 import lib.COTSFalconSwerveConstants;
 
 /**
- * GlobalConst are, by default, for the competition robot.
- * GlobalConst get changed if the RobotId detected is not the competition robot.
+ * Global constants are, by default, for the competition robot.
+ * Global constants get changed in the update method if the RobotId detected is not the competition robot.
  */
 public class DriveConstants {
     /**
@@ -21,10 +21,6 @@ public class DriveConstants {
      * The frame width is 26.5 inches, and each bumper is 3.25 inches.
      */
     public static double kRobotWidthWithBumpers = Units.inchesToMeters(26.5 + 3.25 * 2);
-
-    // TODO: missing robot length
-    // TODO: missing robot center of rotation to back bumper and center of rotation to front bumper
-    // the center of rotation need not be the geometric center of the robot.
 
     /** Radius of the drive wheels [meters]. */
     public static double kWheelRadius = Units.inchesToMeters(2);
@@ -49,7 +45,7 @@ public class DriveConstants {
     // To do so, divide by the radius. The radius is the diagonal of the square chassis, diagonal = sqrt(2) * side_length.
     public static double kMaxAngularSpeed = kMaxSpeed / ((kTrackWidth / 2) * Math.sqrt(2));
 
-    // TODO: tune this better.
+    // TODO: Tune this better.
     public static double kMaxAngularAccel = 8 * 2 * Math.PI; // 8 rotations per second per second
 
     /** Pigeon2 IMU CAN Id. */
@@ -69,30 +65,31 @@ public class DriveConstants {
     public static int kDriveFrontLeft = 1;
     public static int kSteerFrontLeft = 2;
     public static int kEncoderFrontLeft = 3;
-    public static double kSteerOffsetFrontLeft = 100.184;//0.058291152119637;//-3.060285486280918+Math.PI;
+    public static double kSteerOffsetFrontLeft = 0;
 
     public static int kDriveFrontRight = 10;
     public static int kSteerFrontRight = 11;
     public static int kEncoderFrontRight = 12;
-    public static double kSteerOffsetFrontRight = 224.293-180;//-2.994324445724487;//-3.001994334161282;
+    public static double kSteerOffsetFrontRight = 0;
 
     public static int kDriveBackLeft = 7;
     public static int kSteerBackLeft = 8;
     public static int kEncoderBackLeft = 9;
-    public static double kSteerOffsetBackLeft = 304.795;//-2.540267050266266;//0.650406539440155+Math.PI;
+    public static double kSteerOffsetBackLeft = 0;
 
     public static int kDriveBackRight = 4;
     public static int kSteerBackRight = 5;
     public static int kEncoderBackRight = 6;
-    public static double kSteerOffsetBackRight = 201.177;//2.626169800758362;//2.771897681057453;
+    public static double kSteerOffsetBackRight = 0;
 
-    // heading PID.  
+    // heading PID.
     public static double kHeadingP = 5.5;
     public static double kHeadingD = 0;
 
     public static final double HEADING_TOLERANCE = Units.degreesToRadians(1.5);
 
     //translational PID
+    // TODO: Tune this better
     public static double kTranslationalP = 1;
     public static double kTranslationalD = 0.001;
 
@@ -122,8 +119,6 @@ public class DriveConstants {
     public static final int kDrivePeakCurrentLimit = 80;
     public static final double kDrivePeakCurrentDuration = 0.01;
     public static final boolean kDriveEnableCurrentLimit = true;
-
-    // TODO put slew rate limiter to reduce drift on drivetrain without killing battery.
 
     /* Motor inversions */
     public static final boolean kDriveMotorInvert = true;//kModuleConstants.driveMotorInvert;
@@ -185,7 +180,7 @@ public class DriveConstants {
     /* Motor gear ratios */
     public static final double kAngleGearRatio = kModuleConstants.angleGearRatio;
 
-    public static final boolean kInvertGyro = false; // Make sure gyro is CCW+ CW- // FIXME: Swerve
+    public static final boolean kInvertGyro = false; // Make sure gyro is CCW+ CW-
 
     public static final double kSlowDriveFactor = 0.2;
     public static final double kSlowRotFactor = 0.1;
@@ -194,26 +189,24 @@ public class DriveConstants {
      * Updates the constants if the RobotId is not the competition robot.
      */
     public static void update(RobotId robotId) {
-        if (robotId == RobotId.Vertigo) {
+        if (robotId == RobotId.Vivace) {
+            kSteerOffsetFrontLeft = 100.184;
+            kSteerOffsetFrontRight = 224.293-180;
+            kSteerOffsetBackLeft = 304.795;
+            kSteerOffsetBackRight = 201.177;
+        } else if (robotId == RobotId.Vertigo) {
             kTrackWidth = Units.inchesToMeters(22.75);//22.75 swerve bot, 20.75 comp bot
             
-            kPigeon = 13;
-
-            kSteerOffsetFrontLeft = 4.185;//0.058291152119637;//-3.060285486280918+Math.PI;
-
-            kSteerOffsetFrontRight = 101.519+90;//-2.994324445724487;//-3.001994334161282;
-
-            kSteerOffsetBackLeft = 38.997+180;//-2.540267050266266;//0.650406539440155+Math.PI;
-
-            kSteerOffsetBackRight = 242.847-90;//2.626169800758362;//2.771897681057453;
+            kSteerOffsetFrontLeft = 4.185;
+            kSteerOffsetFrontRight = 101.519+90;
+            kSteerOffsetBackLeft = 38.997+180;
+            kSteerOffsetBackRight = 242.847-90;
             
             kDriveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
-            kModuleConstants = COTSFalconSwerveConstants.SDSMK4i(kDriveGearRatio);
             
-            // Talon Speed
+            // Falcon Speed
             Constants.MAX_RPM = 6080.0;
-        } 
-        else if (robotId == RobotId.SwerveTest) {
+        } else if (robotId == RobotId.Phil) {
 
             kDriveMotorCAN = Constants.RIO_CAN;
             kSteerMotorCAN = Constants.RIO_CAN;
@@ -221,23 +214,14 @@ public class DriveConstants {
             kPigeonCAN = Constants.RIO_CAN;
 
             kTrackWidth = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
-
-            kPigeon = 13;
         
             kSteerOffsetFrontLeft = 121.463;
-
             kSteerOffsetFrontRight = 284.242-180;
-            // kSteerOffsetFrontRight = 10.957+90;
-
             kSteerOffsetBackLeft = 157.676+180;
-            // [new one] kSteerOffsetBackLeft = 339.689;
-
             kSteerOffsetBackRight = 77.199+180;
-            // Talon Speed
-            Constants.MAX_RPM = 6080.0;
 
             kDriveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
-            kModuleConstants = COTSFalconSwerveConstants.SDSMK4i(kDriveGearRatio);
         }
+        kModuleConstants = COTSFalconSwerveConstants.SDSMK4i(kDriveGearRatio);
     }
 }
