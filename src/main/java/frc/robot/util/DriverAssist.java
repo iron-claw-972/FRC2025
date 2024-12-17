@@ -4,8 +4,10 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -22,7 +24,7 @@ import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 public class DriverAssist {
     // The amount to correct the driver's inpus by
     // 0 = return unchanged driver inputs, 1 = return calculated speed without driver input
-    private static final double CORRECTION_FACTOR = 0.75;
+    private static final double CORRECTION_FACTOR = 0.5;
 
     // The setpoint generator, which limits the acceleration
     private static final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
@@ -36,7 +38,7 @@ public class DriverAssist {
      * @param driverInput The driver input speed
      * @return The new speed
      */
-    public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
+    public static ChassisSpeeds calculate2(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
         // Do nothing if there is no pose
         if(desiredPose == null){
             return driverInput;
@@ -98,5 +100,41 @@ public class DriverAssist {
         
         return driverSpeeds.plus(correction);
         // return nextChassisSpeed.times(CORRECTION_FACTOR).plus(driverInput.times(1-CORRECTION_FACTOR));
+    }
+
+    public static final double MAX_VELOCITY_ANGLE_ERROR = Math.PI/4;
+    public static final double MAX_DISTANCE_ERROR = 2;
+    public static final double ROTATION_CORRECTION_FACTOR = 0.7;
+    public static final double MAX_ROTATION_ERROR = Math.PI/3;
+
+    public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
+        if(desiredPose == null){
+            return driverInput;
+        }
+        Pose2d drivePose = drive.getPose();
+        Translation2d difference = desiredPose.getTranslation().minus(drivePose.getTranslation());
+        double distance = difference.getNorm();
+        double angleToTarget = difference.getAngle().getRadians();
+        double inputSpeed = Math.hypot(driverInput.vxMetersPerSecond, driverInput.vyMetersPerSecond);
+        double driverAngle = Math.atan2(driverInput.vyMetersPerSecond, driverInput.vxMetersPerSecond);
+        double angleError = MathUtil.angleModulus(angleToTarget - driverAngle);
+        if(Math.abs(angleError) > MAX_VELOCITY_ANGLE_ERROR){
+            return driverInput;
+        }
+        double perpendicularDist = Math.abs(distance * Math.sin(angleError));
+        if(perpendicularDist > MAX_DISTANCE_ERROR){
+            return driverInput;
+        }
+        double perpendicularAngle = MathUtil.angleModulus(driverAngle + Math.PI/2*Math.signum(angleError));
+        // Different options for calculation. From simulator testing, I like the 3rd one the best
+        // double correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist), Math.abs(Math.tan(angleError)*inputSpeed));
+        // double correctionSpeed = Math.min(CORRECTION_FACTOR * Math.pow(1.5, -perpendicularDist), 1) * Math.abs(Math.tan(angleError)*inputSpeed);
+        double correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist) * Math.pow(1.2, -distance+1), Math.abs(Math.tan(angleError)*inputSpeed));
+        double rotationError = MathUtil.angleModulus(angleToTarget-drivePose.getRotation().getRadians());
+        if(Math.abs(rotationError) > MAX_ROTATION_ERROR){
+            return driverInput;
+        }
+        double rotationalSpeed = ROTATION_CORRECTION_FACTOR * Math.signum(rotationError)*Math.sqrt(2*DriveConstants.MAX_ANGULAR_ACCEL*Math.abs(rotationError));
+        return driverInput.plus(new ChassisSpeeds(correctionSpeed*Math.cos(perpendicularAngle), correctionSpeed*Math.sin(perpendicularAngle), rotationalSpeed));
     }
 }

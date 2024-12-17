@@ -562,6 +562,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Pose2d getDesiredPose(){
-        return desiredPoSupplier.get();
+        return new Pose2d(FieldConstants.kFieldLength/2, FieldConstants.kFieldWidth/2, new Rotation2d());
+        // return desiredPoSupplier.get();
     }
 }
