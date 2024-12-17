@@ -57,28 +57,28 @@ public class Module extends SubsystemBase {
         this.moduleConstants = moduleConstants;
 
         type = moduleConstants.getType();
-        feedforward = new SimpleMotorFeedforward(moduleConstants.getKs(), moduleConstants.getKv(), moduleConstants.getKa());
+        feedforward = new SimpleMotorFeedforward(moduleConstants.getDriveS(), moduleConstants.getDriveV(), moduleConstants.getDriveA());
         //angleOffset = new Rotation2d(constants.getSteerOffset());
         angleOffset = moduleConstants.getSteerOffset();
 
         /* Angle Encoder Config */
-        CANcoder = new CANcoder(moduleConstants.getEncoderPort(), DriveConstants.kSteerEncoderCAN);
+        CANcoder = new CANcoder(moduleConstants.getEncoderPort(), DriveConstants.STEER_ENCODER_CAN);
         configCANcoder();
 
         /* Angle Motor Config */
-        angleMotor = new TalonFX(moduleConstants.getSteerPort(), DriveConstants.kSteerEncoderCAN);
+        angleMotor = new TalonFX(moduleConstants.getSteerPort(), DriveConstants.STEER_ENCODER_CAN);
         configAngleMotor();
 
         /* Drive Motor Config */
-        driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.kDriveMotorCAN);
+        driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.DRIVE_MOTOR_CAN);
         configDriveMotor();
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
     
 
         String directory_name = "Drivetrain/Module" + type.name();
-        LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.kWheelCircumference,
-        DriveConstants.kDriveGearRatio), 1000);
+        LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+        DriveConstants.DRIVE_GEAR_RATIO), 1000);
         LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
         LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
         LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000);
@@ -112,11 +112,11 @@ public class Module extends SubsystemBase {
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
         if (isOpenLoop) {
-            double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.kMaxSpeed;
+            double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.kWheelCircumference,
-                DriveConstants.kDriveGearRatio), 1)/60;
+            double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.WHEEL_CIRCUMFERENCE,
+                DriveConstants.DRIVE_GEAR_RATIO), 1)/60;
             // TODO: This curently doesn't use the feedforward.
             // TODO: Maybe use current and next velocity instead of only 1 parameter
             driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(RotationsPerSecond.of(velocity)).magnitude()));
@@ -126,19 +126,19 @@ public class Module extends SubsystemBase {
 
     private void setAngle(SwerveModuleState desiredState) {
         // Prevent rotating module if desired speed < 1%. Prevents Jittering.
-        if (stateDeadband && (Math.abs(desiredState.speedMetersPerSecond) <= (DriveConstants.kMaxSpeed * 0.01))) {
+        if (stateDeadband && (Math.abs(desiredState.speedMetersPerSecond) <= (DriveConstants.MAX_SPEED * 0.01))) {
             stop();
             return;
         }
         // angleMotor.setControl(new PositionDutyCycle(3));
-        angleMotor.setControl(new PositionDutyCycle(desiredState.angle.getRotations()*DriveConstants.kModuleConstants.angleGearRatio));
+        angleMotor.setControl(new PositionDutyCycle(desiredState.angle.getRotations()*DriveConstants.MODULE_CONSTANTS.angleGearRatio));
     }
 
     public void setDriveVoltage(Voltage voltage){
         driveMotor.setVoltage(voltage.baseUnitMagnitude());
     }
     public void setAngle(Rotation2d angle){
-        angleMotor.setControl(new PositionDutyCycle(angle.getRotations()*DriveConstants.kModuleConstants.angleGearRatio));
+        angleMotor.setControl(new PositionDutyCycle(angle.getRotations()*DriveConstants.MODULE_CONSTANTS.angleGearRatio));
     }
 
     public void setOptimize(boolean enable) {
@@ -151,7 +151,7 @@ public class Module extends SubsystemBase {
 
     public Rotation2d getAngle() {
         return Rotation2d.fromRotations(
-                angleMotor.getPosition().getValue()/DriveConstants.kModuleConstants.angleGearRatio);
+                angleMotor.getPosition().getValue()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     public Rotation2d getCANcoder() {
@@ -161,30 +161,30 @@ public class Module extends SubsystemBase {
     public void resetToAbsolute() {
         // Sensor ticks
         double absolutePosition = getCANcoder().getRotations() - Units.degreesToRotations(angleOffset);
-        angleMotor.setPosition(absolutePosition*DriveConstants.kModuleConstants.angleGearRatio);
+        angleMotor.setPosition(absolutePosition*DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     private void configCANcoder() {
         CANcoder.getConfigurator().apply(new CANcoderConfiguration());
         CANcoder.getConfigurator().apply(new MagnetSensorConfigs()
             .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
-            .withSensorDirection(DriveConstants.kModuleConstants.canCoderInvert?SensorDirectionValue.Clockwise_Positive:SensorDirectionValue.CounterClockwise_Positive));
+            .withSensorDirection(DriveConstants.MODULE_CONSTANTS.canCoderInvert?SensorDirectionValue.Clockwise_Positive:SensorDirectionValue.CounterClockwise_Positive));
     }
 
     private void configAngleMotor() {
         angleMotor.getConfigurator().apply(new TalonFXConfiguration());
         CurrentLimitsConfigs config = new CurrentLimitsConfigs();
-        config.SupplyCurrentLimitEnable = DriveConstants.kAngleEnableCurrentLimit;
-        config.SupplyCurrentLimit = DriveConstants.kAngleContinuousCurrentLimit;
-        config.SupplyCurrentThreshold = DriveConstants.kAnglePeakCurrentLimit;
-        config.SupplyTimeThreshold = DriveConstants.kAnglePeakCurrentDuration;
+        config.SupplyCurrentLimitEnable = DriveConstants.STEER_ENABLE_CURRENT_LIMIT;
+        config.SupplyCurrentLimit = DriveConstants.STEER_CONTINUOUS_CURRENT_LIMIT;
+        config.SupplyCurrentThreshold = DriveConstants.STEER_PEAK_CURRENT_LIMIT;
+        config.SupplyTimeThreshold = DriveConstants.STEER_PEAK_CURRENT_DURATION;
         angleMotor.getConfigurator().apply(config);
         angleMotor.getConfigurator().apply(new Slot0Configs()
-            .withKP(DriveConstants.kModuleConstants.angleKP)
-            .withKI(DriveConstants.kModuleConstants.angleKI)
-            .withKD(DriveConstants.kModuleConstants.angleKD));
-        angleMotor.setInverted(DriveConstants.kAngleMotorInvert);
-        angleMotor.setNeutralMode(DriveConstants.kAngleNeutralMode);
+            .withKP(DriveConstants.MODULE_CONSTANTS.angleKP)
+            .withKI(DriveConstants.MODULE_CONSTANTS.angleKI)
+            .withKD(DriveConstants.MODULE_CONSTANTS.angleKD));
+        angleMotor.setInverted(DriveConstants.INVERT_STEER_MOTOR);
+        angleMotor.setNeutralMode(DriveConstants.STEER_NEUTRAL_MODE);
         angleMotor.setPosition(0);
         m_VelocityVoltage.Slot = 0;
         
@@ -195,13 +195,13 @@ public class Module extends SubsystemBase {
      * @return Speed in RPM
      */
     public double getSteerVelocity() {
-        return angleMotor.getVelocity().getValue()/DriveConstants.kModuleConstants.angleGearRatio*60;
+        return angleMotor.getVelocity().getValue()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
     }
     /**
      * @return Speed in RPM
      */
     public double getDriveVelocity() {
-        return driveMotor.getVelocity().getValue()*60/DriveConstants.kModuleConstants.driveGearRatio;
+        return driveMotor.getVelocity().getValue()*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
     }
 
     public double getDriveVoltage(){
@@ -215,33 +215,33 @@ public class Module extends SubsystemBase {
     private void configDriveMotor() {
         driveMotor.getConfigurator().apply(new TalonFXConfiguration());
         CurrentLimitsConfigs config = new CurrentLimitsConfigs();
-        config.SupplyCurrentLimitEnable = DriveConstants.kDriveEnableCurrentLimit;
-        config.SupplyCurrentLimit = DriveConstants.kDriveContinuousCurrentLimit;
-        config.SupplyCurrentThreshold = DriveConstants.kDrivePeakCurrentLimit;
-        config.SupplyTimeThreshold = DriveConstants.kDrivePeakCurrentDuration;
+        config.SupplyCurrentLimitEnable = DriveConstants.DRIVE_ENABLE_CURRENT_LIMIT;
+        config.SupplyCurrentLimit = DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT;
+        config.SupplyCurrentThreshold = DriveConstants.DRIVE_PEAK_CURRENT_LIMIT;
+        config.SupplyTimeThreshold = DriveConstants.DRIVE_PEAK_CURRENT_DURATION;
         driveMotor.getConfigurator().apply(config);
         driveMotor.getConfigurator().apply(new Slot0Configs()
             .withKP(moduleConstants.getDriveP())
             .withKI(moduleConstants.getDriveI())
             .withKD(moduleConstants.getDriveD()));
-        driveMotor.getConfigurator().apply(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(DriveConstants.kOpenLoopRamp));
-        driveMotor.getConfigurator().apply(new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(DriveConstants.kOpenLoopRamp));
-        driveMotor.setInverted(DriveConstants.kDriveMotorInvert);
-        driveMotor.setNeutralMode(DriveConstants.kDriveNeutralMode);
+        driveMotor.getConfigurator().apply(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
+        driveMotor.getConfigurator().apply(new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
+        driveMotor.setInverted(DriveConstants.INVERT_DRIVE_MOTOR);
+        driveMotor.setNeutralMode(DriveConstants.DRIVE_NEUTRAL_MODE);
         
     }
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-                ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()*60, 1), DriveConstants.kWheelCircumference,
-                                            DriveConstants.kDriveGearRatio),
+                ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()*60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+                                            DriveConstants.DRIVE_GEAR_RATIO),
                 getAngle());
     }
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(driveMotor.getPosition().getValue()*360, 1), DriveConstants.kWheelCircumference,
-                                               DriveConstants.kDriveGearRatio),
+                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(driveMotor.getPosition().getValue()*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+                                               DriveConstants.DRIVE_GEAR_RATIO),
                 getAngle());
     }
 

@@ -1,4 +1,4 @@
-package frc.robot.constants.miscConstants;
+package frc.robot.constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ import edu.wpi.first.math.util.Units;
 
 public class FieldConstants {
   /** Width of the field [meters] */
-  public static final double kFieldLength = Units.inchesToMeters(54*12 + 3.25);
+  public static final double FIELD_LENGTH = Units.inchesToMeters(54*12 + 3.25);
   /** Height of the field [meters] */
-  public static final double kFieldWidth = Units.inchesToMeters(26*12 + 11.25);
+  public static final double FIELD_WIDTH = Units.inchesToMeters(26*12 + 11.25);
 
   /** 
    * ArrayList of April Tags to use when the field layout is not available.

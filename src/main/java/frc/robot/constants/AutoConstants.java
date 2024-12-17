@@ -19,8 +19,8 @@ public class AutoConstants {
     public static final double MAX_AUTO_SPEED = 5.2; // m/s
     public static final double MAX_AUTO_ACCEL = 4.8; // m/s^2
 
-    public static RobotConfig  config;
-    public static final PPHolonomicDriveController autoController = new PPHolonomicDriveController( 
+    public static RobotConfig  CONFIG;
+    public static final PPHolonomicDriveController AUTO_CONTROLLER = new PPHolonomicDriveController( 
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
             new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
         );
@@ -28,11 +28,11 @@ public class AutoConstants {
 
     static {
         try{
-            config = RobotConfig.fromGUISettings();
+            CONFIG = RobotConfig.fromGUISettings();
         }catch(Exception e){
             e.printStackTrace();
             // Although these values are probably wrong and auto might not work correctly, at least it won't cause NullPointerExceptions
-            config = new RobotConfig(50, 0.5, new ModuleConfig(50, MAX_AUTO_SPEED, 1.1, DCMotor.getKrakenX60(1).withReduction(DriveConstants.kDriveGearRatio), DriveConstants.kDriveContinuousCurrentLimit, 1), DriveConstants.kTrackWidth, DriveConstants.kTrackWidth);
+            CONFIG = new RobotConfig(50, 0.5, new ModuleConfig(50, MAX_AUTO_SPEED, 1.1, DCMotor.getKrakenX60(1).withReduction(DriveConstants.DRIVE_GEAR_RATIO), DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT, 1), DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH);
         }
     }
 }

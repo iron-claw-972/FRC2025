@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
 
 /**

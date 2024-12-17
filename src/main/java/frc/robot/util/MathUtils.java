@@ -36,7 +36,7 @@ public class MathUtils {
      * @return the input rescaled and to fit [-1, -DEADBAND], [DEADBAND, 1]
      */
     public static double deadband(double input) {
-        return deadband(input, Constants.DEADBAND);
+        return deadband(input, Constants.DEFAULT_DEADBAND);
     }
 
     /**

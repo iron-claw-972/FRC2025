@@ -22,8 +22,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
-import frc.robot.constants.miscConstants.FieldConstants;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.FieldConstants;
+import frc.robot.constants.IdConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.subsystems.module.Module;
@@ -111,7 +112,7 @@ public class Drivetrain extends SubsystemBase {
         }
         
         // The Pigeon is a gyroscope and implements WPILib's Gyro interface
-        pigeon = new Pigeon2(DriveConstants.kPigeon, DriveConstants.kPigeonCAN);
+        pigeon = new Pigeon2(IdConstants.PIGEON, DriveConstants.PIGEON_CAN);
         pigeon.getConfigurator().apply(new Pigeon2Configuration());
         // Our pigeon is mounted with y forward, and z upward
         MountPoseConfigs mountPoseConfigs = new MountPoseConfigs();
@@ -127,7 +128,7 @@ public class Drivetrain extends SubsystemBase {
         resetModulesToAbsolute();
         
         // initial Odometry Location
-        pigeon.setYaw(DriveConstants.kStartingHeading.getDegrees());
+        pigeon.setYaw(DriveConstants.STARTING_HEADING.getDegrees());
         poseEstimator = new SwerveDrivePoseEstimator(
                 DriveConstants.KINEMATICS,
                 Rotation2d.fromDegrees(pigeon.getYaw().getValue()),
@@ -140,9 +141,9 @@ public class Drivetrain extends SubsystemBase {
        poseEstimator.setVisionMeasurementStdDevs(VisionConstants.VISION_STD_DEVS);
         
         // initialize PID controllers
-        xController = new PIDController(DriveConstants.kTranslationalP, 0, DriveConstants.kTranslationalD);
-        yController = new PIDController(DriveConstants.kTranslationalP, 0, DriveConstants.kTranslationalD);
-        rotationController = new PIDController(DriveConstants.kHeadingP, 0, DriveConstants.kHeadingD);
+        xController = new PIDController(DriveConstants.TRANSLATIONAL_P, 0, DriveConstants.TRANSLATIONAL_D);
+        yController = new PIDController(DriveConstants.TRANSLATIONAL_P, 0, DriveConstants.TRANSLATIONAL_D);
+        rotationController = new PIDController(DriveConstants.HEADING_P, 0, DriveConstants.HEADING_D);
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
         rotationController.setTolerance(Units.degreesToRadians(0.25), Units.degreesToRadians(0.25));
 
@@ -253,7 +254,7 @@ public class Drivetrain extends SubsystemBase {
         if(!Vision.onField(pose1)){
             // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
             // Use the rotation of the pose after updating odometry so the yaw is right
-            resetOdometry(new Pose2d(FieldConstants.kFieldLength/2, FieldConstants.kFieldWidth/2, pose2.getRotation()));
+            resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
         }else if(!Vision.onField(pose2)){
             // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
             // Keep the rotation from pose2 so yaw is correct for driver
@@ -281,7 +282,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setModuleStates(SwerveModuleState[] swerveModuleStates, boolean isOpenLoop) {
         // makes sure speeds of modules don't exceed maximum allowed
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.MAX_SPEED);
 
         for (int i = 0; i < 4; i++) {
             modules[i].setDesiredState(swerveModuleStates[i], isOpenLoop);
@@ -300,7 +301,7 @@ public class Drivetrain extends SubsystemBase {
                     +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
         currentSetpoint = setpointGenerator.generateSetpoint(
-            new ModuleLimits(DriveConstants.kMaxSpeed, Double.MAX_VALUE, Double.MAX_VALUE),
+            new ModuleLimits(DriveConstants.MAX_SPEED, Double.MAX_VALUE, Double.MAX_VALUE),
             currentSetpoint,chassisSpeeds,
             Constants.LOOP_TIME);
             

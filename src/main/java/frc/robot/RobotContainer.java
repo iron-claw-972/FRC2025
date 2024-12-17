@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
@@ -122,8 +122,8 @@ public class RobotContainer {
         (chassisSpeeds) -> {
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
-        AutoConstants.autoController,
-        AutoConstants.config,
+        AutoConstants.AUTO_CONTROLLER,
+        AutoConstants.CONFIG,
         getAllianceColorBooleanSupplier(),
         drive);
   }

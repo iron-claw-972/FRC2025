@@ -26,8 +26,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.constants.miscConstants.FieldConstants;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.FieldConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 
 // Vision and it's commands are adapted from Iron Claw's FRC2023
@@ -70,7 +70,7 @@ public class Vision {
     // NetworkTableInstance.getDefault().startServer();
 
     // Load field layout
-    m_aprilTagFieldLayout = new AprilTagFieldLayout(FieldConstants.APRIL_TAGS, FieldConstants.kFieldLength, FieldConstants.kFieldWidth);
+    m_aprilTagFieldLayout = new AprilTagFieldLayout(FieldConstants.APRIL_TAGS, FieldConstants.FIELD_LENGTH, FieldConstants.FIELD_WIDTH);
 
     // Sets the origin to the right side of the blue alliance wall
     m_aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -394,7 +394,7 @@ public class Vision {
    * @return If the pose is on the field
    */
   public static boolean onField(Pose2d pose){
-    return pose!=null && pose.getX()>0 && pose.getX()<FieldConstants.kFieldLength && pose.getY()>0 && pose.getY()<FieldConstants.kFieldWidth;
+    return pose!=null && pose.getX()>0 && pose.getX()<FieldConstants.FIELD_LENGTH && pose.getY()>0 && pose.getY()<FieldConstants.FIELD_WIDTH;
   }
   
   private class VisionCamera {
@@ -477,7 +477,7 @@ public class Vision {
         double timestamp = getTimeStamp();
 
         // If the pose moved too much, don't use it
-        if(lastPose==null || lastPose.getTranslation().getDistance(pose.get().estimatedPose.toPose2d().getTranslation()) > DriveConstants.kMaxSpeed*1.25*(timestamp-lastTimestamp) || timestamp < lastTimestamp){
+        if(lastPose==null || lastPose.getTranslation().getDistance(pose.get().estimatedPose.toPose2d().getTranslation()) > DriveConstants.MAX_SPEED*1.25*(timestamp-lastTimestamp) || timestamp < lastTimestamp){
           lastPose = pose.get().estimatedPose.toPose2d();
           lastTimestamp = timestamp;
           return Optional.empty();
