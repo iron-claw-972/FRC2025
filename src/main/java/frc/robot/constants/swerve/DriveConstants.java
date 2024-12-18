@@ -53,7 +53,7 @@ public class DriveConstants {
     
     public static final double COSF = 1.1;
     
-    public static double MAX_LINEAR_ACCEL = COSF * 9.81;
+    public static double MAX_LINEAR_ACCEL = COSF * Constants.GRAVITY_ACCELERATION;
     public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * kTrackWidth * Math.sqrt(2) / 2;
 
     /** Pigeon2 IMU CAN Id. */
@@ -194,7 +194,7 @@ public class DriveConstants {
     public static final double kSlowDriveFactor = 0.2;
     public static final double kSlowRotFactor = 0.1;
 
-    public static final ModuleLimits MODULE_LIMITS = new ModuleLimits(kMaxSpeed, MAX_LINEAR_ACCEL, Double.POSITIVE_INFINITY);
+    public static final ModuleLimits MODULE_LIMITS = new ModuleLimits(kMaxSpeed, MAX_LINEAR_ACCEL, Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / kSteerGearRatio));
 
     /**
      * Updates the constants if the RobotId is not the competition robot.

@@ -19,23 +19,27 @@ import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
 /** 
- * A util class to assist the driver drive to a pose with 1 method
+ * A util class to assist the driver drive to a pose
  */
 public class DriverAssist {
     // The amount to correct the driver's inpus by
-    // 0 = return unchanged driver inputs, 1 = return calculated speed without driver input
+    // 0 = return unchanged driver inputs, 1 = return a value much closer to the calculated speed, sometimes equal to it
+    // This can be greater than 1 to fully correct more of the time, like from farther away
     private static final double CORRECTION_FACTOR = 0.5;
 
+    
+    // Variables used for first method
     // The setpoint generator, which limits the acceleration
     private static final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
-
     private static final TrapezoidProfile xProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
     private static final TrapezoidProfile yProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
     private static final TrapezoidProfile angleProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL));
 
     /**
      * Combines the driver input with a speed calculated using a trapezoidal profile
+     * @param drive The drivetrain
      * @param driverInput The driver input speed
+     * @param desiredPose The pose to drive to
      * @return The new speed
      */
     public static ChassisSpeeds calculate2(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
@@ -102,11 +106,19 @@ public class DriverAssist {
         // return nextChassisSpeed.times(CORRECTION_FACTOR).plus(driverInput.times(1-CORRECTION_FACTOR));
     }
 
+    // Constants used for second method
     public static final double MAX_VELOCITY_ANGLE_ERROR = Math.PI/4;
     public static final double MAX_DISTANCE_ERROR = 2;
-    public static final double ROTATION_CORRECTION_FACTOR = 0.7;
+    public static final double ROTATION_CORRECTION_FACTOR = 1;
     public static final double MAX_ROTATION_ERROR = Math.PI/3;
 
+    /**
+     * Combines the driver input with a speed perpendicular to the input
+     * @param drive The drivetrain
+     * @param driverInput The driver input speed
+     * @param desiredPose The pose to drive to
+     * @return The new speed
+     */
     public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
         if(desiredPose == null){
             return driverInput;
@@ -134,7 +146,10 @@ public class DriverAssist {
         if(Math.abs(rotationError) > MAX_ROTATION_ERROR){
             return driverInput;
         }
-        double rotationalSpeed = ROTATION_CORRECTION_FACTOR * Math.signum(rotationError)*Math.sqrt(2*DriveConstants.MAX_ANGULAR_ACCEL*Math.abs(rotationError));
+        // We want to set the current angular velocity so that we can decelerate to 0rad/s at the setpoint
+        // Since 0=v0^2+2ax, v0=√(2ax)
+        // High correction factors will also ignore the driver's input more
+        double rotationalSpeed = ROTATION_CORRECTION_FACTOR * Math.signum(rotationError)*Math.sqrt(2*DriveConstants.MAX_ANGULAR_ACCEL*Math.abs(rotationError)) - ROTATION_CORRECTION_FACTOR * driverInput.omegaRadiansPerSecond;
         return driverInput.plus(new ChassisSpeeds(correctionSpeed*Math.cos(perpendicularAngle), correctionSpeed*Math.sin(perpendicularAngle), rotationalSpeed));
     }
 }

@@ -456,6 +456,10 @@ public class Drivetrain extends SubsystemBase {
         alignAngle = newAngle;
     }
 
+    /**
+     * Returns whether or not the robot is at the input align angle
+     * @return true if it within tolerance the align angle, false otherwise
+     */
     public boolean atAlignAngle(){
         if(alignAngle == null){
             return false;
@@ -473,10 +477,6 @@ public class Drivetrain extends SubsystemBase {
             return alignAngle;
         }
         return -Math.PI/2;
-        // Pose2d pose = getPose();
-        // return Math.PI + (Robot.getAlliance() == Alliance.Blue ?
-        //     Math.atan2(VisionConstants.BLUE_SPEAKER_POSE.getY() - pose.getY(), VisionConstants.BLUE_SPEAKER_POSE.getX() - pose.getX()) :
-        //     Math.atan2(VisionConstants.RED_SPEAKER_POSE.getY() - pose.getY(), VisionConstants.RED_SPEAKER_POSE.getX() - pose.getX()));
     }
 
     /**
@@ -554,15 +554,29 @@ public class Drivetrain extends SubsystemBase {
         return rotationController;
     }
 
+    /**
+     * Set the desired pose to drive to
+     * This will enable driver assist to go to the pose
+     * @param supplier The supplier for the desired pose, use ()->null to not use a desired pose
+     */
     public void setDesiredPose(Supplier<Pose2d> supplier){
         desiredPoSupplier = supplier;
     }
+
+    /**
+     * Set the desired pose to drive to
+     * This will enable driver assist to go to the pose
+     * @param pose The Pose2d to drive to
+     */
     public void setDesiredPose(Pose2d pose){
         setDesiredPose(()->pose);
     }
 
+    /**
+     * Gets the current desired pose, or null if there is no desired pose
+     * @return The Pose2d if it exists, null otherwise
+     */
     public Pose2d getDesiredPose(){
-        return new Pose2d(FieldConstants.kFieldLength/2, FieldConstants.kFieldWidth/2, new Rotation2d());
-        // return desiredPoSupplier.get();
+        return desiredPoSupplier.get();
     }
 }

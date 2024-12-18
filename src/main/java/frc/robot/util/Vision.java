@@ -178,7 +178,7 @@ public class Vision {
     double[] xOffset = getHorizontalOffset();
     double[] yOffset = getVerticalOffset();
     // double[] distance = getDistance();
-    String[] objectClass = getDetectedObjectClass();
+    // String[] objectClass = getDetectedObjectClass();
     // long[] cameraIndex = getCameraIndex();
     DetectedObject[] objects = new DetectedObject[Math.min(xOffset.length, yOffset.length)];
     for(int i = 0; i < objects.length; i++){
