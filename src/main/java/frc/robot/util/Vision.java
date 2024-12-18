@@ -3,6 +3,7 @@ package frc.robot.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.DoubleUnaryOperator;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -278,33 +279,32 @@ public class Vision {
   /**
    * Returns where it thinks the robot is
    * @param referencePose The pose to use as a reference, usually the previous robot pose
+   * @param yawFunction A unary operator that takes a timestamp and returns the yaw at that time
    * @return An array list of estimated poses, one for each camera that can see an april tag
    */
   public ArrayList<EstimatedRobotPose> getEstimatedPoses(Pose2d referencePose) {
+    return getEstimatedPoses(referencePose, ignoree->referencePose.getRotation().getRadians());
+  }
+
+  /**
+   * Returns where it thinks the robot is
+   * @param referencePose The pose to use as a reference, usually the previous robot pose
+   * @param yawFunction A unary operator that takes a timestamp and returns the yaw at that time
+   * @return An array list of estimated poses, one for each camera that can see an april tag
+   */
+  public ArrayList<EstimatedRobotPose> getEstimatedPoses(Pose2d referencePose, DoubleUnaryOperator yawFunction) {
     ArrayList<EstimatedRobotPose> estimatedPoses = new ArrayList<>();
     for (int i = 0; i < m_cameras.size(); i++) {
       if(VisionConstants.USE_MANUAL_CALCULATIONS){
-        Pose2d pose = m_cameras.get(i).getEstimatedPose(referencePose.getRotation().getRadians());
+        EstimatedRobotPose pose = m_cameras.get(i).getEstimatedPose(yawFunction);
         if(pose != null){
-          try{
-            EstimatedRobotPose estimatedPose = new EstimatedRobotPose(
-              new Pose3d(pose.getX(), pose.getY(), 0, new Rotation3d(0, 0, pose.getRotation().getRadians())), 
-              m_cameras.get(i).getTimeStamp(), 
-              List.of(m_cameras.get(i).getBestTarget()),
-              VisionConstants.POSE_STRATEGY
-            );
-            estimatedPoses.add(estimatedPose);
+          estimatedPoses.add(pose);
 
-            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-              pose.getX(),
-              pose.getY(),
-              pose.getRotation().getRadians()
-            });
-
-          }catch(Exception e){
-            System.out.println(e.getStackTrace());
-            DriverStation.reportWarning("EXCEPTION THROWN:", true);
-          }
+          LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+            pose.estimatedPose.getX(),
+            pose.estimatedPose.getY(),
+            pose.estimatedPose.toPose2d().getRotation().getRadians()
+          });
         }
       }else{
         Optional<EstimatedRobotPose> estimatedPose = m_cameras.get(i).getEstimatedPose(referencePose);
@@ -330,8 +330,7 @@ public class Vision {
    * Updates the robot's odometry with vision
    * @param poseEstimator The pose estimator to update
    */
-  @SuppressWarnings("unused")
-  public void updateOdometry(SwerveDrivePoseEstimator poseEstimator){
+  public void updateOdometry(SwerveDrivePoseEstimator poseEstimator, DoubleUnaryOperator yawFunction){
     // Simulate vision
     if(RobotBase.isSimulation() && VisionConstants.ENABLED_SIM){
       visionSim.update(poseEstimator.getEstimatedPosition());
@@ -340,11 +339,11 @@ public class Vision {
     sawTag = false;
 
     // An array list of poses returned by different cameras
-    ArrayList<EstimatedRobotPose> estimatedPoses = getEstimatedPoses(poseEstimator.getEstimatedPosition());
+    ArrayList<EstimatedRobotPose> estimatedPoses = getEstimatedPoses(poseEstimator.getEstimatedPosition(), yawFunction);
     for (int i = 0; i < estimatedPoses.size(); i++) {
       EstimatedRobotPose estimatedPose = estimatedPoses.get(i);
       // Continue if this pose doesn't exist
-      if(estimatedPose.timestampSeconds < 0 || !onField(estimatedPose.estimatedPose.toPose2d()) || Timer.getFPGATimestamp() < estimatedPose.timestampSeconds || Timer.getFPGATimestamp() > estimatedPose.timestampSeconds + 1){
+      if(estimatedPose.timestampSeconds < 0 || !onField(estimatedPose.estimatedPose.toPose2d()) || Timer.getFPGATimestamp() < estimatedPose.timestampSeconds || Timer.getFPGATimestamp() > estimatedPose.timestampSeconds + 2){
         continue;
       }
 
@@ -444,22 +443,8 @@ public class Vision {
       // check the ambiguity isn't too high
       List<PhotonTrackedTarget> targetsUsed = cameraResult.targets;
       for (int i = targetsUsed.size()-1; i >= 0; i--) {
-        // found = only use is empty or this tag is in only use
-        boolean found = onlyUse == null || onlyUse.length == 0;
-        for(int j = 0; !found && j < onlyUse.length; j++){
-          if(targetsUsed.get(i).getFiducialId() == onlyUse[j]){
-            found = true;
-          }
-        }
-        // Set found to false if it is in the list of tags to ignore
-        for(int id : VisionConstants.TAGS_TO_IGNORE){
-          if(targetsUsed.get(i).getFiducialId() == id){
-            found = false;
-            break;
-          }
-        }
         // Remove it from the list if it should not be used or if it has too high of an ambiguity
-        if(!found || targetsUsed.get(i).getPoseAmbiguity() > VisionConstants.HIGHEST_AMBIGUITY){
+        if(!useTag(targetsUsed.get(i).getFiducialId()) || targetsUsed.get(i).getPoseAmbiguity() > VisionConstants.HIGHEST_AMBIGUITY){
           targetsUsed.remove(i);
         }
       }
@@ -495,24 +480,28 @@ public class Vision {
     
     /**
      * Gets the pose using manual calculations
-     * @param yaw The yaw of the robot to use in the calculation
-     * @return estimated pose as a Pose2d
+     * @param yawFunction A unary operator that takes a timestamp and returns the yaw at that time
+     * @return estimated pose as a EstimatedRobotPose
      */
-    public Pose2d getEstimatedPose(double yaw){
+    public EstimatedRobotPose getEstimatedPose(DoubleUnaryOperator yawFunction){
+      // The latest camera result
+      PhotonPipelineResult result = camera.getLatestResult();
       // Gets the best target to use for the calculations
-      PhotonTrackedTarget target = camera.getLatestResult().getBestTarget();
+      PhotonTrackedTarget target = result.getBestTarget();
       // Return null if the target doesn't exist or it should be ignored
-      if(target==null){//|| onlyUse>0 && target.getFiducialId()!=onlyUse){
+      if(target==null){
         return null;
       }
       // Return null if the id is too high or too low
       int id = target.getFiducialId();
-      if(id <= 0 || id > FieldConstants.APRIL_TAGS.size()){
+      if(!useTag(id)){
         return null;
       }
       // Stores target pose and robot to camera transformation for easy access later
       Pose3d targetPose = FieldConstants.APRIL_TAGS.get(id-1).pose;
       Transform3d robotToCamera = photonPoseEstimator.getRobotToCameraTransform();
+
+      double yaw = yawFunction.applyAsDouble(result.getTimestampSeconds());
 
       // Get the tag position relative to the robot, assuming the robot is on the ground
       Translation3d translation = target.getBestCameraToTarget().getTranslation()
@@ -528,7 +517,39 @@ public class Vision {
       // Get the field relative robot pose
         .plus(targetPose.getTranslation());
       // Return as a Pose2d
-      return new Pose2d(translation.toTranslation2d(), new Rotation2d(yaw));
+      Pose2d pose = new Pose2d(translation.toTranslation2d(), new Rotation2d(yaw));
+      try{
+        return new EstimatedRobotPose(
+          new Pose3d(pose.getX(), pose.getY(), 0, new Rotation3d(0, 0, pose.getRotation().getRadians())), 
+          result.getTimestampSeconds(), 
+          List.of(target),
+          VisionConstants.POSE_STRATEGY
+        );
+      }catch(Exception e){
+        DriverStation.reportError("Error creating EstimatedRobotPose", true);
+      }
+      return null;
+    }
+
+    public boolean useTag(int id){
+      // Never use tags that don't exist
+      if(id <= 0 || id > FieldConstants.APRIL_TAGS.size()){
+        return false;
+      }
+      // Return false if it is in the list of tags to ignore
+      for(int id2 : VisionConstants.TAGS_TO_IGNORE){
+        if(id == id2){
+          return false;
+        }
+      }
+      // If it's in the array to only use and not in the array to ignore, return true
+      for(int j = 0; onlyUse != null && j < onlyUse.length; j++){
+        if(id == onlyUse[j]){
+          return true;
+        }
+      }
+      // If it isn't in the array to only use, only reutrn true if the array is empty/null
+      return onlyUse == null || onlyUse.length == 0;
     }
 
     /**
@@ -539,14 +560,6 @@ public class Vision {
       return camera.getLatestResult().getTimestampSeconds();
     }
     
-    /**
-     * Gets the best target
-     * @return A PhotonTrackedTarget
-     */
-    public PhotonTrackedTarget getBestTarget(){
-      return camera.getLatestResult().getBestTarget();
-    }
-
     /**
      * Enables or disables this camera
      * @param enable If it should be enabled or disabled
