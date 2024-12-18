@@ -64,6 +64,7 @@ public class ArmTest {
      * @param setpoint arm setpoint in radians
      * @return true if the value is acceptable.
      */
+    @SuppressWarnings("unused")
     private static boolean rangeCheck(double setpoint) {
         return ArmConstants.MIN_ANGLE_RADS <= setpoint && setpoint <= ArmConstants.MAX_ANGLE_RADS;
     }

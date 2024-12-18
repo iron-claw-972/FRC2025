@@ -1,14 +1,10 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.gpm.IntakeNote;
-import frc.robot.commands.gpm.PrepareShooter;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.miscConstants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
@@ -19,6 +15,7 @@ import frc.robot.subsystems.gpm.Arm;
 import frc.robot.subsystems.gpm.Intake;
 import frc.robot.subsystems.gpm.Shooter;
 import frc.robot.subsystems.gpm.StorageIndex;
+import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
@@ -72,17 +69,12 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
-        index = new StorageIndex();
-        shooter = new Shooter();
-        break;
-
       case TestBed2:
-        intake = new Intake();
-        index = new StorageIndex();
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         break;
       case Vertigo:
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, arm, index, shooter);
+        driver = new GameControllerDriverConfig(drive, arm, index, shooter, vision);
         driver.configureControls();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         break;
@@ -100,11 +92,11 @@ public class RobotContainer {
 
 
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, arm, index, shooter);
+        driver = new GameControllerDriverConfig(drive, arm, index, shooter, vision);
         operator = new Operator(intake, arm, index, shooter, drive, consumer);
 
         // Detected objects need access to the drivetrain
-        //DetectedObject.setDrive(drive);
+        DetectedObject.setDrive(drive);
         
         //SignalLogger.start();
 
@@ -168,35 +160,35 @@ public class RobotContainer {
   public void registerCommands() {
 
     // Stuff used in Choreo Paths
-    NamedCommands.registerCommand("Intake", new IntakeNote(intake, index, arm, (ignored) -> {}).withTimeout(1));
+    // NamedCommands.registerCommand("Intake", new IntakeNote(intake, index, arm, (ignored) -> {}).withTimeout(1));
 
-    NamedCommands.registerCommand("Intake_Note_1.5_Sec", new IntakeNote(intake, index, arm, consumer).withTimeout(1.75));
+    // NamedCommands.registerCommand("Intake_Note_1.5_Sec", new IntakeNote(intake, index, arm, consumer).withTimeout(1.75));
     
-     NamedCommands.registerCommand("Outtake_Note_1.50_Sec", new SequentialCommandGroup(
-       new ParallelDeadlineGroup(
-       new InstantCommand(() -> drive.setChassisSpeeds(new ChassisSpeeds(), true)),
-       new WaitCommand(.75)),
-     new WaitCommand(.75)
-     ));
+    //  NamedCommands.registerCommand("Outtake_Note_1.50_Sec", new SequentialCommandGroup(
+    //    new ParallelDeadlineGroup(
+    //    new InstantCommand(() -> drive.setChassisSpeeds(new ChassisSpeeds(), true)),
+    //    new WaitCommand(.75)),
+    //  new WaitCommand(.75)
+    //  ));
 
-    NamedCommands.registerCommand("Intake_Note_2.5_Sec", new IntakeNote(intake, index, arm, consumer).withTimeout(2.5)); // 3 seconds used at SVR
+    // NamedCommands.registerCommand("Intake_Note_2.5_Sec", new IntakeNote(intake, index, arm, consumer).withTimeout(2.5)); // 3 seconds used at SVR
     
-    //Old
-    NamedCommands.registerCommand("Outtake_Note_1.5_Sec", new SequentialCommandGroup(// TODO: This will end instantly
-    // TODO: Don't use setChassisSpeeds(), use drive() instead and add the drivetrain as a parameter so it is a requirement
-      new ParallelDeadlineGroup(new PrepareShooter(shooter, 1750),
-      new WaitCommand(.75)),
-      new WaitCommand(.75),
-      new InstantCommand(()-> index.runIndex()),
-      new WaitCommand(.75),
-      new ParallelDeadlineGroup(new PrepareShooter(shooter, 0))
-     ));
+    // //Old
+    // NamedCommands.registerCommand("Outtake_Note_1.5_Sec", new SequentialCommandGroup(// TODO: This will end instantly
+    // // TODO: Don't use setChassisSpeeds(), use drive() instead and add the drivetrain as a parameter so it is a requirement
+    //   new ParallelDeadlineGroup(new PrepareShooter(shooter, 1750),
+    //   new WaitCommand(.75)),
+    //   new WaitCommand(.75),
+    //   new InstantCommand(()-> index.runIndex()),
+    //   new WaitCommand(.75),
+    //   new ParallelDeadlineGroup(new PrepareShooter(shooter, 0))
+    //  ));
 
-    // Whole time running
-    NamedCommands.registerCommand("Set_Shooter",
-      new SequentialCommandGroup(// TODO: This will end instantly
-        new PrepareShooter(shooter, 1750),
-        new WaitCommand(.75) ) );
+    // // Whole time running
+    // NamedCommands.registerCommand("Set_Shooter",
+    //   new SequentialCommandGroup(// TODO: This will end instantly
+    //     new PrepareShooter(shooter, 1750),
+    //     new WaitCommand(.75) ) );
 
     // NamedCommands.registerCommand("Set_Shooter",
     //   new SequentialCommandGroup(// TODO: This will end instantly
@@ -206,19 +198,19 @@ public class RobotContainer {
 
 
     // Runs the Indexer
-    NamedCommands.registerCommand("Outtake", new SequentialCommandGroup(
-      new WaitCommand(.25),
-      new InstantCommand(()-> index.runIndex()),
-      new WaitCommand(.25)
-    ));
+    // NamedCommands.registerCommand("Outtake", new SequentialCommandGroup(
+    //   new WaitCommand(.25),
+    //   new InstantCommand(()-> index.runIndex()),
+    //   new WaitCommand(.25)
+    // ));
 
-    NamedCommands.registerCommand("Lower_Set_Shooter_Sabotage_Prep", new SequentialCommandGroup(
-      new ParallelDeadlineGroup(new PrepareShooter(shooter, 50))
-    ));
+    // NamedCommands.registerCommand("Lower_Set_Shooter_Sabotage_Prep", new SequentialCommandGroup(
+    //   new ParallelDeadlineGroup(new PrepareShooter(shooter, 50))
+    // ));
 
-    NamedCommands.registerCommand("Sabotage_Second_Shot_Prep", new SequentialCommandGroup(
-      new ParallelDeadlineGroup(new PrepareShooter(shooter, 1250))
-    ));
+    // NamedCommands.registerCommand("Sabotage_Second_Shot_Prep", new SequentialCommandGroup(
+    //   new ParallelDeadlineGroup(new PrepareShooter(shooter, 1250))
+    // ));
     
       // new InstantCommand(() -> drive.setChassisSpeeds(new ChassisSpeeds(), true)),
       // new WaitCommand(.75)),
@@ -226,7 +218,7 @@ public class RobotContainer {
       // new WaitCommand(.5))); 
       //TODO: Stop index after command finishes
 
-    NamedCommands.registerCommand("Prepare Shooter", new SequentialCommandGroup(new PrepareShooter(shooter, 1750), new WaitCommand(1)));
+    // NamedCommands.registerCommand("Prepare Shooter", new SequentialCommandGroup(new PrepareShooter(shooter, 1750), new WaitCommand(1)));
   }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {
