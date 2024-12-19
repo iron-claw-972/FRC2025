@@ -21,7 +21,6 @@ public class DynamicSlewRateLimiter {
     private double prevVal;
     private double prevTime;
 
-    //TODO: write unit test for continuous
     private boolean continuous = false;
     private double lowerContinuousLimit = -1;
     private double upperContinuousLimit = 1;
@@ -81,30 +80,16 @@ public class DynamicSlewRateLimiter {
                 negativeRateLimit * elapsedTime,
                 positiveRateLimit * elapsedTime);
 
-        // TODO: make continuous work properly with + and - slew rates
         if (continuous) {
+            change = MathUtil.clamp(
+                MathUtil.inputModulus(input - prevVal, lowerContinuousLimit, upperContinuousLimit),
+                negativeRateLimit * elapsedTime,
+                positiveRateLimit * elapsedTime);
 
-            //TODO: see if MathUtil.inputModulus() can work
-            // convert value to be in between limits
-            // input = MathUtil.inputModulus(input, lowerContinuousLimit, upperContinuousLimit);
-            //input %= upperCycleLimit - lowerCycleLimit;
-            while (input < lowerContinuousLimit || input > upperContinuousLimit) {
-                if (input < lowerContinuousLimit) input += upperContinuousLimit - lowerContinuousLimit;
-                if (input > upperContinuousLimit) input -= upperContinuousLimit - lowerContinuousLimit;
-            }
-
-            // if change is larger than half the total distance than it is closer on the other side so it can be flipped on other direction
-            if (Math.abs(input - prevVal) > (upperContinuousLimit - lowerContinuousLimit) / 2) {
-                change = upperContinuousLimit - lowerContinuousLimit - change;
-            }
             prevVal += change;
 
-            //converting value to be in limits
-            // prevVal = MathUtil.inputModulus(prevVal, lowerContinuousLimit, upperContinuousLimit);
-            while (prevVal < lowerContinuousLimit || prevVal > upperContinuousLimit) {
-                if (prevVal < lowerContinuousLimit) prevVal += upperContinuousLimit - lowerContinuousLimit;
-                if (prevVal > upperContinuousLimit) prevVal -= upperContinuousLimit - lowerContinuousLimit;
-            }
+            //Extra check to make sure it is within the limits, probably unnecessary
+            prevVal = MathUtil.inputModulus(prevVal, lowerContinuousLimit, upperContinuousLimit);
         } else {
             prevVal += change;
         }

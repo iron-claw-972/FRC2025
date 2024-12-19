@@ -10,7 +10,6 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.constants.miscConstants.FieldConstants;
 import frc.robot.util.Vision;
 
 /**

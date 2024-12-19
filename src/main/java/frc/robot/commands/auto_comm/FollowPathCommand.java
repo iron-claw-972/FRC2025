@@ -6,7 +6,9 @@ package frc.robot.commands.auto_comm;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
@@ -36,12 +38,14 @@ public class FollowPathCommand extends SequentialCommandGroup {
 
     public void resetOdemetry(boolean resetOdemetry){
         if (resetOdemetry){
+            PathPoint point;
             if(RobotContainer.getAllianceColorBooleanSupplier().getAsBoolean()){
-                drive.resetOdometry(path.flipPath().getPreviewStartingHolonomicPose());
+                point = path.getPoint(0).flip();
+            }else{
+                point = path.getPoint(0);
             }
-            else{
-                drive.resetOdometry(path.getPreviewStartingHolonomicPose());
-            }
+            // TODO: Test if this resets it correctly
+            drive.resetOdometry(new Pose2d(point.position, point.rotationTarget.rotation()));
         }
     }
     }
