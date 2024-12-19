@@ -1,7 +1,4 @@
 package frc.robot.constants.miscConstants;
-/**
- * Container class for vision constants.
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +22,9 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.swerve.DriveConstants;
 
+/**
+ * Container class for vision constants.
+ */
 public class VisionConstants {
   /**
    * If April tag vision is enabled on the robot
@@ -34,7 +34,7 @@ public class VisionConstants {
   /**
    * If object detection should be enabled
    */
-  public static final boolean OBJECT_DETECTION_ENABLED = false;
+  public static final boolean OBJECT_DETECTION_ENABLED = true;
 
   /** If odometry should be updated using vision during auto */
   public static final boolean ENABLED_AUTO = true;
@@ -319,7 +319,7 @@ public class VisionConstants {
    */
   public static final ArrayList<Transform3d> OBJECT_DETECTION_CAMERAS = new ArrayList<>(List.of(
     new Transform3d(
-      new Translation3d(Units.inchesToMeters(10), 0, Units.inchesToMeters(24)),
-      new Rotation3d(0, Units.degreesToRadians(20), 0))
+      new Translation3d(-0.33, 0.115, 0.54),
+      new Rotation3d(0, Units.degreesToRadians(31), Math.PI))
   ));
 }

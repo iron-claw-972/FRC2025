@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.util.DetectedObject.ObjectType;
 
 /**
  * Tests DetectedObject
@@ -35,7 +36,7 @@ public class DetectedObjectTest {
       Units.degreesToRadians(45),
       0,
       1,
-      0,
+      ObjectType.NONE,
       new Transform3d(new Translation3d(0, 0, 1), new Rotation3d(0, -Math.PI/2, Math.PI/2))
     );
     Translation3d expected =  new Translation3d(Math.sqrt(2)/2, 0, Math.sqrt(2)/2+1);
@@ -51,8 +52,8 @@ public class DetectedObjectTest {
   public void testObjectPoseWithoutDistance(){
     DetectedObject object = new DetectedObject(
       0,
-      Units.degreesToRadians(20),
-      0,
+      -Units.degreesToRadians(20),
+      ObjectType.NONE,
       new Transform3d(new Translation3d(0, 0, 1), new Rotation3d(0, Units.degreesToRadians(25), 0))
     );
     Translation3d expected =  new Translation3d(1, 0, 0);
@@ -70,7 +71,7 @@ public class DetectedObjectTest {
     DetectedObject object = new DetectedObject(
       random.nextDouble(-Math.PI, Math.PI),
       random.nextDouble(0.001, Math.PI/4),
-      0,
+      ObjectType.NONE,
       new Transform3d(new Translation3d(
         random.nextDouble(0, 100),
         random.nextDouble(0, 100),
