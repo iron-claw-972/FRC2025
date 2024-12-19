@@ -79,7 +79,7 @@ public class Vision {
     // Sets the origin to the right side of the blue alliance wall
     m_aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
 
-    if(!VisionConstants.ENABLED){
+    if(VisionConstants.ENABLED){
       // Puts the cameras in an array list
       for (int i = 0; i < camList.size(); i++) {
         m_cameras.add(new VisionCamera(camList.get(i).getFirst(), camList.get(i).getSecond()));
@@ -340,10 +340,9 @@ public class Vision {
 
     // An array list of poses returned by different cameras
     ArrayList<EstimatedRobotPose> estimatedPoses = getEstimatedPoses(poseEstimator.getEstimatedPosition(), yawFunction);
-    for (int i = 0; i < estimatedPoses.size(); i++) {
-      EstimatedRobotPose estimatedPose = estimatedPoses.get(i);
+    for (EstimatedRobotPose estimatedPose : estimatedPoses) {
       // Continue if this pose doesn't exist
-      if(estimatedPose.timestampSeconds < 0 || !onField(estimatedPose.estimatedPose.toPose2d()) || Timer.getFPGATimestamp() < estimatedPose.timestampSeconds || Timer.getFPGATimestamp() > estimatedPose.timestampSeconds + 2){
+      if(estimatedPose.timestampSeconds < 0 || !onField(estimatedPose.estimatedPose.toPose2d()) || Timer.getFPGATimestamp() < estimatedPose.timestampSeconds || Timer.getFPGATimestamp() > estimatedPose.timestampSeconds + 1){
         continue;
       }
 
@@ -501,7 +500,8 @@ public class Vision {
       Pose3d targetPose = FieldConstants.APRIL_TAGS.get(id-1).pose;
       Transform3d robotToCamera = photonPoseEstimator.getRobotToCameraTransform();
 
-      double yaw = yawFunction.applyAsDouble(result.getTimestampSeconds());
+      double timestamp = result.getTimestampSeconds();
+      double yaw = yawFunction.applyAsDouble(timestamp);
 
       // Get the tag position relative to the robot, assuming the robot is on the ground
       Translation3d translation = target.getBestCameraToTarget().getTranslation()
@@ -511,17 +511,15 @@ public class Vision {
         .rotateBy(new Rotation3d(0, 0, yaw))
 
       // Invert it to get the robot position relative to the April tag
-        .times(-1)
       // Multiply by a constant. I don't know why this works, but it was consistently 10% off in 2023 Fall Semester
-        .times(VisionConstants.DISTANCE_SCALE)
+        .times(-VisionConstants.DISTANCE_SCALE)
       // Get the field relative robot pose
         .plus(targetPose.getTranslation());
-      // Return as a Pose2d
-      Pose2d pose = new Pose2d(translation.toTranslation2d(), new Rotation2d(yaw));
-      try{
+        try{
+        // Return as an EstimatedRobotPose
         return new EstimatedRobotPose(
-          new Pose3d(pose.getX(), pose.getY(), 0, new Rotation3d(0, 0, pose.getRotation().getRadians())), 
-          result.getTimestampSeconds(), 
+          new Pose3d(translation.getX(), translation.getY(), 0, new Rotation3d(0, 0, yaw)), 
+          timestamp, 
           List.of(target),
           VisionConstants.POSE_STRATEGY
         );
