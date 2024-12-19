@@ -32,7 +32,7 @@ public class AutoConstants {
         }catch(Exception e){
             e.printStackTrace();
             // Although these values are probably wrong and auto might not work correctly, at least it won't cause NullPointerExceptions
-            CONFIG = new RobotConfig(50, 0.5, new ModuleConfig(50, MAX_AUTO_SPEED, 1.1, DCMotor.getKrakenX60(1).withReduction(DriveConstants.DRIVE_GEAR_RATIO), DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT, 1), DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH);
+            CONFIG = new RobotConfig(50, 0.5, new ModuleConfig(DriveConstants.WHEEL_RADIUS, MAX_AUTO_SPEED, 1.1, DCMotor.getKrakenX60(1).withReduction(DriveConstants.DRIVE_GEAR_RATIO), DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT, 1), DriveConstants.MODULE_LOCATIONS);
         }
     }
 }

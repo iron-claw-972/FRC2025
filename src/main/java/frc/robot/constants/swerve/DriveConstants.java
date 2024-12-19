@@ -51,10 +51,10 @@ public class DriveConstants {
     public static final Rotation2d STARTING_HEADING = new Rotation2d();
 
     public static final Translation2d[] MODULE_LOCATIONS = {
-            new Translation2d(DriveConstants.TRACK_WIDTH / 2, DriveConstants.TRACK_WIDTH / 2),
-            new Translation2d(DriveConstants.TRACK_WIDTH / 2, -DriveConstants.TRACK_WIDTH / 2),
-            new Translation2d(-DriveConstants.TRACK_WIDTH / 2, DriveConstants.TRACK_WIDTH / 2),
-            new Translation2d(-DriveConstants.TRACK_WIDTH / 2, -DriveConstants.TRACK_WIDTH / 2)
+        new Translation2d(DriveConstants.TRACK_WIDTH / 2, DriveConstants.TRACK_WIDTH / 2),
+        new Translation2d(DriveConstants.TRACK_WIDTH / 2, -DriveConstants.TRACK_WIDTH / 2),
+        new Translation2d(-DriveConstants.TRACK_WIDTH / 2, DriveConstants.TRACK_WIDTH / 2),
+        new Translation2d(-DriveConstants.TRACK_WIDTH / 2, -DriveConstants.TRACK_WIDTH / 2)
     };
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
