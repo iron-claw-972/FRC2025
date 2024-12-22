@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.AutoConstants;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -66,7 +66,7 @@ public class GoToPose extends SequentialCommandGroup {
     }
     Command command = AutoBuilder.pathfindToPose(
       pose,
-      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.kMaxAngularAccel),
+      new PathConstraints(maxSpeed, maxAccel, DriveConstants.MAX_ANGLULAR_SPEED, DriveConstants.MAX_ANGULAR_ACCEL),
       0
     );
 

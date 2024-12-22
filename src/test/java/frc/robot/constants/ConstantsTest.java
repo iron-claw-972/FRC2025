@@ -12,18 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConstantsTest {
 
     @Test
-    @SuppressWarnings("unused")
     public void testRobotSize() {
         // The competition robot frame width and length is 26 inches.
         // It has 3/16 inch plates on all sides,
         // so frame width is 26.375!
         double widthFrame = Units.inchesToMeters(26.0);
         double widthFrameAndPlates = widthFrame + 2.0 * Units.inchesToMeters(3.0 / 16.0);
-
+        
         // At Port Hueneme, the frame perimeter was 105 inches
         // frame perimeter is 105.5...
         assertEquals(105.0, 4 * Units.metersToInches(widthFrameAndPlates), 0.501);
-
+        
         // Bumpers.
         // The backing board is 0.75 inches.
         // The noodles are 2.5 inches.
@@ -34,8 +33,9 @@ public class ConstantsTest {
         // The bumper latch bracket holes for the studs are 3/4 in from the inside surface of the bumpers.
         // That puts the bumper inside surface at 3/4 - (0.5) = 1/4 inch out from widthFrame
         double thickBumpers = Units.inchesToMeters(3.5 + 0.25);
-
+        
         // so width with bumpers is
+        @SuppressWarnings("unused")
         double widthFrameWithBumpers = widthFrame + 2 * thickBumpers;
 
         // check with values in DriveConstants
@@ -82,11 +82,11 @@ public class ConstantsTest {
         assertEquals(6.12, SwerveDriveSpecialties.L3.driveRatio, 0.01);
 
         // The drive ratio could be more accurate, but does not hurt
-        assertEquals(SwerveDriveSpecialties.L2P.driveRatio, DriveConstants.kDriveGearRatio, 0.01);
+        assertEquals(SwerveDriveSpecialties.L2P.driveRatio, DriveConstants.DRIVE_GEAR_RATIO, 0.01);
 
         // The steer ratio
         // print the relative error: 0.6e-4. After 100 rotations, error would be 0.6e-2 rotations (about 1.5 degrees)
         // System.out.println((DriveConstants.kSteerGearRatio - SwerveDriveSpecialties.L2.steerRatio) / SwerveDriveSpecialties.L2.steerRatio);
-        assertEquals(SwerveDriveSpecialties.L2P.steerRatio, DriveConstants.kSteerGearRatio, 0.01);
+        assertEquals(SwerveDriveSpecialties.L2P.steerRatio, DriveConstants.STEER_GEAR_RATIO, 0.01);
     }
 }
