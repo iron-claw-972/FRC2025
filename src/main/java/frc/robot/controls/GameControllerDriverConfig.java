@@ -5,16 +5,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.commands.GoToPose;
-import frc.robot.commands.OuttakeAmp;
 import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
-import frc.robot.constants.miscConstants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.gpm.Arm;
-import frc.robot.subsystems.gpm.Shooter;
-import frc.robot.subsystems.gpm.StorageIndex;
 import frc.robot.util.MathUtils;
 import frc.robot.util.Vision;
 import lib.controllers.GameController;
@@ -26,16 +20,11 @@ import lib.controllers.GameController.Button;
  */
 public class GameControllerDriverConfig extends BaseDriverConfig {
   private final GameController kDriver = new GameController(Constants.DRIVER_JOY);
-  private Arm arm;
-  private StorageIndex index;
-  private Shooter shooter;
-  private Vision vision;
 
-  public GameControllerDriverConfig(Drivetrain drive, Arm arm, StorageIndex index, Shooter shooter, Vision vision) {
+  private final Vision vision;
+
+  public GameControllerDriverConfig(Drivetrain drive, Vision vision) {
     super(drive);
-    this.arm = arm;
-    this.index = index;
-    this.shooter = shooter;
     this.vision = vision;
   }
 
@@ -51,49 +40,17 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     // Enable state deadband after setting formation to X
     kDriver.get(Button.X).onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
 
-    // if(VisionConstants.OBJECT_DETECTION_ENABLED){
-    //   if(intake != null && index != null && arm != null){
-    //     kDriver.get(Button.RIGHT_JOY).whileTrue(new AcquireGamePiece(()->vision.getBestGamePiece(Math.PI/2), getDrivetrain(), intake, index, arm));
-    //   }
-    // }
-
     // Resets the modules to absolute if they are having the unresolved zeroing
     // error
     kDriver.get(Button.RB).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
-    //kDriver.get(Button.RB).onTrue(new SysIDDriveCommand(getDrivetrain()));
-    kDriver.get(Button.X).whileTrue(new GoToPose(()->
-      Robot.getAlliance() == Alliance.Red ? VisionConstants.RED_SUBWOOFER_LEFT
-      : VisionConstants.BLUE_SUBWOOFER_LEFT,
-      getDrivetrain()));
-    kDriver.get(Button.Y).whileTrue(new GoToPose(()->
-      Robot.getAlliance() == Alliance.Red ? VisionConstants.RED_SUBWOOFER_CENTER
-      : VisionConstants.BLUE_SUBWOOFER_CENTER,
-       getDrivetrain()));
-    kDriver.get(Button.B).whileTrue(new GoToPose(()->
-      Robot.getAlliance() == Alliance.Red ? VisionConstants.RED_SUBWOOFER_RIGHT
-      : VisionConstants.BLUE_SUBWOOFER_RIGHT,
-      getDrivetrain()));
 
-
-    // Amp alignment
-    if(arm != null && index != null && shooter != null){
-      // kDriver.get(Button.B).whileTrue(new OuttakeAmp(arm, index, shooter, getDrivetrain()));
-      kDriver.get(Button.A).whileTrue(new OuttakeAmp(getDrivetrain()));
-    }else{
-      kDriver.get(Button.A).whileTrue(new OuttakeAmp(getDrivetrain()));
+    if(vision != null){
+      // TODO: Replace this with the next lines after testing
+      (new Trigger(kDriver.LEFT_TRIGGER_BUTTON)).whileTrue(new DriverAssistIntake(getDrivetrain(), this, vision));
+      // (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
+      //   .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(30), false).pose.toPose2d())))
+      //   .onFalse(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)));
     }
-    // Podium alignment
-    kDriver.get(Button.LB)
-        .whileTrue(new GoToPose(
-            () -> Robot.getAlliance() == Alliance.Blue ? VisionConstants.BLUE_PODIUM_POSE
-                : VisionConstants.RED_PODIUM_POSE,
-            getDrivetrain()));
-
-    // TODO: Replace this with the next lines after testing
-    (new Trigger(kDriver.LEFT_TRIGGER_BUTTON)).whileTrue(new DriverAssistIntake(getDrivetrain(), this, vision));
-    // (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
-    //   .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(30), false).pose.toPose2d())))
-    //   .onFalse(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)));
   }
 
   @Override

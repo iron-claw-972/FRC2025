@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.constants.miscConstants.FieldConstants;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.DetectedObject;
@@ -38,7 +38,7 @@ public class Field {
         }
 
         for (int i = 0; i<4; i++ ){
-            Translation2d postion = DriveConstants.swerveModuleLocations[i].
+            Translation2d postion = DriveConstants.MODULE_LOCATIONS[i].
             rotateBy(chassisPose.getRotation())
             .plus(chassisPose.getTranslation());
 

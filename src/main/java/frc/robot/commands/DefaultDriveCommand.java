@@ -39,11 +39,11 @@ public class DefaultDriveCommand extends Command {
         double sideTranslation = driver.getSideTranslation();
         double rotation = -driver.getRotation();
 
-        double slowFactor = driver.getIsSlowMode() ? DriveConstants.kSlowDriveFactor : 1;
+        double slowFactor = driver.getIsSlowMode() ? DriveConstants.SLOW_DRIVE_FACTOR : 1;
 
         forwardTranslation *= slowFactor;
         sideTranslation *= slowFactor;
-        rotation *= driver.getIsSlowMode() ? DriveConstants.kSlowRotFactor : 1;
+        rotation *= driver.getIsSlowMode() ? DriveConstants.SLOW_ROT_FACTOR : 1;
 
         int allianceReversal = Robot.getAlliance() == Alliance.Red ? 1 : -1;
         forwardTranslation *= allianceReversal;
