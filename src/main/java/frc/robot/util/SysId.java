@@ -3,8 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.util;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -16,12 +15,14 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import java.util.function.Consumer;
 
 
-/** Add your docs here. */
+/**
+ * Util class for creating SysId routines
+*/
 public class SysId {
 
-    SysIdRoutine sysIdRoutine;
+    private SysIdRoutine sysIdRoutine;
 
-    public SysId(String name, Consumer<Measure<Voltage>> driveConsumer, Consumer<SysIdRoutineLog> logConsumer, Subsystem subsystem, Config config){
+    public SysId(String name, Consumer<Voltage> driveConsumer, Consumer<SysIdRoutineLog> logConsumer, Subsystem subsystem, Config config){
         sysIdRoutine = new SysIdRoutine(
             config,
             new Mechanism(
@@ -32,7 +33,7 @@ public class SysId {
             )
         );
     }
-    public SysId(String name, Consumer<Measure<Voltage>> driveConsumer, Subsystem subsystem, Config config){
+    public SysId(String name, Consumer<Voltage> driveConsumer, Subsystem subsystem, Config config){
         this(name,driveConsumer,null,subsystem,config);
     }
 
