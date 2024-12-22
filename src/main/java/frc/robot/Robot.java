@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.util.LogManager;
 
@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        // TODO: why is this here?
+        // Needs to be updated because RobotContainer does not have a periodic method
         robotContainer.updateShuffleBoard();
 
         CommandScheduler.getInstance().run();
@@ -115,7 +115,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopInit() {
-        // TODO: why is this here? Robot may not have vision.
         robotContainer.setVisionEnabled(true);
 
         // This makes sure that the autonomous stops running when
