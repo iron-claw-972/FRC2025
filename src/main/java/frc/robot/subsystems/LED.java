@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.constants.IdConstants;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
@@ -30,7 +31,7 @@ public class LED extends SubsystemBase {
 
     // constructor
     public LED() {
-        this.candle = new CANdle(Constants.CANDLE_ID, Constants.CANDLE_BUS);
+        this.candle = new CANdle(IdConstants.CANDLE_ID, "rio");
         // this.config = new CANdleConfiguration();
 
         // config.statusLedOffWhenActive = true;
