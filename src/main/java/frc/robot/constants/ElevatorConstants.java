@@ -5,13 +5,9 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public class ElevatorConstants {
-    public static final int LEFT_MOTOR_ID = 20;
-    public static final int RIGHT_MOTOR_ID = 48;
-
     public static final double ANGLE = 0; // radians, from vertical
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(2);
     public static final int NUMBER_OF_STAGES = 2;

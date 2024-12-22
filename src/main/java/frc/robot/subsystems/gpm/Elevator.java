@@ -34,14 +34,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.IdConstants;
 import frc.robot.util.EqualsUtil;
 
 public class Elevator extends SubsystemBase {
-  private TalonFX rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID);
-  private TalonFX leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID);
+  private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
+  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
-  private DigitalInput topLimitSwitch = new DigitalInput(1);
-  private DigitalInput bottomLimitSwitch = new DigitalInput(0);
+  private DigitalInput topLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_TOP_LIMIT_SWITCH);
+  private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
   private DIOSim topLimitSwitchSim;
   private DIOSim bottomLimitSwitchSim;
   private boolean limitSwitchPressed = false;
@@ -74,13 +75,13 @@ public class Elevator extends SubsystemBase {
           Units.feetToMeters(11.0))); // Max elevator speed and acceleration.
   private State m_lastProfiledReference = new State();
 
-  private final LinearSystem<N2, N1, N1> m_elevatorPlant = LinearSystemId.createElevatorSystem(
+  private final LinearSystem<N2, N1, N2> m_elevatorPlant = LinearSystemId.createElevatorSystem(
       ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS,
       ElevatorConstants.GEARING);
   private final KalmanFilter<N2, N1, N1> m_observer = new KalmanFilter<>(
       Nat.N2(),
       Nat.N1(),
-      (LinearSystem<N2, N1, N1>) m_elevatorPlant,
+      (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       VecBuilder.fill(Units.inchesToMeters(2), Units.inchesToMeters(20)), // How accurate we
       // think our model is, in meters and meters/second.
       VecBuilder.fill(0.001), // How accurate we think our encoder position

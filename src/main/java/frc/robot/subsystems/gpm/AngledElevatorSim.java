@@ -24,29 +24,10 @@ public class AngledElevatorSim extends ElevatorSim {
       double maxHeightMeters,
       boolean simulateGravity,
       double startingHeightMeters,
-      Matrix<N1, N1> measurementStdDevs,
       double angleRads,
-      double springForceNewtons) {
+      double springForceNewtons,
+      double...   measurementStdDevs) {
         super(gearbox, gearing, carriageMassKg, drumRadiusMeters, minHeightMeters, maxHeightMeters, simulateGravity, startingHeightMeters, measurementStdDevs);
-        angle = angleRads;
-        this.simulateGravity = simulateGravity;
-        minHeight = minHeightMeters;
-        maxHeight = maxHeightMeters;
-        springAccel = springForceNewtons/carriageMassKg;
-    }
-
-    public AngledElevatorSim(
-      DCMotor gearbox,
-      double gearing,
-      double carriageMassKg,
-      double drumRadiusMeters,
-      double minHeightMeters,
-      double maxHeightMeters,
-      boolean simulateGravity,
-      double startingHeightMeters,
-      double angleRads,
-      double springForceNewtons) {
-        super(gearbox, gearing, carriageMassKg, drumRadiusMeters, minHeightMeters, maxHeightMeters, simulateGravity, startingHeightMeters);
         angle = angleRads;
         this.simulateGravity = simulateGravity;
         minHeight = minHeightMeters;
