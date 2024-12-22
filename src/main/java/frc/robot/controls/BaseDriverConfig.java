@@ -10,31 +10,13 @@ import frc.robot.util.MathUtils;
 /**
  * Abstract class for different controller types.
  */
-@SuppressWarnings("unused")
 public abstract class BaseDriverConfig {
 
     private final Drivetrain drive;
 
-    // Some of these are not currently used, but we might want them later
-    private double translationalSensitivity = Constants.TRANSLATIONAL_SENSITIVITY;
-    private double translationalExpo = Constants.TRANSLATIONAL_EXPO;
-    private double translationalDeadband = Constants.TRANSLATIONAL_DEADBAND;
-    private double translationalSlewrate = Constants.TRANSLATIONAL_SLEWRATE;
-
-    private double rotationSensitivity = Constants.ROTATION_SENSITIVITY;
-    private double rotationExpo = Constants.ROTATION_EXPO;
-    private double rotationDeadband = Constants.ROTATION_DEADBAND;
-    private double rotationSlewrate = Constants.ROTATION_SLEWRATE;
-
-    private double headingSensitivity = Constants.HEADING_SENSITIVITY;
-    private double headingExpo = Constants.HEADING_EXPO;
-    private double headingDeadband = Constants.HEADING_DEADBAND;
     private double previousHeading = 0;
 
-    private final DynamicSlewRateLimiter xSpeedLimiter = new DynamicSlewRateLimiter(translationalSlewrate);
-    private final DynamicSlewRateLimiter ySpeedLimiter = new DynamicSlewRateLimiter(translationalSlewrate);
-    private final DynamicSlewRateLimiter rotLimiter = new DynamicSlewRateLimiter(rotationSlewrate);
-    private final DynamicSlewRateLimiter headingLimiter = new DynamicSlewRateLimiter(headingSensitivity);
+    private final DynamicSlewRateLimiter headingLimiter = new DynamicSlewRateLimiter(Constants.HEADING_SLEWRATE);
 
     /**
      * @param drive               the drivetrain instance
@@ -49,24 +31,24 @@ public abstract class BaseDriverConfig {
 
     public double getForwardTranslation() {
         double forward = getRawForwardTranslation();
-        return forward * DriveConstants.kMaxSpeed * MathUtil.applyDeadband(Math.sqrt(forward*forward + Math.pow(getRawSideTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
+        return forward * DriveConstants.MAX_SPEED * MathUtil.applyDeadband(Math.sqrt(forward*forward + Math.pow(getRawSideTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
     }
 
     public double getSideTranslation() {
         double side = getRawSideTranslation();
-        return side * DriveConstants.kMaxSpeed * MathUtil.applyDeadband(Math.sqrt(side*side + Math.pow(getRawForwardTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
+        return side * DriveConstants.MAX_SPEED * MathUtil.applyDeadband(Math.sqrt(side*side + Math.pow(getRawForwardTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
     }
 
     public double getRotation() {
         return MathUtils.expoMS(MathUtil.applyDeadband(getRawRotation(), Constants.ROTATION_DEADBAND), 2)
-                * DriveConstants.kMaxAngularSpeed;
+                * DriveConstants.MAX_ANGLULAR_SPEED;
     }
 
     public double getHeading() {
-        if (getRawHeadingMagnitude() <= headingDeadband)
+        if (getRawHeadingMagnitude() <= Constants.HEADING_DEADBAND)
             return headingLimiter.calculate(previousHeading, 1e-6);
         previousHeading = headingLimiter.calculate(getRawHeadingAngle(),
-                MathUtils.expoMS(getRawHeadingMagnitude(), headingExpo) * headingSensitivity);
+                MathUtils.expoMS(getRawHeadingMagnitude(), 2));
         return previousHeading;
     }
 

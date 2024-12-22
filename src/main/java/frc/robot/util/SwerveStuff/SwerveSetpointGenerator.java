@@ -35,7 +35,7 @@ import frc.robot.util.GeomUtil;
 
 public class SwerveSetpointGenerator {
   private final SwerveDriveKinematics kinematics= DriveConstants.KINEMATICS;
-  private final Translation2d[] moduleLocations = DriveConstants.swerveModuleLocations;
+  private final Translation2d[] moduleLocations = DriveConstants.MODULE_LOCATIONS;
 
   /**
    * Check if it would be faster to go to the opposite of the goal heading (and reverse drive

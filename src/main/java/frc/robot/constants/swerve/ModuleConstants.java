@@ -1,5 +1,7 @@
 package frc.robot.constants.swerve;
 
+import frc.robot.constants.IdConstants;
+
 /**
  * Container class for module constants, defined using constants from {@link DriveConstants}
  * .
@@ -9,56 +11,56 @@ package frc.robot.constants.swerve;
 public enum ModuleConstants {
 
     FRONT_LEFT(
-            DriveConstants.kDriveFrontLeft,
-            DriveConstants.kSteerFrontLeft,
-            DriveConstants.kEncoderFrontLeft,
-            DriveConstants.kSteerOffsetFrontLeft,
+            IdConstants.DRIVE_FRONT_LEFT_ID,
+            IdConstants.STEER_FRONT_LEFT_ID,
+            IdConstants.ENCODER_FRONT_LEFT_ID,
+            DriveConstants.STEER_OFFSET_FRONT_LEFT,
             ModuleType.FRONT_LEFT,
-            DriveConstants.DRIVE_KS_Values[0],
-            DriveConstants.DRIVE_KV_Values[0],
-            DriveConstants.DRIVE_KA_Values[0],
-            DriveConstants.P_Values[0],
-            DriveConstants.I_Values[0],
-            DriveConstants.D_Values[0]
+            DriveConstants.S_VALUES[0],
+            DriveConstants.V_VALUES[0],
+            DriveConstants.A_VALUES[0],
+            DriveConstants.P_VALUES[0],
+            DriveConstants.I_VALUES[0],
+            DriveConstants.D_VALUES[0]
     ),
     FRONT_RIGHT(
-            DriveConstants.kDriveFrontRight,
-            DriveConstants.kSteerFrontRight,
-            DriveConstants.kEncoderFrontRight,
-            DriveConstants.kSteerOffsetFrontRight,
+            IdConstants.DRIVE_FRONT_RIGHT_ID,
+            IdConstants.STEER_FRONT_RIGHT_ID,
+            IdConstants.ENCODER_FRONT_RIGHT_ID,
+            DriveConstants.STEER_OFFSET_FRONT_RIGHT,
             ModuleType.FRONT_RIGHT,
-            DriveConstants.DRIVE_KS_Values[1],
-            DriveConstants.DRIVE_KV_Values[1],
-            DriveConstants.DRIVE_KA_Values[1],
-            DriveConstants.P_Values[1],
-            DriveConstants.I_Values[1],
-            DriveConstants.D_Values[1]
+            DriveConstants.S_VALUES[1],
+            DriveConstants.V_VALUES[1],
+            DriveConstants.A_VALUES[1],
+            DriveConstants.P_VALUES[1],
+            DriveConstants.I_VALUES[1],
+            DriveConstants.D_VALUES[1]
     ),
     BACK_LEFT(
-            DriveConstants.kDriveBackLeft,
-            DriveConstants.kSteerBackLeft,
-            DriveConstants.kEncoderBackLeft,
-            DriveConstants.kSteerOffsetBackLeft,
+            IdConstants.DRIVE_BACK_LEFT_ID,
+            IdConstants.STEER_BACK_LEFT_ID,
+            IdConstants.ENCODER_BACK_LEFT_ID,
+            DriveConstants.STEER_OFFSET_BACK_LEFT,
             ModuleType.BACK_LEFT,
-            DriveConstants.DRIVE_KS_Values[2],
-            DriveConstants.DRIVE_KV_Values[2],
-            DriveConstants.DRIVE_KA_Values[2],
-            DriveConstants.P_Values[2],
-            DriveConstants.I_Values[2],
-            DriveConstants.D_Values[2]
+            DriveConstants.S_VALUES[2],
+            DriveConstants.V_VALUES[2],
+            DriveConstants.A_VALUES[2],
+            DriveConstants.P_VALUES[2],
+            DriveConstants.I_VALUES[2],
+            DriveConstants.D_VALUES[2]
     ),
     BACK_RIGHT(
-            DriveConstants.kDriveBackRight,
-            DriveConstants.kSteerBackRight,
-            DriveConstants.kEncoderBackRight,
-            DriveConstants.kSteerOffsetBackRight,
+            IdConstants.DRIVE_BACK_RIGHT_ID,
+            IdConstants.STEER_BACK_RIGHT_ID,
+            IdConstants.ENCODER_BACK_RIGHT_ID,
+            DriveConstants.STEER_OFFSET_BACK_RIGHT,
             ModuleType.BACK_RIGHT,
-            DriveConstants.DRIVE_KS_Values[3],
-            DriveConstants.DRIVE_KV_Values[3],
-            DriveConstants.DRIVE_KA_Values[3],
-            DriveConstants.P_Values[3],
-            DriveConstants.I_Values[3],
-            DriveConstants.D_Values[3]
+            DriveConstants.S_VALUES[3],
+            DriveConstants.V_VALUES[3],
+            DriveConstants.A_VALUES[3],
+            DriveConstants.P_VALUES[3],
+            DriveConstants.I_VALUES[3],
+            DriveConstants.D_VALUES[3]
     ),
 
     NONE(0, 0, 0, 0.0, ModuleType.NONE,0,0,0,0,0,0);
@@ -121,13 +123,13 @@ public enum ModuleConstants {
     public ModuleType getType() {
         return type;
     }
-    public double getKs(){
+    public double getDriveS(){
         return ks;
     }
-    public double getKv(){
+    public double getDriveV(){
         return kv;
     }
-    public double getKa(){
+    public double getDriveA(){
         return ka;
     }
     public double getDriveP(){

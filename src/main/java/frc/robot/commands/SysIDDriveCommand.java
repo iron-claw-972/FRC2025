@@ -15,14 +15,16 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.SysId;
 
-/** Add your docs here. */
+/**
+ * A command to run all 4 SysId routines on the drivetrain
+*/
 public class SysIDDriveCommand extends SequentialCommandGroup {
 
     private Config config = new Config();
     private SysId sysId;
     public SysIDDriveCommand(Drivetrain drive) {
         config = new Config(
-            Units.Volts.of(0.5).per(Units.Seconds.of(1)),
+            Units.Volts.of(0.5).per(Units.Seconds),
             Units.Volts.of(3),
             Units.Seconds.of(5),
             (x)->SignalLogger.writeString("state", x.toString())

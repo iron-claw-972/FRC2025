@@ -21,12 +21,13 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.constants.miscConstants.FieldConstants;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.FieldConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 
 // Vision and it's commands are adapted from Iron Claw's FRC2023
@@ -69,7 +70,7 @@ public class Vision {
     // NetworkTableInstance.getDefault().startServer();
 
     // Load field layout
-    m_aprilTagFieldLayout = new AprilTagFieldLayout(FieldConstants.APRIL_TAGS, FieldConstants.kFieldLength, FieldConstants.kFieldWidth);
+    m_aprilTagFieldLayout = new AprilTagFieldLayout(FieldConstants.APRIL_TAGS, FieldConstants.FIELD_LENGTH, FieldConstants.FIELD_WIDTH);
 
     // Sets the origin to the right side of the blue alliance wall
     m_aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -217,6 +218,8 @@ public class Vision {
     }
     ArrayList<EstimatedRobotPose> estimatedPoses = getEstimatedPoses(referencePose);
     
+    if (estimatedPoses.size() == 0) return null;
+
     if (estimatedPoses.size() == 1) return estimatedPoses.get(0).estimatedPose.toPose2d();
     
     if (estimatedPoses.size() == 2) {
@@ -232,16 +235,18 @@ public class Vision {
         )
       );
     }
-          
-    //TODO: VERY LOW PRIORITY FOR FUTURE ROBOTS, make the rotation average work with more than 2 cameras
-    // for(int i = 0; i < estimatedPoses.size(); i ++){
-    //   translation=translation.plus(estimatedPoses.get(i).estimatedPose.toPose2d().getTranslation());
-    // }
+    
+    // The average translation is just the average of all of the translations (sum divided by total)
+    // Average angle is similar, except every step needs to use a modulus, since -π is the same angle as π
+    // This calculation is essentially newAverage = (oldAverage * valuesInOldAverage + nextValue) / newNumberOfValues
+    Translation2d translation = new Translation2d();
+    double angle = 0;
+    for(int i = 0; i < estimatedPoses.size(); i ++){
+      translation = translation.plus(estimatedPoses.get(i).estimatedPose.toPose2d().getTranslation());
+      angle = MathUtils.modulusInterpolate(angle, estimatedPoses.get(i).estimatedPose.toPose2d().getRotation().getRadians(), 1.0/(i+1), -Math.PI, Math.PI);
+    }
 
-    // if(posesUsed>0){
-    //   return new Pose2d(translation.div(estimatedPoses.size()), new Rotation2d());
-    // }
-    return null;
+    return new Pose2d(translation.div(estimatedPoses.size()), new Rotation2d(angle));
   }
 
   public AprilTagFieldLayout getAprilTagFieldLayout(){
@@ -304,11 +309,21 @@ public class Vision {
             estimatedPose.get().estimatedPose.getY(),
             estimatedPose.get().estimatedPose.getRotation().getZ()
           });
-
         }
       }
     }
-    //TODO: If poses are different, return nothing
+    if(estimatedPoses.size() > 1){
+      Translation2d average = new Translation2d();
+      for(EstimatedRobotPose pose : estimatedPoses){
+        average = average.plus(pose.estimatedPose.getTranslation().toTranslation2d());
+      }
+      average = average.div(estimatedPoses.size());
+      for(int i = estimatedPoses.size()-1; i>=0; i--){
+        if(estimatedPoses.get(i).estimatedPose.getTranslation().toTranslation2d().getDistance(average) > VisionConstants.MAX_POSE_DIFFERENCE/2){
+          estimatedPoses.remove(i);
+        }
+      }
+    }
     return estimatedPoses; 
   }
 
@@ -316,7 +331,6 @@ public class Vision {
    * Updates the robot's odometry with vision
    * @param poseEstimator The pose estimator to update
    */
-  @SuppressWarnings("unused")
   public void updateOdometry(SwerveDrivePoseEstimator poseEstimator){
     // Simulate vision
     if(RobotBase.isSimulation() && VisionConstants.ENABLED_SIM){
@@ -380,7 +394,7 @@ public class Vision {
    * @return If the pose is on the field
    */
   public static boolean onField(Pose2d pose){
-    return pose!=null && pose.getX()>0 && pose.getX()<FieldConstants.kFieldLength && pose.getY()>0 && pose.getY()<FieldConstants.kFieldWidth;
+    return pose!=null && pose.getX()>0 && pose.getX()<FieldConstants.FIELD_LENGTH && pose.getY()>0 && pose.getY()<FieldConstants.FIELD_WIDTH;
   }
   
   private class VisionCamera {
@@ -463,7 +477,7 @@ public class Vision {
         double timestamp = getTimeStamp();
 
         // If the pose moved too much, don't use it
-        if(lastPose==null || lastPose.getTranslation().getDistance(pose.get().estimatedPose.toPose2d().getTranslation()) > DriveConstants.kMaxSpeed*1.25*(timestamp-lastTimestamp) || timestamp < lastTimestamp){
+        if(lastPose==null || lastPose.getTranslation().getDistance(pose.get().estimatedPose.toPose2d().getTranslation()) > DriveConstants.MAX_SPEED*1.25*(timestamp-lastTimestamp) || timestamp < lastTimestamp){
           lastPose = pose.get().estimatedPose.toPose2d();
           lastTimestamp = timestamp;
           return Optional.empty();
