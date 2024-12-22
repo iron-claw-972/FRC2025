@@ -41,8 +41,7 @@ public class PoseTransform extends Command {
 
     @Override
     public boolean isFinished() {
-        // TODO: the current PID values don't allow the command to finish
-        double errorMarginMeters = TestConstants.TRANSLATION_ERROR;
+        double errorMarginMeters = TestConstants.POSE_TRANSFORM_TRANSLATION_ERROR;
         double errorMarginRadians = Units.degreesToRadians(10);
         error = drive.getPose().relativeTo(finalPose);
         // if robot thinks its precision is < 0.1 to the target we inputted, it will stop, so then we can see how off it is

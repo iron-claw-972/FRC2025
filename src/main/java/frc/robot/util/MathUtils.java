@@ -1,9 +1,9 @@
 package frc.robot.util;
 
+import java.util.List;
+
 import edu.wpi.first.math.MathUtil;
 import frc.robot.constants.Constants;
-
-import java.util.List;
 
 /**
  * Utility class for useful functions.
@@ -36,7 +36,7 @@ public class MathUtils {
      * @return the input rescaled and to fit [-1, -DEADBAND], [DEADBAND, 1]
      */
     public static double deadband(double input) {
-        return deadband(input, Constants.DEADBAND);
+        return deadband(input, Constants.DEFAULT_DEADBAND);
     }
 
     /**
@@ -82,6 +82,29 @@ public class MathUtils {
             return MathUtil.inputModulus((num1 + num2) / 2 + (upperBound - lowerBound) / 2, lowerBound, upperBound);
         }
         return (num1 + num2) / 2;
+    }
+
+    /**
+     * Interpolates between two numbers on modulus number line
+     *
+     * @param num1       first number
+     * @param num2       second number
+     * @param amount     the amount to interpolate, 0 = first number, 1 = second number
+     * @param lowerBound lower bound of modulus number line
+     * @param upperBound upper bound of modulus number line
+     * @return interpolated value between 2 numbers on modulus number line
+     */
+    public static double modulusInterpolate(double num1, double num2, double amount, double lowerBound, double upperBound) {
+        num1 = MathUtil.inputModulus(num1, lowerBound, upperBound);
+        num2 = MathUtil.inputModulus(num2, lowerBound, upperBound);
+        if (Math.abs(num1 - num2) > (upperBound - lowerBound) / 2) {
+            if(num1 < num2){
+                num1 += upperBound-lowerBound;
+            }else{
+                num2 += upperBound-lowerBound;
+            }
+        }
+        return MathUtil.inputModulus((1-amount)*num1 + amount*num2, lowerBound, upperBound);
     }
 
     /**
