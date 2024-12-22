@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Power Distribution.
- * <p>
- * See https://docs.google.com/spreadsheets/d/1UiHZFYeZiHPAPIu39uRrskQuQYfvJ03UjLeQVq--Mzg/edit#gid=0 for PDH assignments.
+ * TODO: Either fully implement this with all subsystems, including swerve, or delete it
+ * Using it would require rewriting swerve sim, and we can't use it without swerve, since that takes more current than anything else
  */
 public class PowerPanel extends SubsystemBase {
 	private final PowerDistribution PDH = new PowerDistribution();
@@ -23,7 +23,6 @@ public class PowerPanel extends SubsystemBase {
 		if (RobotBase.isSimulation()) {
 			PDHSim = new PDPSim(PDH);
 
-			// TODO: find actual values for things like Beelink
 			PDHSim.setCurrent(18, 12.4); //this is an example
 		}
 	}
@@ -37,8 +36,6 @@ public class PowerPanel extends SubsystemBase {
 		// put the current draw on the SmartDashboard
 		//SmartDashboard.putNumber("PDH Current (Amps)", PDH.getTotalCurrent());
 		SmartDashboard.putNumber("PDH Current for Arm (Amps)", PDH.getCurrent(1) + PDH.getCurrent(2) + PDH.getCurrent(4) + PDH.getCurrent(5));
-
-		// TODO: put the Energy draw on the SmartDashboard
 
 		// simulate the voltage on the battery
 		voltsBattery = 12.6 - PDH.getTotalCurrent() * ohmsResistance;
