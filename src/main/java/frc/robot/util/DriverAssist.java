@@ -31,9 +31,9 @@ public class DriverAssist {
     // Variables used for first method
     // The setpoint generator, which limits the acceleration
     private static final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
-    private static final TrapezoidProfile xProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
-    private static final TrapezoidProfile yProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxSpeed, DriveConstants.MAX_LINEAR_ACCEL));
-    private static final TrapezoidProfile angleProfile = new TrapezoidProfile(new Constraints(DriveConstants.kMaxAngularSpeed, DriveConstants.MAX_ANGULAR_ACCEL));
+    private static final TrapezoidProfile xProfile = new TrapezoidProfile(new Constraints(DriveConstants.MAX_SPEED, DriveConstants.MAX_LINEAR_ACCEL));
+    private static final TrapezoidProfile yProfile = new TrapezoidProfile(new Constraints(DriveConstants.MAX_SPEED, DriveConstants.MAX_LINEAR_ACCEL));
+    private static final TrapezoidProfile angleProfile = new TrapezoidProfile(new Constraints(DriveConstants.MAX_ANGULAR_SPEED, DriveConstants.MAX_ANGULAR_ACCEL));
 
     /**
      * Combines the driver input with a speed calculated using a trapezoidal profile
@@ -51,7 +51,8 @@ public class DriverAssist {
         // Store current states
         Pose2d currentPose = drive.getPose();
         Rotation2d yaw = drive.getYaw();
-        ChassisSpeeds driveSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), yaw);
+        ChassisSpeeds driveSpeeds = drive.getChassisSpeeds();
+        driveSpeeds.toFieldRelativeSpeeds(yaw); // Changing this does not cause problems because getChassisSpeeds() creates a new object
         State xState = new State(currentPose.getX(), driveSpeeds.vxMetersPerSecond);
         State yState = new State(currentPose.getY(), driveSpeeds.vyMetersPerSecond);
         State angleState = new State(currentPose.getRotation().getRadians(), driveSpeeds.omegaRadiansPerSecond);
@@ -73,22 +74,30 @@ public class DriverAssist {
             yProfile.calculate(Constants.LOOP_TIME, yState, yGoal).velocity,
             angleProfile.calculate(Constants.LOOP_TIME, angleState, angleGoal).velocity
         );
+        // Robot-relataive goal
+        ChassisSpeeds goalRobot = goal.times(1);
+        goalRobot.toRobotRelativeSpeeds(yaw);
 
         // This calculates the actual acceleration we can get
         // This is the only thing that needs to be robot relative
         SwerveSetpoint nextSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                drive.getCurrSetpoint(), ChassisSpeeds.fromFieldRelativeSpeeds(goal, yaw),
+                drive.getCurrSetpoint(), goalRobot,
                 Constants.LOOP_TIME);
-        ChassisSpeeds nextChassisSpeed = ChassisSpeeds.fromRobotRelativeSpeeds(nextSetpoint.chassisSpeeds(), yaw);
+            ChassisSpeeds nextChassisSpeed = nextSetpoint.chassisSpeeds();
+            nextChassisSpeed.toFieldRelativeSpeeds(yaw);
 
+        // Robot relative driver inputs
+        ChassisSpeeds driverInputRobot = driverInput.times(1); // Copy so original doesn't change
+        driverInputRobot.toRobotRelativeSpeeds(yaw);
         // This is the speed the driver will be able to get next frame
         // Both speeds need to be obtainable in 1 frame or the driver speed will always be farther away
         SwerveSetpoint driverSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                drive.getCurrSetpoint(), ChassisSpeeds.fromFieldRelativeSpeeds(driverInput, yaw),
+                drive.getCurrSetpoint(), driverInputRobot,
                 Constants.LOOP_TIME);
-        ChassisSpeeds driverSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(driverSetpoint.chassisSpeeds(), yaw);
+        ChassisSpeeds driverSpeeds = driverSetpoint.chassisSpeeds();
+        driverSpeeds.toFieldRelativeSpeeds(yaw);
 
         // The difference between the 2 speeds
         ChassisSpeeds error = nextChassisSpeed.minus(driverSpeeds);
@@ -100,7 +109,7 @@ public class DriverAssist {
         double driverInputSpeed = Math.hypot(driverInput.vxMetersPerSecond, driverInput.vyMetersPerSecond);
 
         // The amount to correct by
-        ChassisSpeeds correction = error.times(Math.min(CORRECTION_FACTOR * distanceFactor * driverInputSpeed / DriveConstants.kMaxSpeed, 1));
+        ChassisSpeeds correction = error.times(Math.min(CORRECTION_FACTOR * distanceFactor * driverInputSpeed / DriveConstants.MAX_SPEED, 1));
         
         return driverSpeeds.plus(correction);
         // return nextChassisSpeed.times(CORRECTION_FACTOR).plus(driverInput.times(1-CORRECTION_FACTOR));

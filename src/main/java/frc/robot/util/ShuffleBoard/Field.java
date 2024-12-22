@@ -69,7 +69,7 @@ public class Field {
         field.setRobotPose(chassisPose);
         field.getObject("Modules").setPoses(modulePositions);
         field.getObject("AprilTags").setPoses(aprilTagPoses);
-        // For testing, TODO: remove before merging
+        // For testing, TODO: remove before competition
         field.getObject("Detected objects").setPoses(getObjectPoses());
     }
 

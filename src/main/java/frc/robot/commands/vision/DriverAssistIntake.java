@@ -48,7 +48,7 @@ public class DriverAssistIntake extends Command {
             return;
         }
         // The component of speed in the driection of the object
-        double slowFactor = driver.getIsSlowMode() ? DriveConstants.kSlowDriveFactor : 1;
+        double slowFactor = driver.getIsSlowMode() ? DriveConstants.SLOW_DRIVE_FACTOR : 1;
         double parallelSpeed = speed * Math.cos(angle-velocityAngle) * slowFactor;
         // Drive using only the parallel component of the speed
         drive.driveHeading(parallelSpeed * Math.cos(angle), parallelSpeed * Math.sin(angle), Math.PI+angle, true);
@@ -56,7 +56,7 @@ public class DriverAssistIntake extends Command {
 
     private void normalDrive(double x, double y){
         double rotation = -driver.getRotation();
-        double slowFactor = driver.getIsSlowMode() ? DriveConstants.kSlowDriveFactor : 1;
+        double slowFactor = driver.getIsSlowMode() ? DriveConstants.SLOW_DRIVE_FACTOR : 1;
         drive.drive(x * slowFactor, y * slowFactor, rotation * slowFactor, true, false);
     }
 

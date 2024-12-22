@@ -44,12 +44,12 @@ public class DriveConstants {
 
     // Need to convert tangential velocity (the m/s of the edge of the robot) to angular velocity (the radians/s of the robot)
     // To do so, divide by the radius. The radius is the diagonal of the square chassis, diagonal = sqrt(2) * side_length.
-    public static final double MAX_ANGLULAR_SPEED = MAX_SPEED / ((TRACK_WIDTH / 2) * Math.sqrt(2));
+    public static final double MAX_ANGULAR_SPEED = MAX_SPEED / ((TRACK_WIDTH / 2) * Math.sqrt(2));
 
     public static final double COSF = 1.1;
     
     public static double MAX_LINEAR_ACCEL = COSF * Constants.GRAVITY_ACCELERATION;
-    public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * kTrackWidth * Math.sqrt(2) / 2;
+    public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * TRACK_WIDTH * Math.sqrt(2) / 2;
 
     public static final Rotation2d STARTING_HEADING = new Rotation2d();
 
