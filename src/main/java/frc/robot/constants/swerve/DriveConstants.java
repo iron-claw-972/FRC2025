@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotId;
 import frc.robot.constants.Constants;
+import frc.robot.util.SwerveStuff.ModuleLimits;
 import lib.COTSFalconSwerveConstants;
 
 /**
@@ -43,10 +44,12 @@ public class DriveConstants {
 
     // Need to convert tangential velocity (the m/s of the edge of the robot) to angular velocity (the radians/s of the robot)
     // To do so, divide by the radius. The radius is the diagonal of the square chassis, diagonal = sqrt(2) * side_length.
-    public static final double MAX_ANGLULAR_SPEED = MAX_SPEED / ((TRACK_WIDTH / 2) * Math.sqrt(2));
+    public static final double MAX_ANGULAR_SPEED = MAX_SPEED / ((TRACK_WIDTH / 2) * Math.sqrt(2));
 
-    // TODO: Tune this better.
-    public static final double MAX_ANGULAR_ACCEL = 8 * 2 * Math.PI; // 8 rotations per second per second
+    public static final double COSF = 1.1;
+    
+    public static double MAX_LINEAR_ACCEL = COSF * Constants.GRAVITY_ACCELERATION;
+    public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * TRACK_WIDTH * Math.sqrt(2) / 2;
 
     public static final Rotation2d STARTING_HEADING = new Rotation2d();
 
@@ -161,6 +164,8 @@ public class DriveConstants {
 
     public static final double SLOW_DRIVE_FACTOR = 0.2;
     public static final double SLOW_ROT_FACTOR = 0.1;
+
+    public static final ModuleLimits MODULE_LIMITS = new ModuleLimits(MAX_SPEED, MAX_LINEAR_ACCEL, Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / STEER_GEAR_RATIO));
 
     /**
      * Updates the constants if the RobotId is not the competition robot.
