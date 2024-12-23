@@ -251,7 +251,7 @@ public class Drivetrain extends SubsystemBase {
         Pose2d pose2 = getPose();
 
         if(VisionConstants.ENABLED){
-            if(visionEnabled && visionEnableTimer.hasElapsed(5)){
+            if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){
                 vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians());
             }
         }

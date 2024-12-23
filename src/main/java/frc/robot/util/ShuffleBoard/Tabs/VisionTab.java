@@ -35,9 +35,11 @@ public class VisionTab extends ShuffleBoardTabs {
 
     public void addCommands(ShuffleboardTab tab){
         tab = Shuffleboard.getTab("Vision");
-        tab.add("Calculate std devs", new CalculateStdDevs(1000, vision, drive));
+        if(vision != null){
+            tab.add("Calculate std devs", new CalculateStdDevs(1000, vision, drive));
+            tab.add("Return data", new ReturnData(vision));
+        }
         tab.add("Aim at tag", new AimAtTag(drive));
-        tab.add("Return data", new ReturnData(vision));
     }
 
 }
