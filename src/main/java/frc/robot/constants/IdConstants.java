@@ -15,6 +15,7 @@ public class IdConstants {
     public static final int STEER_BACK_RIGHT_ID = 5;
     public static final int ENCODER_BACK_RIGHT_ID = 6;
     public static final int PIGEON = 13;
-
-    // Add other subsystems here
+    
+    // LEDs
+    public static final int CANDLE_ID = 1;
 }
