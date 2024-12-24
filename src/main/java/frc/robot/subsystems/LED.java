@@ -55,35 +55,6 @@ public class LED extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // candle.setLEDs(255, 127 , 0, 0, 0, 512);
-
-        // candle.animate(new ColorFlowAnimation(255, 127, 0, 0, 0.7, stripLength,
-        // Direction.Forward));
-
-        // candle.animate(new FireAnimation(0.5, 0.7, stripLength, 0.7, 0.5));
-
-        // candle.animate(new LarsonAnimation(0, 255, 46, 0, 1, stripLength,
-        // BounceMode.Front, 3));
-
-        // candle.animate(new RainbowAnimation(1, 1, stripLength));
-
-        // candle.animate(new RgbFadeAnimation(0.7, 0.4, stripLength));
-
-        // candle.animate(new SingleFadeAnimation(50, 2, 200, 0, 0.5, stripLength));
-
-        // candle.animate(new StrobeAnimation(240, 10, 180, 0, 98.0 / 256.0,
-        // stripLength));
-
-        // candle.animate(new TwinkleAnimation(30, 70, 60, 0, 0.4, stripLength,
-        // TwinklePercent.Percent6));
-
-        // candle.animate(new TwinkleOffAnimation(255, 127, 0, 0, 0.8, stripLength,
-        // TwinkleOffPercent.Percent100));
-
-        candle.animate(null);
-
-        alternate(255, 0, 0, 0, 255, 0, 1, 5, stripLength);
-
     }
 
     // public enum Colors {

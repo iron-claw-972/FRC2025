@@ -11,7 +11,6 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.LED;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
@@ -31,7 +30,6 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
-  private LED led = null;
   
   private BaseDriverConfig driver = null;
   private Operator operator = null;
@@ -47,7 +45,6 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
-        led = new LED();
         break;
 
       case TestBed2:
