@@ -31,6 +31,8 @@ public class RobotContainer {
   private Drivetrain drive = null;
   private Vision vision = null;
   
+
+  // Controllers are defined here
   private BaseDriverConfig driver = null;
   private Operator operator = null;
   ShuffleBoardManager shuffleboardManager = null;
