@@ -38,7 +38,7 @@ public class LED extends SubsystemBase {
      * @param green Green value (0-255)
      * @param blue  Blue value (0-255)
      */
-    public void setLEDs(int red, int green, int blue, int white) {
+    public void setLEDs(int red, int green, int blue) {
         candle.setLEDs(red, green, blue);
     }
 
