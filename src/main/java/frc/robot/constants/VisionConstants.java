@@ -84,9 +84,13 @@ public class VisionConstants {
   /**
    * The camera poses
    * <p>
+   * Everything is in meters and radians <p>
+   * 0 for all numbers is center of the robot, on the ground, looking straight toward the front <p>
    * + X: Front of Robot <p>
    * + Y: Left of Robot <p>
-   * + Z: Top of Robot
+   * + Z: Top of Robot <p>
+   * + Pitch: Down <p>
+   * + Yaw: Counterclockwise
    */
   public static final ArrayList<Pair<String, Transform3d>> APRIL_TAG_CAMERAS = new ArrayList<Pair<String, Transform3d>>(List.of(
     new Pair<String, Transform3d>(
