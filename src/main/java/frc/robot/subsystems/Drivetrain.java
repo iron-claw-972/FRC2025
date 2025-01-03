@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -32,7 +35,6 @@ import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
 import frc.robot.util.Vision;
-import frc.robot.util.SwerveStuff.ModuleLimits;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -71,6 +73,8 @@ public class Drivetrain extends SubsystemBase {
     private final PIDController yController;
     private final PIDController rotationController;
 
+
+
     // If vision is enabled for drivetrain odometry updating
     // DO NOT CHANGE THIS HERE TO DISABLE VISION, change VisionConstants.ENABLED instead
     private boolean visionEnabled = true;
@@ -89,7 +93,11 @@ public class Drivetrain extends SubsystemBase {
 
     private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
 
+    // The pose buffer, used to store and get previous poses
+    private TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(2);
 
+    // The pose supplier to drive to
+    private Supplier<Pose2d> desiredPoSupplier = ()->null;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -244,7 +252,7 @@ public class Drivetrain extends SubsystemBase {
 
         if(VisionConstants.ENABLED){
             if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){
-                vision.updateOdometry(poseEstimator);
+                vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians());
             }
         }
 
@@ -263,6 +271,9 @@ public class Drivetrain extends SubsystemBase {
             //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
             resetOdometry(pose2);
         }
+
+        // Store the current pose in the buffer
+        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
     }
 
     /**
@@ -301,7 +312,7 @@ public class Drivetrain extends SubsystemBase {
                     +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
         currentSetpoint = setpointGenerator.generateSetpoint(
-            new ModuleLimits(DriveConstants.MAX_SPEED, Double.MAX_VALUE, Double.MAX_VALUE),
+            DriveConstants.MODULE_LIMITS,
             currentSetpoint,chassisSpeeds,
             Constants.LOOP_TIME);
             
@@ -344,6 +355,7 @@ public class Drivetrain extends SubsystemBase {
         return Units.degreesToRadians(speed);
     }
 
+
     /**
      * Gets an array of SwerveModulePositions, which store the distance travleled by the drive and the steer angle.
      *
@@ -385,6 +397,10 @@ public class Drivetrain extends SubsystemBase {
         return DriveConstants.KINEMATICS.toChassisSpeeds(
                 Arrays.stream(modules).map(Module::getState).toArray(SwerveModuleState[]::new)
         );
+    }
+
+    public SwerveSetpoint getCurrSetpoint(){
+        return currentSetpoint;
     }
 
     /**
@@ -436,6 +452,10 @@ public class Drivetrain extends SubsystemBase {
         alignAngle = newAngle;
     }
 
+    /**
+     * Returns whether or not the robot is at the input align angle
+     * @return true if it within tolerance the align angle, false otherwise
+     */
     public boolean atAlignAngle(){
         if(alignAngle == null){
             return false;
@@ -453,10 +473,6 @@ public class Drivetrain extends SubsystemBase {
             return alignAngle;
         }
         return -Math.PI/2;
-        // Pose2d pose = getPose();
-        // return Math.PI + (Robot.getAlliance() == Alliance.Blue ?
-        //     Math.atan2(VisionConstants.BLUE_SPEAKER_POSE.getY() - pose.getY(), VisionConstants.BLUE_SPEAKER_POSE.getX() - pose.getX()) :
-        //     Math.atan2(VisionConstants.RED_SPEAKER_POSE.getY() - pose.getY(), VisionConstants.RED_SPEAKER_POSE.getX() - pose.getX()));
     }
 
     /**
@@ -480,6 +496,23 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
+     * Gets the pose at a previous time
+     * @param timestamp The timestamp of the pose to get
+     * @return The pose, null if there are no poses yet, or the current pose if timestamp < 0
+     */
+    public Pose2d getPoseAt(double timestamp){
+        if(timestamp < 0){
+            return getPose();
+        }
+        Optional<Pose2d> pose = poseBuffer.getSample(timestamp);
+        if(pose.isPresent()){
+            return pose.get();
+        }else{
+            return null;
+        }
+    }
+
+    /**
      * Uses pigeon and rotational input to return a rotation that accounts for drift
      * @return A rotation
      */
@@ -493,7 +526,8 @@ public class Drivetrain extends SubsystemBase {
         }
         if (!drive_turning){
             rotationController.setSetpoint(currentHeading);
-            rot = Math.abs(rotationController.calculate(getYaw().getRadians())) > Math.abs(rot) ? rotationController.calculate(getYaw().getRadians()) : rot;
+            double output = rotationController.calculate(getYaw().getRadians());
+            rot = Math.abs(output) > Math.abs(rot) ? output : rot;
         }
         return rot;
     }
@@ -514,5 +548,31 @@ public class Drivetrain extends SubsystemBase {
     }
     public PIDController getRotationController() {
         return rotationController;
+    }
+
+    /**
+     * Set the desired pose to drive to
+     * This will enable driver assist to go to the pose
+     * @param supplier The supplier for the desired pose, use ()->null to not use a desired pose
+     */
+    public void setDesiredPose(Supplier<Pose2d> supplier){
+        desiredPoSupplier = supplier;
+    }
+
+    /**
+     * Set the desired pose to drive to
+     * This will enable driver assist to go to the pose
+     * @param pose The Pose2d to drive to
+     */
+    public void setDesiredPose(Pose2d pose){
+        setDesiredPose(()->pose);
+    }
+
+    /**
+     * Gets the current desired pose, or null if there is no desired pose
+     * @return The Pose2d if it exists, null otherwise
+     */
+    public Pose2d getDesiredPose(){
+        return desiredPoSupplier.get();
     }
 }

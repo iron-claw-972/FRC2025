@@ -39,7 +39,7 @@ public class ShuffleBoardManager {
             tab.createEntries();
         }
         
-        feild = new Field(drive);
+        feild = new Field(drive, vision);
     }
 
     public void update(){
