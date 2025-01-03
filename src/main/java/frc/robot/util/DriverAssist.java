@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import frc.robot.constants.Constants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
@@ -36,13 +37,14 @@ public class DriverAssist {
     private static final TrapezoidProfile angleProfile = new TrapezoidProfile(new Constraints(DriveConstants.MAX_ANGULAR_SPEED, DriveConstants.MAX_ANGULAR_ACCEL));
 
     /**
-     * Combines the driver input with a speed calculated using a trapezoidal profile
+     * Combines the driver input with a speed calculated using a trapezoidal profile <p>
+     * Called when VisionConstants.DRIVER_ASSIST_MODE is 2
      * @param drive The drivetrain
      * @param driverInput The driver input speed
      * @param desiredPose The pose to drive to
      * @return The new speed
      */
-    public static ChassisSpeeds calculate2(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
+    private static ChassisSpeeds calculate2(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
         // Do nothing if there is no pose
         if(desiredPose == null){
             return driverInput;
@@ -122,13 +124,17 @@ public class DriverAssist {
     public static final double MAX_ROTATION_ERROR = Math.PI/3;
 
     /**
-     * Combines the driver input with a speed perpendicular to the input
+     * Combines the driver input with a calculated correction speed
      * @param drive The drivetrain
      * @param driverInput The driver input speed
      * @param desiredPose The pose to drive to
      * @return The new speed
      */
     public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
+        if(VisionConstants.DRIVER_ASSIST_MODE == 2){
+            return calculate2(drive, driverInput, desiredPose);
+        }
+        // Combines the driver input with a speed perpendicular to the input
         if(desiredPose == null){
             return driverInput;
         }
@@ -147,10 +153,19 @@ public class DriverAssist {
             return driverInput;
         }
         double perpendicularAngle = MathUtil.angleModulus(driverAngle + Math.PI/2*Math.signum(angleError));
-        // Different options for calculation. From simulator testing, I like the 3rd one the best
-        // double correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist), Math.abs(Math.tan(angleError)*inputSpeed));
-        // double correctionSpeed = Math.min(CORRECTION_FACTOR * Math.pow(1.5, -perpendicularDist), 1) * Math.abs(Math.tan(angleError)*inputSpeed);
-        double correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist) * Math.pow(1.2, -distance+1), Math.abs(Math.tan(angleError)*inputSpeed));
+        // Different options for calculation.
+        double correctionSpeed = 0;
+        switch(VisionConstants.DRIVER_ASSIST_MODE){
+            case 3:
+                correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist), Math.abs(Math.tan(angleError)*inputSpeed));
+                break;
+            case 4:
+                correctionSpeed = Math.min(CORRECTION_FACTOR * Math.pow(1.5, -perpendicularDist), 1) * Math.abs(Math.tan(angleError)*inputSpeed);
+                break;
+            case 5:
+                correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist) * Math.pow(1.2, -distance+1), Math.abs(Math.tan(angleError)*inputSpeed));
+                break;
+        }
         double rotationError = MathUtil.angleModulus(angleToTarget-drivePose.getRotation().getRadians());
         if(Math.abs(rotationError) > MAX_ROTATION_ERROR){
             return driverInput;

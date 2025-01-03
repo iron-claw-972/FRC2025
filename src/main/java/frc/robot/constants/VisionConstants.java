@@ -56,12 +56,25 @@ public class VisionConstants {
   /** If vision should use manual calculations */
   public static final boolean USE_MANUAL_CALCULATIONS = false;
 
+  // <ol start="0"> did not work
+  /**
+   * Which version of driver assist to use. This would be an enum, except there is no short and descriptive name for all of these. <p>
+   * The options are: <p>
+   * 0: Disable driver assist <p>
+   * 1: Completely remove the component of the driver's input that is not toward the object <p>
+   * 2: Interpolate between the next achievable driver speed and a speed calculated using trapezoid profiles <p>
+   * 3-5: Add a speed perpendicular to the driver input; there are 3 similar but different calculations for this
+   */
+  public static final int DRIVER_ASSIST_MODE = 1;
+
   /**
    * The number to multiply the distance to the April tag by.
    * <p>
    * Only affects manual calculations.
    * <p>
    * To find this, set it to 1 and measure the actual distance and the calculated distance.
+   * <p>
+   * This should not be needed, and it is only here because it improved the accuracy of vision in the 2023 fall semester
    */
   public static final double DISTANCE_SCALE = 1;
 
