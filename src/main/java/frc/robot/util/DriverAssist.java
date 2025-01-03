@@ -130,6 +130,7 @@ public class DriverAssist {
      * @param desiredPose The pose to drive to
      * @return The new speed
      */
+    @SuppressWarnings("unused") // Needed because some code might not run for some values of DRIVER_ASSIST_MODE
     public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
         if(VisionConstants.DRIVER_ASSIST_MODE == 2){
             return calculate2(drive, driverInput, desiredPose);
