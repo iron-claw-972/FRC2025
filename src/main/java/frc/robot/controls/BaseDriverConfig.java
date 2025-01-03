@@ -41,7 +41,7 @@ public abstract class BaseDriverConfig {
 
     public double getRotation() {
         return MathUtils.expoMS(MathUtil.applyDeadband(getRawRotation(), Constants.ROTATION_DEADBAND), 2)
-                * DriveConstants.MAX_ANGLULAR_SPEED;
+                * DriveConstants.MAX_ANGULAR_SPEED;
     }
 
     public double getHeading() {
