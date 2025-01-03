@@ -11,6 +11,7 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
@@ -62,11 +63,11 @@ public class RobotContainer {
       case Phil:
       case Vertigo:
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive);
+        driver = new GameControllerDriverConfig(drive, vision);
         operator = new Operator(drive);
 
         // Detected objects need access to the drivetrain
-        //DetectedObject.setDrive(drive);
+        DetectedObject.setDrive(drive);
         
         //SignalLogger.start();
 
