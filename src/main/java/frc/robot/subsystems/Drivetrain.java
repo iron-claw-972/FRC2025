@@ -199,7 +199,7 @@ public class Drivetrain extends SubsystemBase {
         rot = headingControl(rot, xSpeed, ySpeed);
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         if(fieldRelative){
-            speeds.toRobotRelativeSpeeds(getYaw());
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }
         setChassisSpeeds(speeds, isOpenLoop);
     }
@@ -216,7 +216,7 @@ public class Drivetrain extends SubsystemBase {
         double rot = rotationController.calculate(getYaw().getRadians(), heading);
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         if(fieldRelative){
-            speeds.toRobotRelativeSpeeds(getYaw());
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }
         setChassisSpeeds(speeds, false);
     }
