@@ -12,7 +12,6 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -76,7 +75,7 @@ public class Module extends SubsystemBase {
     
 
         String directory_name = "Drivetrain/Module" + type.name();
-        LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()/60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+        LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValueAsDouble()/60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
         DriveConstants.DRIVE_GEAR_RATIO), 1000);
         LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
         LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
@@ -150,11 +149,11 @@ public class Module extends SubsystemBase {
 
     public Rotation2d getAngle() {
         return Rotation2d.fromRotations(
-                angleMotor.getPosition().getValue()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+                angleMotor.getPosition().getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     public Rotation2d getCANcoder() {
-        return Rotation2d.fromDegrees(CANcoder.getAbsolutePosition().getValue()*360);
+        return Rotation2d.fromDegrees(CANcoder.getAbsolutePosition().getValueAsDouble()*360);
     }
 
     public void resetToAbsolute() {
@@ -194,21 +193,21 @@ public class Module extends SubsystemBase {
      * @return Speed in RPM
      */
     public double getSteerVelocity() {
-        return angleMotor.getVelocity().getValue()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
+        return angleMotor.getVelocity().getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
     }
     /**
      * @return Speed in RPM
      */
     public double getDriveVelocity() {
-        return driveMotor.getVelocity().getValue()*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
+        return driveMotor.getVelocity().getValueAsDouble()*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
     }
 
     public double getDriveVoltage(){
-        return driveMotor.getMotorVoltage().getValue();
+        return driveMotor.getMotorVoltage().getValueAsDouble();
     }
 
     public double getDriveStatorCurrent(){
-        return driveMotor.getStatorCurrent().getValue();
+        return driveMotor.getStatorCurrent().getValueAsDouble();
     }
 
     private void configDriveMotor() {
@@ -232,14 +231,14 @@ public class Module extends SubsystemBase {
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-                ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValue()*60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+                ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValueAsDouble()*60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
                                             DriveConstants.DRIVE_GEAR_RATIO),
                 getAngle());
     }
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(driveMotor.getPosition().getValue()*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(driveMotor.getPosition().getValueAsDouble()*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
                                                DriveConstants.DRIVE_GEAR_RATIO),
                 getAngle());
     }
