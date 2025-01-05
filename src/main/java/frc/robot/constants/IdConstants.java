@@ -16,6 +16,12 @@ public class IdConstants {
     public static final int ENCODER_BACK_RIGHT_ID = 6;
     public static final int PIGEON = 13;
     
+    // Elevator
+    public static final int ELEVATOR_LEFT_MOTOR = 20;
+    public static final int ELEVATOR_RIGHT_MOTOR = 48;
+    public static final int ELEVATOR_BOTTOM_LIMIT_SWITCH = 0;
+    public static final int ELEVATOR_TOP_LIMIT_SWITCH = 0;
+
     // LEDs
     public static final int CANDLE_ID = 1;
 }

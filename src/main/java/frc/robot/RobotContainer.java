@@ -11,6 +11,7 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.gpm.Elevator;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -31,7 +32,7 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
-  
+  private Elevator elevator = null;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -57,10 +58,9 @@ public class RobotContainer {
       case SwerveCompetition:
       // Our competition subsystems go here
 
-      case Vivace:
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
- 
       case Phil:
+        elevator = new Elevator();
+      case Vivace:
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new GameControllerDriverConfig(drive, vision);
@@ -69,7 +69,7 @@ public class RobotContainer {
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
         
-        //SignalLogger.start();
+        // //SignalLogger.start();
 
         driver.configureControls();
         operator.configureControls();
@@ -78,7 +78,7 @@ public class RobotContainer {
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
  
-        shuffleboardManager = new ShuffleBoardManager(drive, vision);
+        shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator);
         break;
       }
 
