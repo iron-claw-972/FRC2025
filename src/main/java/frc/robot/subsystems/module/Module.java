@@ -174,8 +174,8 @@ public class Module extends SubsystemBase {
         CurrentLimitsConfigs config = new CurrentLimitsConfigs();
         config.SupplyCurrentLimitEnable = DriveConstants.STEER_ENABLE_CURRENT_LIMIT;
         config.SupplyCurrentLimit = DriveConstants.STEER_CONTINUOUS_CURRENT_LIMIT;
-        config.SupplyCurrentThreshold = DriveConstants.STEER_PEAK_CURRENT_LIMIT;
-        config.SupplyTimeThreshold = DriveConstants.STEER_PEAK_CURRENT_DURATION;
+        config.SupplyCurrentLowerLimit = DriveConstants.STEER_PEAK_CURRENT_LIMIT;
+        config.SupplyCurrentLowerTime = DriveConstants.STEER_PEAK_CURRENT_DURATION;
         angleMotor.getConfigurator().apply(config);
         angleMotor.getConfigurator().apply(new Slot0Configs()
             .withKP(DriveConstants.MODULE_CONSTANTS.angleKP)
@@ -215,8 +215,8 @@ public class Module extends SubsystemBase {
         CurrentLimitsConfigs config = new CurrentLimitsConfigs();
         config.SupplyCurrentLimitEnable = DriveConstants.DRIVE_ENABLE_CURRENT_LIMIT;
         config.SupplyCurrentLimit = DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT;
-        config.SupplyCurrentThreshold = DriveConstants.DRIVE_PEAK_CURRENT_LIMIT;
-        config.SupplyTimeThreshold = DriveConstants.DRIVE_PEAK_CURRENT_DURATION;
+        config.SupplyCurrentLowerLimit = DriveConstants.DRIVE_PEAK_CURRENT_LIMIT;
+        config.SupplyCurrentLowerTime = DriveConstants.DRIVE_PEAK_CURRENT_DURATION;
         driveMotor.getConfigurator().apply(config);
         driveMotor.getConfigurator().apply(new Slot0Configs()
             .withKP(moduleConstants.getDriveP())
