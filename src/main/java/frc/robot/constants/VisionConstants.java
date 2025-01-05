@@ -1,7 +1,4 @@
 package frc.robot.constants;
-/**
- * Container class for vision constants.
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +8,19 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import frc.robot.constants.swerve.DriveConstants;
 
+/**
+ * Container class for vision constants.
+ */
 public class VisionConstants {
   /**
    * If April tag vision is enabled on the robot
@@ -130,4 +133,15 @@ public class VisionConstants {
       new Translation3d(Units.inchesToMeters(10), 0, Units.inchesToMeters(24)),
       new Rotation3d(0, Units.degreesToRadians(20), 0))
   ));
+
+  // Poses to potentially align to
+
+  public static final Pose2d BLUE_PROCESSOR_POSE = new Pose2d(
+    FieldConstants.APRIL_TAGS.get(15).pose.getX(),
+    FieldConstants.APRIL_TAGS.get(15).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS/2,
+    new Rotation2d(-Math.PI/2)
+  );
+
+  // TODO: Add this and the other poses to align to
+  public static final Pose2d RED_PROCESSOR_POSE = null;
 }
