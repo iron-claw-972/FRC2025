@@ -59,10 +59,11 @@ public class RobotContainer {
       // Our competition subsystems go here
 
       case Phil:
-        elevator = new Elevator();
+        //elevator = new Elevator();
       case Vivace:
       case Vertigo:
         drive = new Drivetrain(vision);
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         driver = new GameControllerDriverConfig(drive, vision);
         operator = new Operator(drive);
 

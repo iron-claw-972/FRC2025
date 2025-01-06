@@ -8,7 +8,9 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -48,14 +50,14 @@ public class Elevator extends SubsystemBase {
   private DIOSim bottomLimitSwitchSim;
   private boolean limitSwitchPressed = false;
 
-  private ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
-  private GenericEntry Voltage = tab.add("Voltage", 0).getEntry();
-  private GenericEntry height = tab.add("Height", 0).getEntry();
-  private GenericEntry leftMotorEncoder = tab.add("leftEncoder", 0).getEntry();
-  private GenericEntry rightMotorEncoder = tab.add("rightEncoder", 0).getEntry();
-  private GenericEntry Setpoint = tab.add("setpoint", 0).getEntry();
-  private GenericEntry bottomSensor = tab.add("bottom sensor", 0).getEntry();
-  private GenericEntry topSensor = tab.add("top sensor", 0).getEntry();
+  // private ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
+  // private GenericEntry Voltage = tab.add("Voltage", 0).getEntry();
+  // private GenericEntry height = tab.add("Height", 0).getEntry();
+  // private GenericEntry leftMotorEncoder = tab.add("leftEncoder", 0).getEntry();
+  // private GenericEntry rightMotorEncoder = tab.add("rightEncoder", 0).getEntry();
+  // private GenericEntry Setpoint = tab.add("setpoint", 0).getEntry();
+  // private GenericEntry bottomSensor = tab.add("bottom sensor", 0).getEntry();
+  // private GenericEntry topSensor = tab.add("top sensor", 0).getEntry();
 
   // Calibration variables
   private boolean calibrated;
@@ -79,17 +81,18 @@ public class Elevator extends SubsystemBase {
   private final LinearSystem<N2, N1, N2> m_elevatorPlant = LinearSystemId.createElevatorSystem(
       ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS,
       ElevatorConstants.GEARING);
-  private final KalmanFilter<N2, N1, N1> m_observer = new KalmanFilter<>(
+
+  private final KalmanFilter<N2, N1, N2> m_observer = new KalmanFilter<>(
       Nat.N2(),
-      Nat.N1(),
+      Nat.N2(),
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       VecBuilder.fill(Units.inchesToMeters(2), Units.inchesToMeters(20)), // How accurate we
       // think our model is, in meters and meters/second.
-      VecBuilder.fill(0.001), // How accurate we think our encoder position
+      VecBuilder.fill(0.001,0.001), // How accurate we think our encoder position
       // data is. In this case we very highly trust our encoder position reading.
       Constants.LOOP_TIME);
-  private final LinearQuadraticRegulator<N2, N1, N1> m_controller = new LinearQuadraticRegulator<>(
-      (LinearSystem<N2, N1, N1>) m_elevatorPlant,
+  private final LinearQuadraticRegulator<N2, N1, N2> m_controller = new LinearQuadraticRegulator<>(
+      (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       VecBuilder.fill(Units.inchesToMeters(1.0), Units.inchesToMeters(20.0)), // qelms. Position
       // and velocity error tolerances, in meters and meters per second. Decrease this
       // to more
@@ -107,8 +110,8 @@ public class Elevator extends SubsystemBase {
 
   // The state-space loop combines a controller, observer, feedforward and plant
   // for easy control.
-  private final LinearSystemLoop<N2, N1, N1> m_loop = new LinearSystemLoop<>(
-      (LinearSystem<N2, N1, N1>) m_elevatorPlant,
+  private final LinearSystemLoop<N2, N1, N2> m_loop = new LinearSystemLoop<>(
+      (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
       12.0,
@@ -117,8 +120,8 @@ public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   public Elevator() {
     // Left motor follows right motor in the opposite direction
-    leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
-    rightMotor.setInverted(true);
+    //leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
+    //rightMotor.setInverted(true);
 
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
@@ -135,7 +138,7 @@ public class Elevator extends SubsystemBase {
 
       topLimitSwitchSim = new DIOSim(topLimitSwitch);
       bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
-      tab.add("Elevator", getMechanism2d());
+      //tab.add("Elevator", getMechanism2d());
     }
     Timer.delay(1.0);
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
@@ -149,7 +152,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    setSetpoint(Setpoint.get().getDouble());
+    setSetpoint(SmartDashboard.getNumber("Setpoint", 0));
     // If it hits the limit switch, reset the encoder
     if (getBottomLimitSwitch() && (calibrated || !movingUp)) {
       if (false) {
@@ -189,7 +192,7 @@ public class Elevator extends SubsystemBase {
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
-    m_loop.correct(VecBuilder.fill(currentPosition));
+    m_loop.correct(MatBuilder.fill(Nat.N2(), Nat.N1(),currentPosition,getVelocity()));
 
     // Update our LQR to generate new voltage commands and use the voltages to
     // predict the next
@@ -208,10 +211,10 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putBoolean("bottom Sensor", getBottomLimitSwitch());
     SmartDashboard.putBoolean("top sensor", getTopLimitSwitch());
     SmartDashboard.putNumber("next voltage", nextVoltage);
-    SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValue());
-    SmartDashboard.putNumber("right motor encoder", rightMotor.getPosition().getValue());
+    SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("right motor encoder", rightMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("height", getPosition());
-    Voltage.setDouble(nextVoltage);
+    //Voltage.setDouble(nextVoltage);
     set(nextVoltage);
   }
 
@@ -244,6 +247,11 @@ public class Elevator extends SubsystemBase {
   public double getPosition() {
     return rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
         * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+  }
+
+  public double getVelocity(){
+    return rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
   }
 
   public boolean getBottomLimitSwitch() {
