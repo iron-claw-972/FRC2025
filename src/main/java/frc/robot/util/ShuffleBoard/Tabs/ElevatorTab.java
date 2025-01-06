@@ -29,7 +29,7 @@ public class ElevatorTab extends ShuffleBoardTabs {
     }
 
     public void update(){
-        if (RobotBase.isSimulation()){
+        if (RobotBase.isSimulation() && elevator != null){
             if(elevator.getSetpoint() != previousSetpoint){
                 setpoint.setDouble(elevator.getSetpoint());
             }else{

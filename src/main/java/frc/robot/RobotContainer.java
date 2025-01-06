@@ -59,7 +59,7 @@ public class RobotContainer {
       // Our competition subsystems go here
 
       case Phil:
-        //elevator = new Elevator();
+        elevator = new Elevator();
       case Vivace:
       case Vertigo:
         drive = new Drivetrain(vision);
