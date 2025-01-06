@@ -40,6 +40,9 @@ public class ElevatorTab extends ShuffleBoardTabs {
     }
 
     public void addCommands(ShuffleboardTab tab){
+        if(elevator == null){
+            return;
+        }
         if(RobotBase.isSimulation()){
             tab.add("Elevator", elevator.getMechanism2d());
             setpoint = tab.add("Elevater setpoint", 0).getEntry();
