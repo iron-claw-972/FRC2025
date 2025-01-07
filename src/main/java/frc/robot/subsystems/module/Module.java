@@ -1,10 +1,12 @@
 package frc.robot.subsystems.module;
 
 
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -182,8 +184,7 @@ public class Module extends SubsystemBase {
             .withKP(DriveConstants.MODULE_CONSTANTS.angleKP)
             .withKI(DriveConstants.MODULE_CONSTANTS.angleKI)
             .withKD(DriveConstants.MODULE_CONSTANTS.angleKD));
-        //angleMotor.setInverted(DriveConstants.INVERT_STEER_MOTOR);
-        angleMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(DriveConstants.INVERT_STEER_MOTOR));
+        angleMotor.setInverted(DriveConstants.INVERT_STEER_MOTOR);
         angleMotor.setNeutralMode(DriveConstants.STEER_NEUTRAL_MODE);
         angleMotor.setPosition(0);
         m_VelocityVoltage.Slot = 0;
@@ -226,7 +227,7 @@ public class Module extends SubsystemBase {
             .withKD(moduleConstants.getDriveD()));
         driveMotor.getConfigurator().apply(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
         driveMotor.getConfigurator().apply(new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
-        driveMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(DriveConstants.INVERT_DRIVE_MOTOR));
+        driveMotor.setInverted(DriveConstants.INVERT_DRIVE_MOTOR);
         driveMotor.setNeutralMode(DriveConstants.DRIVE_NEUTRAL_MODE);
         
     }
