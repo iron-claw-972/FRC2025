@@ -1,10 +1,10 @@
 package frc.robot.subsystems.module;
 
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -180,7 +181,7 @@ public class Module extends SubsystemBase {
             .withKP(DriveConstants.MODULE_CONSTANTS.angleKP)
             .withKI(DriveConstants.MODULE_CONSTANTS.angleKI)
             .withKD(DriveConstants.MODULE_CONSTANTS.angleKD));
-        angleMotor.setInverted(DriveConstants.INVERT_STEER_MOTOR);
+        angleMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(DriveConstants.INVERT_STEER_MOTOR?InvertedValue.Clockwise_Positive:InvertedValue.CounterClockwise_Positive));
         angleMotor.setNeutralMode(DriveConstants.STEER_NEUTRAL_MODE);
         angleMotor.setPosition(0);
         m_VelocityVoltage.Slot = 0;
@@ -223,7 +224,7 @@ public class Module extends SubsystemBase {
             .withKD(moduleConstants.getDriveD()));
         driveMotor.getConfigurator().apply(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
         driveMotor.getConfigurator().apply(new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
-        driveMotor.setInverted(DriveConstants.INVERT_DRIVE_MOTOR);
+        driveMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(DriveConstants.INVERT_DRIVE_MOTOR?InvertedValue.Clockwise_Positive:InvertedValue.CounterClockwise_Positive));
         driveMotor.setNeutralMode(DriveConstants.DRIVE_NEUTRAL_MODE);
         
     }
