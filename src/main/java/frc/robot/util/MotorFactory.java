@@ -93,7 +93,7 @@ public class MotorFactory {
         // See explanations for Supply and Stator limiting in FalconConstants.java
         config.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimitEnable(StatorLimitEnable).withStatorCurrentLimit(StatorCurrentLimit).
             withSupplyCurrentLimitEnable(SupplyLimitEnable).withSupplyCurrentLimit(SupplyCurrentLimit).
-            withSupplyCurrentThreshold(SupplyTriggerThreshold).withSupplyTimeThreshold(SupplyTriggerDuration);
+            withSupplyCurrentLowerLimit(SupplyTriggerThreshold).withSupplyCurrentLowerTime(SupplyTriggerDuration);
 
         config.Voltage = new VoltageConfigs().withPeakForwardVoltage(Constants.ROBOT_VOLTAGE);
 
