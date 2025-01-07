@@ -12,6 +12,7 @@ import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Elevator;
+import frc.robot.subsystems.gpm.Outtake;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -33,6 +34,7 @@ public class RobotContainer {
   private Drivetrain drive = null;
   private Vision vision = null;
   private Elevator elevator = null;
+  private Outtake outtake = null;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -60,17 +62,18 @@ public class RobotContainer {
 
       case Phil:
         elevator = new Elevator();
+        outtake = new Outtake();
       case Vivace:
       case Vertigo:
         drive = new Drivetrain(vision);
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         driver = new GameControllerDriverConfig(drive, vision);
-        operator = new Operator(drive);
+        operator = new Operator(drive, elevator, outtake);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
         
-        // //SignalLogger.start();
+        //SignalLogger.start();
 
         driver.configureControls();
         operator.configureControls();
