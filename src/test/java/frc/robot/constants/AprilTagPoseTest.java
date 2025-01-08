@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -67,8 +68,8 @@ public class AprilTagPoseTest {
 
   @Test
   public void testReefTags(){
-    Pose3d[] redPoses = (Pose3d[]) FieldConstants.APRIL_TAGS.subList(5, 11).stream().map(tag->tag.pose).toArray();
-    Pose3d[] bluePoses = (Pose3d[]) FieldConstants.APRIL_TAGS.subList(16, 22).stream().map(tag->tag.pose).toArray();
+    List<Pose3d> redPoses = FieldConstants.APRIL_TAGS.subList(5, 11).stream().map(tag->tag.pose).toList();
+    List<Pose3d> bluePoses = FieldConstants.APRIL_TAGS.subList(16, 22).stream().map(tag->tag.pose).toList();
     Pose3d redCenter = findCenter(redPoses);
     Pose3d blueCenter = findCenter(bluePoses);
     
@@ -100,7 +101,7 @@ public class AprilTagPoseTest {
    * @param poses The poses to find the center of
    * @return A pose with the translation at the center and the sum of the rotations
    */
-  private Pose3d findCenter(Pose3d[] poses){
+  private Pose3d findCenter(List<Pose3d> poses){
     double x = 0;
     double y = 0;
     double z = 0;
@@ -111,9 +112,9 @@ public class AprilTagPoseTest {
       z += pose.getZ();
       rot = rot.plus(pose.getRotation());
     }
-    x /= poses.length;
-    y /= poses.length;
-    z /= poses.length;
+    x /= poses.size();
+    y /= poses.size();
+    z /= poses.size();
     return new Pose3d(x, y, z, rot);
   }
 }
