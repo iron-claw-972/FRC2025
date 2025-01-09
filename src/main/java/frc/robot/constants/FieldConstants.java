@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 
 public class FieldConstants {
-  // TODO: Update these for the 2025 field
   /** Width of the field [meters] */
   public static final double FIELD_LENGTH = Units.inchesToMeters(57*12 + 6+7/8);
   /** Height of the field [meters] */

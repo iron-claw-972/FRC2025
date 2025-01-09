@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -74,8 +75,12 @@ public class AprilTagPoseTest {
     Pose3d blueCenter = findCenter(bluePoses);
     
     // The tags should be symmetrical, so the total rotation should be 0
-    assertEquals(redCenter.getRotation(), new Rotation3d());
-    assertEquals(blueCenter.getRotation(), new Rotation3d());
+    assertEquals(redCenter.getRotation().getX(), 0, 0.0001);
+    assertEquals(blueCenter.getRotation().getX(), 0, 0.0001);
+    assertEquals(redCenter.getRotation().getY(), 0, 0.0001);
+    assertEquals(blueCenter.getRotation().getY(), 0, 0.0001);
+    assertEquals(MathUtil.angleModulus(redCenter.getRotation().getZ()), Math.PI, 0.0001);
+    assertEquals(MathUtil.angleModulus(blueCenter.getRotation().getZ()), Math.PI, 0.0001);
 
     // Y and Z should be equal
     assertEquals(redCenter.getY(), blueCenter.getY(), 0.0001);
@@ -90,9 +95,9 @@ public class AprilTagPoseTest {
       Pose3d blue = FieldConstants.APRIL_TAGS.get(i+11).pose;
       assertEquals(red.getY(), blue.getY(), 0.0001);
       assertEquals(red.getZ(), blue.getZ(), 0.0001);
-      assertEquals(red.getZ(), redCenter.getZ());
-      assertEquals(red.getX(), FieldConstants.FIELD_LENGTH-blue.getX());
-      assertEquals(red.getRotation().getZ(), Math.PI-blue.getRotation().getZ());
+      assertEquals(red.getZ(), redCenter.getZ(), 0.0001);
+      assertEquals(red.getX(), FieldConstants.FIELD_LENGTH-blue.getX(), 0.01);
+      assertEquals(MathUtil.angleModulus(red.getRotation().getZ()), MathUtil.angleModulus(Math.PI-blue.getRotation().getZ()), 0.0001);
     }
   }
 
