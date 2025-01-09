@@ -311,10 +311,19 @@ public class Drivetrain extends SubsystemBase {
             pigeon.getSimState().addYaw(
                     +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
-        currentSetpoint = setpointGenerator.generateSetpoint(
-            DriveConstants.MODULE_LIMITS,
-            currentSetpoint,chassisSpeeds,
-            Constants.LOOP_TIME);
+
+        if(DriveConstants.USE_ACTUAL_SPEED){
+            SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
+            currentSetpoint = setpointGenerator.generateSetpoint(
+                DriveConstants.MODULE_LIMITS,
+                currentState, chassisSpeeds,
+                Constants.LOOP_TIME);
+        }else{
+            currentSetpoint = setpointGenerator.generateSetpoint(
+                DriveConstants.MODULE_LIMITS,
+                currentSetpoint, chassisSpeeds,
+                Constants.LOOP_TIME);
+        }
             
         SwerveModuleState[] swerveModuleStates = currentSetpoint.moduleStates();
         setModuleStates(swerveModuleStates, isOpenLoop);
@@ -394,9 +403,15 @@ public class Drivetrain extends SubsystemBase {
      * This is often used as an input for other methods
      */
     public ChassisSpeeds getChassisSpeeds() {
-        return DriveConstants.KINEMATICS.toChassisSpeeds(
-                Arrays.stream(modules).map(Module::getState).toArray(SwerveModuleState[]::new)
-        );
+        return DriveConstants.KINEMATICS.toChassisSpeeds(getModuleStates());
+    }
+
+    /**
+     * Gets the state of each module
+     * @return An array of 4 SwerveModuleStates
+     */
+    public SwerveModuleState[] getModuleStates(){
+        return Arrays.stream(modules).map(Module::getState).toArray(SwerveModuleState[]::new);
     }
 
     public SwerveSetpoint getCurrSetpoint(){

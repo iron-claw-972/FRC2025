@@ -57,6 +57,12 @@ public class DriveConstants {
     // The maximum angular acceleration of the robot
     public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * TRACK_WIDTH * Math.sqrt(2) / 2;
 
+    /**
+     * If this is false, Drivetrain will use the previous setpoint to calculate the new setpoint.
+     * <p> If this is true, Drivetrain will use the actual current setpoint instead.
+     */
+    public static boolean USE_ACTUAL_SPEED = true;
+
     public static final Rotation2d STARTING_HEADING = new Rotation2d();
 
     public static final Translation2d[] MODULE_LOCATIONS = {

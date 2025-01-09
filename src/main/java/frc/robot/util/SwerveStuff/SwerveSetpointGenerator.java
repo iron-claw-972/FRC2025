@@ -178,7 +178,10 @@ public class SwerveSetpointGenerator {
       double max_vel_step,
       int max_iterations) {
     double dist = Math.hypot(x_1-x_0, y_1-y_0);
-    return Math.max(0.0, Math.min(1.0, max_vel_step / (dist)));
+    if(dist <= max_vel_step){
+      return 1;
+    }
+    return Math.max(0.0, Math.min(1.0, max_vel_step / dist));
   }
 
   protected double findDriveMaxS(
@@ -429,7 +432,6 @@ public class SwerveSetpointGenerator {
       
       // Limit the overall acceleration of this wheel
       double s2 = min_s*findAccelerationMaxS(prev_vx[i], prev_vy[i], vx_min_s, vy_min_s, max_vel_step_2, kMaxIterations);
-      System.out.printf("%.3f, %.3f\n", s, s2);
 
       min_s = Math.min(Math.min(min_s, s), s2);
     }
