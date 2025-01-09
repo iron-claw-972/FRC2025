@@ -49,7 +49,12 @@ public class DriveConstants {
 
     public static final double COSF = 1.1;
     
+    // The maximum acceleration of the robot, limited by friction
     public static double MAX_LINEAR_ACCEL = COSF * Constants.GRAVITY_ACCELERATION;
+    // The maximum amount a drive motor can accelerate, independant of friction
+    // This does nothing if greater than LINEAR_ACCEL
+    public static double MAX_DRIVE_ACCEL = MAX_LINEAR_ACCEL;
+    // The maximum angular acceleration of the robot
     public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * TRACK_WIDTH * Math.sqrt(2) / 2;
 
     public static final Rotation2d STARTING_HEADING = new Rotation2d();
@@ -166,7 +171,7 @@ public class DriveConstants {
     public static final double SLOW_DRIVE_FACTOR = 0.2;
     public static final double SLOW_ROT_FACTOR = 0.1;
 
-    public static final ModuleLimits MODULE_LIMITS = new ModuleLimits(MAX_SPEED, MAX_LINEAR_ACCEL, Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / STEER_GEAR_RATIO));
+    public static final ModuleLimits MODULE_LIMITS = new ModuleLimits(MAX_SPEED, MAX_DRIVE_ACCEL, COSF, Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / STEER_GEAR_RATIO));
 
     /**
      * Updates the constants if the RobotId is not the competition robot.
