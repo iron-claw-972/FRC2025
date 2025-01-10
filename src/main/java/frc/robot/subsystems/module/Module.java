@@ -98,12 +98,14 @@ public class Module extends SubsystemBase {
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
-
-        /*
-         * This is a custom optimize function, since default WPILib optimize assumes
-         * continuous controller which CTRE and Rev onboard is not
-         */
-        desiredState = optimizeStates ? CTREModuleState.optimize(wantedState, getState().angle) : wantedState;
+        // Separate if here and in setAngle() to avoid warning
+        if(!DriveConstants.DISABLE_DEADBAND_AND_OPTIMIZATION){
+            /*
+            * This is a custom optimize function, since default WPILib optimize assumes
+            * continuous controller which CTRE and Rev onboard is not
+            */
+            desiredState = optimizeStates ? CTREModuleState.optimize(wantedState, getState().angle) : wantedState;
+        }
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
     }
@@ -123,12 +125,13 @@ public class Module extends SubsystemBase {
     }
 
     private void setAngle(SwerveModuleState desiredState) {
-        // Prevent rotating module if desired speed < 1%. Prevents Jittering.
-        if (stateDeadband && (Math.abs(desiredState.speedMetersPerSecond) <= (DriveConstants.MAX_SPEED * 0.01))) {
-            stop();
-            return;
+        if(!DriveConstants.DISABLE_DEADBAND_AND_OPTIMIZATION){
+            // Prevent rotating module if desired speed < 1%. Prevents jittering and unnecessary movement.
+            if (stateDeadband && (Math.abs(desiredState.speedMetersPerSecond) <= (DriveConstants.MAX_SPEED * 0.01))) {
+                stop();
+                return;
+            }
         }
-        // angleMotor.setControl(new PositionDutyCycle(3));
         angleMotor.setControl(new PositionDutyCycle(desiredState.angle.getRotations()*DriveConstants.MODULE_CONSTANTS.angleGearRatio));
     }
 
