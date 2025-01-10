@@ -10,7 +10,7 @@ import edu.wpi.first.math.util.Units;
 
 public class FieldConstants {
   /** Width of the field [meters] */
-  public static final double FIELD_LENGTH = Units.inchesToMeters(57*12 + 6+7/8);
+  public static final double FIELD_LENGTH = Units.inchesToMeters(57*12 + 6+7.0/8.0);
   /** Height of the field [meters] */
   public static final double FIELD_WIDTH = Units.inchesToMeters(26*12 + 5);
 
