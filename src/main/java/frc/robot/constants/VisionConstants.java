@@ -9,6 +9,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -165,136 +166,206 @@ public class VisionConstants {
   public static final Pose2d RED_CORAL_STATION_LEFT_POSE = new Pose2d(
       FieldConstants.APRIL_TAGS.get(0).pose.getX(),
       FieldConstants.APRIL_TAGS.get(0).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+      new Rotation2d(Units.degreesToRadians(126)));
 
   public static final Pose2d RED_CORAL_STATION_RIGHT_POSE = new Pose2d(
       FieldConstants.APRIL_TAGS.get(1).pose.getX(),
       FieldConstants.APRIL_TAGS.get(1).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+      new Rotation2d(Units.degreesToRadians(234)));
 
   public static final Pose2d BLUE_CORAL_STATION_LEFT_POSE = new Pose2d(
       FieldConstants.APRIL_TAGS.get(12).pose.getX(),
       FieldConstants.APRIL_TAGS.get(12).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+      new Rotation2d(Units.degreesToRadians(306)));
 
   public static final Pose2d BLUE_CORAL_STATION_RIGHT_POSE = new Pose2d(
       FieldConstants.APRIL_TAGS.get(11).pose.getX(),
       FieldConstants.APRIL_TAGS.get(11).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-
-
-
-
-  public static final Pose2d BLUE_PROCESSOR_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(2).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(2).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+      new Rotation2d(Units.degreesToRadians(54)));
 
   public static final Pose2d RED_PROCESSOR_POSE = new Pose2d(
+      FieldConstants.APRIL_TAGS.get(2).pose.getX(),
+      FieldConstants.APRIL_TAGS.get(2).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
+      new Rotation2d(Math.PI / 2));
+
+  public static final Pose2d BLUE_PROCESSOR_POSE = new Pose2d(
       FieldConstants.APRIL_TAGS.get(15).pose.getX(),
       FieldConstants.APRIL_TAGS.get(15).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
       new Rotation2d(-Math.PI / 2));
 
-
-
-
-
   public static final Pose2d BLUE_LEFT_CAGE_POSE = new Pose2d(
-      8.775,
-      FieldConstants.APRIL_TAGS.get(13).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2 + Units.feetToMeters(6),
+      FieldConstants.FIELD_LENGTH/2,
+      FieldConstants.APRIL_TAGS.get(13).pose.getY() + Units.feetToMeters(6),
       new Rotation2d(-Math.PI / 2));
 
   public static final Pose2d BLUE_MIDDLE_CAGE_POSE = new Pose2d(
-      8.775,
-      FieldConstants.APRIL_TAGS.get(13).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
+      FieldConstants.FIELD_LENGTH/2,
+      FieldConstants.APRIL_TAGS.get(13).pose.getY(),
       new Rotation2d(-Math.PI / 2));
 
   public static final Pose2d BLUE_RIGHT_CAGE_POSE = new Pose2d(
-      8.775,
-      FieldConstants.APRIL_TAGS.get(13).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2 - Units.feetToMeters(6),
+      FieldConstants.FIELD_LENGTH/2,
+      FieldConstants.APRIL_TAGS.get(13).pose.getY() - Units.feetToMeters(6),
       new Rotation2d(-Math.PI / 2));
 
-
-
-
-
   public static final Pose2d RED_LEFT_CAGE_POSE = new Pose2d(
-      8.775,
-      FieldConstants.APRIL_TAGS.get(14).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2 + Units.feetToMeters(6),
+      FieldConstants.FIELD_LENGTH/2,
+      FieldConstants.APRIL_TAGS.get(14).pose.getY() + Units.feetToMeters(6),
       new Rotation2d(-Math.PI / 2));
 
   public static final Pose2d RED_MIDDLE_CAGE_POSE = new Pose2d(
-      8.775,
-      FieldConstants.APRIL_TAGS.get(14).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
+      FieldConstants.FIELD_LENGTH/2,
+      FieldConstants.APRIL_TAGS.get(14).pose.getY(),
       new Rotation2d(-Math.PI / 2));
 
   public static final Pose2d RED_RIGHT_CAGE_POSE = new Pose2d(
-      8.775,
-      FieldConstants.APRIL_TAGS.get(14).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2 - Units.feetToMeters(6),
+      FieldConstants.FIELD_LENGTH/2,
+      FieldConstants.APRIL_TAGS.get(14).pose.getY() - Units.feetToMeters(6),
       new Rotation2d(-Math.PI / 2));
 
+      public enum BLUE_REEF {
+        BLUE_BRANCH_17_LPOSE(16, 5.14, 2.31),
+        BLUE_BRANCH_17_RPOSE(16, -5.14, 2.31),
+        BLUE_BRANCH_18_LPOSE(17, 5.14, 2.31),
+        BLUE_BRANCH_18_RPOSE(17, -5.14, 2.31),
+        BLUE_BRANCH_19_LPOSE(18, 5.14, 2.31),
+        BLUE_BRANCH_19_RPOSE(18, -5.14, 2.31),
+        BLUE_BRANCH_20_LPOSE(19, 5.14, 2.31),
+        BLUE_BRANCH_20_RPOSE(19, -5.14, 2.31),
+        BLUE_BRANCH_21_LPOSE(20, 5.14, 2.31),
+        BLUE_BRANCH_21_RPOSE(20, -5.14, 2.31),
+        BLUE_BRANCH_22_LPOSE(21, 5.14, 2.31),
+        BLUE_BRANCH_22_RPOSE(21, -5.14, 2.31);
+    
+        private final int aprilTagId;
+        private final double xOffset;
+        private final double yOffset;
+    
+        BLUE_REEF(int aprilTagId, double xOffset, double yOffset) {
+            this.aprilTagId = aprilTagId;
+            this.xOffset = xOffset;
+            this.yOffset = yOffset;
+        }
+    
+        /**
+         * Calculates the Pose2d for the branch based on the April tag's base pose and offsets.
+         *
+         * @param basePose3d The Pose3d of the April tag base.
+         * @return The calculated Pose2d for this reef branch.
+         */
+        public Pose2d getPose(Pose3d basePose3d) {
+            // Convert the April tag base Pose3d to Pose2d
+            Pose2d basePose2d = new Pose2d(
+                    basePose3d.getX(),
+                    basePose3d.getY(),
+                    basePose3d.getRotation().toRotation2d()
+            );
+    
+            // Apply both X and Y offsets to calculate the reef branch pose
+            Translation3d offsetTranslation = new Translation3d(
+                    Units.inchesToMeters(xOffset), 
+                    Units.inchesToMeters(yOffset), 
+                    0
+            ).rotateBy(basePose3d.getRotation());
+            
+            Pose3d branchPose3d = basePose3d.plus(new Transform3d(offsetTranslation, new Rotation3d()));
+    
+            // Convert the calculated branch Pose3d to Pose2d
+            return new Pose2d(
+                    branchPose3d.getX(),
+                    branchPose3d.getY(),
+                    branchPose3d.getRotation().toRotation2d()
+            );
+        }
+    
+        /**
+         * Finds the appropriate ReefBranch based on the April tag ID and whether the pose is left or right.
+         *
+         * @param aprilTagId The ID of the April tag.
+         * @param isLeftPose True if the pose is left, false if it's right.
+         * @return The matching ReefBranch, or null if no match is found.
+         */
+        public static BLUE_REEF fromAprilTagIdAndPose(int aprilTagId, boolean isLeftPose) {
+            for (BLUE_REEF branch : values()) {
+                if (branch.aprilTagId == aprilTagId && 
+                    ((isLeftPose && branch.xOffset > 0) || (!isLeftPose && branch.xOffset < 0))) {
+                    return branch;
+                }
+            }
+            return null;
+        }
+    }  
 
+public enum RED_REEF {
+    RED_BRANCH_17_LPOSE(16, 5.14, 2.31),
+    RED_BRANCH_17_RPOSE(16, -5.14, 2.31),
+    RED_BRANCH_18_LPOSE(17, 5.14, 2.31),
+    RED_BRANCH_18_RPOSE(17, -5.14, 2.31),
+    RED_BRANCH_19_LPOSE(18, 5.14, 2.31),
+    RED_BRANCH_19_RPOSE(18, -5.14, 2.31),
+    RED_BRANCH_20_LPOSE(19, 5.14, 2.31),
+    RED_BRANCH_20_RPOSE(19, -5.14, 2.31),
+    RED_BRANCH_21_LPOSE(20, 5.14, 2.31),
+    RED_BRANCH_21_RPOSE(20, -5.14, 2.31),
+    RED_BRANCH_22_LPOSE(21, 5.14, 2.31),
+    RED_BRANCH_22_RPOSE(21, -5.14, 2.31);
 
+    private final int aprilTagId;
+    private final double xOffset;
+    private final double yOffset;
 
+    RED_REEF(int aprilTagId, double xOffset, double yOffset) {
+        this.aprilTagId = aprilTagId;
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+    }
 
-  public static final Pose2d BLUE_BRANCH_17_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(16).pose.getX() + Units.inchesToMeters(2.31), // approximate x - distance from reef base to center of branch
-      FieldConstants.APRIL_TAGS.get(16).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2 + Units.inchesToMeters(5.14), // approximate y - distance from reef base to center of branch
-      new Rotation2d(-Math.PI / 2));
+    /**
+     * Calculates the Pose2d for the branch based on the April tag's base pose and offsets.
+     *
+     * @param basePose3d The Pose3d of the April tag base.
+     * @return The calculated Pose2d for this reef branch.
+     */
+    public Pose2d getPose(Pose3d basePose3d) {
+        // Convert the April tag base Pose3d to Pose2d
+        Pose2d basePose2d = new Pose2d(
+                basePose3d.getX(),
+                basePose3d.getY(),
+                basePose3d.getRotation().toRotation2d()
+        );
 
-  public static final Pose2d BLUE_BRANCH_17_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(16).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(16).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+        // Apply both X and Y offsets to calculate the reef branch pose
+        Translation3d offsetTranslation = new Translation3d(
+                Units.inchesToMeters(xOffset), 
+                Units.inchesToMeters(yOffset), 
+                0
+        ).rotateBy(basePose3d.getRotation());
+        
+        Pose3d branchPose3d = basePose3d.plus(new Transform3d(offsetTranslation, new Rotation3d()));
 
-  public static final Pose2d BLUE_BRANCH_18_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(17).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(17).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+        // Convert the calculated branch Pose3d to Pose2d
+        return new Pose2d(
+                branchPose3d.getX(),
+                branchPose3d.getY(),
+                branchPose3d.getRotation().toRotation2d()
+        );
+    }
 
-  public static final Pose2d BLUE_BRANCH_18_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(17).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(17).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_19_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(18).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(18).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_19_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(18).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(18).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_20_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(19).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(19).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_20_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(19).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(19).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_21_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(20).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(20).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_21_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(20).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(20).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_22_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(21).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(21).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
-
-  public static final Pose2d BLUE_BRANCH_22_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(21).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(21).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+    /**
+     * Finds the appropriate ReefBranch based on the April tag ID and whether the pose is left or right.
+     *
+     * @param aprilTagId The ID of the April tag.
+     * @param isLeftPose True if the pose is left, false if it's right.
+     * @return The matching ReefBranch, or null if no match is found.
+     */
+    public static RED_REEF fromAprilTagIdAndPose(int aprilTagId, boolean isLeftPose) {
+        for (RED_REEF branch : values()) {
+            if (branch.aprilTagId == aprilTagId && 
+                ((isLeftPose && branch.xOffset > 0) || (!isLeftPose && branch.xOffset < 0))) {
+                return branch;
+            }
+        }
+        return null;
+    }
 }
+}    
