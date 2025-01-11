@@ -1,11 +1,16 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.constants.AutoConstants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
@@ -135,7 +140,25 @@ public class RobotContainer {
   }
 
   public void registerCommands() {
-
+    if(elevator != null && outtake != null){
+      NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
+        new WaitCommand(1),
+        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+      ));
+      NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+      NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+      NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+    }
   }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {
