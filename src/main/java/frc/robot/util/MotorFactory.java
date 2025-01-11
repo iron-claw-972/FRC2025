@@ -5,9 +5,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.constants.Constants;
 
 /**
@@ -22,32 +21,33 @@ public class MotorFactory {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Create a CANSparkMax with current limiting enabled
+     * Create a SparkMax with current limiting enabled
      *
      * @param id         the ID of the Spark MAX
      * @param motortype  the type of motor the Spark MAX is connected to
      * @param stallLimit the current limit to set at stall
      * @return a fully configured CANSparkMAX
      */
-    public static CANSparkMax createSparkMAX(int id, MotorType motortype, int stallLimit) {
-        CANSparkMax sparkMAX = new CANSparkMax(id, motortype);
-        sparkMAX.restoreFactoryDefaults();
-        sparkMAX.enableVoltageCompensation(Constants.ROBOT_VOLTAGE);
-        sparkMAX.setSmartCurrentLimit(stallLimit);
-        sparkMAX.setIdleMode(IdleMode.kBrake);
+    public static SparkMax createSparkMAX(int id, MotorType motortype, int stallLimit) {
+        SparkMax sparkMAX = new SparkMax(id, motortype);
+        // TODO: Fix this
+        // sparkMAX.restoreFactoryDefaults();
+        // sparkMAX.enableVoltageCompensation(Constants.ROBOT_VOLTAGE);
+        // sparkMAX.setSmartCurrentLimit(stallLimit);
+        // sparkMAX.setIdleMode(IdleMode.kBrake);
 
-        sparkMAX.burnFlash();
+        // sparkMAX.burnFlash();
         return sparkMAX;
     }
 
     /**
-     * Create a CANSparkMax with default current limiting enabled
+     * Create a SparkMax with default current limiting enabled
      *
      * @param id        the ID of the Spark MAX
      * @param motortype the type of motor the Spark MAX is connected to
      * @return a fully configured CANSparkMAX
      */
-    public static CANSparkMax createSparkMAXDefault(int id, MotorType motortype) {
+    public static SparkMax createSparkMAXDefault(int id, MotorType motortype) {
         return createSparkMAX(id, motortype, SPARK_MAX_DEFAULT_CURRENT_LIMIT);
     }
 
