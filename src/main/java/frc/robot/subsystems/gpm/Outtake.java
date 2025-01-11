@@ -13,6 +13,7 @@ import frc.robot.constants.IdConstants;
 public class Outtake extends SubsystemBase {
 
     private SparkFlex  motor = new SparkFlex(IdConstants.OUTTAKE_MOTOR, MotorType.kBrushless);
+    private double power;
     public Outtake(){
         motor.configure(new SparkFlexConfig()
             .inverted(true)
@@ -21,8 +22,12 @@ public class Outtake extends SubsystemBase {
             PersistMode.kNoPersistParameters
         );
     }
-    public void setMotor(double power){
+    @Override
+    public void periodic(){
         motor.set(power);
+    }
+    public void setMotor(double power){
+        this.power = power;
     }
     public void stop(){
         setMotor(0);
