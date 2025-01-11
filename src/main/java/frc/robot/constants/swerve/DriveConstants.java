@@ -198,10 +198,10 @@ public class DriveConstants {
 
             TRACK_WIDTH = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
         
-            STEER_OFFSET_FRONT_LEFT = 121.463;
-            STEER_OFFSET_FRONT_RIGHT = 284.242-180;
-            STEER_OFFSET_BACK_LEFT = 157.676+180;
-            STEER_OFFSET_BACK_RIGHT = 77.199+180;
+            STEER_OFFSET_FRONT_LEFT = 121.463+180;
+            STEER_OFFSET_FRONT_RIGHT = 284.242;
+            STEER_OFFSET_BACK_LEFT = 157.676;
+            STEER_OFFSET_BACK_RIGHT = 77.199;
 
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
         }

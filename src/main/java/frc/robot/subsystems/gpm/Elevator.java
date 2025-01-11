@@ -146,14 +146,13 @@ public class Elevator extends SubsystemBase {
     calibrate();
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
-    SmartDashboard.putNumber("setpoint", 0);
+
   }
   // 14 inches verically
   // 2.901 icnehs toward battery
   // 16.901 inches 
   @Override
   public void periodic() {
-    setpoint = SmartDashboard.getNumber("setpoint", setpoint);
     // If it hits the limit switch, reset the encoder
     // if (getBottomLimitSwitch() && (calibrated || !movingUp)) {
     //   if (false) {

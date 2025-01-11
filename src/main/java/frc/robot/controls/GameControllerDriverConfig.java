@@ -46,6 +46,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     //kDriver.setRumble(RumbleStatus.RUMBLE_ON);
     kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
+    if (elevator!=null && outtake!=null){
+    
 
     // set the wheels to X
     kDriver.get(Button.B).whileTrue(new SetFormationX(super.getDrivetrain()));
@@ -58,7 +60,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
     kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
     kDriver.get(Button.RB).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-    new Trigger(kDriver.RIGHT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+    new Trigger(kDriver.LEFT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
     kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
     kDriver.get(Button.A).onTrue(new OuttakeCoral(outtake, elevator));
 
@@ -71,6 +73,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
           .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(60), false).pose.toPose2d())))
           .onFalse(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)));
       }
+    }
     }
   }
 

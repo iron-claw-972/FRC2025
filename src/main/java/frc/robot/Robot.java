@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
 
         CommandScheduler.getInstance().run();
         
-        LogManager.update();
+        //LogManager.update();
     }
 
     /**
