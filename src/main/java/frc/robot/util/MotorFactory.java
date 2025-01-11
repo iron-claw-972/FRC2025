@@ -6,7 +6,12 @@ import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import frc.robot.constants.Constants;
 
 /**
@@ -30,13 +35,14 @@ public class MotorFactory {
      */
     public static SparkMax createSparkMAX(int id, MotorType motortype, int stallLimit) {
         SparkMax sparkMAX = new SparkMax(id, motortype);
-        // TODO: Fix this
-        // sparkMAX.restoreFactoryDefaults();
-        // sparkMAX.enableVoltageCompensation(Constants.ROBOT_VOLTAGE);
-        // sparkMAX.setSmartCurrentLimit(stallLimit);
-        // sparkMAX.setIdleMode(IdleMode.kBrake);
 
-        // sparkMAX.burnFlash();
+        sparkMAX.configure(new SparkMaxConfig()
+            .voltageCompensation(Constants.ROBOT_VOLTAGE)
+            .smartCurrentLimit(stallLimit)
+            .idleMode(IdleMode.kBrake),
+            ResetMode.kResetSafeParameters,
+            PersistMode.kNoPersistParameters
+        );
         return sparkMAX;
     }
 
