@@ -72,7 +72,7 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision);
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
-        driver = new GameControllerDriverConfig(drive, vision);
+        driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
         operator = new Operator(drive, elevator, outtake);
 
         // Detected objects need access to the drivetrain

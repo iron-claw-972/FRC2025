@@ -7,10 +7,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.drive_comm.SetFormationX;
+import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.gpm.Elevator;
+import frc.robot.subsystems.gpm.Outtake;
 import frc.robot.util.MathUtils;
 import frc.robot.util.Vision;
 import lib.controllers.GameController;
@@ -24,10 +29,14 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   private final GameController kDriver = new GameController(Constants.DRIVER_JOY);
 
   private final Vision vision;
+  private final Elevator elevator;
+  private final Outtake outtake;
 
-  public GameControllerDriverConfig(Drivetrain drive, Vision vision) {
+  public GameControllerDriverConfig(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake) {
     super(drive);
     this.vision = vision;
+    this.elevator = elevator;
+    this.outtake = outtake;
   }
 
   @SuppressWarnings("unused")
@@ -39,13 +48,19 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
 
     // set the wheels to X
-    kDriver.get(Button.X).whileTrue(new SetFormationX(super.getDrivetrain()));
+    kDriver.get(Button.B).whileTrue(new SetFormationX(super.getDrivetrain()));
     // Enable state deadband after setting formation to X
-    kDriver.get(Button.X).onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
+    kDriver.get(Button.B).onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
 
     // Resets the modules to absolute if they are having the unresolved zeroing
     // error
-    kDriver.get(Button.RB).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
+    kDriver.get(Button.BACK).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
+
+    kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+    kDriver.get(Button.RB).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+    new Trigger(kDriver.RIGHT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+    kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
+    kDriver.get(Button.A).onTrue(new OuttakeCoral(outtake, elevator));
 
     if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
       // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions

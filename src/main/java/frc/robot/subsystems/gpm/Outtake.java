@@ -11,6 +11,7 @@ public class Outtake extends SubsystemBase {
     private CANSparkFlex motor = new CANSparkFlex(IdConstants.OUTTAKE_MOTOR, MotorType.kBrushless);
     public Outtake(){
         motor.setIdleMode(IdleMode.kBrake);
+        motor.setInverted(true);
     }
     public void setMotor(double power){
         motor.set(power);

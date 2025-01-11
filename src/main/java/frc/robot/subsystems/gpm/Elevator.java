@@ -210,6 +210,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("height", getPosition());
     //Voltage.setDouble(nextVoltage);
     set(nextVoltage);
+    // ElevatorConstants.CENTER_OF_MASS_HEIGHT = (getPosition())
   }
 
   @Override

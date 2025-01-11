@@ -39,12 +39,6 @@ public class Operator {
             }
             CommandScheduler.getInstance().cancelAll();
         }));
-        // TODO: Maybe change buttons
-        kDriver.get(Button.A).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-        kDriver.get(Button.B).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-        kDriver.get(Button.Y).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
-        kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
-        kDriver.get(Button.RB).onTrue(new OuttakeCoral(outtake, elevator));
     }
     public Trigger getRightTrigger(){
         return new Trigger(kDriver.RIGHT_TRIGGER_BUTTON);

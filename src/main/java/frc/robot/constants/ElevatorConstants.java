@@ -5,6 +5,7 @@
 package frc.robot.constants;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public class ElevatorConstants {
@@ -29,4 +30,10 @@ public class ElevatorConstants {
     public static final double L2_SETPOINT = 0.4;
     public static final double L3_SETPOINT = 0.8;
     public static final double L4_SETPOINT = 1.2;
+
+    public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(10);
+    public static final double CENTER_OF_MASS_HEIGHT_L4 = Units.inchesToMeters(14);
+
+    // This is not the best way to do this, but it is the easiest for the Alpha Bot
+    public static double CENTER_OF_MASS_HEIGHT = 0;
 }
