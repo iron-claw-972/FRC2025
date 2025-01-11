@@ -11,6 +11,7 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Elevator;
 import frc.robot.subsystems.gpm.Outtake;
@@ -33,12 +34,27 @@ public class Operator {
     }
 
     public void configureControls() {
-        kDriver.get(Button.BACK).onTrue(new InstantCommand(()->{
-            if(elevator != null){
-                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
-            }
-            CommandScheduler.getInstance().cancelAll();
-        }));
+        // kDriver.get(Button.BACK).onTrue(new InstantCommand(()->drive.setMaxAccel(1.68213715)).
+        // andThen(new InstantCommand(()->{
+        //     if(elevator != null){
+        //         elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
+        //     }
+        //     CommandScheduler.getInstance().cancelAll();
+        // })));
+    
+        // kDriver.get(Button.BACK).onFalse(new InstantCommand(()->{
+        //     if(elevator != null){
+        //         elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+        //     }
+        //     CommandScheduler.getInstance().cancelAll();
+        // }));
+        // }).andThen(new InstantCommand(()->drive.setMaxAccel(DriveConstants.MAX_LINEAR_ACCEL))));
+        // TODO: Maybe change buttons
+        kDriver.get(Button.A).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+        kDriver.get(Button.B).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+        kDriver.get(Button.Y).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+        kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
+        kDriver.get(Button.RB).onTrue(new OuttakeCoral(outtake, elevator));
     }
     public Trigger getRightTrigger(){
         return new Trigger(kDriver.RIGHT_TRIGGER_BUTTON);

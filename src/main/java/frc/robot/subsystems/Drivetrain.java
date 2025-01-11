@@ -35,6 +35,7 @@ import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
 import frc.robot.util.Vision;
+import frc.robot.util.SwerveStuff.ModuleLimits;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -50,6 +51,8 @@ import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
     protected final Module[] modules;
+
+    private double maxAccel = DriveConstants.MAX_LINEAR_ACCEL;
 
     private SwerveSetpoint currentSetpoint =
     new SwerveSetpoint(
@@ -312,8 +315,8 @@ public class Drivetrain extends SubsystemBase {
                     +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
         currentSetpoint = setpointGenerator.generateSetpoint(
-            DriveConstants.MODULE_LIMITS,
-            currentSetpoint,chassisSpeeds,
+            new ModuleLimits(DriveConstants.MAX_SPEED, maxAccel, Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / DriveConstants.STEER_GEAR_RATIO)),
+            currentSetpoint, chassisSpeeds,
             Constants.LOOP_TIME);
             
         SwerveModuleState[] swerveModuleStates = currentSetpoint.moduleStates();
@@ -424,6 +427,10 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setYaw(Rotation2d rotation) {
         resetOdometry(new Pose2d(getPose().getTranslation(), rotation));
+    }
+
+    public void setMaxAccel(double maxAccel){
+        this.maxAccel = maxAccel;
     }
 
     /**

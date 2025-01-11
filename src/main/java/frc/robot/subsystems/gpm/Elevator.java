@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.gpm;
 
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -114,8 +115,11 @@ public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   public Elevator() {
     // Left motor follows right motor in the opposite direction
-    //leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
-    //rightMotor.setInverted(true);
+    if (!RobotBase.isSimulation()){
+      leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
+      rightMotor.setInverted(true);
+    }
+    
 
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
@@ -142,45 +146,48 @@ public class Elevator extends SubsystemBase {
     calibrate();
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
+    SmartDashboard.putNumber("setpoint", 0);
   }
-
+  // 14 inches verically
+  // 2.901 icnehs toward battery
+  // 16.901 inches 
   @Override
   public void periodic() {
-    setSetpoint(SmartDashboard.getNumber("Setpoint", 0));
+    setpoint = SmartDashboard.getNumber("setpoint", setpoint);
     // If it hits the limit switch, reset the encoder
-    if (getBottomLimitSwitch() && (calibrated || !movingUp)) {
-      if (false) {
-        resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
-      }
-      calibrated = true;
-      limitSwitchPressed = true;
-    } else if (getTopLimitSwitch()) {
-      if (false) {
-        resetEncoder(ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT);
-      }
-      calibrated = true;
-      limitSwitchPressed = true;
-    } else {
-      limitSwitchPressed = false;
-    }
+    // if (getBottomLimitSwitch() && (calibrated || !movingUp)) {
+    //   if (false) {
+    //     resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
+    //   }
+    //   calibrated = true;
+    //   limitSwitchPressed = true;
+    // } else if (getTopLimitSwitch()) {
+    //   if (false) {
+    //     resetEncoder(ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT);
+    //   }
+    //   calibrated = true;
+    //   limitSwitchPressed = true;
+    // } else {
+    //   limitSwitchPressed = false;
+    // }
 
-    // The final state that the elevator is trying to get to
-    State goal = new State(setpoint, 0.0);
+    // // The final state that the elevator is trying to get to
+     State goal = new State(setpoint, 0.0);
 
-    double currentPosition = getPosition();
+     double currentPosition = getPosition();
 
-    // If it isn't calibrated yet, try to find the limit switch
-    if (!calibrated) {
-      double v = -0.25;
-      if (movingUp) {
-        // This is only to get above the limit switch, so it can move faster
-        v = 0.5;
-        if (currentPosition - start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) {
-          movingUp = false;
-        }
-      }
-      goal = new State(currentPosition + v * Constants.LOOP_TIME, v);
-    }
+    // // If it isn't calibrated yet, try to find the limit switch
+    // if (!calibrated) {
+    //   double v = -0.25;
+    //   if (movingUp) {
+    //     // This is only to get above the limit switch, so it can move faster
+    //     v = 0.5;
+    //     if (currentPosition - start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) {
+    //       movingUp = false;
+    //     }
+    //   }
+    //   goal = new State(currentPosition + v * Constants.LOOP_TIME, v);
+    // }
 
     m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
@@ -248,6 +255,12 @@ public class Elevator extends SubsystemBase {
     return rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
     * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
   }
+
+  public double getVoltage(){
+    return voltage;
+  }
+
+
 
   public boolean getBottomLimitSwitch() {
     return !bottomLimitSwitch.get();

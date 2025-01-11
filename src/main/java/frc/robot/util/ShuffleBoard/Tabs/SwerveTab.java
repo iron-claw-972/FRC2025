@@ -32,6 +32,7 @@ public class SwerveTab extends ShuffleBoardTabs {
     private GenericEntry[] rotationalPosition = new GenericEntry[4];
     private GenericEntry[] voltage = new GenericEntry[4];
     private GenericEntry[] current = new GenericEntry[4];
+    private GenericEntry[] moduleDistance = new GenericEntry[4];
 
     private ShuffleboardLayout[] driveLayouts = new ShuffleboardLayout[4];
 
@@ -76,6 +77,7 @@ public class SwerveTab extends ShuffleBoardTabs {
             .add("drive accel", 0)
             .withPosition(0, 4)
             .getEntry();
+            moduleDistance[i] =  tab.add("module " + i, 0).getEntry();
         }
 
         xOdemetry = tab.add("x odemetry", 0).withPosition(0, 3).getEntry();
@@ -94,7 +96,7 @@ public class SwerveTab extends ShuffleBoardTabs {
             if(RobotBase.isReal()){
                 driveAccel[i].setDouble(modules[i].getDriveMotor().getAcceleration().getValueAsDouble());
             }
-
+            moduleDistance[i].setDouble(modules[i].getPosition().distanceMeters);
         }
         xOdemetry.setDouble(truncate(drive.getPose().getX()));
         yOdemetry.setDouble(truncate(drive.getPose().getY()));
