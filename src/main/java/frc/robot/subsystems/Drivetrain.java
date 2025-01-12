@@ -139,7 +139,7 @@ public class Drivetrain extends SubsystemBase {
         pigeon.setYaw(DriveConstants.STARTING_HEADING.getDegrees());
         poseEstimator = new SwerveDrivePoseEstimator(
                 DriveConstants.KINEMATICS,
-                Rotation2d.fromDegrees(pigeon.getYaw().getValue()),
+                Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
                 getModulePositions(),
                 new Pose2d(),
                 // Defaults, except trust pigeon more
@@ -199,7 +199,7 @@ public class Drivetrain extends SubsystemBase {
         rot = headingControl(rot, xSpeed, ySpeed);
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         if(fieldRelative){
-            speeds.toRobotRelativeSpeeds(getYaw());
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }
         setChassisSpeeds(speeds, isOpenLoop);
     }
@@ -216,7 +216,7 @@ public class Drivetrain extends SubsystemBase {
         double rot = rotationController.calculate(getYaw().getRadians(), heading);
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         if(fieldRelative){
-            speeds.toRobotRelativeSpeeds(getYaw());
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }
         setChassisSpeeds(speeds, false);
     }
@@ -246,7 +246,7 @@ public class Drivetrain extends SubsystemBase {
         Pose2d pose1 = getPose();
 
         // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
-        poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValue()), getModulePositions());
+        poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
 
         Pose2d pose2 = getPose();
 
@@ -342,13 +342,13 @@ public class Drivetrain extends SubsystemBase {
         double speed = 0;
         switch(id){
             case 0:
-                speed = pigeon.getAngularVelocityXWorld().getValue();
+                speed = pigeon.getAngularVelocityXWorld().getValueAsDouble();
                 break;
             case 1:
-                speed = pigeon.getAngularVelocityYWorld().getValue();
+                speed = pigeon.getAngularVelocityYWorld().getValueAsDouble();
                 break;
             case 2:
-                speed = pigeon.getAngularVelocityZWorld().getValue();
+                speed = pigeon.getAngularVelocityZWorld().getValueAsDouble();
                 break;
         }
         // outputs in deg/s, so convert to rad/s
@@ -434,7 +434,7 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry(Pose2d pose) {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
-        poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValue()), getModulePositions(), pose);
+        poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
     }
 
     /**
