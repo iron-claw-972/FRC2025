@@ -34,9 +34,7 @@ import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
-import frc.robot.util.LogManager;
 import frc.robot.util.Vision;
-import frc.robot.util.SwerveStuff.ModuleLimits;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -52,8 +50,6 @@ import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
     protected final Module[] modules;
-
-    private double maxAccel = DriveConstants.MAX_LINEAR_ACCEL;
 
     private SwerveSetpoint currentSetpoint =
     new SwerveSetpoint(
@@ -315,10 +311,20 @@ public class Drivetrain extends SubsystemBase {
             pigeon.getSimState().addYaw(
                     +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
-        currentSetpoint = setpointGenerator.generateSetpoint(
-            new ModuleLimits(DriveConstants.MAX_SPEED, Math.min(maxAccel, Constants.GRAVITY_ACCELERATION*ElevatorConstants.CENTER_OF_MASS_HEIGHT/DriveConstants.TRACK_WIDTH*2), Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / DriveConstants.STEER_GEAR_RATIO)),
-            currentSetpoint, chassisSpeeds,
-            Constants.LOOP_TIME);
+        if(DriveConstants.USE_ACTUAL_SPEED){
+            SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
+            currentSetpoint = setpointGenerator.generateSetpoint(
+                DriveConstants.MODULE_LIMITS,
+                Constants.GRAVITY_ACCELERATION*ElevatorConstants.CENTER_OF_MASS_HEIGHT/DriveConstants.TRACK_WIDTH*2,
+                currentState, chassisSpeeds,
+                Constants.LOOP_TIME);
+        }else{
+            currentSetpoint = setpointGenerator.generateSetpoint(
+                DriveConstants.MODULE_LIMITS,
+                Constants.GRAVITY_ACCELERATION*ElevatorConstants.CENTER_OF_MASS_HEIGHT/DriveConstants.TRACK_WIDTH*2,
+                currentSetpoint, chassisSpeeds,
+                Constants.LOOP_TIME);
+        }
             
         SwerveModuleState[] swerveModuleStates = currentSetpoint.moduleStates();
         setModuleStates(swerveModuleStates, isOpenLoop);
@@ -398,9 +404,15 @@ public class Drivetrain extends SubsystemBase {
      * This is often used as an input for other methods
      */
     public ChassisSpeeds getChassisSpeeds() {
-        return DriveConstants.KINEMATICS.toChassisSpeeds(
-                Arrays.stream(modules).map(Module::getState).toArray(SwerveModuleState[]::new)
-        );
+        return DriveConstants.KINEMATICS.toChassisSpeeds(getModuleStates());
+    }
+
+    /**
+     * Gets the state of each module
+     * @return An array of 4 SwerveModuleStates
+     */
+    public SwerveModuleState[] getModuleStates(){
+        return Arrays.stream(modules).map(Module::getState).toArray(SwerveModuleState[]::new);
     }
 
     public SwerveSetpoint getCurrSetpoint(){
@@ -428,10 +440,6 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setYaw(Rotation2d rotation) {
         resetOdometry(new Pose2d(getPose().getTranslation(), rotation));
-    }
-
-    public void setMaxAccel(double maxAccel){
-        this.maxAccel = maxAccel;
     }
 
     /**
