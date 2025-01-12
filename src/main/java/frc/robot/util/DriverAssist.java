@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import frc.robot.constants.Constants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -84,6 +85,7 @@ public class DriverAssist {
         // This is the only thing that needs to be robot relative
         SwerveSetpoint nextSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
+                Constants.GRAVITY_ACCELERATION*ElevatorConstants.CENTER_OF_MASS_HEIGHT/DriveConstants.TRACK_WIDTH*2,
                 drive.getCurrSetpoint(), goalRobot,
                 Constants.LOOP_TIME);
             ChassisSpeeds nextChassisSpeed = nextSetpoint.chassisSpeeds();
@@ -96,6 +98,7 @@ public class DriverAssist {
         // Both speeds need to be obtainable in 1 frame or the driver speed will always be farther away
         SwerveSetpoint driverSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
+                Constants.GRAVITY_ACCELERATION*ElevatorConstants.CENTER_OF_MASS_HEIGHT/DriveConstants.TRACK_WIDTH*2,
                 drive.getCurrSetpoint(), driverInputRobot,
                 Constants.LOOP_TIME);
         ChassisSpeeds driverSpeeds = driverSetpoint.chassisSpeeds();

@@ -252,6 +252,7 @@ public class SwerveSetpointGenerator {
    * Generate a new setpoint.
    *
    * @param limits The kinematic limits to respect for this setpoint.
+   * @param tippingAccelerationLimit The maximum acceleration in the x and y directions to prevent tipping
    * @param prevSetpoint The previous setpoint motion. Normally, you'd pass in the previous
    *     iteration setpoint instead of the actual measured/estimated kinematic state.
    * @param desiredState The desired state of motion, such as from the driver sticks or a path
@@ -262,6 +263,7 @@ public class SwerveSetpointGenerator {
    */
   public SwerveSetpoint generateSetpoint(
       final ModuleLimits limits,
+      final double tippingAccelerationLimit,
       final SwerveSetpoint prevSetpoint,
       ChassisSpeeds desiredState,
       double dt) {
@@ -326,7 +328,7 @@ public class SwerveSetpointGenerator {
       // It will (likely) be faster to stop the robot, rotate the modules in place to the complement
       // of the desired
       // angle, and accelerate again.
-      return generateSetpoint(limits, prevSetpoint, new ChassisSpeeds(), dt);
+      return generateSetpoint(limits, tippingAccelerationLimit, prevSetpoint, new ChassisSpeeds(), dt);
     }
 
     // Compute the deltas between start and goal. We can then interpolate from the start state to
@@ -434,6 +436,18 @@ public class SwerveSetpointGenerator {
       double s2 = min_s*findAccelerationMaxS(prev_vx[i], prev_vy[i], vx_min_s, vy_min_s, max_vel_step_2, kMaxIterations);
 
       min_s = Math.min(Math.min(min_s, s), s2);
+    }
+
+    // Limits the acceleration of the entire chassis independantly in each axis to prevent tipping
+    double ax = Math.abs(desiredState.vxMetersPerSecond-prevSetpoint.chassisSpeeds().vxMetersPerSecond)/dt;
+    double ay = Math.abs(desiredState.vyMetersPerSecond-prevSetpoint.chassisSpeeds().vyMetersPerSecond)/dt;
+    if(!epsilonEquals(ax, 0)){
+      double s = tippingAccelerationLimit/ax;
+      min_s = Math.min(min_s, s);
+    }
+    if(!epsilonEquals(ay, 0)){
+      double s = tippingAccelerationLimit/ay;
+      min_s = Math.min(min_s, s);
     }
 
     ChassisSpeeds retSpeeds =

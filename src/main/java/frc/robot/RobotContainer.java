@@ -18,8 +18,6 @@ import frc.robot.controls.Operator;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Elevator;
 import frc.robot.subsystems.gpm.Outtake;
-import frc.robot.util.DetectedObject;
-import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
 import java.util.function.BooleanSupplier;
@@ -87,7 +85,7 @@ public class RobotContainer {
          drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         // PathGroupLoader.loadPathGroups();
  
-         //shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator);
+        shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator);
         break;
       }
 
