@@ -5,9 +5,13 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import frc.robot.constants.Constants;
 
 /**
@@ -22,32 +26,34 @@ public class MotorFactory {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Create a CANSparkMax with current limiting enabled
+     * Create a SparkMax with current limiting enabled
      *
      * @param id         the ID of the Spark MAX
      * @param motortype  the type of motor the Spark MAX is connected to
      * @param stallLimit the current limit to set at stall
      * @return a fully configured CANSparkMAX
      */
-    public static CANSparkMax createSparkMAX(int id, MotorType motortype, int stallLimit) {
-        CANSparkMax sparkMAX = new CANSparkMax(id, motortype);
-        sparkMAX.restoreFactoryDefaults();
-        sparkMAX.enableVoltageCompensation(Constants.ROBOT_VOLTAGE);
-        sparkMAX.setSmartCurrentLimit(stallLimit);
-        sparkMAX.setIdleMode(IdleMode.kBrake);
+    public static SparkMax createSparkMAX(int id, MotorType motortype, int stallLimit) {
+        SparkMax sparkMAX = new SparkMax(id, motortype);
 
-        sparkMAX.burnFlash();
+        sparkMAX.configure(new SparkMaxConfig()
+            .voltageCompensation(Constants.ROBOT_VOLTAGE)
+            .smartCurrentLimit(stallLimit)
+            .idleMode(IdleMode.kBrake),
+            ResetMode.kResetSafeParameters,
+            PersistMode.kNoPersistParameters
+        );
         return sparkMAX;
     }
 
     /**
-     * Create a CANSparkMax with default current limiting enabled
+     * Create a SparkMax with default current limiting enabled
      *
      * @param id        the ID of the Spark MAX
      * @param motortype the type of motor the Spark MAX is connected to
      * @return a fully configured CANSparkMAX
      */
-    public static CANSparkMax createSparkMAXDefault(int id, MotorType motortype) {
+    public static SparkMax createSparkMAXDefault(int id, MotorType motortype) {
         return createSparkMAX(id, motortype, SPARK_MAX_DEFAULT_CURRENT_LIMIT);
     }
 
@@ -93,7 +99,7 @@ public class MotorFactory {
         // See explanations for Supply and Stator limiting in FalconConstants.java
         config.CurrentLimits = new CurrentLimitsConfigs().withStatorCurrentLimitEnable(StatorLimitEnable).withStatorCurrentLimit(StatorCurrentLimit).
             withSupplyCurrentLimitEnable(SupplyLimitEnable).withSupplyCurrentLimit(SupplyCurrentLimit).
-            withSupplyCurrentThreshold(SupplyTriggerThreshold).withSupplyTimeThreshold(SupplyTriggerDuration);
+            withSupplyCurrentLowerLimit(SupplyTriggerThreshold).withSupplyCurrentLowerTime(SupplyTriggerDuration);
 
         config.Voltage = new VoltageConfigs().withPeakForwardVoltage(Constants.ROBOT_VOLTAGE);
 
