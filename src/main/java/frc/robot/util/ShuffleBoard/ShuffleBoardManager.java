@@ -28,25 +28,25 @@ public class ShuffleBoardManager {
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator){
         
         // swerveTab = new SwerveTab(drive);
-        autoTab = new AutoTab(drive);
-        visionTab = new VisionTab(drive, vision);
+        //autoTab = new AutoTab(drive);
+        //visionTab = new VisionTab(drive, vision);
         elevatorTab = new ElevatorTab(elevator);
-        tabs.add(autoTab);
-        tabs.add(visionTab);
+        //tabs.add(autoTab);
+        //tabs.add(visionTab);
         tabs.add(elevatorTab);
 
         for (ShuffleBoardTabs tab : tabs){
             tab.createEntries();
         }
         
-        feild = new Field(drive, vision);
+        //feild = new Field(drive, vision);
     }
 
     public void update(){
         for (ShuffleBoardTabs tab : tabs){
             tab.update();
         }
-        feild.updateFeild();
+        //feild.updateFeild();
     }
 
     public Command getSelectedCommand(){

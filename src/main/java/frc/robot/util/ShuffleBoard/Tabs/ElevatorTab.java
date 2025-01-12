@@ -55,7 +55,7 @@ public class ElevatorTab extends ShuffleBoardTabs {
         }
         tab.add("Calibrate elevator", new CalibrateElevator(elevator));
         voltage = tab.add("voltage", 0).withWidget(BuiltInWidgets.kGraph).withSize(3,3).withPosition(3,3).getEntry();
-        tab.addDouble("Position", ()->elevator.getPosition());
+        //tab.addDouble("Position", ()->elevator.getPosition());
     }
 
 }
