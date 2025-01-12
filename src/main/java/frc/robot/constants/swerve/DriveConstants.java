@@ -55,7 +55,7 @@ public class DriveConstants {
     // This does nothing if greater than LINEAR_ACCEL
     public static double MAX_DRIVE_ACCEL = MAX_LINEAR_ACCEL;
     // The maximum angular acceleration of the robot
-    public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL * TRACK_WIDTH * Math.sqrt(2) / 2;
+    public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL / TRACK_WIDTH * Math.sqrt(2);
 
     /**
      * If this is false, Drivetrain will use the previous setpoint to calculate the new setpoint.
