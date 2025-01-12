@@ -164,34 +164,42 @@ public class VisionConstants {
   // Poses to potentially align to
 
   public static final Pose2d RED_CORAL_STATION_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(0).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(0).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(Units.degreesToRadians(126)));
+    FieldConstants.APRIL_TAGS.get(0).pose.getX() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(126)), 
+    FieldConstants.APRIL_TAGS.get(0).pose.getY() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(126)),
+    new Rotation2d(Units.degreesToRadians(126)));
 
-  public static final Pose2d RED_CORAL_STATION_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(1).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(1).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(Units.degreesToRadians(234)));
+public static final Pose2d RED_CORAL_STATION_RIGHT_POSE = new Pose2d(
+    FieldConstants.APRIL_TAGS.get(1).pose.getX() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(234)),
+    FieldConstants.APRIL_TAGS.get(1).pose.getY() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(234)),
+    new Rotation2d(Units.degreesToRadians(234)));
 
-  public static final Pose2d BLUE_CORAL_STATION_LEFT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(12).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(12).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(Units.degreesToRadians(306)));
+public static final Pose2d BLUE_CORAL_STATION_LEFT_POSE = new Pose2d(
+    FieldConstants.APRIL_TAGS.get(12).pose.getX() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(306)),
+    FieldConstants.APRIL_TAGS.get(12).pose.getY() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(306)),
+    new Rotation2d(Units.degreesToRadians(306)));
 
-  public static final Pose2d BLUE_CORAL_STATION_RIGHT_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(11).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(11).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(Units.degreesToRadians(54)));
+public static final Pose2d BLUE_CORAL_STATION_RIGHT_POSE = new Pose2d(
+    FieldConstants.APRIL_TAGS.get(11).pose.getX() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(54)),
+    FieldConstants.APRIL_TAGS.get(11).pose.getY() + 
+    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(54)),
+    new Rotation2d(Units.degreesToRadians(54)));
 
-  public static final Pose2d RED_PROCESSOR_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(2).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(2).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(Math.PI / 2));
-
-  public static final Pose2d BLUE_PROCESSOR_POSE = new Pose2d(
-      FieldConstants.APRIL_TAGS.get(15).pose.getX(),
-      FieldConstants.APRIL_TAGS.get(15).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
-      new Rotation2d(-Math.PI / 2));
+public static final Pose2d RED_PROCESSOR_POSE = new Pose2d(
+    FieldConstants.APRIL_TAGS.get(2).pose.getX(),
+    FieldConstants.APRIL_TAGS.get(2).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
+    new Rotation2d(Math.PI / 2));
+  
+public static final Pose2d BLUE_PROCESSOR_POSE = new Pose2d(
+    FieldConstants.APRIL_TAGS.get(15).pose.getX(),
+    FieldConstants.APRIL_TAGS.get(15).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
+    new Rotation2d(-Math.PI / 2));
 
   public static final Pose2d BLUE_LEFT_CAGE_POSE = new Pose2d(
       FieldConstants.FIELD_LENGTH/2,
@@ -224,18 +232,18 @@ public class VisionConstants {
       new Rotation2d(-Math.PI / 2));
 
       public enum BLUE_REEF {
-        BLUE_BRANCH_17_LPOSE(16, 5.14, 2.31),
-        BLUE_BRANCH_17_RPOSE(16, -5.14, 2.31),
-        BLUE_BRANCH_18_LPOSE(17, 5.14, 2.31),
-        BLUE_BRANCH_18_RPOSE(17, -5.14, 2.31),
-        BLUE_BRANCH_19_LPOSE(18, 5.14, 2.31),
-        BLUE_BRANCH_19_RPOSE(18, -5.14, 2.31),
-        BLUE_BRANCH_20_LPOSE(19, 5.14, 2.31),
-        BLUE_BRANCH_20_RPOSE(19, -5.14, 2.31),
-        BLUE_BRANCH_21_LPOSE(20, 5.14, 2.31),
-        BLUE_BRANCH_21_RPOSE(20, -5.14, 2.31),
-        BLUE_BRANCH_22_LPOSE(21, 5.14, 2.31),
-        BLUE_BRANCH_22_RPOSE(21, -5.14, 2.31);
+        BLUE_BRANCH_17_LPOSE(16, 0.1308, .0587),
+        BLUE_BRANCH_17_RPOSE(16, -0.1308, .0587),
+        BLUE_BRANCH_18_LPOSE(17, 0.1308, .0587),
+        BLUE_BRANCH_18_RPOSE(17, -0.1308, .0587),
+        BLUE_BRANCH_19_LPOSE(18, 0.1308, .0587),
+        BLUE_BRANCH_19_RPOSE(18, -0.1308, .0587),
+        BLUE_BRANCH_20_LPOSE(19, 0.1308, .0587),
+        BLUE_BRANCH_20_RPOSE(19, -0.1308, .0587),
+        BLUE_BRANCH_21_LPOSE(20, 0.1308, .0587),
+        BLUE_BRANCH_21_RPOSE(20, -0.1308, .0587),
+        BLUE_BRANCH_22_LPOSE(21, 0.1308, .0587),
+        BLUE_BRANCH_22_RPOSE(21, -0.1308, .0587);
     
         private final int aprilTagId;
         private final double xOffset;
@@ -260,13 +268,12 @@ public class VisionConstants {
                     basePose3d.getY(),
                     basePose3d.getRotation().toRotation2d()
             );
+
+            double adjustedYOffset = yOffset + (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0);
     
             // Apply both X and Y offsets to calculate the reef branch pose
-            Translation3d offsetTranslation = new Translation3d(
-                    Units.inchesToMeters(xOffset), 
-                    Units.inchesToMeters(yOffset), 
-                    0
-            ).rotateBy(basePose3d.getRotation());
+            Translation3d offsetTranslation = new Translation3d(xOffset, adjustedYOffset,0)
+            .rotateBy(basePose3d.getRotation());
             
             Pose3d branchPose3d = basePose3d.plus(new Transform3d(offsetTranslation, new Rotation3d()));
     
@@ -297,18 +304,18 @@ public class VisionConstants {
     }  
 
 public enum RED_REEF {
-    RED_BRANCH_17_LPOSE(16, 5.14, 2.31),
-    RED_BRANCH_17_RPOSE(16, -5.14, 2.31),
-    RED_BRANCH_18_LPOSE(17, 5.14, 2.31),
-    RED_BRANCH_18_RPOSE(17, -5.14, 2.31),
-    RED_BRANCH_19_LPOSE(18, 5.14, 2.31),
-    RED_BRANCH_19_RPOSE(18, -5.14, 2.31),
-    RED_BRANCH_20_LPOSE(19, 5.14, 2.31),
-    RED_BRANCH_20_RPOSE(19, -5.14, 2.31),
-    RED_BRANCH_21_LPOSE(20, 5.14, 2.31),
-    RED_BRANCH_21_RPOSE(20, -5.14, 2.31),
-    RED_BRANCH_22_LPOSE(21, 5.14, 2.31),
-    RED_BRANCH_22_RPOSE(21, -5.14, 2.31);
+    RED_BRANCH_6_LPOSE(5, 0.1308, .0587),
+    RED_BRANCH_6_RPOSE(5, -0.1308, .0587),
+    RED_BRANCH_7_LPOSE(6, 0.1308, .0587),
+    RED_BRANCH_7_RPOSE(6, -0.1308, .0587),
+    RED_BRANCH_8_LPOSE(7, 0.1308, .0587),
+    RED_BRANCH_8_RPOSE(7, -0.1308, .0587),
+    RED_BRANCH_9_LPOSE(8, 0.1308, .0587),
+    RED_BRANCH_9_RPOSE(8, -0.1308, .0587),
+    RED_BRANCH_10_LPOSE(9, 0.1308, .0587),
+    RED_BRANCH_10_RPOSE(9, -0.1308, .0587),
+    RED_BRANCH_11_LPOSE(10, 0.1308, .0587),
+    RED_BRANCH_11_RPOSE(10, -0.1308, .0587);
 
     private final int aprilTagId;
     private final double xOffset;
@@ -335,11 +342,8 @@ public enum RED_REEF {
         );
 
         // Apply both X and Y offsets to calculate the reef branch pose
-        Translation3d offsetTranslation = new Translation3d(
-                Units.inchesToMeters(xOffset), 
-                Units.inchesToMeters(yOffset), 
-                0
-        ).rotateBy(basePose3d.getRotation());
+        Translation3d offsetTranslation = new Translation3d(xOffset, yOffset, 0) 
+        .rotateBy(basePose3d.getRotation());
         
         Pose3d branchPose3d = basePose3d.plus(new Transform3d(offsetTranslation, new Rotation3d()));
 
