@@ -1,5 +1,6 @@
 package frc.robot.constants.swerve;
 
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -106,8 +107,8 @@ public class DriveConstants {
     public static final boolean DRIVE_ENABLE_CURRENT_LIMIT = true;
 
     /* Motor inversions */
-    public static final boolean INVERT_DRIVE_MOTOR = true;
-    public static final boolean INVERT_STEER_MOTOR = MODULE_CONSTANTS.angleMotorInvert;
+    public static final InvertedValue INVERT_DRIVE_MOTOR = InvertedValue.CounterClockwise_Positive;
+    public static final InvertedValue INVERT_STEER_MOTOR = InvertedValue.Clockwise_Positive;
 
     /* Neutral Modes */
     public static final NeutralModeValue DRIVE_NEUTRAL_MODE = NeutralModeValue.Brake;
@@ -172,10 +173,10 @@ public class DriveConstants {
      */
     public static void update(RobotId robotId) {
         if (robotId == RobotId.Vivace) {
-            STEER_OFFSET_FRONT_LEFT = 100.184;
-            STEER_OFFSET_FRONT_RIGHT = 224.293-180;
-            STEER_OFFSET_BACK_LEFT = 304.795;
-            STEER_OFFSET_BACK_RIGHT = 201.177;
+            STEER_OFFSET_FRONT_LEFT = 100.184+180;
+            STEER_OFFSET_FRONT_RIGHT = 224.293;
+            STEER_OFFSET_BACK_LEFT = 304.795-180;
+            STEER_OFFSET_BACK_RIGHT = 201.177-180;
         } else if (robotId == RobotId.Vertigo) {
             TRACK_WIDTH = Units.inchesToMeters(22.75);//22.75 swerve bot, 20.75 comp bot
             

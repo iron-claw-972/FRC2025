@@ -54,7 +54,7 @@ public class DriverAssist {
         Pose2d currentPose = drive.getPose();
         Rotation2d yaw = drive.getYaw();
         ChassisSpeeds driveSpeeds = drive.getChassisSpeeds();
-        driveSpeeds.toFieldRelativeSpeeds(yaw); // Changing this does not cause problems because getChassisSpeeds() creates a new object
+        driveSpeeds = ChassisSpeeds. fromFieldRelativeSpeeds(driveSpeeds,yaw); // Changing this does not cause problems because getChassisSpeeds() creates a new object
         State xState = new State(currentPose.getX(), driveSpeeds.vxMetersPerSecond);
         State yState = new State(currentPose.getY(), driveSpeeds.vyMetersPerSecond);
         State angleState = new State(currentPose.getRotation().getRadians(), driveSpeeds.omegaRadiansPerSecond);
@@ -78,7 +78,7 @@ public class DriverAssist {
         );
         // Robot-relataive goal
         ChassisSpeeds goalRobot = goal.times(1);
-        goalRobot.toRobotRelativeSpeeds(yaw);
+        goalRobot = ChassisSpeeds. fromRobotRelativeSpeeds(goalRobot, yaw);
 
         // This calculates the actual acceleration we can get
         // This is the only thing that needs to be robot relative
@@ -87,11 +87,11 @@ public class DriverAssist {
                 drive.getCurrSetpoint(), goalRobot,
                 Constants.LOOP_TIME);
             ChassisSpeeds nextChassisSpeed = nextSetpoint.chassisSpeeds();
-            nextChassisSpeed.toFieldRelativeSpeeds(yaw);
+            nextChassisSpeed = ChassisSpeeds.fromRobotRelativeSpeeds(nextChassisSpeed, yaw);
 
         // Robot relative driver inputs
         ChassisSpeeds driverInputRobot = driverInput.times(1); // Copy so original doesn't change
-        driverInputRobot.toRobotRelativeSpeeds(yaw);
+        driverInputRobot = ChassisSpeeds.fromFieldRelativeSpeeds(driverInputRobot, yaw);
         // This is the speed the driver will be able to get next frame
         // Both speeds need to be obtainable in 1 frame or the driver speed will always be farther away
         SwerveSetpoint driverSetpoint = setpointGenerator.generateSetpoint(
@@ -99,7 +99,7 @@ public class DriverAssist {
                 drive.getCurrSetpoint(), driverInputRobot,
                 Constants.LOOP_TIME);
         ChassisSpeeds driverSpeeds = driverSetpoint.chassisSpeeds();
-        driverSpeeds.toFieldRelativeSpeeds(yaw);
+        driverSpeeds= ChassisSpeeds.fromRobotRelativeSpeeds(driverSpeeds,yaw);
 
         // The difference between the 2 speeds
         ChassisSpeeds error = nextChassisSpeed.minus(driverSpeeds);
