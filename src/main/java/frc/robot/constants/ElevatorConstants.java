@@ -24,13 +24,13 @@ public class ElevatorConstants {
     public static final double TOP_LIMIT_SWITCH_HEIGHT = MAX_HEIGHT; // meters
     public static final double SIM_LIMIT_SWITCH_TRIGGER_DISTANCE = 0.01; // meters
 
-    // TODO: Change to the right values
     public static final double STOW_SETPOINT = 0;
     public static final double INTAKE_SETPOINT = 0;
     public static final double L2_SETPOINT = 0.1;
     public static final double L3_SETPOINT = 0.5;
     public static final double L4_SETPOINT = 1.25;
 
+    // TODO: Tune/calculate
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(10);
     public static final double CENTER_OF_MASS_HEIGHT_L4 = Units.inchesToMeters(14);
 

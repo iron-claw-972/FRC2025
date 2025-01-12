@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.VisionConstants;
@@ -315,7 +316,7 @@ public class Drivetrain extends SubsystemBase {
                     +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
         currentSetpoint = setpointGenerator.generateSetpoint(
-            new ModuleLimits(DriveConstants.MAX_SPEED, maxAccel, Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / DriveConstants.STEER_GEAR_RATIO)),
+            new ModuleLimits(DriveConstants.MAX_SPEED, Math.min(maxAccel, Constants.GRAVITY_ACCELERATION*ElevatorConstants.CENTER_OF_MASS_HEIGHT/DriveConstants.TRACK_WIDTH*2), Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / DriveConstants.STEER_GEAR_RATIO)),
             currentSetpoint, chassisSpeeds,
             Constants.LOOP_TIME);
             

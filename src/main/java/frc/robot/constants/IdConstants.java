@@ -26,8 +26,6 @@ public class IdConstants {
     public static final int CANDLE_ID = 1;
 
     // Outtake
-    // TODO: update
-
     public static final int OUTTAKE_MOTOR = 14;
 
 }

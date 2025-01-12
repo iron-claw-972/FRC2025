@@ -218,7 +218,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("height", getPosition());
     //Voltage.setDouble(nextVoltage);
     set(nextVoltage);
-    // ElevatorConstants.CENTER_OF_MASS_HEIGHT = (getPosition())
+    ElevatorConstants.CENTER_OF_MASS_HEIGHT = (getPosition()-ElevatorConstants.STOW_SETPOINT)/(ElevatorConstants.L4_SETPOINT-ElevatorConstants.STOW_SETPOINT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_L4-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
   }
 
   @Override
