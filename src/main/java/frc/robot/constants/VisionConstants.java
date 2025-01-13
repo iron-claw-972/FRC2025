@@ -233,6 +233,11 @@ public class VisionConstants {
             FieldConstants.APRIL_TAGS.get(14).pose.getY() + Units.feetToMeters(6),
             new Rotation2d(Math.PI));
 
+    /**
+     * Stores all of the alignment poses for both reefs.
+     * Each branch is in the format (RED or BLUE)_BRANCH_(tag ID)_(LEFT or RIGHT)
+     * Left and right refer to the position of the branch when looking directly at the AprilTag
+     */
     public enum REEF {
         RED_BRANCH_6_LEFT(5, 0.1308, .0587),
         RED_BRANCH_6_RIGHT(5, -0.1308, .0587),
@@ -260,11 +265,23 @@ public class VisionConstants {
         BLUE_BRANCH_22_LEFT(21, 0.1308, .0587),
         BLUE_BRANCH_22_RIGHT(21, -0.1308, .0587);
 
+        /**
+         * The pose to align to for scoring on this branch
+         */
         public final Pose2d pose;
+        /**
+         * The ID of the AprilTag on the smae side of hte reef ast his branch
+         */
         public final int aprilTagId;
         private final int aprilTagIndex;
-        private final double xOffset;
-        private final double yOffset;
+        /**
+         * The horizontal (parallel to the closest face of the reef) distance, in meters, between the AprilTag and branch
+         */
+        public final double xOffset;
+        /**
+         * The y (normal to the closest face of the reef) distance, in meters, between the AprilTag and branch
+         */
+        public final double yOffset;
 
         private REEF(int aprilTagIndex, double xOffset, double yOffset) {
             this.aprilTagIndex = aprilTagIndex;
@@ -275,14 +292,14 @@ public class VisionConstants {
         }
 
         /**
-         * Calculates the Pose2d for the branch based on the April tag's base pose and
+         * Calculates the Pose2d to align to the branch based on the AprilTag's pose and
          * offsets.
          *
          * @return The calculated Pose2d for this reef branch.
          */
         private Pose2d getPose() {
             Pose3d basePose3d = FieldConstants.APRIL_TAGS.get(aprilTagIndex).pose;
-            double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0 - yOffset;
+            double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0;
 
             // Apply both X and Y offsets to calculate the reef branch pose
             Transform3d transform = new Transform3d(adjustedYOffset, -xOffset, 0, new Rotation3d(0, 0, Math.PI));
