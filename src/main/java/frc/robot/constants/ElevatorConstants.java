@@ -35,5 +35,8 @@ public class ElevatorConstants {
     public static final double CENTER_OF_MASS_HEIGHT_L4 = Units.inchesToMeters(14);
 
     // This is not the best way to do this, but it is the easiest for the Alpha Bot
-    public static double CENTER_OF_MASS_HEIGHT = 0;
+    public static double CENTER_OF_MASS_HEIGHT = Units.inchesToMeters(1);
+
+    // The x distance from the center of the robot to the outtake.
+    public static final double OUTTAKE_X = Units.inchesToMeters(-7.25);
 }

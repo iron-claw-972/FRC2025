@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -170,28 +171,36 @@ public class VisionConstants {
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(126)),
             FieldConstants.APRIL_TAGS.get(0).pose.getY() +
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(126)),
-            new Rotation2d(Units.degreesToRadians(126)));
+            new Rotation2d(Units.degreesToRadians(126+90))).transformBy(
+                new Transform2d(-ElevatorConstants.OUTTAKE_X, 0, new Rotation2d())
+            );
 
     public static final Pose2d RED_CORAL_STATION_RIGHT_POSE = new Pose2d(
             FieldConstants.APRIL_TAGS.get(1).pose.getX() +
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(234)),
             FieldConstants.APRIL_TAGS.get(1).pose.getY() +
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(234)),
-            new Rotation2d(Units.degreesToRadians(234)));
+            new Rotation2d(Units.degreesToRadians(234+90-360))).transformBy(
+                new Transform2d(-ElevatorConstants.OUTTAKE_X, 0, new Rotation2d())
+            );
 
     public static final Pose2d BLUE_CORAL_STATION_LEFT_POSE = new Pose2d(
             FieldConstants.APRIL_TAGS.get(12).pose.getX() +
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(306)),
             FieldConstants.APRIL_TAGS.get(12).pose.getY() +
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(306)),
-            new Rotation2d(Units.degreesToRadians(306)));
+            new Rotation2d(Units.degreesToRadians(306+90-360))).transformBy(
+                new Transform2d(-ElevatorConstants.OUTTAKE_X, 0, new Rotation2d())
+            );
 
     public static final Pose2d BLUE_CORAL_STATION_RIGHT_POSE = new Pose2d(
             FieldConstants.APRIL_TAGS.get(11).pose.getX() +
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(54)),
             FieldConstants.APRIL_TAGS.get(11).pose.getY() +
                     (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(54)),
-            new Rotation2d(Units.degreesToRadians(54)));
+            new Rotation2d(Units.degreesToRadians(54+90))).transformBy(
+                new Transform2d(-ElevatorConstants.OUTTAKE_X, 0, new Rotation2d())
+            );
 
     public static final Pose2d RED_PROCESSOR_POSE = new Pose2d(
             FieldConstants.APRIL_TAGS.get(2).pose.getX(),
@@ -302,12 +311,14 @@ public class VisionConstants {
             double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0;
 
             // Apply both X and Y offsets to calculate the reef branch pose
-            Transform3d transform = new Transform3d(adjustedYOffset, -xOffset, 0, new Rotation3d(0, 0, Math.PI));
+            Transform3d transform = new Transform3d(adjustedYOffset, -xOffset, 0, new Rotation3d(0, 0, 3*Math.PI/2));
 
             Pose3d branchPose3d = basePose3d.plus(transform);
 
             // Convert the calculated branch Pose3d to Pose2d
-            return branchPose3d.toPose2d();
+            return branchPose3d.toPose2d().transformBy(
+                new Transform2d(-ElevatorConstants.OUTTAKE_X, 0, new Rotation2d())
+            );
         }
 
         /**

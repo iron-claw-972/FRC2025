@@ -4,12 +4,18 @@
 
 package frc.robot.controls;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.Constants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Elevator;
 import frc.robot.subsystems.gpm.Outtake;
 import lib.controllers.GameController;
+import lib.controllers.GameController.Axis;
+import lib.controllers.GameController.Button;
 
 /** Add your docs here. */
 public class Operator {
@@ -19,6 +25,7 @@ public class Operator {
     private Drivetrain drive;
     private Elevator elevator;
     private Outtake outtake;
+    private int direction = 0;
     
     public Operator(Drivetrain drive, Elevator elevator, Outtake outtake) {
         this.drive = drive;
@@ -27,21 +34,19 @@ public class Operator {
     }
 
     public void configureControls() {
-        // kDriver.get(Button.BACK).onTrue(new InstantCommand(()->drive.setMaxAccel(1.68213715)).
-        // andThen(new InstantCommand(()->{
-        //     if(elevator != null){
-        //         elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
-        //     }
-        //     CommandScheduler.getInstance().cancelAll();
-        // })));
-    
-        // kDriver.get(Button.BACK).onFalse(new InstantCommand(()->{
-        //     if(elevator != null){
-        //         elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
-        //     }
-        //     CommandScheduler.getInstance().cancelAll();
-        // }));
-        // }).andThen(new InstantCommand(()->drive.setMaxAccel(DriveConstants.MAX_LINEAR_ACCEL))));
+        kDriver.get(Button.BACK).onTrue(new InstantCommand(()->{
+            if(elevator != null){
+                elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
+            }
+            if(outtake != null){
+                outtake.stop();
+            }
+            CommandScheduler.getInstance().cancelAll();
+        }));
+        new Trigger(()->(Math.hypot(kDriver.get(Axis.LEFT_X), kDriver.get(Axis.LEFT_Y)) > 0.5)).onTrue(new InstantCommand(()->{
+            double angle = MathUtil.inputModulus(Math.atan2(kDriver.get(Axis.LEFT_Y), kDriver.get(Axis.LEFT_X)), 0, 2*Math.PI);
+            direction = (int)(angle/(Math.PI/3));
+        }));
     }
     public Trigger getRightTrigger(){
         return new Trigger(kDriver.RIGHT_TRIGGER_BUTTON);
