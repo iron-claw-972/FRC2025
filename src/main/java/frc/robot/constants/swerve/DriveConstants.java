@@ -61,14 +61,14 @@ public class DriveConstants {
      * If this is false, Drivetrain will use the previous setpoint to calculate the new setpoint.
      * <p> If this is true, Drivetrain will use the actual current setpoint instead.
      */
-    public static final boolean USE_ACTUAL_SPEED = true;
+    public static final boolean USE_ACTUAL_SPEED = false;
 
     /**
      * Disables the deadband and optimization for the modules.
      * SwerveSetpointGenerator adds its own optimization and deadband, and the controllers also have a deadband.
      * Setting this to true fixes bugs caused by using hte actual current state.
      */
-    public static final boolean DISABLE_DEADBAND_AND_OPTIMIZATION = true;
+    public static final boolean DISABLE_DEADBAND_AND_OPTIMIZATION = false;
 
     public static final Rotation2d STARTING_HEADING = new Rotation2d();
 

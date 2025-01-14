@@ -5,6 +5,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.MoveElevator;
@@ -64,14 +65,15 @@ public class RobotContainer {
       // Our competition subsystems go here
 
       case Phil:
+      SmartDashboard.putNumber("wheel speed", 0);
         elevator = new Elevator();
         outtake = new Outtake();
       case Vivace:
       case Vertigo:
-         drive = new Drivetrain(vision);
+         //drive = new Drivetrain(vision);
          vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
          driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
-         operator = new Operator(drive, elevator, outtake);
+         //operator = new Operator(drive, elevator, outtake);
 
         // // Detected objects need access to the drivetrain
         // DetectedObject.setDrive(drive);
@@ -79,13 +81,13 @@ public class RobotContainer {
         // //SignalLogger.start();
 
          driver.configureControls();
-         operator.configureControls();
+         //operator.configureControls();
         // initializeAutoBuilder();
         // registerCommands();
-         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+         //drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         // PathGroupLoader.loadPathGroups();
  
-        shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator);
+        //shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator);
         break;
       }
 

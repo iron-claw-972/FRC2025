@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IdConstants;
 
@@ -33,6 +34,6 @@ public class Outtake extends SubsystemBase {
         setMotor(0);
     }
     public void outtake(){
-        setMotor(0.25);
+        setMotor(SmartDashboard.getNumber("wheel speed", 0));
     }
 }

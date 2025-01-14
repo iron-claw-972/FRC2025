@@ -96,7 +96,7 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(6.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -109,7 +109,7 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      6.0,
+      12.0,
       Constants.LOOP_TIME);
 
   /** Creates a new Elevator. */
@@ -146,7 +146,6 @@ public class Elevator extends SubsystemBase {
     calibrate();
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
-    SmartDashboard.putNumber("setpoint", 0);
 
   }
   // 14 inches verically
@@ -154,8 +153,7 @@ public class Elevator extends SubsystemBase {
   // 16.901 inches 
   @Override
   public void periodic() {
-    setSetpoint(SmartDashboard.getNumber("setpoint", setpoint));
-    // If it hits the limit switch, reset the encoder
+    // If it hits the limit switch, reset the encoder 
     // if (getBottomLimitSwitch() && (calibrated || !movingUp)) {
     //   if (false) {
     //     resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
