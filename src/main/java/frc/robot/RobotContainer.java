@@ -70,24 +70,24 @@ public class RobotContainer {
         outtake = new Outtake();
       case Vivace:
       case Vertigo:
-         //drive = new Drivetrain(vision);
-         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
-         driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
-         //operator = new Operator(drive, elevator, outtake);
+        drive = new Drivetrain(vision);
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+        driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
+        operator = new Operator(drive, elevator, outtake);
 
         // // Detected objects need access to the drivetrain
         // DetectedObject.setDrive(drive);
         
         // //SignalLogger.start();
 
-         driver.configureControls();
-         //operator.configureControls();
+        driver.configureControls();
+        operator.configureControls();
         // initializeAutoBuilder();
         // registerCommands();
-         //drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         // PathGroupLoader.loadPathGroups();
  
-        //shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator);
+        shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator);
         break;
       }
 
