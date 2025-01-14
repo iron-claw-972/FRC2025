@@ -252,6 +252,9 @@ public class SwerveSetpointGenerator {
    * Generate a new setpoint.
    *
    * @param limits The kinematic limits to respect for this setpoint.
+   * @param centerOfMassHeight The height of the robot's center of mass, in meters, off the ground.
+   *     This assumes that the center of mass is in the center of the robot in the x and y directions.
+   *     If tipping is not a potential problem this year, set this to 0.
    * @param prevSetpoint The previous setpoint motion. Normally, you'd pass in the previous
    *     iteration setpoint instead of the actual measured/estimated kinematic state.
    * @param desiredState The desired state of motion, such as from the driver sticks or a path
@@ -262,6 +265,7 @@ public class SwerveSetpointGenerator {
    */
   public SwerveSetpoint generateSetpoint(
       final ModuleLimits limits,
+      double centerOfMassHeight,
       final SwerveSetpoint prevSetpoint,
       ChassisSpeeds desiredState,
       double dt) {
@@ -326,7 +330,7 @@ public class SwerveSetpointGenerator {
       // It will (likely) be faster to stop the robot, rotate the modules in place to the complement
       // of the desired
       // angle, and accelerate again.
-      return generateSetpoint(limits, prevSetpoint, new ChassisSpeeds(), dt);
+      return generateSetpoint(limits, centerOfMassHeight, prevSetpoint, new ChassisSpeeds(), dt);
     }
 
     // Compute the deltas between start and goal. We can then interpolate from the start state to
@@ -434,6 +438,28 @@ public class SwerveSetpointGenerator {
       double s2 = min_s*findAccelerationMaxS(prev_vx[i], prev_vy[i], vx_min_s, vy_min_s, max_vel_step_2, kMaxIterations);
 
       min_s = Math.min(Math.min(min_s, s), s2);
+    }
+
+    if(centerOfMassHeight > 0.02){
+      // Limit the acceleration in the x and y directions separately based on the center of mass.
+      // To make the torque on the robot 0, we can assume all of the mass is on the back wheel, where the front is the direction the robot is accelerating toward
+      // Torque is equal to the force times the component of the radius perpendicular to the force
+      // T = torque, m = mass, a = acceleration, g = gravity acceleration, x = distance from center to wheel
+      // T = mgx - mah = 0
+      // a = gx/h
+      double maxAccel = Constants.GRAVITY_ACCELERATION*(DriveConstants.TRACK_WIDTH/2)/centerOfMassHeight;
+      // Limit based on this calculated value
+      // x and y are limited separately because, when tipping in a diagonal direction, the distance is longer
+      double xAccel = Math.abs(desiredState.vxMetersPerSecond - prevSetpoint.chassisSpeeds().vxMetersPerSecond) / dt;
+      double yAccel = Math.abs(desiredState.vyMetersPerSecond - prevSetpoint.chassisSpeeds().vyMetersPerSecond) / dt;
+      if(!epsilonEquals(xAccel, 0)){
+        double s = maxAccel / xAccel;
+        min_s = Math.min(min_s, s);
+      }
+      if(!epsilonEquals(yAccel, 0)){
+        double s = maxAccel / yAccel;
+        min_s = Math.min(min_s, s);
+      }
     }
 
     ChassisSpeeds retSpeeds =
