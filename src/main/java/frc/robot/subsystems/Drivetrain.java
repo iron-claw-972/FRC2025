@@ -324,7 +324,7 @@ public class Drivetrain extends SubsystemBase {
                 currentSetpoint, chassisSpeeds,
                 Constants.LOOP_TIME);
         }
-            
+
         SwerveModuleState[] swerveModuleStates = currentSetpoint.moduleStates();
         setModuleStates(swerveModuleStates, isOpenLoop);
     }

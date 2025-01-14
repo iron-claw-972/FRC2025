@@ -105,12 +105,18 @@ public class Module extends SubsystemBase {
             * continuous controller which CTRE and Rev onboard is not
             */
             desiredState = optimizeStates ? CTREModuleState.optimize(wantedState, getState().angle) : wantedState;
+        }else{
+            desiredState = wantedState;
         }
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
+        if(desiredState == null){
+            // System.out.println("NULL NULL NULL");
+            return;
+        }
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.MAX_SPEED;
             driveMotor.set(percentOutput);
@@ -131,6 +137,9 @@ public class Module extends SubsystemBase {
                 stop();
                 return;
             }
+        }
+        if(desiredState == null){
+            return;
         }
         angleMotor.setControl(new PositionDutyCycle(desiredState.angle.getRotations()*DriveConstants.MODULE_CONSTANTS.angleGearRatio));
     }
