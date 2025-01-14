@@ -44,19 +44,19 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   public void configureControls() {
     // Reset yaw to be away from driver
     //kDriver.setRumble(RumbleStatus.RUMBLE_ON);
-    // kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
-    //     new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
+    kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
+        new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
     if (elevator!=null && outtake!=null){
     
 
-    // set the wheels to X
-    //kDriver.get(Button.B).whileTrue(new SetFormationX(super.getDrivetrain()));
-    // Enable state deadband after setting formation to X
-    //kDriver.get(Button.B).onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
+    //set the wheels to X
+    kDriver.get(Button.B).whileTrue(new SetFormationX(super.getDrivetrain()));
+    //Enable state deadband after setting formation to X
+    kDriver.get(Button.B).onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
 
     // Resets the modules to absolute if they are having the unresolved zeroing
     // error
-    //kDriver.get(Button.BACK).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
+    kDriver.get(Button.BACK).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
 
     kDriver.get(Button.Y).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
     kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
@@ -65,16 +65,16 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
     kDriver.get(Button.A).onTrue(new OuttakeCoral(outtake, elevator));
 
-    // if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
-    //   // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions
-    //   if(VisionConstants.DRIVER_ASSIST_MODE <= 1){
-    //     (new Trigger(kDriver.LEFT_TRIGGER_BUTTON)).whileTrue(new DriverAssistIntake(getDrivetrain(), this, vision));
-    //   }else{
-    //     (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
-    //       .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(60), false).pose.toPose2d())))
-    //       .onFalse(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)));
-    //   }
-    // }
+    if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
+      // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions
+      if(VisionConstants.DRIVER_ASSIST_MODE <= 1){
+        (new Trigger(kDriver.LEFT_TRIGGER_BUTTON)).whileTrue(new DriverAssistIntake(getDrivetrain(), this, vision));
+      }else{
+        (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
+          .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(60), false).pose.toPose2d())))
+          .onFalse(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)));
+      }
+    }
     }
   }
 
