@@ -1,5 +1,5 @@
 <!--
-PLEASE CHECK THE PR GUIDLINES:
+PLEASE CHECK THE PR GUIDELINES:
  https://docs.google.com/document/d/14ZIhQRlUPK0wl5_AmM80N2D2KJUd6k_7I6isLS89YKU/edit
 These are the things we are going to be checking your PR has, if it doesn't your PR will be rejected!
 -->
