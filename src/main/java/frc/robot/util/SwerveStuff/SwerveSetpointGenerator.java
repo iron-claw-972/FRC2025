@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.GeomUtil;
@@ -135,7 +136,7 @@ public class SwerveSetpointGenerator {
     return findRoot(func, x_0, y_0, f_0 - offset, x_1, y_1, f_1 - offset, max_iterations);
   }
 
-  protected double findDriveMaxS(
+  protected double findDriveMaxS_254version(
       double x_0,
       double y_0,
       double f_0,
@@ -157,32 +158,103 @@ public class SwerveSetpointGenerator {
     return findRoot(func, x_0, y_0, f_0 - offset, x_1, y_1, f_1 - offset, max_iterations);
   }
 
-  // protected double findDriveMaxS(
-  //     double x_0, double y_0, double x_1, double y_1, double max_vel_step) {
-  //   // Our drive velocity between s=0 and s=1 is quadratic in s:
-  //   // v^2 = ((x_1 - x_0) * s + x_0)^2 + ((y_1 - y_0) * s + y_0)^2
-  //   //     = a * s^2 + b * s + c
-  //   // Where:
-  //   //   a = (x_1 - x_0)^2 + (y_1 - y_0)^2
-  //   //   b = 2 * x_0 * (x_1 - x_0) + 2 * y_0 * (y_1 - y_0)
-  //   //   c = x_0^2 + y_0^2
-  //   // We want to find where this quadratic results in a velocity that is > max_vel_step from our
-  //   // velocity at s=0:
-  //   // sqrt(x_0^2 + y_0^2) +/- max_vel_step = ...quadratic...
-  //   final double dx = x_1 - x_0;
-  //   final double dy = y_1 - y_0;
-  //   final double a = dx * dx + dy * dy;
-  //   final double b = 2.0 * x_0 * dx + 2.0 * y_0 * dy;
-  //   final double c = x_0 * x_0 + y_0 * y_0;
-  //   final double v_limit_upper_2 = Math.pow(Math.hypot(x_0, y_0) + max_vel_step, 2.0);
-  //   final double v_limit_lower_2 = Math.pow(Math.hypot(x_0, y_0) - max_vel_step, 2.0);
-  //   return 0.0;
-  // }
+  /**
+   * Limits the acceleration in all directions.
+   * This is different from findDriveMaxS because it includes the acceleration perpendicular to the wheel as it rotates.
+   * Given the same velocity step, this will return a lower S value than findDriveMaxS.
+   * @param x_0 The initial x velocity
+   * @param y_0 The initial y velocity
+   * @param x_1 The final x velocity
+   * @param y_1 The final y velocity
+   * @param max_vel_step The maxiumum amount the velocity can change this frame
+   * @param max_iterations The maximum number of iterations to use in findRoot
+   * @return The maximum interpolation value
+   */
+  protected double findAccelerationMaxS(
+      double x_0,
+      double y_0,
+      double x_1,
+      double y_1,
+      double max_vel_step,
+      int max_iterations) {
+    double dist = Math.hypot(x_1-x_0, y_1-y_0);
+    if(dist <= max_vel_step){
+      return 1;
+    }
+    return Math.max(0.0, Math.min(1.0, max_vel_step / dist));
+  }
+
+  protected double findDriveMaxS(
+      double x_0, double y_0, double x_1, double y_1, double max_vel_step) {
+    // Derivation:
+    // Want to find point P(s) between (x_0, y_0) and (x_1, y_1) where the
+    // length of P(s) is the target T. P(s) is linearly interpolated between the
+    // points, so P(s) = (x_0 + (x_1 - x_0) * s, y_0 + (y_1 - y_0) * s).
+    // Then,
+    //     T = sqrt(P(s).x^2 + P(s).y^2)
+    //   T^2 = (x_0 + (x_1 - x_0) * s)^2 + (y_0 + (y_1 - y_0) * s)^2
+    //   T^2 = x_0^2 + 2x_0(x_1-x_0)s + (x_1-x_0)^2*s^2
+    //       + y_0^2 + 2y_0(y_1-y_0)s + (y_1-y_0)^2*s^2
+    //   T^2 = x_0^2 + 2x_0x_1s - 2x_0^2*s + x_1^2*s^2 - 2x_0x_1s^2 + x_0^2*s^2
+    //       + y_0^2 + 2y_0y_1s - 2y_0^2*s + y_1^2*s^2 - 2y_0y_1s^2 + y_0^2*s^2
+    //     0 = (x_0^2 + y_0^2 + x_1^2 + y_1^2 - 2x_0x_1 - 2y_0y_1)s^2
+    //       + (2x_0x_1 + 2y_0y_1 - 2x_0^2 - 2y_0^2)s
+    //       + (x_0^2 + y_0^2 - T^2).
+    //
+    // To simplify, we can factor out some common parts:
+    // Let l_0 = x_0^2 + y_0^2, l_1 = x_1^2 + y_1^2, and
+    // p = x_0 * x_1 + y_0 * y_1.
+    // Then we have
+    //   0 = (l_0 + l_1 - 2p)s^2 + 2(p - l_0)s + (l_0 - T^2),
+    // with which we can solve for s using the quadratic formula.
+
+    double l_0 = x_0 * x_0 + y_0 * y_0;
+    double l_1 = x_1 * x_1 + y_1 * y_1;
+    double sqrt_l_0 = Math.sqrt(l_0);
+    double diff = Math.sqrt(l_1) - sqrt_l_0;
+    if (Math.abs(diff) <= max_vel_step) {
+      // Can go all the way to s=1.
+      return 1.0;
+    }
+
+    double target = sqrt_l_0 + Math.copySign(max_vel_step, diff);
+    double p = x_0 * x_1 + y_0 * y_1;
+
+    // Quadratic of s
+    double a = l_0 + l_1 - 2 * p;
+    double b = 2 * (p - l_0);
+    double c = l_0 - target * target;
+    double root = Math.sqrt(b * b - 4 * a * c);
+
+    // Check if either of the solutions are valid
+    // Won't divide by zero because it is only possible for a to be zero if the
+    // target velocity is exactly the same or the reverse of the current
+    // velocity, which would be caught by the difference check.
+    double s_1 = (-b + root) / (2 * a);
+    if (isValidS(s_1)) {
+      return s_1;
+    }
+    double s_2 = (-b - root) / (2 * a);
+    if (isValidS(s_2)) {
+      return s_2;
+    }
+
+    // Since we passed the initial max_vel_step check, a solution should exist,
+    // but if no solution was found anyway, just don't limit movement
+    return 1.0;
+  }
+
+  protected static boolean isValidS(double s) {
+    return Double.isFinite(s) && s >= 0 && s <= 1;
+  }
 
   /**
    * Generate a new setpoint.
    *
    * @param limits The kinematic limits to respect for this setpoint.
+   * @param centerOfMassHeight The height of the robot's center of mass, in meters, off the ground.
+   *     This assumes that the center of mass is in the center of the robot in the x and y directions.
+   *     If tipping is not a potential problem this year, set this to 0.
    * @param prevSetpoint The previous setpoint motion. Normally, you'd pass in the previous
    *     iteration setpoint instead of the actual measured/estimated kinematic state.
    * @param desiredState The desired state of motion, such as from the driver sticks or a path
@@ -193,6 +265,7 @@ public class SwerveSetpointGenerator {
    */
   public SwerveSetpoint generateSetpoint(
       final ModuleLimits limits,
+      double centerOfMassHeight,
       final SwerveSetpoint prevSetpoint,
       ChassisSpeeds desiredState,
       double dt) {
@@ -257,7 +330,7 @@ public class SwerveSetpointGenerator {
       // It will (likely) be faster to stop the robot, rotate the modules in place to the complement
       // of the desired
       // angle, and accelerate again.
-      return generateSetpoint(limits, prevSetpoint, new ChassisSpeeds(), dt);
+      return generateSetpoint(limits, centerOfMassHeight, prevSetpoint, new ChassisSpeeds(), dt);
     }
 
     // Compute the deltas between start and goal. We can then interpolate from the start state to
@@ -345,6 +418,7 @@ public class SwerveSetpointGenerator {
 
     // Enforce drive wheel acceleration limits.
     final double max_vel_step = dt * limits.maxDriveAcceleration();
+    final double max_vel_step_2 = dt * limits.staticFriction() * Constants.GRAVITY_ACCELERATION;
     for (int i = 0; i < modules.length; ++i) {
       if (min_s == 0.0) {
         // No need to carry on.
@@ -358,18 +432,34 @@ public class SwerveSetpointGenerator {
       // already know we can't go faster
       // than that.
       final int kMaxIterations = 10;
-      double s =
-          min_s
-              * findDriveMaxS(
-                  prev_vx[i],
-                  prev_vy[i],
-                  Math.hypot(prev_vx[i], prev_vy[i]),
-                  vx_min_s,
-                  vy_min_s,
-                  Math.hypot(vx_min_s, vy_min_s),
-                  max_vel_step,
-                  kMaxIterations);
-      min_s = Math.min(min_s, s);
+      double s = min_s*findDriveMaxS(prev_vx[i], prev_vy[i], vx_min_s, vy_min_s, max_vel_step);
+      
+      // Limit the overall acceleration of this wheel
+      double s2 = min_s*findAccelerationMaxS(prev_vx[i], prev_vy[i], vx_min_s, vy_min_s, max_vel_step_2, kMaxIterations);
+
+      min_s = Math.min(Math.min(min_s, s), s2);
+    }
+
+    if(centerOfMassHeight > 0.02){
+      // Limit the acceleration in the x and y directions separately based on the center of mass.
+      // To make the torque on the robot 0, we can assume all of the mass is on the back wheel, where the front is the direction the robot is accelerating toward
+      // Torque is equal to the force times the component of the radius perpendicular to the force
+      // T = torque, m = mass, a = acceleration, g = gravity acceleration, x = distance from center to wheel
+      // T = mgx - mah = 0
+      // a = gx/h
+      double maxAccel = Constants.GRAVITY_ACCELERATION*(DriveConstants.TRACK_WIDTH/2)/centerOfMassHeight;
+      // Limit based on this calculated value
+      // x and y are limited separately because, when tipping in a diagonal direction, the distance is longer
+      double xAccel = Math.abs(desiredState.vxMetersPerSecond - prevSetpoint.chassisSpeeds().vxMetersPerSecond) / dt;
+      double yAccel = Math.abs(desiredState.vyMetersPerSecond - prevSetpoint.chassisSpeeds().vyMetersPerSecond) / dt;
+      if(!epsilonEquals(xAccel, 0)){
+        double s = maxAccel / xAccel;
+        min_s = Math.min(min_s, s);
+      }
+      if(!epsilonEquals(yAccel, 0)){
+        double s = maxAccel / yAccel;
+        min_s = Math.min(min_s, s);
+      }
     }
 
     ChassisSpeeds retSpeeds =
