@@ -5,11 +5,15 @@
 package frc.robot.controls;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.VisionConstants.REEF;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.gpm.Elevator;
 import frc.robot.subsystems.gpm.Outtake;
@@ -41,13 +45,23 @@ public class Operator {
             if(outtake != null){
                 outtake.stop();
             }
+            drive.setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
         new Trigger(()->(Math.hypot(kDriver.get(Axis.LEFT_X), kDriver.get(Axis.LEFT_Y)) > 0.5)).onTrue(new InstantCommand(()->{
             double angle = MathUtil.inputModulus(Math.atan2(kDriver.get(Axis.LEFT_Y), kDriver.get(Axis.LEFT_X)), 0, 2*Math.PI);
             direction = (int)(angle/(Math.PI/3));
         }));
+        kDriver.get(Button.LB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, true))));
+        kDriver.get(Button.RB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, false))));
     }
+
+    public Pose2d getBranch(int direction, boolean isLeft){
+        int redId = (direction+3)%6+6;
+        int id = Robot.getAlliance() == Alliance.Blue ? redId + 11: redId;
+        return REEF.fromAprilTagIdAndPose(id, isLeft).pose;
+    }
+
     public Trigger getRightTrigger(){
         return new Trigger(kDriver.RIGHT_TRIGGER_BUTTON);
     }

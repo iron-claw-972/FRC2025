@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import frc.robot.commands.gpm.CalibrateElevator;
 import frc.robot.subsystems.gpm.Elevator;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;

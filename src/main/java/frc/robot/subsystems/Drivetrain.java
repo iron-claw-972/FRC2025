@@ -315,13 +315,13 @@ public class Drivetrain extends SubsystemBase {
             SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
             currentSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                0,
+                ElevatorConstants.CENTER_OF_MASS_HEIGHT,
                 currentState, chassisSpeeds,
                 Constants.LOOP_TIME);
         }else{
             currentSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                0,
+                ElevatorConstants.CENTER_OF_MASS_HEIGHT,
                 currentSetpoint, chassisSpeeds,
                 Constants.LOOP_TIME);
         }
