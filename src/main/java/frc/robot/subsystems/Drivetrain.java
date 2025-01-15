@@ -278,6 +278,10 @@ public class Drivetrain extends SubsystemBase {
             resetOdometry(pose2);
         }
 
+        if (Robot.isSimulation()) {
+            pigeon.getSimState().addYaw(
+                    +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
+        }
         modulePoses.update();
 
         // Store the current pose in the buffer
@@ -315,11 +319,6 @@ public class Drivetrain extends SubsystemBase {
      * @param isOpenLoop    if open loop control should be used for the drive velocity
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds, boolean isOpenLoop) {
-        if (Robot.isSimulation()) {
-            pigeon.getSimState().addYaw(
-                    +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
-        }
-
         if(DriveConstants.USE_ACTUAL_SPEED){
             SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
             currentSetpoint = setpointGenerator.generateSetpoint(
