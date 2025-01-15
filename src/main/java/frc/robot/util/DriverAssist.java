@@ -84,6 +84,7 @@ public class DriverAssist {
         // This is the only thing that needs to be robot relative
         SwerveSetpoint nextSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
+                0,
                 drive.getCurrSetpoint(), goalRobot,
                 Constants.LOOP_TIME);
             ChassisSpeeds nextChassisSpeed = nextSetpoint.chassisSpeeds();
@@ -96,6 +97,7 @@ public class DriverAssist {
         // Both speeds need to be obtainable in 1 frame or the driver speed will always be farther away
         SwerveSetpoint driverSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
+                0,
                 drive.getCurrSetpoint(), driverInputRobot,
                 Constants.LOOP_TIME);
         ChassisSpeeds driverSpeeds = driverSetpoint.chassisSpeeds();

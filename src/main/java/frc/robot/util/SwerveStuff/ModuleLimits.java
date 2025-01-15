@@ -8,4 +8,4 @@
 package frc.robot.util.SwerveStuff;
 
 public record ModuleLimits(
-    double maxDriveVelocity, double maxDriveAcceleration, double maxSteeringVelocity) {}
+    double maxDriveVelocity, double maxDriveAcceleration, double staticFriction, double maxSteeringVelocity) {}
