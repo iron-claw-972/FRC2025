@@ -205,12 +205,12 @@ public class VisionConstants {
 
     public static final Pose2d BLUE_CAGE_LEFT_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(1019 / 8),
+            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(1019.0 / 8),
             new Rotation2d());
 
     public static final Pose2d BLUE_CAGE_MIDDLE_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(675 / 8),
+            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(675.0 / 8),
             new Rotation2d());
 
     public static final Pose2d BLUE_CAGE_RIGHT_POSE = new Pose2d(
@@ -218,19 +218,19 @@ public class VisionConstants {
             FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(41.5),
             new Rotation2d());
 
-    public static final Pose2d RED_CAGE_LEFT_POSE = new Pose2d(
+    public static final Pose2d RED_CAGE_RIGHT_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
             FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(-41.5),
             new Rotation2d(Math.PI));
 
     public static final Pose2d RED_CAGE_MIDDLE_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.FIELD_WIDTH / 2 - Units.inchesToMeters(675 / 8),
+            FieldConstants.FIELD_WIDTH / 2 - Units.inchesToMeters(-675.0 / 8),
             new Rotation2d(Math.PI));
 
-    public static final Pose2d RED_CAGE_RIGHT_POSE = new Pose2d(
+    public static final Pose2d RED_CAGE_LEFT_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.FIELD_WIDTH / 2 - Units.inchesToMeters(1019 / 8),
+            FieldConstants.FIELD_WIDTH / 2 - Units.inchesToMeters(-1019.0 / 8),
             new Rotation2d(Math.PI));
 
     /**
