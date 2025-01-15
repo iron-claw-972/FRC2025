@@ -74,6 +74,9 @@ public class Field {
     }
 
     private Pose2d[] getObjectPoses(){
+        if(vision == null){
+            return new Pose2d[0];
+        }
         DetectedObject[] objects = vision.getDetectedObjects();
         Pose2d[] result = new Pose2d[objects.length];
         for(int i = 0; i < objects.length; i++){
