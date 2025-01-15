@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -180,6 +181,7 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         updateOdometry();
+        
     }
 
     // DRIVE

@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
@@ -84,7 +85,8 @@ public class Module extends SubsystemBase {
         LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
         LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000);
         LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000);
-
+        LogManager.logSupplier(directory_name +"/DriveResiatnce/", () -> (driveMotor.getMotorVoltage().getValueAsDouble()/driveMotor.getStatorCurrent().getValueAsDouble()), 1000);
+       
     }
 
     public void close() {
@@ -92,9 +94,14 @@ public class Module extends SubsystemBase {
         driveMotor.close();
         CANcoder.close();
     }
-
+    double avrageCurrent = 0;
+    double voltage = 0;
+    
     public void periodic() {
         
+        avrageCurrent+=driveMotor.getStatorCurrent().getValueAsDouble();
+        voltage +=driveMotor.getMotorVoltage().getValueAsDouble();
+        SmartDashboard.putNumber("Current", voltage/avrageCurrent);
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
