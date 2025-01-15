@@ -22,7 +22,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -35,6 +34,7 @@ import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
+import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
@@ -100,6 +100,8 @@ public class Drivetrain extends SubsystemBase {
     // The pose supplier to drive to
     private Supplier<Pose2d> desiredPoSupplier = ()->null;
 
+    private SwerveModulePose modulePoses;
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -155,6 +157,8 @@ public class Drivetrain extends SubsystemBase {
         rotationController = new PIDController(DriveConstants.HEADING_P, 0, DriveConstants.HEADING_D);
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
         rotationController.setTolerance(Units.degreesToRadians(0.25), Units.degreesToRadians(0.25));
+
+        modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
 
         LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond);
         LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond);
@@ -273,6 +277,8 @@ public class Drivetrain extends SubsystemBase {
             //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
             resetOdometry(pose2);
         }
+
+        modulePoses.update();
 
         // Store the current pose in the buffer
         poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
@@ -454,6 +460,7 @@ public class Drivetrain extends SubsystemBase {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
         poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
+        modulePoses.reset();
     }
 
     /**
@@ -593,5 +600,9 @@ public class Drivetrain extends SubsystemBase {
      */
     public Pose2d getDesiredPose(){
         return desiredPoSupplier.get();
+    }
+
+    public SwerveModulePose getSwerveModulePose(){
+        return modulePoses;
     }
 }

@@ -4,59 +4,53 @@
 
 package frc.robot.util;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.constants.swerve.DriveConstants;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.constants.Constants;
 import frc.robot.subsystems.Drivetrain;
 
-/** Add your docs here. */
+/** 
+ * Stores and updates the position of each module
+ */
 public class SwerveModulePose {
 
-    double[] dist = {0,0,0,0};
-    Translation2d[] moduleTranslations;
-    Pose2d[] modulePositions;
-    Drivetrain drive;
-    Rotation2d prev_heading;
+    private Translation2d[] moduleTranslations;
+    private Pose2d[] modulePositions;
+    private double[] angles;
+    private Drivetrain drive;
 
     public SwerveModulePose(Drivetrain drive, Translation2d... modulePositions){
         this.drive = drive;
-        Pose2d chassiPose2d = drive.getPose();
-        prev_heading = drive.getYaw();
-        moduleTranslations = new Translation2d[4];
+        this.moduleTranslations = modulePositions;
         this.modulePositions = new Pose2d[4];
-        for (int i = 0; i<4; i++){
-            moduleTranslations[i] = modulePositions[i].
-            plus(chassiPose2d.getTranslation()).rotateBy(chassiPose2d.getRotation());
-        }
+        angles = new double[4];
+        reset();
     }
 
     public void update(){
+        SwerveModuleState[] states = drive.getModuleStates();
 
         for(int i = 0; i<4; i++){
-            double dD = drive.getModules()[i].getPosition().distanceMeters - dist[i];
-            double x = drive.getModules()[i].getAngle().getCos() * dD;
-            double y = drive.getModules()[i].getAngle().getSin() * dD;
-           Translation2d dPose = new Translation2d(x, y).rotateBy(drive.getYaw());
-            dist[i] = drive.getModules()[i].getPosition().distanceMeters;
-            moduleTranslations[i] = moduleTranslations[i].plus(dPose);
-            
-            Rotation2d moduleRotation = drive.getModulePositions()[i].angle
-            .plus(drive.getYaw());
-
-            if (drive.getModules()[i].getState().speedMetersPerSecond<0){
-                moduleRotation = moduleRotation.plus(Rotation2d.fromDegrees(180));
-            }else if(drive.getModules()[i].getState().speedMetersPerSecond == 0 && modulePositions[i] != null){
-                // Use previous rotation if it isn't moving
-                moduleRotation = modulePositions[i].getRotation();
-            }
-
-            modulePositions[i] = new Pose2d(moduleTranslations[i], moduleRotation);
+            Twist2d twist = new Twist2d(states[i].speedMetersPerSecond*Constants.LOOP_TIME, 0, MathUtil.angleModulus(states[i].angle.getRadians()-angles[i]) + drive.getChassisSpeeds().omegaRadiansPerSecond*Constants.LOOP_TIME);
+            angles[i] = states[i].angle.getRadians();
+            modulePositions[i] = modulePositions[i].exp(twist);
         }
-        prev_heading = drive.getYaw();
     }
 
-    public Pose2d[] getModuTranslation2ds(){
+    public Pose2d[] getModulePoses(){
         return modulePositions;
+    }
+
+    public void reset(){
+        Pose2d chassisPose2d = drive.getPose();
+        SwerveModuleState[] states = drive.getModuleStates();
+        for (int i = 0; i<4; i++){
+            angles[i] = states[i].angle.getRadians();
+            this.modulePositions[i] = new Pose2d(moduleTranslations[i].rotateBy(chassisPose2d.getRotation()).plus(chassisPose2d.getTranslation()), new Rotation2d(angles[i]).plus(chassisPose2d.getRotation()));
+        }
     }
 }

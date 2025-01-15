@@ -5,13 +5,10 @@
 package frc.robot.util.ShuffleBoard;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.constants.FieldConstants;
-import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.SwerveModulePose;
@@ -33,11 +30,10 @@ public class Field {
         Shuffleboard.getTab("Swerve").add(field);
         Timer.delay(1);
         //aprilTagPoses = getTagPoses();
-        modulePoses = new SwerveModulePose(drive, DriveConstants.MODULE_LOCATIONS);
+        modulePoses = drive.getSwerveModulePose();
     } 
     
     public void updateModulePositions(){
-        modulePoses.update();
         // for(int i = 0; i<4; i++){
         //     modulePositions[i] = new Pose2d(modulePoses.getModuTranslation2ds()[i], new Rotation2d());
         // }
@@ -76,7 +72,7 @@ public class Field {
     public void updateFeild(){
         updateModulePositions();
         field.setRobotPose(chassisPose);
-        field.getObject("Modules").setPoses(modulePoses.getModuTranslation2ds());
+        field.getObject("Modules").setPoses(modulePoses.getModulePoses());
         //field.getObject("AprilTags").setPoses(aprilTagPoses);
         // For testing, TODO: remove before competition
         field.getObject("Detected objects").setPoses(getObjectPoses());
