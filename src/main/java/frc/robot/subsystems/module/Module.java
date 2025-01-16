@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
@@ -50,6 +51,8 @@ public class Module extends SubsystemBase {
     private boolean optimizeStates = true;
 
     private ModuleConstants moduleConstants;
+
+    private SwerveModuleState prev_SwerveModuleState = new SwerveModuleState();
 
 
     public Module(ModuleConstants moduleConstants) {
@@ -113,6 +116,7 @@ public class Module extends SubsystemBase {
             */
             desiredState = optimizeStates ? CTREModuleState.optimize(wantedState, getState().angle) : wantedState;
         }else{
+            prev_SwerveModuleState = desiredState;
             desiredState = wantedState;
         }
         setAngle(desiredState);
@@ -132,7 +136,9 @@ public class Module extends SubsystemBase {
                 DriveConstants.DRIVE_GEAR_RATIO), 1)/60;
             // TODO: This curently doesn't use the feedforward.
             // TODO: Maybe use current and next velocity instead of only 1 parameter
-            driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)));
+            
+            double accelFeedforward = DriveConstants.WHEEL_MOI * (desiredState.speedMetersPerSecond - prev_SwerveModuleState.speedMetersPerSecond)/Constants.LOOP_TIME/0.0194802495/DriveConstants.DRIVE_GEAR_RATIO;
+            driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)+accelFeedforward));
         }
         
     }
