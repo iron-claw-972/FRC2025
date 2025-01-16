@@ -138,7 +138,7 @@ public class Module extends SubsystemBase {
             // TODO: This curently doesn't use the feedforward.
             // TODO: Maybe use current and next velocity instead of only 1 parameter
             
-            double accelFeedforward = DriveConstants.WHEEL_RADIUS * 58.9670081/4 * (desiredState.speedMetersPerSecond - prev_SwerveModuleState.speedMetersPerSecond)/Constants.LOOP_TIME/0.0194802495/DriveConstants.DRIVE_GEAR_RATIO;
+            double accelFeedforward = 0.16180650617 * (desiredState.speedMetersPerSecond - prev_SwerveModuleState.speedMetersPerSecond)/Constants.LOOP_TIME;
             driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)+accelFeedforward));
         }
         
