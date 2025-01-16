@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.util.DriveFeedforwards;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -137,7 +138,7 @@ public class Module extends SubsystemBase {
             // TODO: This curently doesn't use the feedforward.
             // TODO: Maybe use current and next velocity instead of only 1 parameter
             
-            double accelFeedforward = DriveConstants.WHEEL_MOI * (desiredState.speedMetersPerSecond - prev_SwerveModuleState.speedMetersPerSecond)/Constants.LOOP_TIME/0.0194802495/DriveConstants.DRIVE_GEAR_RATIO;
+            double accelFeedforward = DriveConstants.WHEEL_RADIUS * 58.9670081/4 * (desiredState.speedMetersPerSecond - prev_SwerveModuleState.speedMetersPerSecond)/Constants.LOOP_TIME/0.0194802495/DriveConstants.DRIVE_GEAR_RATIO;
             driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)+accelFeedforward));
         }
         
