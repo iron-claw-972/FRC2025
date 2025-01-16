@@ -98,14 +98,15 @@ public class Module extends SubsystemBase {
         driveMotor.close();
         CANcoder.close();
     }
-    double avrageCurrent = 0;
-    double voltage = 0;
+
+    private double averageCurrent = 0;
+    private double voltage = 0;
     
     public void periodic() {
         
-        avrageCurrent+=driveMotor.getStatorCurrent().getValueAsDouble();
+        averageCurrent+=driveMotor.getStatorCurrent().getValueAsDouble();
         voltage +=driveMotor.getMotorVoltage().getValueAsDouble();
-        SmartDashboard.putNumber("Current", voltage/avrageCurrent);
+        SmartDashboard.putNumber("Resistance", voltage/averageCurrent);
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
@@ -126,7 +127,6 @@ public class Module extends SubsystemBase {
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
         if(desiredState == null){
-            // System.out.println("NULL NULL NULL");
             return;
         }
         if (isOpenLoop) {
