@@ -1,54 +1,38 @@
 package frc.robot.commands.auto_comm;
 
-import com.choreo.lib.Choreo;
-import com.choreo.lib.ChoreoTrajectory;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.DoNothing;
 import frc.robot.subsystems.Drivetrain;
-
-import java.util.Optional;
+import frc.robot.util.LogManager;
 
 public class ChoreoPathCommand extends SequentialCommandGroup {
-    private final Drivetrain drive;
-    private final ChoreoTrajectory trajectory;
+    private static AutoFactory factory;
 
     public ChoreoPathCommand(String pathName, boolean resetOdemetry, Drivetrain drive) {
-        this.drive = drive;
-        this.trajectory = Choreo.getTrajectory(pathName);
-
-        var command = Choreo.choreoSwerveCommand(
-                trajectory,
+        if(factory == null){
+            factory = new AutoFactory(
                 drive::getPose,
-                drive.getXController(),
-                drive.getYController(),
-                drive.getRotationController(),
-                (ChassisSpeeds speeds) ->
-                        drive.setChassisSpeeds(speeds, false),
-                ChoreoPathCommand::getShouldFlip,
-                drive
-                                                );
+                drive::resetOdometry,
+                sample -> drive.setChassisSpeeds(sample.getChassisSpeeds(), false),
+                true,
+                drive,
+                (trajectory, bool)->{
+                    if(bool){
+                        LogManager.log("Trajectory started", trajectory.name());
+                    }else{
+                        LogManager.log("Trajectory ended", trajectory.name());
+                    }
+                }
+            );
+        }
+
+        var command = factory.trajectoryCmd(pathName);
 
         addCommands(
-                new InstantCommand(() -> resetOdemetry(resetOdemetry)),
-                command
-                   );
-    }
-
-    public void resetOdemetry(boolean resetOdemetry) {
-        if (resetOdemetry) {
-            boolean shouldFlip = getShouldFlip();
-            if (shouldFlip) {
-                drive.resetOdometry(trajectory.getFlippedInitialPose());
-            } else {
-                drive.resetOdometry(trajectory.getInitialPose());
-            }
-        }
-    }
-
-    public static boolean getShouldFlip() {
-        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red;
+            resetOdemetry ? new InstantCommand(()->factory.resetOdometry(pathName)) : new DoNothing(),
+            command
+        );
     }
 }
