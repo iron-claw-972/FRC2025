@@ -4,13 +4,14 @@
 
 package frc.robot.util;
 
+import java.util.Arrays;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.constants.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 /** 
@@ -18,58 +19,59 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class SwerveModulePose {
 
-    double[] dist = {0,0,0,0};
-    double[] angles;
-    
-    Pose2d[] modulePositions;
-    Drivetrain drive;
-    Rotation2d prev_heading;
-
-    Translation2d[] moduleTranslation2ds;
+    private double[] dist = {0,0,0,0};
+    private Translation2d[] moduleTranslations;
+    private Pose2d[] modulePositions;
+    private double[] angles;
+    private Drivetrain drive;
+    private double prevRotation;
+    private Pose2d[] displayPoses;
 
     public SwerveModulePose(Drivetrain drive, Translation2d... modulePositions){
         this.drive = drive;
-        Pose2d chassiPose2d = drive.getPose();
-        prev_heading = drive.getYaw();
-        this.moduleTranslation2ds = modulePositions;
-        angles = new double[4];
+        this.moduleTranslations = modulePositions;
         this.modulePositions = new Pose2d[4];
-        for (int i = 0; i<4; i++){
-            this.modulePositions[i] = new Pose2d(new Translation2d().
-            plus(chassiPose2d.getTranslation()).rotateBy(chassiPose2d.getRotation()), new Rotation2d());
-            angles[i] = drive.getModuleStates()[i].angle.getRadians();
-        }
+        angles = new double[4];
+        reset();
+        update();
     }
 
     public void update(){
-        
-        Rotation2d dtheta = drive.getYaw().minus(prev_heading);
         SwerveModuleState[] states = drive.getModuleStates();
+        double currentRotation = drive.getYaw().getRadians();
+        double chassisRotation = currentRotation - prevRotation;
+
         for(int i = 0; i<4; i++){
-            double dD = drive.getModules()[i].getPosition().distanceMeters - dist[i];
-            double dx = drive.getModules()[i].getAngle().getCos() * dD;
-            double dy = drive.getModules()[i].getAngle().getSin() * dD;
+            double position = drive.getModules()[i].getPosition().distanceMeters;
+            double distance = position - dist[i];
+            dist[i] = position;
             
-            Twist2d dPose = new Twist2d(dx, dy, dtheta.getRadians());
-            
-            
-            modulePositions[i] = modulePositions[i].exp(dPose);
-            
-            dist[i] = drive.getModules()[i].getPosition().distanceMeters;
-            angles[i] = drive.getModuleStates()[i].angle.getRadians();
+            Twist2d twist = new Twist2d(distance, 0, MathUtil.angleModulus(states[i].angle.getRadians()-angles[i] + chassisRotation));
+            angles[i] = states[i].angle.getRadians();
+            modulePositions[i] = modulePositions[i].exp(twist);
+
+            displayPoses[i] = new Pose2d(
+                modulePositions[i].getTranslation(),
+                EqualsUtil.epsilonEquals(states[i].speedMetersPerSecond, 0, 0.01) ? displayPoses[i].getRotation() :
+                    states[i].speedMetersPerSecond < 0 ? modulePositions[i].getRotation().plus(new Rotation2d(Math.PI)) :
+                    modulePositions[i].getRotation()
+            );
         }
-        prev_heading = drive.getYaw();
+        prevRotation = currentRotation;
     }
 
     public Pose2d[] getModulePoses(){
-        return modulePositions;
+        return displayPoses;
     }
 
     public void reset(){
         Pose2d chassisPose2d = drive.getPose();
-       // SwerveModuleState[] states = drive.getModuleStates();
+        SwerveModuleState[] states = drive.getModuleStates();
         for (int i = 0; i<4; i++){
-            this.modulePositions[i] = new Pose2d(moduleTranslation2ds[i].rotateBy(chassisPose2d.getRotation()).plus(chassisPose2d.getTranslation()), new Rotation2d().plus(chassisPose2d.getRotation()));
+            angles[i] = states[i].angle.getRadians();
+            this.modulePositions[i] = new Pose2d(moduleTranslations[i].rotateBy(chassisPose2d.getRotation()).plus(chassisPose2d.getTranslation()), new Rotation2d(angles[i]).plus(chassisPose2d.getRotation()));
         }
+        prevRotation = drive.getYaw().getRadians();
+        displayPoses = Arrays.copyOf(modulePositions, 4);
     }
 }
