@@ -11,7 +11,6 @@ import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.util.MathUtils;
 import frc.robot.util.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
@@ -81,7 +80,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public double getRawHeadingMagnitude() {
-    return MathUtils.calculateHypotenuse(kDriver.get(Axis.RIGHT_X), kDriver.get(Axis.RIGHT_Y));
+    return Math.hypot(kDriver.get(Axis.RIGHT_X), kDriver.get(Axis.RIGHT_Y));
   }
 
   @Override

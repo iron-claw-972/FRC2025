@@ -1,5 +1,7 @@
 package frc.robot.controls;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -8,7 +10,6 @@ import frc.robot.Robot;
 import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.util.MathUtils;
 import lib.controllers.PS5Controller;
 import lib.controllers.PS5Controller.PS5Axis;
 import lib.controllers.PS5Controller.PS5Button;
@@ -19,6 +20,7 @@ import lib.controllers.PS5Controller.PS5Button;
 public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     private final PS5Controller kDriver = new PS5Controller(Constants.DRIVER_JOY);
+    private final BooleanSupplier slowModeSupplier = kDriver.get(PS5Button.RIGHT_TRIGGER);
 
     public PS5ControllerDriverConfig(Drivetrain drive) {
         super(drive);
@@ -69,16 +71,16 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     @Override
     public double getRawHeadingMagnitude() {
-        return MathUtils.calculateHypotenuse(kDriver.get(PS5Axis.RIGHT_X), kDriver.get(PS5Axis.RIGHT_Y));
+        return Math.hypot(kDriver.get(PS5Axis.RIGHT_X), kDriver.get(PS5Axis.RIGHT_Y));
     }
 
     @Override
     public boolean getIsSlowMode() {
-        return kDriver.get(PS5Button.RIGHT_TRIGGER).getAsBoolean();
+        return slowModeSupplier.getAsBoolean();
     }
 
     @Override
     public boolean getIsAlign() {
-        return kDriver.get(PS5Button.LEFT_TRIGGER).getAsBoolean();
+        return false;
     }
 }
