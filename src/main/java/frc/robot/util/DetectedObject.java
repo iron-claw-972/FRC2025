@@ -22,7 +22,7 @@ public class DetectedObject {
 
     public enum ObjectType{
         CORAL(Units.inchesToMeters(4.5/2)),
-        ALGAE(Units.inchesToMeters(16.0/2)),
+        ALGAE(Units.inchesToMeters(16.25/2)),
         RED_ROBOT(0),
         BLUE_ROBOT(0),
         NONE(0);
