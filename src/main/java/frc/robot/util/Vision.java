@@ -427,7 +427,6 @@ public class Vision {
       photonPoseEstimator = new PhotonPoseEstimator(
         m_aprilTagFieldLayout, 
         VisionConstants.POSE_STRATEGY, 
-        camera, 
         robotToCam
       );
       photonPoseEstimator.setMultiTagFallbackStrategy(VisionConstants.MULTITAG_FALLBACK_STRATEGY);
