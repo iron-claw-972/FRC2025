@@ -144,16 +144,16 @@ public class VisionConstants {
                             "CameraPort",
                             new Transform3d(
                                     new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(6.2),
-                                            Units.inchesToMeters(18.67)),
-                                    new Rotation3d(0, Units.degreesToRadians(-20),
-                                            Math.PI + Units.degreesToRadians(15)))),
+                                            Units.inchesToMeters(18.67+4.7)),
+                                    new Rotation3d(Math.PI, Units.degreesToRadians(20),
+                                            Math.PI - Units.degreesToRadians(15)))),
                     new Pair<String, Transform3d>(
                             "CameraStarboard",
                             new Transform3d(
                                     new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(-6.2),
-                                            Units.inchesToMeters(18.67)),
-                                    new Rotation3d(0, Units.degreesToRadians(-20),
-                                            Math.PI - Units.degreesToRadians(15))))));
+                                            Units.inchesToMeters(18.67+4.7)),
+                                    new Rotation3d(Math.PI, Units.degreesToRadians(20),
+                                            Math.PI + Units.degreesToRadians(15))))));
 
     /**
      * The transformations from the robot to object detection cameras

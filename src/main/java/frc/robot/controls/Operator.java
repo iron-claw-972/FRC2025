@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
+import frc.robot.commands.GoToPose;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants.REEF;
 import frc.robot.subsystems.Drivetrain;
@@ -35,11 +36,14 @@ public class Operator {
             CommandScheduler.getInstance().cancelAll();
         }));
         new Trigger(()->(Math.hypot(kDriver.get(Axis.LEFT_X), kDriver.get(Axis.LEFT_Y)) > 0.5)).onTrue(new InstantCommand(()->{
-            double angle = MathUtil.inputModulus(Math.atan2(kDriver.get(Axis.LEFT_Y), kDriver.get(Axis.LEFT_X)), 0, 2*Math.PI);
+            double angle = MathUtil.inputModulus(Math.atan2(-kDriver.get(Axis.LEFT_Y), 
+                (Robot.getAlliance() == Alliance.Blue ? -1 : 1) * kDriver.get(Axis.LEFT_X)), 0, 2*Math.PI);
             direction = (int)(angle/(Math.PI/3));
         }));
-        kDriver.get(Button.LB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, true))));
-        kDriver.get(Button.RB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, false))));
+        // kDriver.get(Button.LB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, true))));
+        // kDriver.get(Button.RB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, false))));
+        kDriver.get(Button.LB).whileTrue(new GoToPose(()->getBranch(direction, true), 1, 3, drive));
+        kDriver.get(Button.RB).whileTrue(new GoToPose(()->getBranch(direction, false), 1, 3, drive));
     }
 
     public Pose2d getBranch(int direction, boolean isLeft){
