@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.GroundIntakePrototype;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Button;
 
@@ -18,12 +19,20 @@ public class Operator {
     private final GameController kDriver = new GameController(Constants.OPERATOR_JOY);
 
     private Drivetrain drive;
+    private GroundIntakePrototype groundIntakePrototype;
     
-    public Operator(Drivetrain drive) {
+    public Operator(Drivetrain drive, GroundIntakePrototype groundIntakePrototype) {
         this.drive = drive;
+        this.groundIntakePrototype = groundIntakePrototype;
+
     }
 
     public void configureControls() {
+        kDriver.get(Button.A).onTrue(new InstantCommand(()->groundIntakePrototype.setIndexMotor(0.1)));
+        kDriver.get(Button.B).onTrue(new InstantCommand(()->groundIntakePrototype.setIntakeMotor(0.1)));
+        kDriver.get(Button.X).onTrue(new InstantCommand(()->groundIntakePrototype.setIndexMotor(0)));
+        kDriver.get(Button.Y).onTrue(new InstantCommand(()->groundIntakePrototype.setIntakeMotor(0)));
+
         kDriver.get(Button.BACK).onTrue(new InstantCommand(()->{
             CommandScheduler.getInstance().cancelAll();
         }));   
@@ -37,4 +46,5 @@ public class Operator {
     public GameController getGameController(){
         return kDriver;
     }
+
 }

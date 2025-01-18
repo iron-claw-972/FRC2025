@@ -11,6 +11,7 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.GroundIntakePrototype;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -31,6 +32,7 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
+  private GroundIntakePrototype groundIntakePrototype = new GroundIntakePrototype();
   
 
   // Controllers are defined here
@@ -64,7 +66,7 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new GameControllerDriverConfig(drive, vision);
-        operator = new Operator(drive);
+        operator = new Operator(drive, groundIntakePrototype);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
