@@ -50,7 +50,8 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
-        break;
+        operator = new Operator(drive, groundIntakePrototype);
+      break;
 
       case TestBed2:
         break;
@@ -66,7 +67,6 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new GameControllerDriverConfig(drive, vision);
-        operator = new Operator(drive, groundIntakePrototype);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);

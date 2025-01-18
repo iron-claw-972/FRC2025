@@ -16,6 +16,10 @@ public class IdConstants {
     public static final int ENCODER_BACK_RIGHT_ID = 6;
     public static final int PIGEON = 13;
     
+    // Ground intake prototype motors
+    public static final int indexMotorID = -1;
+    public static final int intakeMotorID = -1;
+    
     // LEDs
     public static final int CANDLE_ID = 1;
 }

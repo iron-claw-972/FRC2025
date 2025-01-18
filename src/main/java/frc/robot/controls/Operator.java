@@ -28,10 +28,11 @@ public class Operator {
     }
 
     public void configureControls() {
-        kDriver.get(Button.A).onTrue(new InstantCommand(()->groundIntakePrototype.setIndexMotor(0.1)));
-        kDriver.get(Button.B).onTrue(new InstantCommand(()->groundIntakePrototype.setIntakeMotor(0.1)));
-        kDriver.get(Button.X).onTrue(new InstantCommand(()->groundIntakePrototype.setIndexMotor(0)));
-        kDriver.get(Button.Y).onTrue(new InstantCommand(()->groundIntakePrototype.setIntakeMotor(0)));
+        // (indexMotorSpeed, intakeMotorSpeed)
+        kDriver.get(Button.A).onTrue(new InstantCommand(()->groundIntakePrototype.setBothMotors(0.1, 0.1)));
+        kDriver.get(Button.X).onTrue(new InstantCommand(()->groundIntakePrototype.setBothMotors(0,0))); 
+        kDriver.get(Button.Y).onTrue(new InstantCommand(()->groundIntakePrototype.setBothMotors(-0.1, -0.1)));
+        
 
         kDriver.get(Button.BACK).onTrue(new InstantCommand(()->{
             CommandScheduler.getInstance().cancelAll();
