@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -186,6 +187,7 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         updateOdometry();
         
+        SmartDashboard.putBoolean("Slipped", modulePoses.slipped());
     }
 
     // DRIVE
@@ -265,18 +267,18 @@ public class Drivetrain extends SubsystemBase {
         Pose2d pose3 = getPose();
         
         // Reset the pose to a position on the field if it is off the field
-        if(!Vision.onField(pose1)){
-            // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
-            // Use the rotation of the pose after updating odometry so the yaw is right
-            resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
-        }else if(!Vision.onField(pose2)){
-            // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
-            // Keep the rotation from pose2 so yaw is correct for driver
-            resetOdometry(new Pose2d(pose1.getTranslation(), pose2.getRotation()));
-        }else if(!Vision.onField(pose3)){
-            //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
-            resetOdometry(pose2);
-        }
+        // if(!Vision.onField(pose1)){
+        //     // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
+        //     // Use the rotation of the pose after updating odometry so the yaw is right
+        //     resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
+        // }else if(!Vision.onField(pose2)){
+        //     // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
+        //     // Keep the rotation from pose2 so yaw is correct for driver
+        //     resetOdometry(new Pose2d(pose1.getTranslation(), pose2.getRotation()));
+        // }else if(!Vision.onField(pose3)){
+        //     //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
+        //     resetOdometry(pose2);
+        // }
 
         if (Robot.isSimulation()) {
             pigeon.getSimState().addYaw(

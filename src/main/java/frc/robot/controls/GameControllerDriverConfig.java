@@ -46,6 +46,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     // error
     kDriver.get(Button.RB).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
 
+    kDriver.get(Button.BACK).onTrue(new InstantCommand(()->getDrivetrain().getSwerveModulePose().reset()));
+
     if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
       // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions
       if(VisionConstants.DRIVER_ASSIST_MODE <= 1){
