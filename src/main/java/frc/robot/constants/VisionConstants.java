@@ -46,7 +46,7 @@ public class VisionConstants {
     public static final boolean ENABLED_SIM = true;
 
     /** If vision should only return values if it can see 2 good targets */
-    public static final boolean ONLY_USE_2_TAGS = true;
+    public static final boolean ONLY_USE_2_TAGS = false;
 
     /** PoseStrategy to use in pose estimation */
     public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
@@ -87,7 +87,7 @@ public class VisionConstants {
      * 3-5: Add a speed perpendicular to the driver input; there are 3 similar but
      * different calculations for this
      */
-    public static final int DRIVER_ASSIST_MODE = 1;
+    public static final int DRIVER_ASSIST_MODE = 5;
 
     /**
      * The number to multiply the distance to the April tag by.
@@ -302,7 +302,7 @@ public class VisionConstants {
             double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0;
 
             // Apply both X and Y offsets to calculate the reef branch pose
-            Transform3d transform = new Transform3d(adjustedYOffset, -xOffset, 0, new Rotation3d(0, 0, Math.PI));
+            Transform3d transform = new Transform3d(adjustedYOffset, -xOffset, 0, new Rotation3d(0, 0, 0));
 
             Pose3d branchPose3d = basePose3d.plus(transform);
 
