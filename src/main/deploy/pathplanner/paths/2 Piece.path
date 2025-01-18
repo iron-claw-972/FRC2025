@@ -112,7 +112,30 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 0.6440410418310886,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "OuttakeCoral"
+        }
+      }
+    },
+    {
+      "name": "MoveElevator",
+      "waypointRelativePos": 2.2352012628255573,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "MoveElevator"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
