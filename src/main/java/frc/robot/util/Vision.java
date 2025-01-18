@@ -534,7 +534,7 @@ public class Vision {
           .times(-VisionConstants.DISTANCE_SCALE)
         // Get the field relative robot pose
           .plus(targetPose.getTranslation());
-          try{
+        try{
           // Adds an EstimatedRobotPose
           list.add(new EstimatedRobotPose(
             new Pose3d(translation.getX(), translation.getY(), 0, new Rotation3d(0, 0, yaw)), 

@@ -64,7 +64,7 @@ public class VisionConstants {
      * If multiple cameras return different poses, they will be ignored if the
      * difference between them is greater than this
      */
-    public static final double MAX_POSE_DIFFERENCE = 0.3;
+    public static final double MAX_POSE_DIFFERENCE = 0.2;
 
     /** If vision should use manual calculations */
     public static final boolean USE_MANUAL_CALCULATIONS = false;
