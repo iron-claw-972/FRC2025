@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -34,6 +35,8 @@ import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
+import frc.robot.util.LogManager;
+import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
@@ -98,6 +101,10 @@ public class Drivetrain extends SubsystemBase {
 
     // The pose supplier to drive to
     private Supplier<Pose2d> desiredPoSupplier = ()->null;
+
+    private SwerveModulePose modulePoses;
+
+    private boolean slipped = false;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -180,6 +187,8 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         updateOdometry();
+        
+        SmartDashboard.putBoolean("Slipped", modulePoses.slipped());
     }
 
     // DRIVE
@@ -248,11 +257,23 @@ public class Drivetrain extends SubsystemBase {
         // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
         poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
 
+        // Update the swerve module poses
+        modulePoses.update();
+
+        if(modulePoses.slipped()){
+            slipped = true;
+        }
+
         Pose2d pose2 = getPose();
 
         if(VisionConstants.ENABLED){
             if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){
-                vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians());
+                vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians(), slipped);
+
+                if(vision.canSeeTag()){
+                    slipped = false;
+                    modulePoses.reset();
+                }
             }
         }
 
@@ -270,6 +291,11 @@ public class Drivetrain extends SubsystemBase {
         }else if(!Vision.onField(pose3)){
             //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
             resetOdometry(pose2);
+        }
+
+        if (Robot.isSimulation()) {
+            pigeon.getSimState().addYaw(
+                    +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
 
         // Store the current pose in the buffer
@@ -451,6 +477,7 @@ public class Drivetrain extends SubsystemBase {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
         poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
+        modulePoses.reset();
     }
 
     /**
@@ -590,5 +617,9 @@ public class Drivetrain extends SubsystemBase {
      */
     public Pose2d getDesiredPose(){
         return desiredPoSupplier.get();
+    }
+
+    public SwerveModulePose getSwerveModulePose(){
+        return modulePoses;
     }
 }

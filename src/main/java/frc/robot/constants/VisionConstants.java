@@ -104,11 +104,21 @@ public class VisionConstants {
     public static final double DISTANCE_SCALE = 1;
 
     /**
-     * The standard deviations to use for the vision
+     * The standard deviations to use for vision
      */
     public static final Matrix<N3, N1> VISION_STD_DEVS = VecBuilder.fill(
             0.9, // x in meters (default=0.9)
             0.9, // y in meters (default=0.9)
+            0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
+                // correctly it is unnecessary to correct it with vision
+    );
+
+    /**
+     * The standard deviations to use for vision when the wheels slip
+     */
+    public static final Matrix<N3, N1> VISION_STD_DEVS_2 = VecBuilder.fill(
+            0.02, // x in meters (default=0.9)
+            0.02, // y in meters (default=0.9)
             0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
                 // correctly it is unnecessary to correct it with vision
     );

@@ -1,5 +1,7 @@
 package frc.robot.controls;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -28,6 +30,7 @@ import lib.controllers.PS5Controller.PS5Button;
 public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     private final PS5Controller kDriver = new PS5Controller(Constants.DRIVER_JOY);
+    private final BooleanSupplier slowModeSupplier = kDriver.get(PS5Button.RIGHT_TRIGGER);
 
     private final Vision vision;
     private final Elevator elevator;
@@ -99,7 +102,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     @Override
     public double getRawHeadingMagnitude() {
-        return MathUtils.calculateHypotenuse(kDriver.get(PS5Axis.RIGHT_X), kDriver.get(PS5Axis.RIGHT_Y));
+        return Math.hypot(kDriver.get(PS5Axis.RIGHT_X), kDriver.get(PS5Axis.RIGHT_Y));
     }
 
     @Override
