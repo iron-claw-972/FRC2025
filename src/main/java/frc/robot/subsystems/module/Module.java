@@ -10,14 +10,26 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.LinearSystemLoop;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,7 +64,42 @@ public class Module extends SubsystemBase {
 
     private ModuleConstants moduleConstants;
 
-    private SwerveModuleState prev_SwerveModuleState = new SwerveModuleState();
+    private final LinearSystem<N1, N1, N1> m_driveMotor = LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60Foc(1), 0.000326, DriveConstants.DRIVE_GEAR_RATIO );
+
+  private final KalmanFilter<N1, N1, N1> m_observer = new KalmanFilter<>(
+      Nat.N1(),
+      Nat.N1(),
+      (LinearSystem<N1, N1, N1>) m_driveMotor,
+      VecBuilder.fill(Units.inchesToMeters(2)), // How accurate we
+      // think our model is, in meters and meters/second.
+      VecBuilder.fill(0.001), // How accurate we think our encoder position
+      // data is. In this case we very highly trust our encoder position reading.
+      Constants.LOOP_TIME);
+  private final LinearQuadraticRegulator<N1, N1, N1> m_controller = new LinearQuadraticRegulator<>(
+      (LinearSystem<N1, N1, N1>) m_driveMotor,
+      VecBuilder.fill(Units.inchesToMeters(1.0)), // qelms. Position
+      // and velocity error tolerances, in meters and meters per second. Decrease this
+      // to more
+      // heavily penalize state excursion, or make the controller behave more
+      // aggressively. In
+      // this example we weight position much more highly than velocity, but this can
+      // be
+      // tuned to balance the two.
+      VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      // heavily penalize control effort, or make the controller less aggressive. 12
+      // is a good
+      // starting point because that is the (approximate) maximum voltage of a
+      // battery.
+      Constants.LOOP_TIME); // Nominal time between loops. 0.020 for TimedRobot, but can be
+
+  // The state-space loop combines a controller, observer, feedforward and plant
+  // for easy control.
+  private final LinearSystemLoop<N1, N1, N1> m_loop = new LinearSystemLoop<>(
+      (LinearSystem<N1, N1, N1>) m_driveMotor,
+      m_controller,
+      m_observer,
+      12.0,
+      Constants.LOOP_TIME);
 
 
     public Module(ModuleConstants moduleConstants) {
@@ -76,6 +123,8 @@ public class Module extends SubsystemBase {
         configDriveMotor();
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
+
+        m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
     
 
         String directory_name = "Drivetrain/Module" + type.name();
@@ -117,7 +166,7 @@ public class Module extends SubsystemBase {
             */
             desiredState = optimizeStates ? CTREModuleState.optimize(wantedState, getState().angle) : wantedState;
         }else{
-            prev_SwerveModuleState = desiredState;
+            //prev_SwerveModuleState = desiredState;
             desiredState = wantedState;
         }
         setAngle(desiredState);
@@ -132,13 +181,23 @@ public class Module extends SubsystemBase {
             double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.WHEEL_CIRCUMFERENCE,
-                DriveConstants.DRIVE_GEAR_RATIO), 1)/60;
+            // double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.WHEEL_CIRCUMFERENCE,
+            //     DriveConstants.DRIVE_GEAR_RATIO), 1)/60;
             // TODO: This curently doesn't use the feedforward.
             // TODO: Maybe use current and next velocity instead of only 1 parameter
-            
-            double accelFeedforward = 0.16180650617 * (desiredState.speedMetersPerSecond - prev_SwerveModuleState.speedMetersPerSecond)/Constants.LOOP_TIME;
-            driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)+accelFeedforward));
+            double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
+            m_loop.setNextR(velocity);
+            // Correct our Kalman filter's state vector estimate with encoder data.
+            m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), driveMotor.getVelocity().getValueAsDouble()*2*Math.PI));
+            // Update our LQR to generate new voltage commands and use the voltages to
+            // predict the next
+            // state with out Kalman filter.
+            m_loop.predict(Constants.LOOP_TIME);
+            // Send the new calculated voltage to the motors.
+            // voltage = duty cycle * battery voltage, so
+            // duty cycle = voltage / battery voltage
+            double nextVoltage = m_loop.getU(0);
+            driveMotor.setControl(new VoltageOut(nextVoltage));
         }
         
     }
