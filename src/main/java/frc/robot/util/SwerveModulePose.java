@@ -76,7 +76,11 @@ public class SwerveModulePose {
     }
 
     public boolean slipped(){
-        Pose2d drivePose = drive.getPose();
+        Translation2d total = new Translation2d();
+        for(Pose2d pose : modulePositions){
+            total = total.plus(pose.getTranslation());
+        }
+        Pose2d drivePose = new Pose2d(total.div(4), drive.getYaw());
         for(int i = 0; i < 4; i++){
             double dist = modulePositions[i].relativeTo(drivePose).getTranslation().getDistance(moduleTranslations[i]);
             if(dist > 0.3){
