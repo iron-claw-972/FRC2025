@@ -27,8 +27,12 @@ public class DriveConstants {
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
 
+    public static final double WHEEL_MOI = 0.000326;
+
     /** Distance between the left and right wheels [meters]. */
     public static double TRACK_WIDTH = Units.inchesToMeters(20.75);//22.75 swerve bot, 20.75 comp bot
+
+    public static double TRACK_RADIUS = Math.hypot(Units.inchesToMeters(20.75),Units.inchesToMeters(20.75)/2);
 
     // Mk4i gear ratios
     // https://www.swervedrivespecialties.com/products/mk4i-swerve-module
@@ -119,8 +123,8 @@ public class DriveConstants {
     public static final double STEER_PEAK_CURRENT_DURATION = 0.01;
     public static final boolean STEER_ENABLE_CURRENT_LIMIT = true;
 
-    public static final int DRIVE_CONTINUOUS_CURRENT_LIMIT = 80;
-    public static final int DRIVE_PEAK_CURRENT_LIMIT = 80;
+    public static final int DRIVE_CONTINUOUS_CURRENT_LIMIT = 74;
+    public static final int DRIVE_PEAK_CURRENT_LIMIT = 74;
     public static final double DRIVE_PEAK_CURRENT_DURATION = 0.01;
     public static final boolean DRIVE_ENABLE_CURRENT_LIMIT = true;
 

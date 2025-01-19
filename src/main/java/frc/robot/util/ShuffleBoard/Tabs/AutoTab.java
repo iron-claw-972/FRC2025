@@ -8,7 +8,13 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DoNothing;
+import frc.robot.commands.auto_comm.FollowPathCommand;
+import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.gpm.Elevator;
+import frc.robot.subsystems.gpm.Outtake;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
 /**
@@ -19,13 +25,24 @@ public class AutoTab extends ShuffleBoardTabs {
     private final SendableChooser<Command> autoCommand = new SendableChooser<>();
 
     private Drivetrain drive;
+    private Elevator elevator;
+    private Outtake outtake;
 
-    public AutoTab(Drivetrain drive){
+    public AutoTab(Drivetrain drive, Elevator elevator, Outtake outtake){
         this.drive = drive;
+        this.elevator = elevator;
+        this.outtake = outtake;
     }
     
-    public void createEntries(){         tab = Shuffleboard.getTab("Auto");
+    public void createEntries(){         
+        tab = Shuffleboard.getTab("Auto");
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
+
+        autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive));
+        autoCommand.addOption("test", new FollowPathCommand("test", true, drive));
+
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.MAX_HEIGHT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));
 
         tab.add(autoCommand);
     }

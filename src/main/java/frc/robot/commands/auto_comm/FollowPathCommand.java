@@ -38,14 +38,12 @@ public class FollowPathCommand extends SequentialCommandGroup {
 
     public void resetOdemetry(boolean resetOdemetry){
         if (resetOdemetry){
-            PathPoint point;
             if(RobotContainer.getAllianceColorBooleanSupplier().getAsBoolean()){
-                point = path.getPoint(0).flip();
+                drive.resetOdometry(new Pose2d(path.getAllPathPoints().get(0).flip().position, path.getIdealStartingState().rotation()));
             }else{
-                point = path.getPoint(0);
+                drive.resetOdometry(new Pose2d(path.getAllPathPoints().get(0).position, path.getIdealStartingState().rotation()));
             }
             // TODO: Test if this resets it correctly
-            drive.resetOdometry(new Pose2d(point.position, point.rotationTarget.rotation()));
         }
     }
     }
