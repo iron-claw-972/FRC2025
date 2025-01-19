@@ -42,8 +42,8 @@ public class Operator {
         }));
         // kDriver.get(Button.LB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, true))));
         // kDriver.get(Button.RB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, false))));
-        kDriver.get(Button.LB).whileTrue(new GoToPose(()->getBranch(direction, true), 1, 3, drive));
-        kDriver.get(Button.RB).whileTrue(new GoToPose(()->getBranch(direction, false), 1, 3, drive));
+        kDriver.get(Button.LB).whileTrue(new GoToPose(()->getBranch(direction, true), 2, 5, drive));
+        kDriver.get(Button.RB).whileTrue(new GoToPose(()->getBranch(direction, false), 2, 5, drive));
     }
 
     public Pose2d getBranch(int direction, boolean isLeft){

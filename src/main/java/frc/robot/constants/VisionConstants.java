@@ -146,14 +146,14 @@ public class VisionConstants {
                                     new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(6.2),
                                             Units.inchesToMeters(18.67+4.7)),
                                     new Rotation3d(Math.PI, Units.degreesToRadians(20),
-                                            Math.PI - Units.degreesToRadians(15)))),
+                                            Math.PI + Units.degreesToRadians(15)))),
                     new Pair<String, Transform3d>(
                             "CameraStarboard",
                             new Transform3d(
                                     new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(-6.2),
                                             Units.inchesToMeters(18.67+4.7)),
                                     new Rotation3d(Math.PI, Units.degreesToRadians(20),
-                                            Math.PI + Units.degreesToRadians(15))))));
+                                            Math.PI - Units.degreesToRadians(15))))));
 
     /**
      * The transformations from the robot to object detection cameras
@@ -239,31 +239,31 @@ public class VisionConstants {
      * Left and right refer to the position of the branch when looking directly at the AprilTag
      */
     public enum REEF {
-        RED_BRANCH_6_LEFT(5, 0.1308, .0587),
-        RED_BRANCH_6_RIGHT(5, -0.1308, .0587),
-        RED_BRANCH_7_LEFT(6, 0.1308, .0587),
-        RED_BRANCH_7_RIGHT(6, -0.1308, .0587),
-        RED_BRANCH_8_LEFT(7, 0.1308, .0587),
-        RED_BRANCH_8_RIGHT(7, -0.1308, .0587),
-        RED_BRANCH_9_LEFT(8, 0.1308, .0587),
-        RED_BRANCH_9_RIGHT(8, -0.1308, .0587),
-        RED_BRANCH_10_LEFT(9, 0.1308, .0587),
-        RED_BRANCH_10_RIGHT(9, -0.1308, .0587),
-        RED_BRANCH_11_LEFT(10, 0.1308, .0587),
-        RED_BRANCH_11_RIGHT(10, -0.1308, .0587),
+        RED_BRANCH_6_LEFT(5, 0.1651, .0587),
+        RED_BRANCH_6_RIGHT(5, -0.1651, .0587),
+        RED_BRANCH_7_LEFT(6, 0.1651, .0587),
+        RED_BRANCH_7_RIGHT(6, -0.1651, .0587),
+        RED_BRANCH_8_LEFT(7, 0.1651, .0587),
+        RED_BRANCH_8_RIGHT(7, -0.1651, .0587),
+        RED_BRANCH_9_LEFT(8, 0.1651, .0587),
+        RED_BRANCH_9_RIGHT(8, -0.1651, .0587),
+        RED_BRANCH_10_LEFT(9, 0.1651, .0587),
+        RED_BRANCH_10_RIGHT(9, -0.1651, .0587),
+        RED_BRANCH_11_LEFT(10, 0.1651, .0587),
+        RED_BRANCH_11_RIGHT(10, -0.1651, .0587),
 
-        BLUE_BRANCH_17_LEFT(16, 0.1308, .0587),
-        BLUE_BRANCH_17_RIGHT(16, -0.1308, .0587),
-        BLUE_BRANCH_18_LEFT(17, 0.1308, .0587),
-        BLUE_BRANCH_18_RIGHT(17, -0.1308, .0587),
-        BLUE_BRANCH_19_LEFT(18, 0.1308, .0587),
-        BLUE_BRANCH_19_RIGHT(18, -0.1308, .0587),
-        BLUE_BRANCH_20_LEFT(19, 0.1308, .0587),
-        BLUE_BRANCH_20_RIGHT(19, -0.1308, .0587),
-        BLUE_BRANCH_21_LEFT(20, 0.1308, .0587),
-        BLUE_BRANCH_21_RIGHT(20, -0.1308, .0587),
-        BLUE_BRANCH_22_LEFT(21, 0.1308, .0587),
-        BLUE_BRANCH_22_RIGHT(21, -0.1308, .0587);
+        BLUE_BRANCH_17_LEFT(16, 0.1651, .0587),
+        BLUE_BRANCH_17_RIGHT(16, -0.1651, .0587),
+        BLUE_BRANCH_18_LEFT(17, 0.1651, .0587),
+        BLUE_BRANCH_18_RIGHT(17, -0.1651, .0587),
+        BLUE_BRANCH_19_LEFT(18, 0.1651, .0587),
+        BLUE_BRANCH_19_RIGHT(18, -0.1651, .0587),
+        BLUE_BRANCH_20_LEFT(19, 0.1651, .0587),
+        BLUE_BRANCH_20_RIGHT(19, -0.1651, .0587),
+        BLUE_BRANCH_21_LEFT(20, 0.1651, .0587),
+        BLUE_BRANCH_21_RIGHT(20, -0.1651, .0587),
+        BLUE_BRANCH_22_LEFT(21, 0.1651, .0587),
+        BLUE_BRANCH_22_RIGHT(21, -0.1651, .0587);
 
         /**
          * The pose to align to for scoring on this branch
