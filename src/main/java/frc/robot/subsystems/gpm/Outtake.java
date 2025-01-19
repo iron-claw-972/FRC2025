@@ -36,4 +36,8 @@ public class Outtake extends SubsystemBase {
     public void outtake(){
         setMotor(SmartDashboard.getNumber("wheel speed", 0));
     }
+
+    public void reverse(){
+        setMotor(-0.2);
+    }
 }

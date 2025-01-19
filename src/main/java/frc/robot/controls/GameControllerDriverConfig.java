@@ -9,6 +9,7 @@ import frc.robot.Robot;
 import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.reverseCoral;
 import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -50,9 +51,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     
 
     //set the wheels to X
-    kDriver.get(Button.B).whileTrue(new SetFormationX(super.getDrivetrain()));
-    //Enable state deadband after setting formation to X
-    kDriver.get(Button.B).onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
+    kDriver.get(Button.B).onTrue(new reverseCoral(outtake));
+    
 
     // Resets the modules to absolute if they are having the unresolved zeroing
     // error
@@ -105,7 +105,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public boolean getIsSlowMode() {
-    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
+    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean() || elevator.getSetpoint()>0;
   }
 
   @Override

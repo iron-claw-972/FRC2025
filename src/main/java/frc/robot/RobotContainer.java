@@ -65,7 +65,7 @@ public class RobotContainer {
       // Our competition subsystems go here
 
       case Phil:
-      SmartDashboard.putNumber("wheel speed", 0);
+      SmartDashboard.putNumber("wheel speed", 0.2);
         elevator = new Elevator();
         outtake = new Outtake();
       case Vivace:
