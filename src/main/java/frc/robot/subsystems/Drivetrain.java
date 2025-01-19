@@ -115,6 +115,8 @@ public class Drivetrain extends SubsystemBase {
         modules = new Module[4];
 
         ModuleConstants[] constants = Arrays.copyOfRange(ModuleConstants.values(), 0, 4);
+
+        
         
         if(RobotBase.isReal()){
             Arrays.stream(constants).forEach(moduleConstants -> {
@@ -154,7 +156,7 @@ public class Drivetrain extends SubsystemBase {
                 VisionConstants.VISION_STD_DEVS
         );
        poseEstimator.setVisionMeasurementStdDevs(VisionConstants.VISION_STD_DEVS);
-        
+       modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
         // initialize PID controllers
         xController = new PIDController(DriveConstants.TRANSLATIONAL_P, 0, DriveConstants.TRANSLATIONAL_D);
         yController = new PIDController(DriveConstants.TRANSLATIONAL_P, 0, DriveConstants.TRANSLATIONAL_D);

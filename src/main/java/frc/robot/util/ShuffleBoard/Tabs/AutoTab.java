@@ -31,15 +31,18 @@ public class AutoTab extends ShuffleBoardTabs {
     public AutoTab(Drivetrain drive, Elevator elevator, Outtake outtake){
         this.drive = drive;
         this.elevator = elevator;
+        this.outtake = outtake;
     }
     
     public void createEntries(){         
         tab = Shuffleboard.getTab("Auto");
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
 
-        autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", drive)
-        .andThen(new MoveElevator(elevator, ElevatorConstants.MAX_HEIGHT))
-        .andThen(new OuttakeCoral(outtake, elevator)));
+        autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive));
+        autoCommand.addOption("test", new FollowPathCommand("test", true, drive));
+
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.MAX_HEIGHT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));
 
         tab.add(autoCommand);
     }
