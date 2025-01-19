@@ -19,20 +19,17 @@ import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
@@ -46,7 +43,7 @@ import lib.CTREModuleState;
 public class Module extends SubsystemBase {
     private final ModuleType type;
     
-    // Motor ticks
+    // Degrees
     private final double angleOffset;
 
     private final TalonFX angleMotor;
@@ -56,8 +53,6 @@ public class Module extends SubsystemBase {
 
     protected boolean stateDeadband = true;
 
-    private SimpleMotorFeedforward feedforward;
-    
     final VelocityVoltage m_VelocityVoltage = new VelocityVoltage(0);
     
     private boolean optimizeStates = true;
@@ -105,8 +100,6 @@ public class Module extends SubsystemBase {
         this.moduleConstants = moduleConstants;
 
         type = moduleConstants.getType();
-        feedforward = new SimpleMotorFeedforward(moduleConstants.getDriveS(), moduleConstants.getDriveV(), moduleConstants.getDriveA());
-        //angleOffset = new Rotation2d(constants.getSteerOffset());
         angleOffset = moduleConstants.getSteerOffset();
 
         /* Angle Encoder Config */
@@ -121,10 +114,9 @@ public class Module extends SubsystemBase {
         driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.DRIVE_MOTOR_CAN);
         configDriveMotor();
 
-        setDesiredState(new SwerveModuleState(0, getAngle()), false);
-
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
-    
+
+        setDesiredState(new SwerveModuleState(0, getAngle()), false);
 
         String directory_name = "Drivetrain/Module" + type.name();
         LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValueAsDouble()/60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
@@ -137,7 +129,6 @@ public class Module extends SubsystemBase {
         LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000);
         LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000);
         LogManager.logSupplier(directory_name +"/DriveResiatnce/", () -> (driveMotor.getMotorVoltage().getValueAsDouble()/driveMotor.getStatorCurrent().getValueAsDouble()), 1000);
-       
     }
 
     public void close() {
@@ -145,15 +136,8 @@ public class Module extends SubsystemBase {
         driveMotor.close();
         CANcoder.close();
     }
-
-    private double averageCurrent = 0;
-    private double voltage = 0;
     
     public void periodic() {
-        
-        averageCurrent+=driveMotor.getStatorCurrent().getValueAsDouble();
-        voltage +=driveMotor.getMotorVoltage().getValueAsDouble();
-        SmartDashboard.putNumber("Resistance", voltage/averageCurrent);
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
@@ -180,10 +164,6 @@ public class Module extends SubsystemBase {
             double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            // double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.WHEEL_CIRCUMFERENCE,
-            //     DriveConstants.DRIVE_GEAR_RATIO), 1)/60;
-            // TODO: This curently doesn't use the feedforward.
-            // TODO: Maybe use current and next velocity instead of only 1 parameter
             double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
             m_loop.setNextR(velocity);
             // Correct our Kalman filter's state vector estimate with encoder data.

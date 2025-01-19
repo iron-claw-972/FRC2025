@@ -103,6 +103,8 @@ public class Drivetrain extends SubsystemBase {
 
     private SwerveModulePose modulePoses;
 
+    private boolean slipped = false;
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -256,35 +258,46 @@ public class Drivetrain extends SubsystemBase {
         // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
         poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
 
+        // Update the swerve module poses
+        modulePoses.update();
+
+        if(modulePoses.slipped()){
+            slipped = true;
+        }
+
         Pose2d pose2 = getPose();
 
         if(VisionConstants.ENABLED){
             if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){
-                vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians());
+                vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians(), slipped);
+
+                if(vision.canSeeTag()){
+                    slipped = false;
+                    modulePoses.reset();
+                }
             }
         }
 
         Pose2d pose3 = getPose();
         
         // Reset the pose to a position on the field if it is off the field
-        // if(!Vision.onField(pose1)){
-        //     // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
-        //     // Use the rotation of the pose after updating odometry so the yaw is right
-        //     resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
-        // }else if(!Vision.onField(pose2)){
-        //     // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
-        //     // Keep the rotation from pose2 so yaw is correct for driver
-        //     resetOdometry(new Pose2d(pose1.getTranslation(), pose2.getRotation()));
-        // }else if(!Vision.onField(pose3)){
-        //     //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
-        //     resetOdometry(pose2);
-        // }
+        if(!Vision.onField(pose1)){
+            // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
+            // Use the rotation of the pose after updating odometry so the yaw is right
+            resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
+        }else if(!Vision.onField(pose2)){
+            // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
+            // Keep the rotation from pose2 so yaw is correct for driver
+            resetOdometry(new Pose2d(pose1.getTranslation(), pose2.getRotation()));
+        }else if(!Vision.onField(pose3)){
+            //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
+            resetOdometry(pose2);
+        }
 
         if (Robot.isSimulation()) {
             pigeon.getSimState().addYaw(
                     +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
-        modulePoses.update();
 
         // Store the current pose in the buffer
         poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
