@@ -27,7 +27,7 @@ public class DriveConstants {
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
 
-    public static final double WHEEL_MOI = 0;
+    public static final double WHEEL_MOI = 0.000326;
 
     /** Distance between the left and right wheels [meters]. */
     public static double TRACK_WIDTH = Units.inchesToMeters(20.75);//22.75 swerve bot, 20.75 comp bot
