@@ -29,7 +29,6 @@ public class Field {
         this.drive = drive;
         this.vision = vision;
         Shuffleboard.getTab("Swerve").add(field);
-        Timer.delay(1);
         aprilTagPoses = getTagPoses();
         modulePoses = drive.getSwerveModulePose();
     } 
