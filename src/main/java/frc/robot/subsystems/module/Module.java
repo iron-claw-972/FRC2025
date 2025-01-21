@@ -167,7 +167,7 @@ public class Module extends SubsystemBase {
             double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
             m_loop.setNextR(velocity);
             // Correct our Kalman filter's state vector estimate with encoder data.
-            m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), driveMotor.getVelocity().getValueAsDouble()*2*Math.PI/DriveConstants.DRIVE_GEAR_RATIO));
+            m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), driveMotor.getVelocity().getValueAsDouble()*2*Math.PI));
             // Update our LQR to generate new voltage commands and use the voltages to
             // predict the next
             // state with out Kalman filter.
