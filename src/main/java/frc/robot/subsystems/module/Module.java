@@ -149,7 +149,6 @@ public class Module extends SubsystemBase {
             */
             desiredState = optimizeStates ? CTREModuleState.optimize(wantedState, getState().angle) : wantedState;
         }else{
-            //prev_SwerveModuleState = desiredState;
             desiredState = wantedState;
         }
         setAngle(desiredState);
