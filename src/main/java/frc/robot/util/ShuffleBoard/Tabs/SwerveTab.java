@@ -5,6 +5,7 @@
 package frc.robot.util.ShuffleBoard.Tabs;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -96,8 +97,9 @@ public class SwerveTab extends ShuffleBoardTabs {
             }
 
         }
-        xOdemetry.setDouble(truncate(drive.getPose().getX()));
-        yOdemetry.setDouble(truncate(drive.getPose().getY()));
-        rotOdemetry.setDouble(truncate(drive.getPose().getRotation().getDegrees()));
+        Pose2d drivePose = drive.getPose();
+        xOdemetry.setDouble(truncate(drivePose.getX()));
+        yOdemetry.setDouble(truncate(drivePose.getY()));
+        rotOdemetry.setDouble(truncate(drivePose.getRotation().getDegrees()));
     }
 }

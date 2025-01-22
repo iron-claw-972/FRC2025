@@ -306,7 +306,8 @@ public class DetectedObject {
      * @return The angle in radians
      */
     public double getAngle(){
-        return Math.atan2(pose.getY()-drive.getPose().getY(), pose.getX()-drive.getPose().getX());
+        Pose2d drivePose = drive.getPose();
+        return Math.atan2(pose.getY()-drivePose.getY(), pose.getX()-drivePose.getX());
     }
 
     /**

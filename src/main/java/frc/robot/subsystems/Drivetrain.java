@@ -102,6 +102,8 @@ public class Drivetrain extends SubsystemBase {
     // The previous pose to reset to if the current pose gets too far off the field
     private Pose2d prevPose = new Pose2d();
 
+    private boolean lockUpdateOdometry = false;
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -163,11 +165,13 @@ public class Drivetrain extends SubsystemBase {
         LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond));
         LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond);
     
-        LogManager.logSupplier("Drivetrain/Pose2d", () -> new Double[]{
-            getPose().getX(),
-            getPose().getY(),
-            getPose().getRotation().getRadians()
-            });
+        LogManager.logSupplier("Drivetrain/Pose2d", () -> {
+            Pose2d pose = getPose();
+            return new Double[]{
+                pose.getX(),
+                pose.getY(),
+                pose.getRotation().getRadians()};
+        });
     }
 
     public void close() {
@@ -241,11 +245,13 @@ public class Drivetrain extends SubsystemBase {
      * Updates the field relative position of the robot.
      */
     public void updateOdometry() {
+        // Wait until this is false
+        if(lockUpdateOdometry){
+            return;
+        }
         // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
-        poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
-
-        // Store the current pose in the buffer
-        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
+        // Also stores the current pose in the buffer
+        poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions()));
     }
 
     /**
@@ -254,6 +260,9 @@ public class Drivetrain extends SubsystemBase {
     public void updateOdometryVision() {
         // Start the timer if it hasn't started yet
         visionEnableTimer.start();
+
+        // Lock the updateOdometry() method. synchronized would prevent either method from running while the other was running, slowing the periodic loop
+        lockUpdateOdometry = true;
 
         Pose2d pose2 = getPose();
 
@@ -271,18 +280,24 @@ public class Drivetrain extends SubsystemBase {
         if(!Vision.nearField(prevPose)){
             // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
             // Use the rotation of the pose after updating odometry so the yaw is right
-            resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
+            prevPose = new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation());
+            resetOdometry(prevPose);
         }else if(!Vision.nearField(pose2)){
             // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
             // Keep the rotation from pose2 so yaw is correct for driver
-            resetOdometry(new Pose2d(prevPose.getTranslation(), pose2.getRotation()));
+            prevPose = new Pose2d(prevPose.getTranslation(), pose2.getRotation());
+            resetOdometry(prevPose);
         }else if(!Vision.nearField(pose3)){
             //if our vision+drivetrain odometry isn't near the field, reset our odometry to the pose before(this is the right pose)
             resetOdometry(pose2);
+            prevPose = pose2;
+        }else{
+            // Set the previous pose to the current pose if we need to return to that
+            prevPose = pose3;
         }
 
-        // Set the previous pose to the current pose if we need to return to that
-        prevPose = getPose();
+        // Unlock updateOdometry()
+        lockUpdateOdometry = false;
     }
 
     /**

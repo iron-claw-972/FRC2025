@@ -33,8 +33,9 @@ public class Field {
     
     public void updateModulePositions(){
         
-        if (drive.getPose() != null){
-            chassisPose = drive.getPose();
+        Pose2d drivePose = drive.getPose();
+        if (drivePose != null){
+            chassisPose = drivePose;
         }
 
         for (int i = 0; i<4; i++ ){
