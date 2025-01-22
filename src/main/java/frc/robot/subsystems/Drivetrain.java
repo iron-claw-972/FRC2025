@@ -99,6 +99,9 @@ public class Drivetrain extends SubsystemBase {
     // The pose supplier to drive to
     private Supplier<Pose2d> desiredPoSupplier = ()->null;
 
+    // The previous pose to reset to if the current pose gets too far off the field
+    private Pose2d prevPose = new Pose2d();
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -179,7 +182,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateOdometry();
+        updateOdometryVision();
     }
 
     // DRIVE
@@ -193,8 +196,6 @@ public class Drivetrain extends SubsystemBase {
      * @param fieldRelative whether the provided x and y speeds are relative to the field
      * @param isOpenLoop    whether to use velocity control for the drive motors
      */
-
-    
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         rot = headingControl(rot, xSpeed, ySpeed);
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
@@ -240,40 +241,48 @@ public class Drivetrain extends SubsystemBase {
      * Updates the field relative position of the robot.
      */
     public void updateOdometry() {
-        // Start the timer if it hasn't started yet
-        visionEnableTimer.start();
-
-        Pose2d pose1 = getPose();
-
         // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
         poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
+
+        // Store the current pose in the buffer
+        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
+    }
+
+    /**
+     * Updates odometry using vision
+     */
+    public void updateOdometryVision() {
+        // Start the timer if it hasn't started yet
+        visionEnableTimer.start();
 
         Pose2d pose2 = getPose();
 
         if(VisionConstants.ENABLED){
-            if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){
+            if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(1)){
                 vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians());
             }
         }
 
         Pose2d pose3 = getPose();
         
-        // Reset the pose to a position on the field if it is off the field
-        if(!Vision.onField(pose1)){
+        // Reset the pose to a position on the field if it is too far off the field
+        // This uses nearField() instead of onField() so we don't reset the odometry when the wheels slip near the edge of the field
+        // This is meant for poses that are caused by errors
+        if(!Vision.nearField(prevPose)){
             // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
             // Use the rotation of the pose after updating odometry so the yaw is right
             resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
-        }else if(!Vision.onField(pose2)){
+        }else if(!Vision.nearField(pose2)){
             // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
             // Keep the rotation from pose2 so yaw is correct for driver
-            resetOdometry(new Pose2d(pose1.getTranslation(), pose2.getRotation()));
-        }else if(!Vision.onField(pose3)){
-            //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
+            resetOdometry(new Pose2d(prevPose.getTranslation(), pose2.getRotation()));
+        }else if(!Vision.nearField(pose3)){
+            //if our vision+drivetrain odometry isn't near the field, reset our odometry to the pose before(this is the right pose)
             resetOdometry(pose2);
         }
 
-        // Store the current pose in the buffer
-        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
+        // Set the previous pose to the current pose if we need to return to that
+        prevPose = getPose();
     }
 
     /**

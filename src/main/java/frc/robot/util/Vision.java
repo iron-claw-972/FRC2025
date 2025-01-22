@@ -409,6 +409,15 @@ public class Vision {
   public static boolean onField(Pose2d pose){
     return pose!=null && pose.getX()>0 && pose.getX()<FieldConstants.FIELD_LENGTH && pose.getY()>0 && pose.getY()<FieldConstants.FIELD_WIDTH;
   }
+
+  /**
+   * Checks if a pose is on or near the field
+   * @param pose The pose to check
+   * @return If the pose is within an area with twice the length and width of the field
+   */
+  public static boolean nearField(Pose2d pose){
+    return pose!=null && pose.getX()>-FieldConstants.FIELD_LENGTH/2 && pose.getX()<FieldConstants.FIELD_LENGTH*1.5 && pose.getY()>-FieldConstants.FIELD_WIDTH/2 && pose.getY()<FieldConstants.FIELD_WIDTH*1.5;
+  }
   
   private class VisionCamera {
     PhotonCamera camera;
