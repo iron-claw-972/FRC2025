@@ -42,6 +42,7 @@ public class Operator {
             if(elevator != null){
                 elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
             }
+            // TODO: the subsystem should stop on its own.
             if(outtake != null){
                 outtake.stop();
             }
