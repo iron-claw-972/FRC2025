@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
+import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants.REEF;
@@ -40,7 +42,7 @@ public class Operator {
     public void configureControls() {
         kDriver.get(Button.BACK).onTrue(new InstantCommand(()->{
             if(elevator != null){
-                elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
+                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
             }
             if(outtake != null){
                 outtake.stop();
@@ -48,10 +50,18 @@ public class Operator {
             drive.setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
+
+        kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+        kDriver.get(Button.RB).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+        new Trigger(kDriver.LEFT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+        kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
+        kDriver.get(Button.A).onTrue(new OuttakeCoral(outtake, elevator));
+        
         new Trigger(()->(Math.hypot(kDriver.get(Axis.LEFT_X), kDriver.get(Axis.LEFT_Y)) > 0.5)).onTrue(new InstantCommand(()->{
             double angle = MathUtil.inputModulus(Math.atan2(kDriver.get(Axis.LEFT_Y), kDriver.get(Axis.LEFT_X)), 0, 2*Math.PI);
             direction = (int)(angle/(Math.PI/3));
         }));
+        
         kDriver.get(Button.LB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, true))));
         kDriver.get(Button.RB).onTrue(new InstantCommand(()->drive.setDesiredPose(getBranch(direction, false))));
     }
