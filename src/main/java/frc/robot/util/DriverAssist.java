@@ -124,7 +124,7 @@ public class DriverAssist {
     // Constants used for second method
     public static final double MAX_VELOCITY_ANGLE_ERROR = Math.PI/4;
     public static final double MAX_DISTANCE_ERROR = 2;
-    public static final double ROTATION_CORRECTION_FACTOR = 1;
+    public static final double ROTATION_CORRECTION_FACTOR = 0.1;
     public static final double MAX_ROTATION_ERROR = Math.PI/3;
 
     /**

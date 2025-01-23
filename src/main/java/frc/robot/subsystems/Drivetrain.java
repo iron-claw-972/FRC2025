@@ -196,7 +196,7 @@ public class Drivetrain extends SubsystemBase {
 
     
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
-        rot = headingControl(rot, xSpeed, ySpeed);
+        // rot = headingControl(rot, xSpeed, ySpeed);
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         if(fieldRelative){
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
