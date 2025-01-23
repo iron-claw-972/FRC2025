@@ -30,8 +30,8 @@ public class ElevatorConstants {
     public static final double L3_SETPOINT = 0.5;
     public static final double L4_SETPOINT = 1.18;
 
-    public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(7.581);
-    public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(14.073);
+    public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(8.933);
+    public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(16.931);
 
     // This is not the best way to do this, but it is the easiest for the Alpha Bot
     public static double CENTER_OF_MASS_HEIGHT = CENTER_OF_MASS_HEIGHT_STOWED;

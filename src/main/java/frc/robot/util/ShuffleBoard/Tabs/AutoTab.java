@@ -38,11 +38,13 @@ public class AutoTab extends ShuffleBoardTabs {
         tab = Shuffleboard.getTab("Auto");
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
 
-        autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive));
+        autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator)));
+
         autoCommand.addOption("test", new FollowPathCommand("test", true, drive));
 
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.MAX_HEIGHT))
-        // .andThen(new OuttakeCoral(outtake, elevator)));
+         
 
         tab.add(autoCommand);
     }
