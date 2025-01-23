@@ -128,7 +128,6 @@ public class Module extends SubsystemBase {
         LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
         LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000);
         LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000);
-        LogManager.logSupplier(directory_name +"/DriveResiatnce/", () -> (driveMotor.getMotorVoltage().getValueAsDouble()/driveMotor.getStatorCurrent().getValueAsDouble()), 1000);
     }
 
     public void close() {
