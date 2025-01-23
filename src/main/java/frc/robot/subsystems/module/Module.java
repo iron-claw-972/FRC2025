@@ -1,5 +1,6 @@
 package frc.robot.subsystems.module;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
@@ -29,7 +31,11 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
@@ -56,6 +62,13 @@ public class Module extends SubsystemBase {
     final VelocityVoltage m_VelocityVoltage = new VelocityVoltage(0);
     
     private boolean optimizeStates = true;
+
+    StatusSignal<Angle> drivePosition;
+    StatusSignal<AngularVelocity> driveVelocity;
+    StatusSignal<AngularAcceleration> driveAccel;
+    StatusSignal<Angle> steerAngle;
+    StatusSignal<AngularVelocity> steerVelocity;
+
 
     private ModuleConstants moduleConstants;
 
@@ -114,6 +127,14 @@ public class Module extends SubsystemBase {
         driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.DRIVE_MOTOR_CAN);
         configDriveMotor();
 
+        ParentDevice.optimizeBusUtilizationForAll(angleMotor, driveMotor);
+
+        drivePosition = driveMotor.getPosition();
+        driveVelocity = driveMotor.getVelocity();
+        driveAccel  = driveMotor.getAcceleration();
+        steerAngle = angleMotor.getPosition();
+        steerVelocity = angleMotor.getVelocity();
+
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
@@ -138,6 +159,7 @@ public class Module extends SubsystemBase {
     }
     
     public void periodic() {
+        refreshStatusSignals();
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
@@ -210,8 +232,9 @@ public class Module extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
+        double adjustedAngle = StatusSignal.getLatencyCompensatedValueAsDouble(steerAngle, steerVelocity);
         return Rotation2d.fromRotations(
-                angleMotor.getPosition().getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+            adjustedAngle/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     public Rotation2d getCANcoder() {
@@ -222,6 +245,10 @@ public class Module extends SubsystemBase {
         // Sensor ticks
         double absolutePosition = getCANcoder().getRotations() - Units.degreesToRotations(angleOffset);
         angleMotor.setPosition(absolutePosition*DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+    }
+
+    public void refreshStatusSignals(){
+        StatusSignal.refreshAll(drivePosition, driveVelocity, driveAccel,steerAngle, steerVelocity );
     }
 
     private void configCANcoder() {
@@ -254,13 +281,14 @@ public class Module extends SubsystemBase {
      * @return Speed in RPM
      */
     public double getSteerVelocity() {
-        return angleMotor.getVelocity().getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
+        return steerVelocity.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
     }
     /**
      * @return Speed in RPM
      */
     public double getDriveVelocity() {
-        return driveMotor.getVelocity().getValueAsDouble()*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
+        double adjustedVelocity = StatusSignal.getLatencyCompensatedValueAsDouble(driveVelocity, driveAccel);
+        return adjustedVelocity*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
     }
 
     public double getDriveVoltage(){
@@ -298,8 +326,9 @@ public class Module extends SubsystemBase {
     }
 
     public SwerveModulePosition getPosition() {
+        double adjustedPosition = StatusSignal.getLatencyCompensatedValueAsDouble(drivePosition, driveVelocity);
         return new SwerveModulePosition(
-                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(driveMotor.getPosition().getValueAsDouble()*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(adjustedPosition*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
                                                DriveConstants.DRIVE_GEAR_RATIO),
                 getAngle());
     }
