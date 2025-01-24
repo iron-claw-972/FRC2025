@@ -23,6 +23,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -35,6 +36,7 @@ import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
+import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
@@ -100,10 +102,9 @@ public class Drivetrain extends SubsystemBase {
     // The pose supplier to drive to
     private Supplier<Pose2d> desiredPoSupplier = ()->null;
 
-    // The previous pose to reset to if the current pose gets too far off the field
-    private Pose2d prevPose = new Pose2d();
+    private SwerveModulePose modulePoses;
 
-    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    private boolean slipped = false;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -161,6 +162,8 @@ public class Drivetrain extends SubsystemBase {
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
         rotationController.setTolerance(Units.degreesToRadians(0.25), Units.degreesToRadians(0.25));
 
+        modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
+
         LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond);
         LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond);
         LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond));
@@ -203,7 +206,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         rot = headingControl(rot, xSpeed, ySpeed);
-        ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
+        ChassisSpeeds speeds = ChassisSpeeds.discretize(xSpeed, ySpeed, rot, Constants.LOOP_TIME);
         if(fieldRelative){
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }
@@ -265,11 +268,28 @@ public class Drivetrain extends SubsystemBase {
         // Start the timer if it hasn't started yet
         visionEnableTimer.start();
 
+        Pose2d pose1 = getPose();
+
+        // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
+        poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
+
+        // Update the swerve module poses
+        modulePoses.update();
+
+        if(modulePoses.slipped()){
+            slipped = true;
+        }
+
         Pose2d pose2 = getPose();
 
         if(VisionConstants.ENABLED){
-            if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(1)){
-                vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians());
+            if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){
+                vision.updateOdometry(poseEstimator, time->getPoseAt(time).getRotation().getRadians(), slipped);
+
+                if(vision.canSeeTag()){
+                    slipped = false;
+                    modulePoses.reset();
+                }
             }
         }
 
@@ -296,6 +316,14 @@ public class Drivetrain extends SubsystemBase {
             // Set the previous pose to the current pose if we need to return to that
             prevPose = pose3;
         }
+
+        if (Robot.isSimulation()) {
+            pigeon.getSimState().addYaw(
+                    +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
+        }
+
+        // Store the current pose in the buffer
+        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
     }
 
     /**
@@ -329,11 +357,6 @@ public class Drivetrain extends SubsystemBase {
      * @param isOpenLoop    if open loop control should be used for the drive velocity
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds, boolean isOpenLoop) {
-        if (Robot.isSimulation()) {
-            pigeon.getSimState().addYaw(
-                    +Units.radiansToDegrees(chassisSpeeds.omegaRadiansPerSecond * Constants.LOOP_TIME));
-        }
-
         if(DriveConstants.USE_ACTUAL_SPEED){
             SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
             currentSetpoint = setpointGenerator.generateSetpoint(
@@ -483,6 +506,7 @@ public class Drivetrain extends SubsystemBase {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
         poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
+        modulePoses.reset();
     }
 
     /**
@@ -622,5 +646,9 @@ public class Drivetrain extends SubsystemBase {
      */
     public Pose2d getDesiredPose(){
         return desiredPoSupplier.get();
+    }
+
+    public SwerveModulePose getSwerveModulePose(){
+        return modulePoses;
     }
 }

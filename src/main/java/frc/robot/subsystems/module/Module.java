@@ -1,5 +1,6 @@
 package frc.robot.subsystems.module;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -10,17 +11,32 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.LinearQuadraticRegulator;
+import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.LinearSystemLoop;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
@@ -32,7 +48,7 @@ import lib.CTREModuleState;
 public class Module extends SubsystemBase {
     private final ModuleType type;
     
-    // Motor ticks
+    // Degrees
     private final double angleOffset;
 
     private final TalonFX angleMotor;
@@ -42,21 +58,60 @@ public class Module extends SubsystemBase {
 
     protected boolean stateDeadband = true;
 
-    private SimpleMotorFeedforward feedforward;
-    
     final VelocityVoltage m_VelocityVoltage = new VelocityVoltage(0);
     
     private boolean optimizeStates = true;
 
+    private StatusSignal<Angle> drivePosition;
+    private StatusSignal<AngularVelocity> driveVelocity;
+    private StatusSignal<AngularAcceleration> driveAccel;
+    private StatusSignal<Angle> steerAngle;
+    private StatusSignal<AngularVelocity> steerVelocity;
+
+
     private ModuleConstants moduleConstants;
+
+    private final LinearSystem<N1, N1, N1> m_driveMotor = LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60Foc(1), DriveConstants.WHEEL_MOI, DriveConstants.DRIVE_GEAR_RATIO );
+
+  private final KalmanFilter<N1, N1, N1> m_observer = new KalmanFilter<>(
+      Nat.N1(),
+      Nat.N1(),
+      (LinearSystem<N1, N1, N1>) m_driveMotor,
+      VecBuilder.fill(20), // How accurate we
+     
+      VecBuilder.fill(0.001), // How accurate we think our encoder position
+      // data is. In this case we very highly trust our encoder position reading.
+      Constants.LOOP_TIME);
+  private final LinearQuadraticRegulator<N1, N1, N1> m_controller = new LinearQuadraticRegulator<>(
+      (LinearSystem<N1, N1, N1>) m_driveMotor,
+      VecBuilder.fill(1), // qelms. Position
+       
+      // heavily penalize state excursion, or make the controller behave more
+      // aggressively. In
+      // this example we weight position much more highly than velocity, but this can
+      // be
+      // tuned to balance the two.
+      VecBuilder.fill(11.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      // heavily penalize control effort, or make the controller less aggressive. 12
+      // is a good
+      // starting point because that is the (approximate) maximum voltage of a
+      // battery.
+      Constants.LOOP_TIME); // Nominal time between loops. 0.020 for TimedRobot, but can be
+
+  // The state-space loop combines a controller, observer, feedforward and plant
+  // for easy control.
+  private final LinearSystemLoop<N1, N1, N1> m_loop = new LinearSystemLoop<>(
+      (LinearSystem<N1, N1, N1>) m_driveMotor,
+      m_controller,
+      m_observer,
+      11,
+      Constants.LOOP_TIME);
 
 
     public Module(ModuleConstants moduleConstants) {
         this.moduleConstants = moduleConstants;
 
         type = moduleConstants.getType();
-        feedforward = new SimpleMotorFeedforward(moduleConstants.getDriveS(), moduleConstants.getDriveV(), moduleConstants.getDriveA());
-        //angleOffset = new Rotation2d(constants.getSteerOffset());
         angleOffset = moduleConstants.getSteerOffset();
 
         /* Angle Encoder Config */
@@ -71,8 +126,17 @@ public class Module extends SubsystemBase {
         driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.DRIVE_MOTOR_CAN);
         configDriveMotor();
 
+        ParentDevice.optimizeBusUtilizationForAll(angleMotor, driveMotor);
+
+        drivePosition = driveMotor.getPosition();
+        driveVelocity = driveMotor.getVelocity();
+        driveAccel  = driveMotor.getAcceleration();
+        steerAngle = angleMotor.getPosition();
+        steerVelocity = angleMotor.getVelocity();
+
+        m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
+
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
-    
 
         String directory_name = "Drivetrain/Module" + type.name();
         LogManager.logSupplier(directory_name +"/DriveSpeedActual/" , () -> ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValueAsDouble()/60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
@@ -84,7 +148,7 @@ public class Module extends SubsystemBase {
         LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
         LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000);
         LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000);
-
+        LogManager.logSupplier(directory_name +"/DriveResiatnce/", () -> (driveMotor.getMotorVoltage().getValueAsDouble()/driveMotor.getStatorCurrent().getValueAsDouble()), 1000);
     }
 
     public void close() {
@@ -92,9 +156,9 @@ public class Module extends SubsystemBase {
         driveMotor.close();
         CANcoder.close();
     }
-
+    
     public void periodic() {
-        
+        refreshStatusSignals();
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
@@ -114,18 +178,25 @@ public class Module extends SubsystemBase {
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
         if(desiredState == null){
-            // System.out.println("NULL NULL NULL");
             return;
         }
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            double velocity = ConversionUtils.falconToRPM(ConversionUtils.MPSToFalcon(desiredState.speedMetersPerSecond, DriveConstants.WHEEL_CIRCUMFERENCE,
-                DriveConstants.DRIVE_GEAR_RATIO), 1)/60;
-            // TODO: This curently doesn't use the feedforward.
-            // TODO: Maybe use current and next velocity instead of only 1 parameter
-            driveMotor.setControl(m_VelocityVoltage.withVelocity(velocity).withEnableFOC(true).withFeedForward(feedforward.calculate(velocity)));
+            double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
+            m_loop.setNextR(velocity);
+            // Correct our Kalman filter's state vector estimate with encoder data.
+            m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), driveMotor.getVelocity().getValueAsDouble()*2*Math.PI/DriveConstants.DRIVE_GEAR_RATIO));
+            // Update our LQR to generate new voltage commands and use the voltages to
+            // predict the next
+            // state with out Kalman filter.
+            m_loop.predict(Constants.LOOP_TIME);
+            // Send the new calculated voltage to the motors.
+            // voltage = duty cycle * battery voltage, so
+            // duty cycle = voltage / battery voltage
+            double nextVoltage = m_loop.getU(0);
+            driveMotor.setControl(new VoltageOut(nextVoltage));
         }
         
     }
@@ -160,8 +231,9 @@ public class Module extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
+        double adjustedAngle = StatusSignal.getLatencyCompensatedValueAsDouble(steerAngle, steerVelocity);
         return Rotation2d.fromRotations(
-                angleMotor.getPosition().getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+            adjustedAngle/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     public Rotation2d getCANcoder() {
@@ -172,6 +244,10 @@ public class Module extends SubsystemBase {
         // Sensor ticks
         double absolutePosition = getCANcoder().getRotations() - Units.degreesToRotations(angleOffset);
         angleMotor.setPosition(absolutePosition*DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+    }
+
+    public void refreshStatusSignals(){
+        StatusSignal.refreshAll(drivePosition, driveVelocity, driveAccel,steerAngle, steerVelocity );
     }
 
     private void configCANcoder() {
@@ -204,13 +280,14 @@ public class Module extends SubsystemBase {
      * @return Speed in RPM
      */
     public double getSteerVelocity() {
-        return angleMotor.getVelocity().getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
+        return steerVelocity.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
     }
     /**
      * @return Speed in RPM
      */
     public double getDriveVelocity() {
-        return driveMotor.getVelocity().getValueAsDouble()*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
+        double adjustedVelocity = StatusSignal.getLatencyCompensatedValueAsDouble(driveVelocity, driveAccel);
+        return adjustedVelocity*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
     }
 
     public double getDriveVoltage(){
@@ -248,8 +325,13 @@ public class Module extends SubsystemBase {
     }
 
     public SwerveModulePosition getPosition() {
+        double position = drivePosition.getValueAsDouble();
+        double velocity = drivePosition.getValueAsDouble();
+        double acceleration = drivePosition.getValueAsDouble();
+        double latency = Math.min(0.3, drivePosition.getTimestamp().getLatency());
+        double adjustedPosition = position + velocity*latency + acceleration*Math.pow(latency, 2)/2;
         return new SwerveModulePosition(
-                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(driveMotor.getPosition().getValueAsDouble()*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(adjustedPosition*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
                                                DriveConstants.DRIVE_GEAR_RATIO),
                 getAngle());
     }

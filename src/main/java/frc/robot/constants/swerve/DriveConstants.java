@@ -27,6 +27,8 @@ public class DriveConstants {
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
 
+    public static final double WHEEL_MOI = 0.000326;
+
     /** Distance between the left and right wheels [meters]. */
     public static double TRACK_WIDTH = Units.inchesToMeters(20.75);//22.75 swerve bot, 20.75 comp bot
 
@@ -81,10 +83,10 @@ public class DriveConstants {
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-    public static double STEER_OFFSET_FRONT_LEFT = 0;
-    public static double STEER_OFFSET_FRONT_RIGHT = 0;
-    public static double STEER_OFFSET_BACK_LEFT = 0;
-    public static double STEER_OFFSET_BACK_RIGHT = 0;
+    public static double STEER_OFFSET_FRONT_LEFT = 193.884-180;
+    public static double STEER_OFFSET_FRONT_RIGHT = 110.914;
+    public static double STEER_OFFSET_BACK_LEFT = 128.054+180;
+    public static double STEER_OFFSET_BACK_RIGHT = 41.13+180;
 
     // Heading PID.
     public static final double HEADING_P = 5.5;
@@ -223,6 +225,7 @@ public class DriveConstants {
 
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
         }
+        
         MODULE_CONSTANTS = COTSFalconSwerveConstants.SDSMK4i(DRIVE_GEAR_RATIO);
     }
 }
