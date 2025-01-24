@@ -67,10 +67,9 @@ public class RobotContainer {
         outtake = new Outtake();
         elevator = new Elevator();
         climb = new Climb();
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
 
       case Vivace:
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
- 
       case Phil:
       case Vertigo:
         drive = new Drivetrain(vision);
