@@ -10,7 +10,6 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
-import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -38,7 +37,6 @@ public class RobotContainer {
   private Vision vision = null;
   private Intake intake = null;
   private Outtake outtake = null;
-  private AlgaeIntake algaeIntake = null;
   private Elevator elevator;
   private Climb climb;
 
@@ -67,7 +65,6 @@ public class RobotContainer {
         // Our competition subsystems go here
         intake = new Intake();
         outtake = new Outtake();
-        algaeIntake = new AlgaeIntake();
         elevator = new Elevator();
         climb = new Climb();
 
@@ -77,8 +74,8 @@ public class RobotContainer {
       case Phil:
       case Vertigo:
         drive = new Drivetrain(vision);
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, outtake, climb, algaeIntake);
-        operator = new Operator(drive, elevator, intake, outtake, climb, algaeIntake);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, outtake, climb);
+        operator = new Operator(drive, elevator, intake, outtake, climb);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);

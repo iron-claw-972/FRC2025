@@ -19,7 +19,6 @@ import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -41,16 +40,14 @@ public class Operator {
     private final Intake intake;
     private final Outtake outtake;
     private final Climb climb;
-    private final AlgaeIntake algaeIntake;
     private int alignmentDirection = -1;
     
-    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Outtake outtake, Climb climb, AlgaeIntake algaeIntake) {
+    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Outtake outtake, Climb climb) {
         this.drive = drive;
         this.elevator = elevator;
         this.intake = intake;
         this.outtake = outtake;
         this.climb = climb;
-        this.algaeIntake = algaeIntake;
     }
 
     public void configureControls() {
@@ -82,9 +79,9 @@ public class Operator {
         if(outtake != null && elevator != null){
             driver.get(Button.RIGHT_JOY).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
         }
-        if(algaeIntake != null){
-            driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(algaeIntake));
-            driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(algaeIntake));
+        if(intake != null){
+            driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
+            driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(intake != null && outtake != null){
             driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
