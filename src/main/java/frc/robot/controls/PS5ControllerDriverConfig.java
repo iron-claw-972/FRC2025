@@ -57,22 +57,34 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
-        driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-        driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-        driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-        driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
-        driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
+        if(elevator != null){
+            driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+            driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+            driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
+        }
 
         // Intake/outtake
-        driver.get(PS5Button.CROSS).and(menu.negate()).whileTrue(new IntakeCoral(intake, elevator));
-        driver.get(PS5Button.PS).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
-        driver.get(PS5Button.CROSS).and(menu).whileTrue(new IntakeAlgae(algaeIntake));
-        driver.get(PS5Button.PS).and(menu).onTrue(new OuttakeAlgae(algaeIntake));
-        driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
+        if(intake != null && elevator != null){
+            driver.get(PS5Button.CROSS).and(menu.negate()).whileTrue(new IntakeCoral(intake, elevator));
+        }
+        if(outtake != null && elevator != null){
+            driver.get(PS5Button.PS).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+        }
+        if(algaeIntake != null){
+            driver.get(PS5Button.CROSS).and(menu).whileTrue(new IntakeAlgae(algaeIntake));
+            driver.get(PS5Button.PS).and(menu).onTrue(new OuttakeAlgae(algaeIntake));
+        }
+        if(intake != null && outtake != null){
+            driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
+        }
 
         // Climb
-        driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
-            .onFalse(new InstantCommand(()->climb.climb(), climb));
+        if(climb != null){
+            driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
+                .onFalse(new InstantCommand(()->climb.climb(), climb));
+        }
 
         // Alignment
         driver.get(PS5Button.CIRCLE).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 0));
@@ -90,15 +102,14 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         )));
 
         // Set the wheels to X
-        driver.get(PS5Button.SQUARE).whileTrue(new SetFormationX(getDrivetrain()))
+        driver.get(PS5Button.TOUCHPAD).whileTrue(new SetFormationX(getDrivetrain()))
             .onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
-
-        // Resets the modules to absolute if they are having the unresolved zeroing error
-        driver.get(PS5Button.CROSS).onTrue(new InstantCommand(() ->
-                getDrivetrain().resetModulesToAbsolute()
-        ));
     }
 
+    /**
+     * Sets the drivetrain's alignmetn pose to the selected position
+     * @param isLeft True for left branch, false for right
+     */
     private void setAlignmentPose(boolean isLeft){
         Pose2d pose = VisionConstants.REEF.fromAprilTagIdAndPose(
             Robot.getAlliance() == Alliance.Blue ? alignmentDirection + 17

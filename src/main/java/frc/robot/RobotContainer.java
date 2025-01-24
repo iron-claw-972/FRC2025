@@ -78,7 +78,7 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, outtake, climb, algaeIntake);
-        operator = new Operator(drive);
+        operator = new Operator(drive, elevator, intake, outtake, climb, algaeIntake);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
