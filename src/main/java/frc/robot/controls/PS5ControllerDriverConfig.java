@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -24,8 +23,6 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
-import frc.robot.util.MathUtils;
-import frc.robot.util.Vision;
 import lib.controllers.PS5Controller;
 import lib.controllers.PS5Controller.DPad;
 import lib.controllers.PS5Controller.PS5Axis;
@@ -52,7 +49,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         this.climb = climb;
     }
 
-    @SuppressWarnings("unused")
     public void configureControls() {
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
@@ -77,7 +73,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.PS).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(intake != null && outtake != null){
-            driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
+            driver.get(PS5Button.CIRCLE).and(menu.negate()).onTrue(new ReverseMotors(intake, outtake));
         }
 
         // Climb
@@ -140,7 +136,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     @Override
     public double getRawHeadingMagnitude() {
-        return Math.hypot(kDriver.get(PS5Axis.RIGHT_X), kDriver.get(PS5Axis.RIGHT_Y));
+        return Math.hypot(driver.get(PS5Axis.RIGHT_X), driver.get(PS5Axis.RIGHT_Y));
     }
 
     @Override

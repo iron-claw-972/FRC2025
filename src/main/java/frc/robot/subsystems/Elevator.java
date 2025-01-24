@@ -45,12 +45,19 @@ public class Elevator extends SubsystemBase {
   private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
   private DIOSim topLimitSwitchSim;
   private DIOSim bottomLimitSwitchSim;
-  // TODO: Use or delete
   private boolean limitSwitchPressed = false;
+
+  // private ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
+  // private GenericEntry Voltage = tab.add("Voltage", 0).getEntry();
+  // private GenericEntry height = tab.add("Height", 0).getEntry();
+  // private GenericEntry leftMotorEncoder = tab.add("leftEncoder", 0).getEntry();
+  // private GenericEntry rightMotorEncoder = tab.add("rightEncoder", 0).getEntry();
+  // private GenericEntry Setpoint = tab.add("setpoint", 0).getEntry();
+  // private GenericEntry bottomSensor = tab.add("bottom sensor", 0).getEntry();
+  // private GenericEntry topSensor = tab.add("top sensor", 0).getEntry();
 
   // Calibration variables
   private boolean calibrated;
-  // TODO: Use or delete
   private boolean movingUp;
   private double start;
 
@@ -131,6 +138,7 @@ public class Elevator extends SubsystemBase {
 
       topLimitSwitchSim = new DIOSim(topLimitSwitch);
       bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
+      //tab.add("Elevator", getMechanism2d());
     }
     Timer.delay(1.0);
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
@@ -142,13 +150,45 @@ public class Elevator extends SubsystemBase {
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
 
   }
-
+  // 14 inches verically
+  // 2.901 icnehs toward battery
+  // 16.901 inches 
   @Override
   public void periodic() {
-    // The final state that the elevator is trying to get to
-    State goal = new State(setpoint, 0.0);
+    // If it hits the limit switch, reset the encoder 
+    // if (getBottomLimitSwitch() && (calibrated || !movingUp)) {
+    //   if (false) {
+    //     resetEncoder(ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT);
+    //   }
+    //   calibrated = true;
+    //   limitSwitchPressed = true;
+    // } else if (getTopLimitSwitch()) {
+    //   if (false) {
+    //     resetEncoder(ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT);
+    //   }
+    //   calibrated = true;
+    //   limitSwitchPressed = true;
+    // } else {
+    //   limitSwitchPressed = false;
+    // }
 
-    double currentPosition = getPosition();
+    // // The final state that the elevator is trying to get to
+     State goal = new State(setpoint, 0.0);
+
+     double currentPosition = getPosition();
+
+    // // If it isn't calibrated yet, try to find the limit switch
+    // if (!calibrated) {
+    //   double v = -0.25;
+    //   if (movingUp) {
+    //     // This is only to get above the limit switch, so it can move faster
+    //     v = 0.5;
+    //     if (currentPosition - start > ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) {
+    //       movingUp = false;
+    //     }
+    //   }
+    //   goal = new State(currentPosition + v * Constants.LOOP_TIME, v);
+    // }
 
     m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
@@ -164,13 +204,21 @@ public class Elevator extends SubsystemBase {
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
+    // Voltage.setDouble(voltage);
+    // height.setDouble(currentPosition);
+    // leftMotorEncoder.setDouble(leftMotor.getPosition().getValue());
+    // rightMotorEncoder.setDouble(rightMotor.getPosition().getValue());
+    // bottomSensor.setBoolean(getBottomLimitSwitch());
+    // topSensor.setBoolean(getTopLimitSwitch());
     SmartDashboard.putBoolean("bottom Sensor", getBottomLimitSwitch());
     SmartDashboard.putBoolean("top sensor", getTopLimitSwitch());
     SmartDashboard.putNumber("next voltage", nextVoltage);
     SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("right motor encoder", rightMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("height", getPosition());
+    //Voltage.setDouble(nextVoltage);
     set(nextVoltage);
+    ElevatorConstants.CENTER_OF_MASS_HEIGHT = (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
   }
 
   @Override
@@ -240,9 +288,7 @@ public class Elevator extends SubsystemBase {
    * <p>
    * Note: The elevator will probably break if the code is deployed and enabled
    * when the elvator is above the top limit switch
-   * @deprecated Currently not supported
    */
-  @Deprecated
   public void calibrate() {
     calibrated = false;
     start = getPosition();
@@ -254,9 +300,5 @@ public class Elevator extends SubsystemBase {
 
   public boolean isCalibrated() {
     return calibrated;
-  }
-
-  public double getCenterOfMassHeight(){
-    return (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
   }
 }

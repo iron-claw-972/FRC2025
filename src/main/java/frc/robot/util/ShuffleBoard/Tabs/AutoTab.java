@@ -13,8 +13,8 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.gpm.Elevator;
-import frc.robot.subsystems.gpm.Outtake;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Outtake;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
 /**

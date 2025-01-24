@@ -21,10 +21,8 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
-import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
-import frc.robot.util.PathGroupLoader;
 import frc.robot.util.Vision;
 import java.util.function.BooleanSupplier;
 

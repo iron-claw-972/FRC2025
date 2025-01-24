@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.subsystems.gpm.Elevator;
-import frc.robot.subsystems.gpm.Outtake;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Outtake;
 
 public class OuttakeCoral extends SequentialCommandGroup {
     public OuttakeCoral(Outtake outtake, Elevator elevator){

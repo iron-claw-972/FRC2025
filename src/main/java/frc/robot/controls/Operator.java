@@ -19,13 +19,13 @@ import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.constants.VisionConstants.REEF;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import lib.controllers.GameController;
-import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
 import lib.controllers.GameController.DPad;
 
@@ -85,7 +85,7 @@ public class Operator {
             driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(intake != null && outtake != null){
-            driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
+            driver.get(Button.B).and(menu.negate()).onTrue(new ReverseMotors(intake, outtake));
         }
 
         // Climb
