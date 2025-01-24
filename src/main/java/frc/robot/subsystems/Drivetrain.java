@@ -259,7 +259,7 @@ public class Drivetrain extends SubsystemBase {
     public void updateOdometry() {
         // Wait for all modules to update
         // TODO: Add all status signals
-        //BaseStatusSignal.waitForAll(0.03, pigeon.getYaw());
+        BaseStatusSignal.waitForAll(0.03, pigeon.getYaw());
         
         synchronized(this){
             // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
@@ -274,11 +274,6 @@ public class Drivetrain extends SubsystemBase {
     public synchronized void updateOdometryVision() {
         // Start the timer if it hasn't started yet
         visionEnableTimer.start();
-
-        Pose2d pose1 = getPose();
-
-        // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
-        poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
 
         // Update the swerve module poses
         modulePoses.update();
@@ -328,9 +323,6 @@ public class Drivetrain extends SubsystemBase {
             pigeon.getSimState().addYaw(
                     +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
-
-        // Store the current pose in the buffer
-        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
     }
 
     /**
