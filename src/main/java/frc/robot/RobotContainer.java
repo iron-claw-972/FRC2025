@@ -8,9 +8,14 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
+import frc.robot.controls.PS5ControllerDriverConfig;
+import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Outtake;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -31,12 +36,16 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
-  
+  private Intake intake = null;
+  private Outtake outtake = null;
+  private AlgaeIntake algaeIntake = null;
+  private Elevator elevator;
+  private Climb climb;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
   private Operator operator = null;
-  ShuffleBoardManager shuffleboardManager = null;
+  private ShuffleBoardManager shuffleboardManager = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -55,7 +64,12 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-      // Our competition subsystems go here
+        // Our competition subsystems go here
+        intake = new Intake();
+        outtake = new Outtake();
+        algaeIntake = new AlgaeIntake();
+        elevator = new Elevator();
+        climb = new Climb();
 
       case Vivace:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
@@ -63,7 +77,7 @@ public class RobotContainer {
       case Phil:
       case Vertigo:
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, vision);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, outtake, climb, algaeIntake);
         operator = new Operator(drive);
 
         // Detected objects need access to the drivetrain
