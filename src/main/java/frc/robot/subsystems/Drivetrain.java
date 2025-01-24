@@ -104,6 +104,11 @@ public class Drivetrain extends SubsystemBase {
 
     private SwerveModulePose modulePoses;
 
+    // The previous pose to reset to if the current pose gets too far off the field
+    private Pose2d prevPose = new Pose2d();
+
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+
     private boolean slipped = false;
 
     /**
@@ -115,6 +120,8 @@ public class Drivetrain extends SubsystemBase {
         modules = new Module[4];
 
         ModuleConstants[] constants = Arrays.copyOfRange(ModuleConstants.values(), 0, 4);
+
+        
         
         if(RobotBase.isReal()){
             Arrays.stream(constants).forEach(moduleConstants -> {
@@ -252,7 +259,7 @@ public class Drivetrain extends SubsystemBase {
     public void updateOdometry() {
         // Wait for all modules to update
         // TODO: Add all status signals
-        BaseStatusSignal.waitForAll(0.03, pigeon.getYaw());
+        //BaseStatusSignal.waitForAll(0.03, pigeon.getYaw());
         
         synchronized(this){
             // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!

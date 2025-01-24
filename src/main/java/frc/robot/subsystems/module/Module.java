@@ -134,6 +134,8 @@ public class Module extends SubsystemBase {
         steerAngle = angleMotor.getPosition();
         steerVelocity = angleMotor.getVelocity();
 
+        StatusSignal.setUpdateFrequencyForAll(50, drivePosition, driveVelocity, driveAccel, steerAngle, steerVelocity);
+
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
