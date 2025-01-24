@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -102,7 +103,7 @@ public class Drivetrain extends SubsystemBase {
     // The previous pose to reset to if the current pose gets too far off the field
     private Pose2d prevPose = new Pose2d();
 
-    private boolean lockUpdateOdometry = false;
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -145,7 +146,7 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator = new SwerveDrivePoseEstimator(
                 DriveConstants.KINEMATICS,
                 Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
-                getModulePositions(),
+                updateModulePositions(),
                 new Pose2d(),
                 // Defaults, except trust pigeon more
                 VecBuilder.fill(0.1, 0.1, 0),
@@ -235,9 +236,10 @@ public class Drivetrain extends SubsystemBase {
      * @param rot the angle to move to, in radians
      */
     public void driveWithPID(double x, double y, double rot) {
-        double xSpeed = xController.calculate(poseEstimator.getEstimatedPosition().getX(), x);
-        double ySpeed = yController.calculate(poseEstimator.getEstimatedPosition().getY(), y);
-        double rotRadians = rotationController.calculate(getYaw().getRadians(), rot);
+        Pose2d pose = getPose();
+        double xSpeed = xController.calculate(pose.getX(), x);
+        double ySpeed = yController.calculate(pose.getY(), y);
+        double rotRadians = rotationController.calculate(pose.getRotation().getRadians(), rot);
         drive(xSpeed, ySpeed, rotRadians, true, false);
     }
 
@@ -245,24 +247,23 @@ public class Drivetrain extends SubsystemBase {
      * Updates the field relative position of the robot.
      */
     public void updateOdometry() {
-        // Wait until this is false
-        if(lockUpdateOdometry){
-            return;
+        // Wait for all modules to update
+        // TODO: Add all status signals
+        BaseStatusSignal.waitForAll(0.03, pigeon.getYaw());
+        
+        synchronized(this){
+            // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
+            // Also stores the current pose in the buffer
+            poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), updateModulePositions()));
         }
-        // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
-        // Also stores the current pose in the buffer
-        poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions()));
     }
 
     /**
      * Updates odometry using vision
      */
-    public void updateOdometryVision() {
+    public synchronized void updateOdometryVision() {
         // Start the timer if it hasn't started yet
         visionEnableTimer.start();
-
-        // Lock the updateOdometry() method. synchronized would prevent either method from running while the other was running, slowing the periodic loop
-        lockUpdateOdometry = true;
 
         Pose2d pose2 = getPose();
 
@@ -295,9 +296,6 @@ public class Drivetrain extends SubsystemBase {
             // Set the previous pose to the current pose if we need to return to that
             prevPose = pose3;
         }
-
-        // Unlock updateOdometry()
-        lockUpdateOdometry = false;
     }
 
     /**
@@ -392,12 +390,21 @@ public class Drivetrain extends SubsystemBase {
 
 
     /**
+     * Updates and returns the array of SwerveModulePositions, which store the distance travleled by the drive and the steer angle.
+     *
+     * @return An array of all swerve module positions
+     */
+    private SwerveModulePosition[] updateModulePositions() {
+        return modulePositions = Arrays.stream(modules).map(Module::getPosition).toArray(SwerveModulePosition[]::new);
+    }
+
+    /**
      * Gets an array of SwerveModulePositions, which store the distance travleled by the drive and the steer angle.
      *
-     * @return an array of all swerve module positions
+     * @return An array of all swerve module positions
      */
     public SwerveModulePosition[] getModulePositions() {
-        return Arrays.stream(modules).map(Module::getPosition).toArray(SwerveModulePosition[]::new);
+        return modulePositions;
     }
 
     /**
@@ -448,7 +455,7 @@ public class Drivetrain extends SubsystemBase {
      * @return the yaw of the robot, aka heading, the direction it is facing
      */
     public Rotation2d getYaw() {
-        return poseEstimator.getEstimatedPosition().getRotation();
+        return getPose().getRotation();
     }
 
     /**
@@ -472,7 +479,7 @@ public class Drivetrain extends SubsystemBase {
      *
      * @param pose the pose to reset to.
      */
-    public void resetOdometry(Pose2d pose) {
+    public synchronized void resetOdometry(Pose2d pose) {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
         poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
