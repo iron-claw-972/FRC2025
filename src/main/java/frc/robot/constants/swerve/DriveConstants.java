@@ -54,12 +54,12 @@ public class DriveConstants {
     public static final double COSF = 1.1;
     
     // The maximum acceleration of the robot, limited by friction
-    public static double MAX_LINEAR_ACCEL = COSF * Constants.GRAVITY_ACCELERATION;
+    public static final double MAX_LINEAR_ACCEL = COSF * Constants.GRAVITY_ACCELERATION;
     // The maximum amount a drive motor can accelerate, independant of friction
     // This does nothing if greater than LINEAR_ACCEL
-    public static double MAX_DRIVE_ACCEL = MAX_LINEAR_ACCEL;
+    public static final double MAX_DRIVE_ACCEL = MAX_LINEAR_ACCEL;
     // The maximum angular acceleration of the robot
-    public static double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL / TRACK_WIDTH * Math.sqrt(2);
+    public static final double MAX_ANGULAR_ACCEL = MAX_LINEAR_ACCEL / TRACK_WIDTH * Math.sqrt(2);
 
     /**
      * If this is false, Drivetrain will use the previous setpoint to calculate the new setpoint.

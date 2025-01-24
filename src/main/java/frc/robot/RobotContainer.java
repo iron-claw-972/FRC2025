@@ -14,11 +14,15 @@ import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
+import frc.robot.controls.PS5ControllerDriverConfig;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.gpm.Elevator;
-import frc.robot.subsystems.gpm.Outtake;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Outtake;
+import frc.robot.util.DetectedObject;
+import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.Vision;
@@ -38,13 +42,15 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
-  private Elevator elevator = null;
+  private Intake intake = null;
   private Outtake outtake = null;
+  private Elevator elevator;
+  private Climb climb;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
   private Operator operator = null;
-  ShuffleBoardManager shuffleboardManager = null;
+  private ShuffleBoardManager shuffleboardManager = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -63,18 +69,20 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-      // Our competition subsystems go here
-
+        // Our competition subsystems go here
+        intake = new Intake();
+        climb = new Climb();
+        
       case Phil:
-      SmartDashboard.putNumber("wheel speed", 0.2);
-        elevator = new Elevator();
         outtake = new Outtake();
+        elevator = new Elevator();
+        SmartDashboard.putNumber("wheel speed", 0.2);
       case Vivace:
       case Vertigo:
         drive = new Drivetrain(vision);
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
-        driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
-        operator = new Operator(drive, elevator, outtake);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, outtake, climb);
+        operator = new Operator(drive, elevator, intake, outtake, climb);
 
         // // Detected objects need access to the drivetrain
         // DetectedObject.setDrive(drive);

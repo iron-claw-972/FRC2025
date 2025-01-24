@@ -12,7 +12,7 @@ public class OuttakeCoral extends SequentialCommandGroup {
         
         addCommands(
             new InstantCommand(()->outtake.outtake(), outtake),
-            new WaitCommand(2),
+            new WaitCommand(0.5),
             new InstantCommand(()->outtake.stop(), outtake),
             new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT), elevator)
         );
