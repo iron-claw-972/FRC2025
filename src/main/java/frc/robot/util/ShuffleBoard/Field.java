@@ -5,7 +5,6 @@
 package frc.robot.util.ShuffleBoard;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.constants.FieldConstants;

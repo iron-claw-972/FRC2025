@@ -35,7 +35,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
@@ -63,11 +62,11 @@ public class Module extends SubsystemBase {
     
     private boolean optimizeStates = true;
 
-    StatusSignal<Angle> drivePosition;
-    StatusSignal<AngularVelocity> driveVelocity;
-    StatusSignal<AngularAcceleration> driveAccel;
-    StatusSignal<Angle> steerAngle;
-    StatusSignal<AngularVelocity> steerVelocity;
+    private StatusSignal<Angle> drivePosition;
+    private StatusSignal<AngularVelocity> driveVelocity;
+    private StatusSignal<AngularAcceleration> driveAccel;
+    private StatusSignal<Angle> steerAngle;
+    private StatusSignal<AngularVelocity> steerVelocity;
 
 
     private ModuleConstants moduleConstants;
@@ -326,7 +325,11 @@ public class Module extends SubsystemBase {
     }
 
     public SwerveModulePosition getPosition() {
-        double adjustedPosition = StatusSignal.getLatencyCompensatedValueAsDouble(drivePosition, driveVelocity);
+        double position = drivePosition.getValueAsDouble();
+        double velocity = drivePosition.getValueAsDouble();
+        double acceleration = drivePosition.getValueAsDouble();
+        double latency = Math.min(0.3, drivePosition.getTimestamp().getLatency());
+        double adjustedPosition = position + velocity*latency + acceleration*Math.pow(latency, 2)/2;
         return new SwerveModulePosition(
                 ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(adjustedPosition*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
                                                DriveConstants.DRIVE_GEAR_RATIO),
