@@ -9,6 +9,7 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.DriverAssist;
 import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 
 /**
  * Default drive command. Drives robot using driver controls.
@@ -22,9 +23,9 @@ public class DefaultDriveCommand extends Command {
             BaseDriverConfig driver) {
         this.swerve = swerve;
         this.driver = driver;
-        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
-        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation());
-        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation());
+        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation(), 500, LogLevel.DEBUG);
+        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation(), 500, LogLevel.DEBUG);
+        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation(), 500, LogLevel.DEBUG);
         addRequirements(swerve);
     }
 
