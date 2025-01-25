@@ -60,20 +60,20 @@ public class OuttakeCoralBasic extends Command {
                 state = State.DONE;
             }
             // waiting for a timeout; 100 ticks is 2 seconds.
-            if (ticks > 100) {
+            if (ticks > 25) {
                 state = State.JAMMED;
             }
             break;
 
             case JAMMED:
             // reverse the motor
-            outtake.setMotor(-0.2);
+            outtake.setMotor(-0.15);
             state = State.REVERSING;
             break;
 
             case REVERSING:
             // waiting for ejected to be false
-            if(outtake.coralEjected()){
+            if(!outtake.coralEjected()){
                 state = State.DONE;
                 outtake.stop();
             }

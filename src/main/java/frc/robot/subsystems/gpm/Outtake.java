@@ -18,9 +18,9 @@ public class Outtake extends SubsystemBase {
     private double power;
 
     /** Coral detected before the rollers */
-    private DigitalInput digitalInputLoaded = new DigitalInput(8);
+    private DigitalInput digitalInputLoaded = new DigitalInput(9);
     /** Coral detected after the rollers */
-    private DigitalInput digitalInputEjected = new DigitalInput(9);
+    private DigitalInput digitalInputEjected = new DigitalInput(8);
 
     public Outtake(){
         motor.configure(new SparkFlexConfig()
@@ -57,10 +57,10 @@ public class Outtake extends SubsystemBase {
     }
 
     public boolean coralLoaded(){
-       return digitalInputLoaded.get();
+       return !digitalInputLoaded.get();
     }
 
     public boolean coralEjected(){
-        return digitalInputEjected.get();
+        return !digitalInputEjected.get();
     }
 }
