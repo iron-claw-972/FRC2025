@@ -65,7 +65,7 @@ public class VisionConstants {
      * If multiple cameras return different poses, they will be ignored if the
      * difference between them is greater than this
      */
-    public static final double MAX_POSE_DIFFERENCE = 0.3;
+    public static final double MAX_POSE_DIFFERENCE = 0.2;
 
     /** If vision should use manual calculations */
     public static final boolean USE_MANUAL_CALCULATIONS = false;
@@ -88,7 +88,7 @@ public class VisionConstants {
      * 3-5: Add a speed perpendicular to the driver input; there are 3 similar but
      * different calculations for this
      */
-    public static final int DRIVER_ASSIST_MODE = 1;
+    public static final int DRIVER_ASSIST_MODE = 5;
 
     /**
      * The number to multiply the distance to the April tag by.
@@ -251,31 +251,31 @@ public class VisionConstants {
      * Left and right refer to the position of the branch when looking directly at the AprilTag
      */
     public enum REEF {
-        RED_BRANCH_6_LEFT(5, 0.1308, .0587),
-        RED_BRANCH_6_RIGHT(5, -0.1308, .0587),
-        RED_BRANCH_7_LEFT(6, 0.1308, .0587),
-        RED_BRANCH_7_RIGHT(6, -0.1308, .0587),
-        RED_BRANCH_8_LEFT(7, 0.1308, .0587),
-        RED_BRANCH_8_RIGHT(7, -0.1308, .0587),
-        RED_BRANCH_9_LEFT(8, 0.1308, .0587),
-        RED_BRANCH_9_RIGHT(8, -0.1308, .0587),
-        RED_BRANCH_10_LEFT(9, 0.1308, .0587),
-        RED_BRANCH_10_RIGHT(9, -0.1308, .0587),
-        RED_BRANCH_11_LEFT(10, 0.1308, .0587),
-        RED_BRANCH_11_RIGHT(10, -0.1308, .0587),
+        RED_BRANCH_6_LEFT(5, 0.1651, .0587),
+        RED_BRANCH_6_RIGHT(5, -0.1651, .0587),
+        RED_BRANCH_7_LEFT(6, 0.1651, .0587),
+        RED_BRANCH_7_RIGHT(6, -0.1651, .0587),
+        RED_BRANCH_8_LEFT(7, 0.1651, .0587),
+        RED_BRANCH_8_RIGHT(7, -0.1651, .0587),
+        RED_BRANCH_9_LEFT(8, 0.1651, .0587),
+        RED_BRANCH_9_RIGHT(8, -0.1651, .0587),
+        RED_BRANCH_10_LEFT(9, 0.1651, .0587),
+        RED_BRANCH_10_RIGHT(9, -0.1651, .0587),
+        RED_BRANCH_11_LEFT(10, 0.1651, .0587),
+        RED_BRANCH_11_RIGHT(10, -0.1651, .0587),
 
-        BLUE_BRANCH_17_LEFT(16, 0.1308, .0587),
-        BLUE_BRANCH_17_RIGHT(16, -0.1308, .0587),
-        BLUE_BRANCH_18_LEFT(17, 0.1308, .0587),
-        BLUE_BRANCH_18_RIGHT(17, -0.1308, .0587),
-        BLUE_BRANCH_19_LEFT(18, 0.1308, .0587),
-        BLUE_BRANCH_19_RIGHT(18, -0.1308, .0587),
-        BLUE_BRANCH_20_LEFT(19, 0.1308, .0587),
-        BLUE_BRANCH_20_RIGHT(19, -0.1308, .0587),
-        BLUE_BRANCH_21_LEFT(20, 0.1308, .0587),
-        BLUE_BRANCH_21_RIGHT(20, -0.1308, .0587),
-        BLUE_BRANCH_22_LEFT(21, 0.1308, .0587),
-        BLUE_BRANCH_22_RIGHT(21, -0.1308, .0587);
+        BLUE_BRANCH_17_LEFT(16, 0.1651, .0587),
+        BLUE_BRANCH_17_RIGHT(16, -0.1651, .0587),
+        BLUE_BRANCH_18_LEFT(17, 0.1651, .0587),
+        BLUE_BRANCH_18_RIGHT(17, -0.1651, .0587),
+        BLUE_BRANCH_19_LEFT(18, 0.1651, .0587),
+        BLUE_BRANCH_19_RIGHT(18, -0.1651, .0587),
+        BLUE_BRANCH_20_LEFT(19, 0.1651, .0587),
+        BLUE_BRANCH_20_RIGHT(19, -0.1651, .0587),
+        BLUE_BRANCH_21_LEFT(20, 0.1651, .0587),
+        BLUE_BRANCH_21_RIGHT(20, -0.1651, .0587),
+        BLUE_BRANCH_22_LEFT(21, 0.1651, .0587),
+        BLUE_BRANCH_22_RIGHT(21, -0.1651, .0587);
 
         /**
          * The pose to align to for scoring on this branch
