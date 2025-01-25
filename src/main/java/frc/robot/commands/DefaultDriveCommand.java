@@ -22,15 +22,15 @@ public class DefaultDriveCommand extends Command {
             BaseDriverConfig driver) {
         this.swerve = swerve;
         this.driver = driver;
+        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
+        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation());
+        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation());
         addRequirements(swerve);
     }
 
     @Override
     public void initialize() {
         swerve.setStateDeadband(true);
-        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
-        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation());
-        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation());
     }
 
     @Override
