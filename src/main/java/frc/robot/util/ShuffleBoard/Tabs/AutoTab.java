@@ -4,6 +4,8 @@
 
 package frc.robot.util.ShuffleBoard.Tabs;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
@@ -39,13 +41,16 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
 
         autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
-        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-        .andThen(new OuttakeCoral(outtake, elevator)));
+                .andThen(NamedCommands.getCommand("Outtake_L4")));
+
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));
 
         autoCommand.addOption("test", new FollowPathCommand("test", true, drive));
+        autoCommand.addOption("Trial", new FollowPathCommand("Trial", true, drive));
+        autoCommand.addOption("Trial 2", new FollowPathCommand("Trial 2", true, drive));
 
          
-
         tab.add(autoCommand);
     }
 

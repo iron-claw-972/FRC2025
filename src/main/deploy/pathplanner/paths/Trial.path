@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 0.47579545454545435,
-        "y": 1.5670028409090901
+        "y": 1.5670028409090904
       },
       "nextControl": {
         "x": 2.475795454545452,
@@ -64,11 +64,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.805051302288865,
-      "maxWaypointRelativePos": 1.0039463299132116,
+      "minWaypointRelativePos": 0.696132596685084,
+      "maxWaypointRelativePos": 1.150749802683509,
       "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 1.0,
+        "maxVelocity": 0.5,
+        "maxAcceleration": 0.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -79,15 +79,20 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "OuttakeCoral",
+      "name": "1st Outtake",
       "waypointRelativePos": 0.866614048934464,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Outtake_L3"
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.4,
+    "maxAcceleration": 2.4,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -103,5 +108,5 @@
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
