@@ -38,6 +38,6 @@ public class Outtake extends SubsystemBase {
     }
 
     public void reverse(){
-        setMotor(-0.2);
+        setMotor(-0.1);
     }
 }
