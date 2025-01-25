@@ -78,8 +78,8 @@ public class RobotContainer {
         SmartDashboard.putNumber("wheel speed", 0.2);
       case Vivace:
       case Vertigo:
+      vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         drive = new Drivetrain(vision);
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
         operator = new Operator(drive, elevator, intake, outtake, climb);
 

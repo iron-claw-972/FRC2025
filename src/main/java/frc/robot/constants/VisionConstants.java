@@ -47,7 +47,7 @@ public class VisionConstants {
     public static final boolean ENABLED_SIM = true;
 
     /** If vision should only return values if it can see 2 good targets */
-    public static final boolean ONLY_USE_2_TAGS = true;
+    public static final boolean ONLY_USE_2_TAGS = false;
 
     /** PoseStrategy to use in pose estimation */
     public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
@@ -152,20 +152,13 @@ public class VisionConstants {
     public static final ArrayList<Pair<String, Transform3d>> APRIL_TAG_CAMERAS = new ArrayList<Pair<String, Transform3d>>(
             List.of(
                     new Pair<String, Transform3d>(
-                            "CameraPort",
+                            "FrontCamera",
                             new Transform3d(
-                                    new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(6.2),
-                                            Units.inchesToMeters(18.67)),
-                                    new Rotation3d(0, Units.degreesToRadians(-20),
-                                            Math.PI + Units.degreesToRadians(15)))),
-                    new Pair<String, Transform3d>(
-                            "CameraStarboard",
-                            new Transform3d(
-                                    new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(-6.2),
-                                            Units.inchesToMeters(18.67)),
-                                    new Rotation3d(0, Units.degreesToRadians(-20),
-                                            Math.PI - Units.degreesToRadians(15))))));
-
+                                    new Translation3d(0.27, -0.31, 0.195),
+                                    new Rotation3d(-Math.PI/2, 0,
+                                            -Math.PI/2 - Units.degreesToRadians(40))))
+            ));
+                    
     /**
      * The transformations from the robot to object detection cameras
      */
