@@ -18,9 +18,9 @@ public class Outtake extends SubsystemBase {
     private double power;
 
     /** Coral detected before the rollers */
-    private DigitalInput digitalInputLoaded = new DigitalInput(0);
+    private DigitalInput digitalInputLoaded = new DigitalInput(8);
     /** Coral detected after the rollers */
-    private DigitalInput digitalInputEjected = new DigitalInput(1);
+    private DigitalInput digitalInputEjected = new DigitalInput(9);
 
     public Outtake(){
         motor.configure(new SparkFlexConfig()
@@ -34,6 +34,8 @@ public class Outtake extends SubsystemBase {
     @Override
     public void periodic(){
         motor.set(power);
+        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        SmartDashboard.putBoolean("Coral ejected", coralEjected());
     }
 
     /** Set the motor power to move the coral */
