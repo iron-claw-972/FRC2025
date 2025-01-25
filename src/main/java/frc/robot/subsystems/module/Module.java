@@ -1,5 +1,6 @@
 package frc.robot.subsystems.module;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
@@ -374,5 +375,19 @@ public class Module extends SubsystemBase {
     
       public Rotation2d getDesiredAngle() {
         return getDesiredState().angle;
+      }
+
+      /**
+       * Get an array of this module's status signals
+       * @return The array of BaseStatusSignals
+       */
+      public BaseStatusSignal[] getStatusSignals(){
+        return new BaseStatusSignal[]{
+            drivePosition,
+            driveVelocity,
+            driveAccel,
+            steerAngle,
+            steerVelocity
+        };
       }
 }

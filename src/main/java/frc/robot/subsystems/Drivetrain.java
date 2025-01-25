@@ -23,7 +23,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -111,6 +110,8 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean slipped = false;
 
+    private BaseStatusSignal[] statusSignals = null;
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -121,8 +122,6 @@ public class Drivetrain extends SubsystemBase {
 
         ModuleConstants[] constants = Arrays.copyOfRange(ModuleConstants.values(), 0, 4);
 
-        
-        
         if(RobotBase.isReal()){
             Arrays.stream(constants).forEach(moduleConstants -> {
                 modules[moduleConstants.ordinal()] = new Module(moduleConstants);
@@ -170,6 +169,20 @@ public class Drivetrain extends SubsystemBase {
         rotationController.setTolerance(Units.degreesToRadians(0.25), Units.degreesToRadians(0.25));
 
         modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
+
+        // Store all status signals that we need to wait for
+        for(int i = 0; i < modules.length; i++){
+            BaseStatusSignal[] signals = modules[0].getStatusSignals();
+            // Initialize array length and add pigeon if this is the first module
+            if(i == 0){
+                statusSignals = new BaseStatusSignal[4*signals.length+1];
+                statusSignals[0] = pigeon.getYaw();
+            }
+            // Add all signals from this module
+            for(int j = 0; j < signals.length; j++){
+                statusSignals[i*signals.length+j+1] = signals[i];
+            }
+        }
 
         LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond);
         LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond);
@@ -258,8 +271,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void updateOdometry() {
         // Wait for all modules to update
-        // TODO: Add all status signals
-        BaseStatusSignal.waitForAll(0.03, pigeon.getYaw());
+        BaseStatusSignal.waitForAll(0.02, statusSignals);
         
         synchronized(this){
             // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
