@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 0.47579545454545435,
-        "y": 1.5670028409090901
+        "y": 1.5670028409090904
       },
       "nextControl": {
         "x": 2.475795454545452,
@@ -82,7 +82,12 @@
       "name": "OuttakeCoral",
       "waypointRelativePos": 0.866614048934464,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "OuttakeCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {
