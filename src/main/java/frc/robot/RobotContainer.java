@@ -91,7 +91,7 @@ public class RobotContainer {
         driver.configureControls();
         operator.configureControls();
          initializeAutoBuilder();
-        // registerCommands();
+        registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
  
