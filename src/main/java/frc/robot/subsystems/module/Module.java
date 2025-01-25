@@ -60,7 +60,7 @@ public class Module extends SubsystemBase {
     private ModuleConstants moduleConstants;
 
     private final LinearSystem<N1, N1, N1> m_driveMotor = LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60Foc(1), DriveConstants.WHEEL_MOI, DriveConstants.DRIVE_GEAR_RATIO );
-
+    
   private final KalmanFilter<N1, N1, N1> m_observer = new KalmanFilter<>(
       Nat.N1(),
       Nat.N1(),
@@ -72,14 +72,14 @@ public class Module extends SubsystemBase {
       Constants.LOOP_TIME);
   private final LinearQuadraticRegulator<N1, N1, N1> m_controller = new LinearQuadraticRegulator<>(
       (LinearSystem<N1, N1, N1>) m_driveMotor,
-      VecBuilder.fill(1), // qelms. Position
+      VecBuilder.fill(3), // qelms. Position
        
       // heavily penalize state excursion, or make the controller behave more
       // aggressively. In
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(11.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -92,13 +92,13 @@ public class Module extends SubsystemBase {
       (LinearSystem<N1, N1, N1>) m_driveMotor,
       m_controller,
       m_observer,
-      11,
+      12,
       Constants.LOOP_TIME);
 
 
     public Module(ModuleConstants moduleConstants) {
         this.moduleConstants = moduleConstants;
-
+        
         type = moduleConstants.getType();
         angleOffset = moduleConstants.getSteerOffset();
 
@@ -124,8 +124,8 @@ public class Module extends SubsystemBase {
         LogManager.logSupplier(directory_name +"/DriveSpeedDesired/", () -> desiredState.speedMetersPerSecond, 1000);
         LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000);
         LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000);
-        LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 1000);
-        LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 1000);
+        LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 100);
+        LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 100);
         LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000);
         LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000);
     }

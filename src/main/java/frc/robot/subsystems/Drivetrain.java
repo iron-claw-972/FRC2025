@@ -334,6 +334,7 @@ public class Drivetrain extends SubsystemBase {
      * @param isOpenLoop    if open loop control should be used for the drive velocity
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds, boolean isOpenLoop) {
+
         if(DriveConstants.USE_ACTUAL_SPEED){
             SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
             currentSetpoint = setpointGenerator.generateSetpoint(
