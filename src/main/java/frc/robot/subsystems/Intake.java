@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 
 
+import java.time.Duration;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -11,7 +13,10 @@ import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
 import edu.wpi.first.wpilibj.Timer;
+
+import frc.robot.util.LogManager;
 
 
 
@@ -50,6 +55,7 @@ public class Intake extends SubsystemBase {
     private final TalonFX botMotor = new TalonFX(71);
     private final TalonFX intakeRotator = new TalonFX(68);
 
+    private Timer waitTimer = new Timer();
 
     private final double motorVoltage = 12.0;
 
@@ -67,7 +73,17 @@ public class Intake extends SubsystemBase {
             //TODO add sim stuff
         }
 
+        waitTimer.start();
 
+        if (Constants.LOG_LEVEL.getValue() > 0) {
+            //TODO fix logging
+            /*
+            LogManager.add("Intake/motorVolts", () -> motor.get() * Constants.ROBOT_VOLTAGE);
+            LogManager.add("Intake/centeringMotorVolts", () -> centeringMotor.get() * Constants.ROBOT_VOLTAGE);
+            
+            LogManager.add("Intake/motorRPM", () -> motor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1));
+            LogManager.add("Intake/centeringMotorRPM", () -> centeringMotor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1)); */
+        }
 
         publish();
     }
@@ -82,10 +98,12 @@ public class Intake extends SubsystemBase {
     public void setMode(Mode mode) {
         this.mode = mode;
 
-
+        
         // set the motor powers to be the value appropriate for this mode
         topMotor.set(mode.power);
         botMotor.set(-mode.power);
+
+        waitTimer.reset();
     }
 
 
