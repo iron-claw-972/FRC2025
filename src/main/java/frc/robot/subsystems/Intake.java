@@ -2,21 +2,12 @@ package frc.robot.subsystems;
 
 
 
-import java.time.Duration;
-
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.DIOSim;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import edu.wpi.first.wpilibj.Timer;
-
-import frc.robot.util.LogManager;
+import edu.wpi.first.math.controller.PIDController;
 
 
 
@@ -53,7 +44,9 @@ public class Intake extends SubsystemBase {
     // TODO put in proper id
     private final TalonFX topMotor = new TalonFX(70);
     private final TalonFX botMotor = new TalonFX(71);
-    private final TalonFX intakeRotator = new TalonFX(68);
+    private final TalonFX intakeStower = new TalonFX(68);
+
+    private final PIDController stowPID = new PIDController(0, 0, 0);
 
     private Timer waitTimer = new Timer();
 
