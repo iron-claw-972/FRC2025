@@ -103,11 +103,21 @@ public class VisionConstants {
     public static final double DISTANCE_SCALE = 1;
 
     /**
-     * The standard deviations to use for the vision
+     * The standard deviations to use for vision
      */
     public static final Matrix<N3, N1> VISION_STD_DEVS = VecBuilder.fill(
             0.9, // x in meters (default=0.9)
             0.9, // y in meters (default=0.9)
+            0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
+                // correctly it is unnecessary to correct it with vision
+    );
+
+    /**
+     * The standard deviations to use for vision when the wheels slip
+     */
+    public static final Matrix<N3, N1> VISION_STD_DEVS_2 = VecBuilder.fill(
+            0.02, // x in meters (default=0.9)
+            0.02, // y in meters (default=0.9)
             0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
                 // correctly it is unnecessary to correct it with vision
     );
@@ -203,34 +213,34 @@ public class VisionConstants {
             FieldConstants.APRIL_TAGS.get(15).pose.getY() + DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,
             new Rotation2d(-Math.PI / 2));
 
-    public static final Pose2d BLUE_LEFT_CAGE_POSE = new Pose2d(
+    public static final Pose2d BLUE_CAGE_LEFT_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.APRIL_TAGS.get(13).pose.getY() + Units.feetToMeters(6),
+            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(1019.0 / 8),
             new Rotation2d());
 
-    public static final Pose2d BLUE_MIDDLE_CAGE_POSE = new Pose2d(
+    public static final Pose2d BLUE_CAGE_MIDDLE_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.APRIL_TAGS.get(13).pose.getY(),
+            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(675.0 / 8),
             new Rotation2d());
 
-    public static final Pose2d BLUE_RIGHT_CAGE_POSE = new Pose2d(
+    public static final Pose2d BLUE_CAGE_RIGHT_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.APRIL_TAGS.get(13).pose.getY() - Units.feetToMeters(6),
+            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(41.5),
             new Rotation2d());
 
-    public static final Pose2d RED_LEFT_CAGE_POSE = new Pose2d(
+    public static final Pose2d RED_CAGE_RIGHT_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.APRIL_TAGS.get(14).pose.getY() - Units.feetToMeters(6),
+            FieldConstants.FIELD_WIDTH / 2 + Units.inchesToMeters(-41.5),
             new Rotation2d(Math.PI));
 
-    public static final Pose2d RED_MIDDLE_CAGE_POSE = new Pose2d(
+    public static final Pose2d RED_CAGE_MIDDLE_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.APRIL_TAGS.get(14).pose.getY(),
+            FieldConstants.FIELD_WIDTH / 2 - Units.inchesToMeters(-675.0 / 8),
             new Rotation2d(Math.PI));
 
-    public static final Pose2d RED_RIGHT_CAGE_POSE = new Pose2d(
+    public static final Pose2d RED_CAGE_LEFT_POSE = new Pose2d(
             FieldConstants.FIELD_LENGTH / 2,
-            FieldConstants.APRIL_TAGS.get(14).pose.getY() + Units.feetToMeters(6),
+            FieldConstants.FIELD_WIDTH / 2 - Units.inchesToMeters(-1019.0 / 8),
             new Rotation2d(Math.PI));
 
     /**

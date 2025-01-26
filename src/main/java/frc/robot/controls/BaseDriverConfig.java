@@ -1,6 +1,7 @@
 package frc.robot.controls;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -31,17 +32,17 @@ public abstract class BaseDriverConfig {
 
     public double getForwardTranslation() {
         double forward = getRawForwardTranslation();
-        return forward * DriveConstants.MAX_SPEED * MathUtil.applyDeadband(Math.sqrt(forward*forward + Math.pow(getRawSideTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
+        return forward * DriveConstants.MAX_SPEED * Math.min(1,RobotController.getBatteryVoltage()/12) * MathUtil.applyDeadband(Math.sqrt(forward*forward + Math.pow(getRawSideTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
     }
 
     public double getSideTranslation() {
         double side = getRawSideTranslation();
-        return side * DriveConstants.MAX_SPEED * MathUtil.applyDeadband(Math.sqrt(side*side + Math.pow(getRawForwardTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
+        return side * DriveConstants.MAX_SPEED * Math.min(1,RobotController.getBatteryVoltage()/12) * MathUtil.applyDeadband(Math.sqrt(side*side + Math.pow(getRawForwardTranslation(), 2)), Constants.TRANSLATIONAL_DEADBAND);
     }
 
     public double getRotation() {
         return MathUtils.expoMS(MathUtil.applyDeadband(getRawRotation(), Constants.ROTATION_DEADBAND), 2)
-                * DriveConstants.MAX_ANGULAR_SPEED;
+                * DriveConstants.MAX_ANGULAR_SPEED * Math.min(1, RobotController.getBatteryVoltage()/12);
     }
 
     public double getHeading() {

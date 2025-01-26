@@ -11,7 +11,6 @@ import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.util.MathUtils;
 import frc.robot.util.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
@@ -47,6 +46,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     // error
     kDriver.get(Button.RB).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
 
+    kDriver.get(Button.BACK).onTrue(new InstantCommand(()->getDrivetrain().getSwerveModulePose().reset()));
+
     if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
       // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions
       if(VisionConstants.DRIVER_ASSIST_MODE <= 1){
@@ -81,7 +82,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public double getRawHeadingMagnitude() {
-    return MathUtils.calculateHypotenuse(kDriver.get(Axis.RIGHT_X), kDriver.get(Axis.RIGHT_Y));
+    return Math.hypot(kDriver.get(Axis.RIGHT_X), kDriver.get(Axis.RIGHT_Y));
   }
 
   @Override
