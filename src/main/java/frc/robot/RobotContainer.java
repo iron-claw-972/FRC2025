@@ -20,6 +20,7 @@ import frc.robot.controls.Operator;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.util.PathGroupLoader;
@@ -42,9 +43,10 @@ public class RobotContainer {
   private Drivetrain drive = null;
   private Vision vision = null;
   private Intake intake = null;
+  private Indexer indexer = null;
   private Outtake outtake = null;
-  private Elevator elevator;
-  private Climb climb;
+  private Elevator elevator = null;
+  private Climb climb = null;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -70,11 +72,12 @@ public class RobotContainer {
       case SwerveCompetition:
         // Our competition subsystems go here
         intake = new Intake();
+        indexer = new Indexer();
+        outtake = new Outtake();
         climb = new Climb();
         
       case Phil:
         outtake = new Outtake();
-        SmartDashboard.putData(new OuttakeCoralBasic(outtake));
         elevator = new Elevator();
         SmartDashboard.putNumber("wheel speed", 0.2);
       case Vivace:
@@ -82,7 +85,7 @@ public class RobotContainer {
       vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         drive = new Drivetrain(vision);
         driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
-        operator = new Operator(drive, elevator, intake, outtake, climb);
+        operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // // Detected objects need access to the drivetrain
         // DetectedObject.setDrive(drive);

@@ -31,10 +31,10 @@ public class ShuffleBoardManager {
         
          swerveTab = new SwerveTab(drive);
         autoTab = new AutoTab(drive, elevator, ouake);
-        //visionTab = new VisionTab(drive, vision);
+        visionTab = new VisionTab(drive, vision);
         elevatorTab = new ElevatorTab(elevator);
         tabs.add(autoTab);
-        //tabs.add(visionTab);
+        tabs.add(visionTab);
         tabs.add(elevatorTab);
 
         for (ShuffleBoardTabs tab : tabs){

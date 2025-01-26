@@ -5,7 +5,6 @@
 package frc.robot.util.ShuffleBoard;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.constants.FieldConstants;
@@ -29,7 +28,6 @@ public class Field {
         this.drive = drive;
         this.vision = vision;
         Shuffleboard.getTab("Swerve").add(field);
-        Timer.delay(1);
         aprilTagPoses = getTagPoses();
         modulePoses = drive.getSwerveModulePose();
     } 
