@@ -23,7 +23,6 @@ import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.constants.VisionConstants.REEF;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -132,12 +131,6 @@ public class Operator {
             : (8-alignmentDirection) % 6 + 6,
         isLeft).pose;
         drive.setDesiredPose(pose);
-    }
-
-    public Pose2d getBranch(int direction, boolean isLeft){
-        int redId = (direction+3)%6+6;
-        int id = Robot.getAlliance() == Alliance.Blue ? redId + 11: redId;
-        return REEF.fromAprilTagIdAndPose(id, isLeft).pose;
     }
 
     public Trigger getRightTrigger(){
