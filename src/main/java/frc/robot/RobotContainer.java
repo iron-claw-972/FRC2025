@@ -1,23 +1,30 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
+import frc.robot.controls.PS5ControllerDriverConfig;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.gpm.Flywheel;
 import frc.robot.subsystems.gpm.Shooter;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
-import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
-import java.util.function.BooleanSupplier;
+import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,11 +41,16 @@ public class RobotContainer {
   private Drivetrain drive = null;
   private Vision vision = null;
   private Shooter shooter = null;
+  private Intake intake = null;
+  private Indexer indexer = null;
+  private Outtake outtake = null;
+  private Elevator elevator = null;
+  private Climb climb = null;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
   private Operator operator = null;
-  ShuffleBoardManager shuffleboardManager = null;
+  private ShuffleBoardManager shuffleboardManager = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -65,8 +77,8 @@ public class RobotContainer {
       case Phil:
       case Vertigo:
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, vision);
-        operator = new Operator(drive);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+        operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
@@ -81,6 +93,7 @@ public class RobotContainer {
         PathGroupLoader.loadPathGroups();
  
         shuffleboardManager = new ShuffleBoardManager(drive, vision);
+      
         break;
       }
 
