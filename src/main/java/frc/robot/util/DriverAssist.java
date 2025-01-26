@@ -43,9 +43,10 @@ public class DriverAssist {
      * @param drive The drivetrain
      * @param driverInput The driver input speed
      * @param desiredPose The pose to drive to
+     * @param keepAngle True to use the angle in the pose, false to point hte robot toward the pose
      * @return The new speed
      */
-    private static ChassisSpeeds calculate2(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
+    private static ChassisSpeeds calculate2(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose, boolean keepAngle) {
         // Do nothing if there is no pose
         if(desiredPose == null){
             return driverInput;
@@ -63,7 +64,8 @@ public class DriverAssist {
         // Store goal states
         State xGoal = new State(desiredPose.getX(), 0);
         State yGoal = new State(desiredPose.getY(), 0);
-        double rotation = desiredPose.getRotation().getRadians();
+        Translation2d difference = desiredPose.getTranslation().minus(currentPose.getTranslation());
+        double rotation = keepAngle ? desiredPose.getRotation().getRadians() : difference.getAngle().getRadians();
         if(rotation - currentPose.getRotation().getRadians() > Math.PI){
             rotation -= 2*Math.PI;
         }else if(rotation - currentPose.getRotation().getRadians() < -Math.PI){
@@ -123,7 +125,7 @@ public class DriverAssist {
     // Constants used for second method
     public static final double MAX_VELOCITY_ANGLE_ERROR = Math.PI/4;
     public static final double MAX_DISTANCE_ERROR = 2;
-    public static final double ROTATION_CORRECTION_FACTOR = 1;
+    public static final double ROTATION_CORRECTION_FACTOR = 0.1;
     public static final double MAX_ROTATION_ERROR = Math.PI/3;
 
     /**
@@ -131,46 +133,47 @@ public class DriverAssist {
      * @param drive The drivetrain
      * @param driverInput The driver input speed
      * @param desiredPose The pose to drive to
+     * @param keepAngle True to use the angle in the pose, false to point hte robot toward the pose
      * @return The new speed
      */
     @SuppressWarnings("unused") // Needed because some code might not run for some values of DRIVER_ASSIST_MODE
-    public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose) {
-        if(VisionConstants.DRIVER_ASSIST_MODE == 2){
-            return calculate2(drive, driverInput, desiredPose);
+    public static ChassisSpeeds calculate(Drivetrain drive, ChassisSpeeds driverInput, Pose2d desiredPose, boolean keepAngle) {
+        if(VisionConstants.DRIVER_ASSIST_MODE < 2 || desiredPose == null){
+            return driverInput;
+        }else if(VisionConstants.DRIVER_ASSIST_MODE == 2){
+            return calculate2(drive, driverInput, desiredPose, keepAngle);
         }
         // Combines the driver input with a speed perpendicular to the input
-        if(desiredPose == null){
-            return driverInput;
-        }
         Pose2d drivePose = drive.getPose();
         Translation2d difference = desiredPose.getTranslation().minus(drivePose.getTranslation());
         double distance = difference.getNorm();
-        double angleToTarget = difference.getAngle().getRadians();
+        double velocityAngle = difference.getAngle().getRadians();
+        double targetAngle = keepAngle ? desiredPose.getRotation().getRadians() : velocityAngle;
         double inputSpeed = Math.hypot(driverInput.vxMetersPerSecond, driverInput.vyMetersPerSecond);
         double driverAngle = Math.atan2(driverInput.vyMetersPerSecond, driverInput.vxMetersPerSecond);
-        double angleError = MathUtil.angleModulus(angleToTarget - driverAngle);
-        if(Math.abs(angleError) > MAX_VELOCITY_ANGLE_ERROR){
+        double velocityAngleError = MathUtil.angleModulus(velocityAngle - driverAngle);
+        if(Math.abs(velocityAngleError) > MAX_VELOCITY_ANGLE_ERROR){
             return driverInput;
         }
-        double perpendicularDist = Math.abs(distance * Math.sin(angleError));
+        double perpendicularDist = Math.abs(distance * Math.sin(velocityAngleError));
         if(perpendicularDist > MAX_DISTANCE_ERROR){
             return driverInput;
         }
-        double perpendicularAngle = MathUtil.angleModulus(driverAngle + Math.PI/2*Math.signum(angleError));
+        double perpendicularAngle = MathUtil.angleModulus(driverAngle + Math.PI/2*Math.signum(velocityAngleError));
         // Different options for calculation.
         double correctionSpeed = 0;
         switch(VisionConstants.DRIVER_ASSIST_MODE){
             case 3:
-                correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist), Math.abs(Math.tan(angleError)*inputSpeed));
+                correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist), Math.abs(Math.tan(velocityAngleError)*inputSpeed));
                 break;
             case 4:
-                correctionSpeed = Math.min(CORRECTION_FACTOR * Math.pow(1.5, -perpendicularDist), 1) * Math.abs(Math.tan(angleError)*inputSpeed);
+                correctionSpeed = Math.min(CORRECTION_FACTOR * Math.pow(1.5, -perpendicularDist), 1) * Math.abs(Math.tan(velocityAngleError)*inputSpeed);
                 break;
             case 5:
-                correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist) * Math.pow(1.2, -distance+1), Math.abs(Math.tan(angleError)*inputSpeed));
+                correctionSpeed = Math.min(CORRECTION_FACTOR * inputSpeed * Math.pow(2, -perpendicularDist) * Math.pow(1.2, -distance+1), Math.abs(Math.tan(velocityAngleError)*inputSpeed));
                 break;
         }
-        double rotationError = MathUtil.angleModulus(angleToTarget-drivePose.getRotation().getRadians());
+        double rotationError = MathUtil.angleModulus(targetAngle-drivePose.getRotation().getRadians());
         if(Math.abs(rotationError) > MAX_ROTATION_ERROR){
             return driverInput;
         }
