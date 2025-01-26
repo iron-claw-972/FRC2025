@@ -344,8 +344,10 @@ public class Vision {
   /**
    * Updates the robot's odometry with vision
    * @param poseEstimator The pose estimator to update
+   * @param yawFunction A function that returns the yaw as a double given the timestamp
+   * @param slipped True if the wheels have slipped, false otherwise
    */
-  public void updateOdometry(SwerveDrivePoseEstimator poseEstimator, DoubleUnaryOperator yawFunction){
+  public void updateOdometry(SwerveDrivePoseEstimator poseEstimator, DoubleUnaryOperator yawFunction, boolean slipped){
     // Simulate vision
     if(RobotBase.isSimulation() && VisionConstants.ENABLED_SIM){
       visionSim.update(poseEstimator.getEstimatedPosition());
@@ -361,13 +363,10 @@ public class Vision {
         continue;
       }
 
-      // System.out.println("\nVIsion x:" + estimatedPose.estimatedPose.getX() + "    "+ "Vision Y: " + estimatedPose.estimatedPose.getY());
-      // for(PhotonTrackedTarget t : estimatedPose.targetsUsed){
-      //   System.out.printf("Dist to tag %d: %.3fm\n", t.getFiducialId(), getTagPose(t.getFiducialId()).getTranslation().toTranslation2d().getDistance(poseEstimator.getEstimatedPosition().getTranslation()));
-      // }
       poseEstimator.addVisionMeasurement(
         estimatedPose.estimatedPose.toPose2d(),
-        estimatedPose.timestampSeconds
+        estimatedPose.timestampSeconds,
+        slipped ? VisionConstants.VISION_STD_DEVS_2 : VisionConstants.VISION_STD_DEVS
       );
       sawTag = true;
     }

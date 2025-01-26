@@ -1,5 +1,7 @@
 package frc.robot.controls;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.constants.Constants;
@@ -15,6 +17,7 @@ import lib.controllers.Ex3DProController.Ex3DProButton;
 public class Ex3DProDriverConfig extends BaseDriverConfig {
 
     private final Ex3DProController kDriver = new Ex3DProController(Constants.DRIVER_JOY);
+    private final BooleanSupplier slowModeSupplier = kDriver.get(Ex3DProButton.B11);
 
     public Ex3DProDriverConfig(Drivetrain drive) {
         super(drive);
@@ -53,11 +56,11 @@ public class Ex3DProDriverConfig extends BaseDriverConfig {
 
     @Override
     public boolean getIsSlowMode() {
-        return kDriver.get(Ex3DProButton.B11).getAsBoolean();
+        return slowModeSupplier.getAsBoolean();
     }
 
     @Override
     public boolean getIsAlign() {
-        return kDriver.get(Ex3DProButton.B12).getAsBoolean();
+        return false;
     }
 }
