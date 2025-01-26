@@ -30,7 +30,6 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import lib.controllers.GameController;
-import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
 import lib.controllers.GameController.DPad;
 
@@ -132,12 +131,6 @@ public class Operator {
             : (8-alignmentDirection) % 6 + 6,
         isLeft).pose;
         drive.setDesiredPose(pose);
-    }
-
-    public Pose2d getBranch(int direction, boolean isLeft){
-        int redId = (direction+3)%6+6;
-        int id = Robot.getAlliance() == Alliance.Blue ? redId + 11: redId;
-        return REEF.fromAprilTagIdAndPose(id, isLeft).pose;
     }
 
     public Trigger getRightTrigger(){
