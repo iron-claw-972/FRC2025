@@ -7,7 +7,7 @@ package frc.robot.constants;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
-/** Add your docs here. */
+/** Stores constants for the elevator. */
 public class ElevatorConstants {
     public static final double ANGLE = 0; // radians, from vertical
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(2);
@@ -26,6 +26,7 @@ public class ElevatorConstants {
 
     public static final double STOW_SETPOINT = 0;
     public static final double INTAKE_SETPOINT = 0;
+    public static final double L1_SETPOINT = 0;
     public static final double L2_SETPOINT = 0.08;
     public static final double L3_SETPOINT = 0.5;
     public static final double L4_SETPOINT = 1.18;

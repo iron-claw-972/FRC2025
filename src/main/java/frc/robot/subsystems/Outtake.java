@@ -1,4 +1,4 @@
-package frc.robot.subsystems.gpm;
+package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -62,5 +62,9 @@ public class Outtake extends SubsystemBase {
 
     public boolean coralEjected(){
         return !digitalInputEjected.get();
+    }
+
+    public void reverse(){
+        setMotor(-0.2);
     }
 }

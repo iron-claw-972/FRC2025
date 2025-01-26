@@ -2,7 +2,7 @@ package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.subsystems.gpm.Elevator;
+import frc.robot.subsystems.Elevator;
 
 public class CalibrateElevator extends Command {
     private Elevator elevator;

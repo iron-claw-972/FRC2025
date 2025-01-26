@@ -1,24 +1,38 @@
 package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.swerve.DriveConstants;
-import frc.robot.subsystems.gpm.Elevator;
+import frc.robot.subsystems.Elevator;
 
+/**
+ * Moves the elevator to a position
+ */
 public class MoveElevator extends Command {
     private Elevator elevator;
     private double setpoint;
-    double accel = DriveConstants.MAX_LINEAR_ACCEL;
+
+    /**
+     * Creates a command to move the elevator to a position
+     * @param elevator The elevator subsystem
+     * @param setpoint The setpoint to move to
+     */
     public MoveElevator(Elevator elevator, double setpoint){
         this.elevator = elevator;
         this.setpoint = setpoint;
         addRequirements(elevator);
     }
+
+    /**
+     * Sets the elevator setpoint
+     */
     @Override
     public void initialize(){
-        
-        DriveConstants.MAX_LINEAR_ACCEL = 1.68213715; 
         elevator.setSetpoint(setpoint);
     }
+
+    /**
+     * Returns whether the elevator is at the setpoint
+     * @return True if the elevator is within about 1 inch of the setpoint, false otherwise
+     */
     @Override
     public boolean isFinished(){
         return Math.abs(elevator.getPosition()-setpoint) < 0.025;  

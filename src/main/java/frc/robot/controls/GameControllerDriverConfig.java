@@ -6,17 +6,16 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.gpm.Elevator;
-import frc.robot.subsystems.gpm.Outtake;
-import frc.robot.util.MathUtils;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Outtake;
 import frc.robot.util.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
@@ -48,11 +47,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
     if (elevator!=null && outtake!=null){
     
-
-    //set the wheels to X
-    kDriver.get(Button.B).whileTrue(new SetFormationX(super.getDrivetrain()));
-    //Enable state deadband after setting formation to X
-    kDriver.get(Button.B).onFalse(new InstantCommand(()->getDrivetrain().setStateDeadband(true)));
+    kDriver.get(Button.B).onTrue(new ReverseMotors(null, outtake));
+    
 
     // Resets the modules to absolute if they are having the unresolved zeroing
     // error
@@ -107,7 +103,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public boolean getIsSlowMode() {
-    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
+    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean() || elevator.getSetpoint()>0;
   }
 
   @Override
