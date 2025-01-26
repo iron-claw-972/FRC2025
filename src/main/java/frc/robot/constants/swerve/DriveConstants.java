@@ -24,9 +24,15 @@ public class DriveConstants {
      */
     public static final double ROBOT_WIDTH_WITH_BUMPERS = Units.inchesToMeters(26.5 + 3.25 * 2);
 
+    //TODO update to actual values for each robot
+    public static double ROBOT_WHEIGHT = 23.36;
+
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
 
+    public static double WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
+
+    
     /** Distance between the left and right wheels [meters]. */
     public static double TRACK_WIDTH = Units.inchesToMeters(20.75);//22.75 swerve bot, 20.75 comp bot
 
@@ -81,10 +87,10 @@ public class DriveConstants {
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-    public static double STEER_OFFSET_FRONT_LEFT = 0;
-    public static double STEER_OFFSET_FRONT_RIGHT = 0;
-    public static double STEER_OFFSET_BACK_LEFT = 0;
-    public static double STEER_OFFSET_BACK_RIGHT = 0;
+    public static double STEER_OFFSET_FRONT_LEFT = 193.884-180;
+    public static double STEER_OFFSET_FRONT_RIGHT = 110.914;
+    public static double STEER_OFFSET_BACK_LEFT = 128.054+180;
+    public static double STEER_OFFSET_BACK_RIGHT = 316.648-180;
 
     // Heading PID.
     public static final double HEADING_P = 5.5;
@@ -195,6 +201,10 @@ public class DriveConstants {
             STEER_OFFSET_FRONT_RIGHT = 224.293;
             STEER_OFFSET_BACK_LEFT = 304.795-180;
             STEER_OFFSET_BACK_RIGHT = 201.177-180;
+
+            ROBOT_WHEIGHT = 50;
+            WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
+
         } else if (robotId == RobotId.Vertigo) {
             TRACK_WIDTH = Units.inchesToMeters(22.75);//22.75 swerve bot, 20.75 comp bot
             
@@ -204,6 +214,10 @@ public class DriveConstants {
             STEER_OFFSET_BACK_RIGHT = 242.847-90;
             
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
+
+            ROBOT_WHEIGHT = 20;
+
+            WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
             
             // Falcon Speed
             Constants.MAX_RPM = 6080.0;
@@ -214,6 +228,9 @@ public class DriveConstants {
             STEER_ENCODER_CAN = Constants.RIO_CAN;
             PIGEON_CAN = Constants.RIO_CAN;
 
+            ROBOT_WHEIGHT = 30;
+            WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
+
             TRACK_WIDTH = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
         
             STEER_OFFSET_FRONT_LEFT = 121.463;
@@ -223,6 +240,7 @@ public class DriveConstants {
 
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
         }
+        
         MODULE_CONSTANTS = COTSFalconSwerveConstants.SDSMK4i(DRIVE_GEAR_RATIO);
     }
 }

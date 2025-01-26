@@ -92,6 +92,7 @@ public class RobotContainer {
         PathGroupLoader.loadPathGroups();
  
         shuffleboardManager = new ShuffleBoardManager(drive, vision);
+      
         break;
       }
 

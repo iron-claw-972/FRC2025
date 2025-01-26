@@ -28,7 +28,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
-import frc.robot.util.MathUtils;
 import lib.controllers.PS5Controller;
 import lib.controllers.PS5Controller.DPad;
 import lib.controllers.PS5Controller.PS5Axis;
@@ -154,7 +153,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     @Override
     public double getRawHeadingMagnitude() {
-        return MathUtils.calculateHypotenuse(driver.get(PS5Axis.RIGHT_X), driver.get(PS5Axis.RIGHT_Y));
+        return Math.hypot(driver.get(PS5Axis.RIGHT_X), driver.get(PS5Axis.RIGHT_Y));
     }
 
     @Override
