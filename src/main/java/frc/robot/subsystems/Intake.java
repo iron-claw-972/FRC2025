@@ -97,6 +97,11 @@ public class Intake extends SubsystemBase {
         topMotor.set(mode.power);
         botMotor.set(-mode.power);
 
+        if (mode == Mode.INTAKE_UP){
+            stowPID.setSetpoint(90);
+            stowPID.reset();
+        }
+
         waitTimer.reset();
     }
 
@@ -152,8 +157,10 @@ public class Intake extends SubsystemBase {
                 break;
             
             case INTAKE_UP:
-                stowPID.setSetpoint(90);
-                stowPID.reset();
+                {
+
+                }
+                break;
 
             default:
                 break;
