@@ -63,16 +63,16 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
     kDriver.get(Button.BACK).onTrue(new InstantCommand(()->getDrivetrain().getSwerveModulePose().reset()));
 
-    if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
-      // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions
-      if(VisionConstants.DRIVER_ASSIST_MODE <= 1){
-        (new Trigger(kDriver.LEFT_TRIGGER_BUTTON)).whileTrue(new DriverAssistIntake(getDrivetrain(), this, vision));
-      }else{
-        (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
-          .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(60), false).pose.toPose2d())))
-          .onFalse(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)));
-      }
-    }
+    // if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
+    //   // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions
+    //   if(VisionConstants.DRIVER_ASSIST_MODE <= 1){
+    //     (new Trigger(kDriver.LEFT_TRIGGER_BUTTON)).whileTrue(new DriverAssistIntake(getDrivetrain(), this, vision));
+    //   }else{
+    //     (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
+    //       .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(60), false).pose.toPose2d())))
+    //       .onFalse(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)));
+    //   }
+    // }
     }
   }
 

@@ -155,7 +155,7 @@ public class VisionConstants {
                             "FrontCamera",
                             new Transform3d(
                                     new Translation3d(0.27, -0.31, 0.195),
-                                    new Rotation3d(-Math.PI/2, 0,
+                                    new Rotation3d(Math.PI/2, 0,
                                             -Math.PI/2 - Units.degreesToRadians(40))))
             ));
                     

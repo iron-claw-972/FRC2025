@@ -26,7 +26,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import lib.controllers.GameController;
-import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
 import lib.controllers.GameController.DPad;
 
