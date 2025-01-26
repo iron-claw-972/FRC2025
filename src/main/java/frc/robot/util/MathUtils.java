@@ -56,17 +56,6 @@ public class MathUtils {
     }
 
     /**
-     * Calculates a points distance from the origin
-     *
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @return distance from (0,0)
-     */
-    public static double calculateHypotenuse(double x, double y) {
-        return Math.pow(Math.pow(x, 2) + Math.pow(y, 2), 0.5);
-    }
-
-    /**
      * Calculates Midpoint of two numbers on modulus number line
      *
      * @param num1       first number
