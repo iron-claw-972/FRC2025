@@ -37,6 +37,7 @@ import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
+import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -184,18 +185,19 @@ public class Drivetrain extends SubsystemBase {
             }
         }
 
-        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond);
-        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond);
-        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond));
-        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond);
+        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
+        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
+        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
+        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.INFO);
     
         LogManager.logSupplier("Drivetrain/Pose2d", () -> {
             Pose2d pose = getPose();
             return new Double[]{
                 pose.getX(),
                 pose.getY(),
-                pose.getRotation().getRadians()};
-        });
+                pose.getRotation().getRadians()
+            };
+        }, 15, LogLevel.COMP);
     }
 
     public void close() {
@@ -368,6 +370,7 @@ public class Drivetrain extends SubsystemBase {
      * @param isOpenLoop    if open loop control should be used for the drive velocity
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds, boolean isOpenLoop) {
+
         if(DriveConstants.USE_ACTUAL_SPEED){
             SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
             currentSetpoint = setpointGenerator.generateSetpoint(
