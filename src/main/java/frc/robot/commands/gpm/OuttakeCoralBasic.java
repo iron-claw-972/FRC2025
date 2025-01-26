@@ -1,7 +1,7 @@
 package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.gpm.Outtake;
+import frc.robot.subsystems.Outtake;
 
 /**
  * Command to eject coral.
