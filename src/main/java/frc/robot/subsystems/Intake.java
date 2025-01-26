@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
+
 
 
 
@@ -98,8 +102,11 @@ public class Intake extends SubsystemBase {
         botMotor.set(-mode.power);
 
         if (mode == Mode.INTAKE_UP){
-            stowPID.setSetpoint(90);
             stowPID.reset();
+            stowPID.setSetpoint(90);
+        }else{
+            stowPID.reset();
+            stowPID.setSetpoint(0);
         }
 
         waitTimer.reset();
@@ -158,7 +165,7 @@ public class Intake extends SubsystemBase {
             
             case INTAKE_UP:
                 {
-
+                    intakeStower.set(stowPID.calculate(getStowPosition()));
                 }
                 break;
 
@@ -167,6 +174,9 @@ public class Intake extends SubsystemBase {
         }
     }
 
+    public double getStowPosition(){
+        return Units.rotationsToDegrees(intakeStower.getPosition().getValueAsDouble());
+    }
 
     public boolean intakeInactive() {
         return (mode == Mode.DISABLED || mode == Mode.INTAKE_UP);
