@@ -5,7 +5,9 @@ import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
@@ -14,10 +16,11 @@ import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.GroundIntakePrototype;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.util.DetectedObject;
+import frc.robot.util.PathGroupLoader;
 import frc.robot.util.Vision;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 
@@ -35,7 +38,6 @@ public class RobotContainer {
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
-  private GroundIntakePrototype groundIntakePrototype = new GroundIntakePrototype();
   private Intake intake = null;
   private Indexer indexer = null;
   private Outtake outtake = null;
@@ -57,8 +59,7 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
-        operator = new Operator(drive, groundIntakePrototype);
-      break;
+        break;
 
       case TestBed2:
         break;
