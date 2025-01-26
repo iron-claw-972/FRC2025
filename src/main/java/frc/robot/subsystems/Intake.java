@@ -59,6 +59,7 @@ public class Intake extends SubsystemBase {
 
         // set the mode to Idle; this will turn off the motors
         setMode(Mode.DISABLED);
+        stowPID.setTolerance(.5);
 
 
         // Simulation objects
@@ -149,7 +150,10 @@ public class Intake extends SubsystemBase {
                     setMode(Mode.DISABLED);
                 }
                 break;
-
+            
+            case INTAKE_UP:
+                stowPID.setSetpoint(90);
+                stowPID.reset();
 
             default:
                 break;
