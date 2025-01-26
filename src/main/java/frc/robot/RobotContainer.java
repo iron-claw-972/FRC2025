@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -73,6 +74,7 @@ public class RobotContainer {
         
       case Phil:
         outtake = new Outtake();
+        SmartDashboard.putData(new OuttakeCoralBasic(outtake));
         elevator = new Elevator();
         SmartDashboard.putNumber("wheel speed", 0.2);
       case Vivace:
