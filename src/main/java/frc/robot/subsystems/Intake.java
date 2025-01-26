@@ -22,6 +22,7 @@ public class Intake extends SubsystemBase {
     public enum Mode {
         DISABLED(0),
         INTAKE(.8),
+        INTAKE_UP(0),
         PickedUpCoral(.8),
         Wait(.8),
         Pause (0),
@@ -47,6 +48,7 @@ public class Intake extends SubsystemBase {
     // TODO put in proper id
     private final TalonFX topMotor = new TalonFX(70);
     private final TalonFX botMotor = new TalonFX(71);
+    private final TalonFX intakeRotator = new TalonFX(68);
 
 
     private final double motorVoltage = 12.0;
@@ -83,11 +85,7 @@ public class Intake extends SubsystemBase {
 
         // set the motor powers to be the value appropriate for this mode
         topMotor.set(mode.power);
-    }
-
-
-    public boolean hasNote() {
-        return !sensor.get();
+        botMotor.set(-mode.power);
     }
 
 
@@ -105,14 +103,14 @@ public class Intake extends SubsystemBase {
 
             case INTAKE:
                 // motors are spinning and we are waiting to pick up a note
-                if (hasNote()){
-                    setMode(Mode.PickedUpNote);
+                if (hasCoral()){
+                    setMode(Mode.PickedUpCoral);
                 }
                 break;
 
 
-            case PickedUpNote:
-                if (!hasNote()) {
+            case PickedUpCoral:
+                if (!hasCoral()) {
                     setMode(Mode.Wait);
                 } else if (waitTimer.hasElapsed(2)) {
                     setMode(Mode.Pause);
@@ -127,7 +125,7 @@ public class Intake extends SubsystemBase {
 
 
             case ReverseMotors:
-                if (!hasNote()){
+                if (!hasCoral()){
                     setMode(Mode.Wait);
                 } else if (waitTimer.hasElapsed(5)) {
                     setMode(Mode.Wait);
@@ -148,67 +146,20 @@ public class Intake extends SubsystemBase {
     }
 
 
-    /**
-     * Get the intake motor current
-     * @return motor current
-     * @Deprecated This method is not used, and the simulation value is wrong
-     */
-    // @Deprecated
-    // public double getCurrent() {
-    //     if (RobotBase.isReal()) {
-    //         return Math.abs(motor.getOutputCurrent());
-    //     } else {
-    //         return mode.power / motorVoltage;
-    //     }
-    // }***
-
-
-    /**
-     * Get the centering motor current
-     * @return motor current
-     * @Deprecated This method is not used, and the simulatin value is wrong.
-     */
-    public double getCenteringCurrent() {
-        if (RobotBase.isReal()) {
-            return Math.abs(centeringMotor.getOutputCurrent());
-        } else {
-            return mode.centeringPower / motorVoltage;
-        }
+    public boolean intakeInactive() {
+        return (mode == Mode.DISABLED || mode == Mode.INTAKE_UP);
     }
 
-
-    public boolean intakeInactive() {
-        return mode == Mode.DISABLED;
+    public boolean hasCoral() {
+        //TODO check if intake has a coral
+        return false;
     }
 
 
     @Override
     public void simulationPeriodic() {
-        flywheelSim.setInputVoltage(mode.power * motorVoltage);
-        centeringFlywheelSim.setInputVoltage(mode.centeringPower * motorVoltage);
-
-
-        flywheelSim.update(0.020);
-        centeringFlywheelSim.update(0.020);
-
-
-        motorRPMSim = flywheelSim.getAngularVelocityRPM();
-        centeringMotorRPMSim = centeringFlywheelSim.getAngularVelocityRPM();
-
-
-        if (mode == Mode.INTAKE) {
-            if (point2Timer.hasElapsed(.2)) {
-                intakeSensorDioSim.setValue(false);
-                point2Timer.reset();
-            }
-        }
-        else if (mode==Mode.DISABLED) {
-            intakeSensorDioSim.setValue(true);
-        }
+        //TODO add sim stuff
     }
 
 
-    public void close() {
-        sensor.close();
-    }
 }
