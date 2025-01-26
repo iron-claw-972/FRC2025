@@ -39,16 +39,16 @@ import frc.robot.constants.swerve.DriveConstants;
 public class Vision {
   private NetworkTable m_objectDetectionTable;
 
-  private NetworkTableEntry m_xOffset;
-  private NetworkTableEntry m_yOffset;
-  private NetworkTableEntry m_objectDistance;
-  private NetworkTableEntry m_objectClass;
-  private NetworkTableEntry m_cameraIndex;
+  private NetworkTableEntry xOffset;
+  private NetworkTableEntry yOffset;
+  private NetworkTableEntry objectDistance;
+  private NetworkTableEntry objectClass;
+  private NetworkTableEntry cameraIndex;
   
   // The field layout. Instance variable
-  private AprilTagFieldLayout m_aprilTagFieldLayout;
+  private AprilTagFieldLayout aprilTagFieldLayout;
   // A list of the cameras on the robot.
-  private ArrayList<VisionCamera> m_cameras = new ArrayList<>();
+  private ArrayList<VisionCamera> cameras = new ArrayList<>();
 
   private VisionSystemSim visionSim;
 
@@ -65,31 +65,31 @@ public class Vision {
     m_objectDetectionTable = NetworkTableInstance.getDefault().getTable("object_detection");
 
     // From the object detection NetworkTable, get the entries
-    m_objectDistance = m_objectDetectionTable.getEntry("distance");
-    m_xOffset = m_objectDetectionTable.getEntry("x_offset");
-    m_yOffset = m_objectDetectionTable.getEntry("y_offset");
-    m_objectClass = m_objectDetectionTable.getEntry("class");
-    m_cameraIndex = m_objectDetectionTable.getEntry("index");
+    objectDistance = m_objectDetectionTable.getEntry("distance");
+    xOffset = m_objectDetectionTable.getEntry("x_offset");
+    yOffset = m_objectDetectionTable.getEntry("y_offset");
+    objectClass = m_objectDetectionTable.getEntry("class");
+    cameraIndex = m_objectDetectionTable.getEntry("index");
 
     // Start NetworkTables server
     NetworkTableInstance.getDefault().startServer();
 
     // Load field layout
-    m_aprilTagFieldLayout = new AprilTagFieldLayout(FieldConstants.APRIL_TAGS, FieldConstants.FIELD_LENGTH, FieldConstants.FIELD_WIDTH);
+    aprilTagFieldLayout = new AprilTagFieldLayout(FieldConstants.APRIL_TAGS, FieldConstants.FIELD_LENGTH, FieldConstants.FIELD_WIDTH);
 
     // Sets the origin to the right side of the blue alliance wall
-    m_aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
+    aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
 
     if(VisionConstants.ENABLED){
       // Puts the cameras in an array list
       for (int i = 0; i < camList.size(); i++) {
-        m_cameras.add(new VisionCamera(camList.get(i).getFirst(), camList.get(i).getSecond()));
+        cameras.add(new VisionCamera(camList.get(i).getFirst(), camList.get(i).getSecond()));
       }
 
       if(RobotBase.isSimulation()){
         visionSim = new VisionSystemSim("Vision");
-        visionSim.addAprilTags(m_aprilTagFieldLayout);
-        for(VisionCamera c : m_cameras){
+        visionSim.addAprilTags(aprilTagFieldLayout);
+        for(VisionCamera c : cameras){
           PhotonCameraSim cameraSim = new PhotonCameraSim(c.camera);
           cameraSim.enableDrawWireframe(true);
           cameraSim.prop.setAvgLatencyMs(30);
@@ -109,7 +109,7 @@ public class Vision {
     if(!VisionConstants.OBJECT_DETECTION_ENABLED){
       return new double[0];
     }
-    return m_xOffset.getDoubleArray(new double[0]);
+    return xOffset.getDoubleArray(new double[0]);
   }
 
   /**
@@ -120,7 +120,7 @@ public class Vision {
     if(!VisionConstants.OBJECT_DETECTION_ENABLED){
       return new double[0];
     }
-    return m_yOffset.getDoubleArray(new double[0]);
+    return yOffset.getDoubleArray(new double[0]);
   }
 
   /**
@@ -132,7 +132,7 @@ public class Vision {
     if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
       return new double[0];
     }
-    return m_objectDistance.getDoubleArray(new double[0]);
+    return objectDistance.getDoubleArray(new double[0]);
   }
 
   /**
@@ -151,10 +151,8 @@ public class Vision {
   public String[] getDetectedObjectClass(){
     if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
       return new String[0];
-      // return new long[0];
     }
-    return m_objectClass.getStringArray(new String[0]);
-    // return m_objectClass.getIntegerArray(new long[0]);
+    return objectClass.getStringArray(new String[0]);
   }
 
   /**
@@ -166,7 +164,7 @@ public class Vision {
     if(!VisionConstants.OBJECT_DETECTION_ENABLED || true){
       return new long[0];
     }
-    return m_cameraIndex.getIntegerArray(new long[0]);
+    return cameraIndex.getIntegerArray(new long[0]);
   }
 
   /**
@@ -180,7 +178,7 @@ public class Vision {
     double[] xOffset = getHorizontalOffset();
     double[] yOffset = getVerticalOffset();
     // double[] distance = getDistance();
-    // String[] objectClass = getDetectedObjectClass();
+    String[] objectClass = getDetectedObjectClass();
     // long[] cameraIndex = getCameraIndex();
     DetectedObject[] objects = new DetectedObject[Math.min(xOffset.length, yOffset.length)];
     for(int i = 0; i < objects.length; i++){
@@ -188,9 +186,7 @@ public class Vision {
         Units.degreesToRadians(xOffset[i]),
         -Units.degreesToRadians(yOffset[i]),
         // distance[i],
-        // TODO: Fix
-        // objectClass[i],
-        "cone",
+        objectClass[i],
         // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
         VisionConstants.OBJECT_DETECTION_CAMERAS.get(0)
       );
@@ -265,7 +261,7 @@ public class Vision {
   }
 
   public AprilTagFieldLayout getAprilTagFieldLayout(){
-    return m_aprilTagFieldLayout;
+    return aprilTagFieldLayout;
   }
 
   /**
@@ -299,30 +295,32 @@ public class Vision {
    */
   public ArrayList<EstimatedRobotPose> getEstimatedPoses(Pose2d referencePose, DoubleUnaryOperator yawFunction) {
     ArrayList<EstimatedRobotPose> estimatedPoses = new ArrayList<>();
-    for (int i = 0; i < m_cameras.size(); i++) {
+    for (int i = 0; i < cameras.size(); i++) {
       if(VisionConstants.USE_MANUAL_CALCULATIONS){
-        EstimatedRobotPose pose = m_cameras.get(i).getEstimatedPose(yawFunction);
-        if(pose != null){
-          estimatedPoses.add(pose);
+        for(EstimatedRobotPose pose : cameras.get(i).getEstimatedPose(yawFunction)){
+          if(pose != null){
+            estimatedPoses.add(pose);
 
-          LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-            pose.estimatedPose.getX(),
-            pose.estimatedPose.getY(),
-            pose.estimatedPose.toPose2d().getRotation().getRadians()
-          });
+            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+              pose.estimatedPose.getX(),
+              pose.estimatedPose.getY(),
+              pose.estimatedPose.toPose2d().getRotation().getRadians()
+            });
+          }
         }
       }else{
-        Optional<EstimatedRobotPose> estimatedPose = m_cameras.get(i).getEstimatedPose(referencePose);
-        // If the camera can see an april tag that exists, add it to the array list
-        // April tags that don't exist might return a result that is present but doesn't have a pose
-        if (estimatedPose.isPresent() && estimatedPose.get().estimatedPose != null) {
-          estimatedPoses.add(estimatedPose.get());
+        for(EstimatedRobotPose pose : cameras.get(i).getEstimatedPose(referencePose)){
+          // If the camera can see an april tag that exists, add it to the array list
+          // April tags that don't exist might return a result that is present but doesn't have a pose
+          if (pose.estimatedPose != null) {
+            estimatedPoses.add(pose);
 
-          LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-            estimatedPose.get().estimatedPose.getX(),
-            estimatedPose.get().estimatedPose.getY(),
-            estimatedPose.get().estimatedPose.getRotation().getZ()
-          });
+            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+              pose.estimatedPose.getX(),
+              pose.estimatedPose.getY(),
+              pose.estimatedPose.getRotation().getZ()
+            });
+          }
         }
       }
     }
@@ -387,7 +385,7 @@ public class Vision {
    */
   public void enableCamera(int index, boolean enabled){
     try{
-      m_cameras.get(index).enable(enabled);
+      cameras.get(index).enable(enabled);
     }catch(IndexOutOfBoundsException e){
       DriverStation.reportWarning("Camera index "+index+" is out of bounds", false);
     }
@@ -424,7 +422,7 @@ public class Vision {
     public VisionCamera(String cameraName, Transform3d robotToCam) {
       camera = new PhotonCamera(cameraName);
       photonPoseEstimator = new PhotonPoseEstimator(
-        m_aprilTagFieldLayout, 
+        aprilTagFieldLayout, 
         VisionConstants.POSE_STRATEGY, 
         robotToCam
       );
@@ -434,112 +432,120 @@ public class Vision {
     }
   
     /**
-     * Gets the estimated pose from the camera
+     * Gets the estimated poses from the camera
      * @param referencePose Pose to use for reference, usually the previous estimated robot pose
-     * @return estimated robot pose
+     * @return estimated robot poses
      */
-    public Optional<EstimatedRobotPose> getEstimatedPose(Pose2d referencePose) {
+    public ArrayList<EstimatedRobotPose> getEstimatedPose(Pose2d referencePose) {
       photonPoseEstimator.setReferencePose(referencePose);
 
+      ArrayList<EstimatedRobotPose> list = new ArrayList<>();
+
       if(!enabled){
-        return Optional.empty();
+        return list;
       }
 
-      PhotonPipelineResult cameraResult = camera.getLatestResult();
-
-      if(!cameraResult.hasTargets() || cameraResult.getTimestampSeconds()<0){
-          return Optional.empty();
-      }
-      
-      // if there is a target detected and the timestamp exists, 
-      // check the ambiguity isn't too high
-      List<PhotonTrackedTarget> targetsUsed = cameraResult.targets;
-      for (int i = targetsUsed.size()-1; i >= 0; i--) {
-        // Remove it from the list if it should not be used or if it has too high of an ambiguity
-        if(!useTag(targetsUsed.get(i).getFiducialId()) || targetsUsed.get(i).getPoseAmbiguity() > VisionConstants.HIGHEST_AMBIGUITY){
-          targetsUsed.remove(i);
+      for(PhotonPipelineResult cameraResult : camera.getAllUnreadResults()){
+        if(!cameraResult.hasTargets() || cameraResult.getTimestampSeconds()<0){
+            continue;
         }
-      }
+        
+        // if there is a target detected and the timestamp exists, 
+        // check the ambiguity isn't too high
+        List<PhotonTrackedTarget> targetsUsed = cameraResult.targets;
+        for (int i = targetsUsed.size()-1; i >= 0; i--) {
+          // Remove it from the list if it should not be used or if it has too high of an ambiguity
+          if(!useTag(targetsUsed.get(i).getFiducialId()) || targetsUsed.get(i).getPoseAmbiguity() > VisionConstants.HIGHEST_AMBIGUITY){
+            targetsUsed.remove(i);
+          }
+        }
 
-      // If there are no targets, the timestamp doesn't exist, or there there is only 1 tag and the constant is set to only use 2 tags, return nothing
-      if(targetsUsed.size() == 0 || cameraResult.getTimestampSeconds()<0 || targetsUsed.size()==1 && VisionConstants.ONLY_USE_2_TAGS){
-        return Optional.empty();
-      }
+        // If there are no targets, the timestamp doesn't exist, or there there is only 1 tag and the constant is set to only use 2 tags, continue
+        if(targetsUsed.size() == 0 || cameraResult.getTimestampSeconds()<0 || targetsUsed.size()==1 && VisionConstants.ONLY_USE_2_TAGS){
+          continue;
+        }
 
-      // Set strategy to single tag if there is only 1 good tag and update
-      photonPoseEstimator.setPrimaryStrategy(targetsUsed.size() > 1  ? VisionConstants.POSE_STRATEGY : VisionConstants.MULTITAG_FALLBACK_STRATEGY);
-      Optional<EstimatedRobotPose> pose = photonPoseEstimator.update(cameraResult);
-      
-      if(pose.isPresent() && pose.get()!=null && onField(pose.get().estimatedPose.toPose2d())){
-        double timestamp = getTimeStamp();
+        // Set strategy to single tag if there is only 1 good tag and update
+        photonPoseEstimator.setPrimaryStrategy(targetsUsed.size() > 1  ? VisionConstants.POSE_STRATEGY : VisionConstants.MULTITAG_FALLBACK_STRATEGY);
+        Optional<EstimatedRobotPose> pose = photonPoseEstimator.update(cameraResult);
+        
+        if(pose.isPresent() && pose.get()!=null && onField(pose.get().estimatedPose.toPose2d())){
+          double timestamp = cameraResult.getTimestampSeconds();
 
-        // If the pose moved too much, don't use it
-        if(lastPose==null || lastPose.getTranslation().getDistance(pose.get().estimatedPose.toPose2d().getTranslation()) > DriveConstants.MAX_SPEED*1.25*(timestamp-lastTimestamp) || timestamp < lastTimestamp){
+          // If the pose moved too much, don't use it
+          if(lastPose==null || lastPose.getTranslation().getDistance(pose.get().estimatedPose.toPose2d().getTranslation()) > DriveConstants.MAX_SPEED*1.25*(timestamp-lastTimestamp) || timestamp < lastTimestamp){
+            lastPose = pose.get().estimatedPose.toPose2d();
+            lastTimestamp = timestamp;
+            continue;
+          }
+
+          // Otherwise, add the pose to the list
           lastPose = pose.get().estimatedPose.toPose2d();
           lastTimestamp = timestamp;
-          return Optional.empty();
+          list.add(pose.get());
         }
-
-        // Otherwise, retrun the pose
-        lastPose = pose.get().estimatedPose.toPose2d();
-        lastTimestamp = timestamp;
-        return pose;
       }
-
-      // Return nothing if it gets tot his point and doesn't return anything
-      return Optional.empty();
+      return list;
     }
     
     /**
      * Gets the pose using manual calculations
      * @param yawFunction A unary operator that takes a timestamp and returns the yaw at that time
-     * @return estimated pose as a EstimatedRobotPose
+     * @return A list of estimated poses as EstimatedRobotPoses
      */
-    public EstimatedRobotPose getEstimatedPose(DoubleUnaryOperator yawFunction){
-      // The latest camera result
-      PhotonPipelineResult result = camera.getLatestResult();
-      // Gets the best target to use for the calculations
-      PhotonTrackedTarget target = result.getBestTarget();
-      // Return null if the target doesn't exist or it should be ignored
-      if(target==null){
-        return null;
+    public ArrayList<EstimatedRobotPose> getEstimatedPose(DoubleUnaryOperator yawFunction){
+      ArrayList<EstimatedRobotPose> list = new ArrayList<>();
+
+      // Do nothing if this camera is disabled
+      if(!enabled){
+        return list;
       }
-      // Return null if the id is too high or too low
-      int id = target.getFiducialId();
-      if(!useTag(id)){
-        return null;
-      }
-      // Stores target pose and robot to camera transformation for easy access later
-      Pose3d targetPose = FieldConstants.APRIL_TAGS.get(id-1).pose;
-      Transform3d robotToCamera = photonPoseEstimator.getRobotToCameraTransform();
 
-      double timestamp = result.getTimestampSeconds();
-      double yaw = yawFunction.applyAsDouble(timestamp);
+      // The latest camera results
+      for(PhotonPipelineResult result : camera.getAllUnreadResults()){
+        // Gets the best target to use for the calculations
+        PhotonTrackedTarget target = result.getBestTarget();
+        // Continue if the target doesn't exist or it should be ignored
+        if(target==null){
+          continue;
+        }
+        // Continue if the id is too high or too low
+        int id = target.getFiducialId();
+        if(!useTag(id)){
+          continue;
+        }
+        // Stores target pose and robot to camera transformation for easy access later
+        Pose3d targetPose = FieldConstants.APRIL_TAGS.get(id-1).pose;
+        Transform3d robotToCamera = photonPoseEstimator.getRobotToCameraTransform();
 
-      // Get the tag position relative to the robot, assuming the robot is on the ground
-      Translation3d translation = target.getBestCameraToTarget().getTranslation()
-        .rotateBy(robotToCamera.getRotation());
-      translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ())
-        .plus(robotToCamera.getTranslation())
-        .rotateBy(new Rotation3d(0, 0, yaw))
+        double timestamp = result.getTimestampSeconds();
+        double yaw = yawFunction.applyAsDouble(timestamp);
 
-      // Invert it to get the robot position relative to the April tag
-      // Multiply by a constant. I don't know why this works, but it was consistently 10% off in 2023 Fall Semester
-        .times(-VisionConstants.DISTANCE_SCALE)
-      // Get the field relative robot pose
-        .plus(targetPose.getTranslation());
+        // Get the tag position relative to the robot, assuming the robot is on the ground
+        Translation3d translation = target.getBestCameraToTarget().getTranslation()
+          .rotateBy(robotToCamera.getRotation());
+        translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ())
+          .plus(robotToCamera.getTranslation())
+          .rotateBy(new Rotation3d(0, 0, yaw))
+
+        // Invert it to get the robot position relative to the April tag
+        // Multiply by a constant. I don't know why this works, but it was consistently 10% off in 2023 Fall Semester
+          .times(-VisionConstants.DISTANCE_SCALE)
+        // Get the field relative robot pose
+          .plus(targetPose.getTranslation());
         try{
-        // Return as an EstimatedRobotPose
-        return new EstimatedRobotPose(
-          new Pose3d(translation.getX(), translation.getY(), 0, new Rotation3d(0, 0, yaw)), 
-          timestamp, 
-          List.of(target),
-          VisionConstants.POSE_STRATEGY
-        );
-      }catch(Exception e){
-        DriverStation.reportError("Error creating EstimatedRobotPose", true);
+          // Adds an EstimatedRobotPose
+          list.add(new EstimatedRobotPose(
+            new Pose3d(translation.getX(), translation.getY(), 0, new Rotation3d(0, 0, yaw)), 
+            timestamp, 
+            List.of(target),
+            VisionConstants.POSE_STRATEGY
+          ));
+        }catch(Exception e){
+          DriverStation.reportError("Error creating EstimatedRobotPose", true);
+        }
       }
-      return null;
+      return list;
     }
 
     public boolean useTag(int id){
@@ -563,14 +569,6 @@ public class Vision {
       return onlyUse == null || onlyUse.length == 0;
     }
 
-    /**
-     * Gets the last timestamp in seconds
-     * @return The timestamp in seconds
-     */
-    public double getTimeStamp(){
-      return camera.getLatestResult().getTimestampSeconds();
-    }
-    
     /**
      * Enables or disables this camera
      * @param enable If it should be enabled or disabled

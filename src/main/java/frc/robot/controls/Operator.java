@@ -6,23 +6,27 @@ package frc.robot.controls;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
+import frc.robot.commands.gpm.FinishStationIntake;
 import frc.robot.commands.gpm.IntakeAlgae;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ReverseMotors;
+import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.constants.VisionConstants.REEF;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import lib.controllers.GameController;
@@ -39,14 +43,16 @@ public class Operator {
     private final Drivetrain drive;
     private final Elevator elevator;
     private final Intake intake;
+    private final Indexer indexer;
     private final Outtake outtake;
     private final Climb climb;
     private int alignmentDirection = -1;
     
-    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Outtake outtake, Climb climb) {
+    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
         this.drive = drive;
         this.elevator = elevator;
         this.intake = intake;
+        this.indexer = indexer;
         this.outtake = outtake;
         this.climb = climb;
     }
@@ -74,8 +80,18 @@ public class Operator {
         }
 
         // Intake/outtake
-        if(intake != null && elevator != null){
-            driver.get(Button.A).and(menu.negate()).whileTrue(new IntakeCoral(intake, elevator));
+        if(intake != null && indexer != null && elevator != null){
+            driver.get(Button.A).and(menu.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
+            // TODO: temporary button
+            // On true, run the command to start intaking
+            // On false, run the command to finish intaking if it has a coral
+            Command startIntake = new StartStationIntake(intake);
+            driver.get(Button.RIGHT_JOY).onTrue(startIntake)
+                .onFalse(new ConditionalCommand(
+                    new InstantCommand(()->startIntake.cancel()),
+                    new FinishStationIntake(intake, indexer, elevator),
+                    startIntake::isScheduled
+                ));
         }
         if(outtake != null && elevator != null){
             driver.get(Button.RIGHT_JOY).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
@@ -115,12 +131,6 @@ public class Operator {
             : (8-alignmentDirection) % 6 + 6,
         isLeft).pose;
         drive.setDesiredPose(pose);
-    }
-
-    public Pose2d getBranch(int direction, boolean isLeft){
-        int redId = (direction+3)%6+6;
-        int id = Robot.getAlliance() == Alliance.Blue ? redId + 11: redId;
-        return REEF.fromAprilTagIdAndPose(id, isLeft).pose;
     }
 
     public Trigger getRightTrigger(){

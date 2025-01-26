@@ -9,6 +9,7 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.DriverAssist;
 import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 
 /**
  * Default drive command. Drives robot using driver controls.
@@ -22,15 +23,15 @@ public class DefaultDriveCommand extends Command {
             BaseDriverConfig driver) {
         this.swerve = swerve;
         this.driver = driver;
+        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation(), 500, LogLevel.DEBUG);
+        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation(), 500, LogLevel.DEBUG);
+        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation(), 500, LogLevel.DEBUG);
         addRequirements(swerve);
     }
 
     @Override
     public void initialize() {
         swerve.setStateDeadband(true);
-        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation());
-        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation());
-        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation());
     }
 
     @Override
@@ -50,7 +51,7 @@ public class DefaultDriveCommand extends Command {
         sideTranslation *= allianceReversal;
 
         ChassisSpeeds driverInput = new ChassisSpeeds(forwardTranslation, sideTranslation, rotation);
-        ChassisSpeeds corrected = DriverAssist.calculate(swerve, driverInput, swerve.getDesiredPose());
+        ChassisSpeeds corrected = DriverAssist.calculate(swerve, driverInput, swerve.getDesiredPose(), true);
 
         // If the driver is pressing the align button or a command set the drivetrain to
         // align, then align to speaker

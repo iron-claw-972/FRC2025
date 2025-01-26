@@ -29,12 +29,13 @@ public class ShuffleBoardManager {
 
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake){
         
-         swerveTab = new SwerveTab(drive);
-        autoTab = new AutoTab(drive, elevator, outtake);
-        //visionTab = new VisionTab(drive, vision);
+        swerveTab = new SwerveTab(drive);
+        autoTab = new AutoTab(drive, elevator, ouake);
+        visionTab = new VisionTab(drive, vision);
         elevatorTab = new ElevatorTab(elevator);
+        tabs.add(swerveTab);
         tabs.add(autoTab);
-        //tabs.add(visionTab);
+        tabs.add(visionTab);
         tabs.add(elevatorTab);
 
         for (ShuffleBoardTabs tab : tabs){
