@@ -5,22 +5,27 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.drive_comm.SetFormationX;
+import frc.robot.commands.gpm.FinishStationIntake;
 import frc.robot.commands.gpm.IntakeAlgae;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ReverseMotors;
+import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.util.MathUtils;
@@ -37,15 +42,17 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final PS5Controller driver = new PS5Controller(Constants.DRIVER_JOY);
     private final Elevator elevator;
     private final Intake intake;
+    private final Indexer indexer;
     private final Outtake outtake;
     private final Climb climb;
     private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_TRIGGER);
     private int alignmentDirection = -1;
 
-    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Outtake outtake, Climb climb) {
+    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
         super(drive);
         this.elevator = elevator;
         this.intake = intake;
+        this.indexer = indexer;
         this.outtake = outtake;
         this.climb = climb;
     }
@@ -63,8 +70,18 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }
 
         // Intake/outtake
-        if(intake != null && elevator != null){
-            driver.get(PS5Button.CROSS).and(menu.negate()).whileTrue(new IntakeCoral(intake, elevator));
+        if(intake != null && indexer != null && elevator != null){
+            driver.get(PS5Button.CROSS).and(menu.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
+            // TODO: temporary button
+            // On true, run the command to start intaking
+            // On false, run the command to finish intaking if it has a coral
+            Command startIntake = new StartStationIntake(intake);
+            driver.get(PS5Button.RIGHT_JOY).onTrue(startIntake)
+                .onFalse(new ConditionalCommand(
+                    new InstantCommand(()->startIntake.cancel()),
+                    new FinishStationIntake(intake, indexer, elevator),
+                    startIntake::isScheduled
+                ));
         }
         if(outtake != null && elevator != null){
             driver.get(PS5Button.PS).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
