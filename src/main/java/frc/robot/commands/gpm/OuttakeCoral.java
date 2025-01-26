@@ -15,10 +15,8 @@ public class OuttakeCoral extends SequentialCommandGroup {
     public OuttakeCoral(Outtake outtake, Elevator elevator){
         
         addCommands(
-            // start the coral moving
-            new InstantCommand(()->outtake.outtake(), outtake),
-            new WaitCommand(0.5),
-            new InstantCommand(()->outtake.stop(), outtake),
+            // Outtake the coral
+            new OuttakeCoralBasic(outtake),
             new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT), elevator)
         );
     }

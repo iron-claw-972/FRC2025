@@ -20,6 +20,7 @@ public class OuttakeCoralBasic extends Command {
 
     public OuttakeCoralBasic(Outtake outtake){
         this.outtake = outtake;
+        addRequirements(outtake);
     }
 
     @Override
