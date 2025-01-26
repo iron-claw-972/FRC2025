@@ -228,7 +228,7 @@ public class DriveConstants {
             STEER_ENCODER_CAN = Constants.RIO_CAN;
             PIGEON_CAN = Constants.RIO_CAN;
 
-            ROBOT_WHEIGHT = 30;
+            ROBOT_WHEIGHT = 20;
             WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
 
             TRACK_WIDTH = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
