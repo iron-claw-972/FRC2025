@@ -1,11 +1,8 @@
-package frc.robot.subsystems.gpm;
+package frc.robot.subsystems;
 
 
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkLowLevel;
-import com.revrobotics.CANSparkMax;
 
-
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -14,7 +11,6 @@ import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.IntakeConstants;
 import edu.wpi.first.wpilibj.Timer;
 
 
@@ -24,21 +20,19 @@ public class Intake extends SubsystemBase {
 
 
     public enum Mode {
-        DISABLED(0,0),
-        INTAKE(.8,.3),
-        PickedUpNote(.8,.3),
-        Wait(.8,.3),
-        Pause (0,0),
-        ReverseMotors(-.8,-.3);
+        DISABLED(0),
+        INTAKE(.8),
+        PickedUpCoral(.8),
+        Wait(.8),
+        Pause (0),
+        ReverseMotors(-.8);
 
 
         private double power;
-        private double centeringPower;
 
 
-        Mode(double power, double centeringPower) {
+        Mode(double power) {
             this.power = power;
-            this.centeringPower = centeringPower;
         }
 
 
@@ -46,91 +40,31 @@ public class Intake extends SubsystemBase {
             return power;
         }
 
-
-        public double getCenteringPower() {
-            return centeringPower;
-        }
     }
 
 
-    /** Intake motor is a Vortex*/
-    private final CANSparkFlex motor = new CANSparkFlex(IntakeConstants.MOTOR_ID, CANSparkLowLevel.MotorType.kBrushless);
 
-
-    // change the motor from neo550 to whatever it actually is
-    private static final DCMotor dcMotor = DCMotor.getNeoVortex(1);
-
-
-    /** Centering motor is a NEO */
-    private final CANSparkMax centeringMotor = new CANSparkMax(IntakeConstants.CENTERING_MOTOR_ID, CANSparkLowLevel.MotorType.kBrushless);
-    private static final DCMotor dcMotorCentering = DCMotor.getNEO(1);
-   
-    /** beam break sensor detects whether a note is present */
-    private final DigitalInput sensor  = new DigitalInput(IntakeConstants.SENSOR_ID);
-
-
-    private final double MASS_SHAFT = 0.4; // in kilograms
-    private final double LENGTH_SHAFT = Units.inchesToMeters(25.5);
-    private final double MOI_SHAFT = (1.0 / 12.0) * MASS_SHAFT * LENGTH_SHAFT * LENGTH_SHAFT;
-    private final double MOI_TOTAL = MOI_SHAFT * 4;
-
-
-    private final double MASS_CENTERING_WHEELS = 0.1; // in kilograms
-    private final double RADIUS_CENTERING_WHEELS = Units.inchesToMeters(2);
-    private final double MOI_CENTERING_WHEEL = 0.5 * MASS_CENTERING_WHEELS * RADIUS_CENTERING_WHEELS
-            * RADIUS_CENTERING_WHEELS;
-    private final double MOI_CENTERING_TOTAL = MOI_CENTERING_WHEEL * 4;
+    // TODO put in proper id
+    private final TalonFX topMotor = new TalonFX(70);
+    private final TalonFX botMotor = new TalonFX(71);
 
 
     private final double motorVoltage = 12.0;
 
-
-    private double motorRPMSim;
-    private double centeringMotorRPMSim;
-
-
-    private DIOSim intakeSensorDioSim;
-    private FlywheelSim flywheelSim;
-    private FlywheelSim centeringFlywheelSim;
-
-
     private Mode mode;
 
 
-    private Timer waitTimer = new Timer();
-    private Timer point2Timer = new Timer();
-
-
     public Intake() {
-        // set the motor parameters
-        // motor.setIdleMode(IntakeConstants.idleMode);***
-        centeringMotor.setIdleMode(IntakeConstants.idleMode);
-
 
         // set the mode to Idle; this will turn off the motors
         setMode(Mode.DISABLED);
 
 
-        // digital inputs
-        // addChild("Intake motor", motor);
-        // addchild("Centering motor", centeringMotor);
-        addChild("Intake sensor", sensor);
-
-
         // Simulation objects
         if (RobotBase.isSimulation()) {
-            intakeSensorDioSim = new DIOSim(sensor);
-            intakeSensorDioSim.setValue(true);
-
-
-            // assuming gearing is 1:1 for both
-            flywheelSim = new FlywheelSim(dcMotor, 1.0, MOI_TOTAL);
-            centeringFlywheelSim = new FlywheelSim(dcMotorCentering ,  1.0, MOI_CENTERING_TOTAL);
+            //TODO add sim stuff
         }
 
-
-        waitTimer.start();
-        point2Timer.start();
 
 
         publish();
@@ -139,11 +73,7 @@ public class Intake extends SubsystemBase {
 
     // publish sensor to Smart Dashboard
     private void publish() {
-        SmartDashboard.putBoolean("Intake Sensor", sensor.get());
-        if (RobotBase.isSimulation()) {
-            SmartDashboard.putNumber("Intake motor RPM", motorRPMSim);
-            SmartDashboard.putNumber("Intake centering motor RPM", centeringMotorRPMSim);
-        }
+        //TODO publish stuff
     }
 
 
@@ -152,12 +82,7 @@ public class Intake extends SubsystemBase {
 
 
         // set the motor powers to be the value appropriate for this mode
-        motor.set(mode.power);
-        centeringMotor.set(mode.centeringPower);
-
-
-        // restart the timer
-        waitTimer.reset();
+        topMotor.set(mode.power);
     }
 
 
