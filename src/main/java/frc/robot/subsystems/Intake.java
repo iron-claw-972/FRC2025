@@ -1,39 +1,22 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix6.hardware.TalonFX;
-<<<<<<< Updated upstream
-import com.ctre.phoenix6.sim.TalonFXSSimState;
-
-import edu.wpi.first.wpilibj.Encoder;
-=======
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
->>>>>>> Stashed changes
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
 
 public class Intake extends SubsystemBase {
 
     // TODO put in proper id
     private final TalonFX rollMotor = new TalonFX(70);
     private final TalonFX stowMotor = new TalonFX(68);
-<<<<<<< Updated upstream
-    private TalonFXSSimState encoderSim;
-=======
     private TalonFXSimState encoderSim;
->>>>>>> Stashed changes
 
     private final PIDController stowPID = new PIDController(0, 0, 0);
     private final double motorVoltage = 12.0;
-
-    Encoder encoder = new Encoder();
-    EncoderSim simEncoder = new EncoderSim(encoder);
 
     public Intake() {
 
