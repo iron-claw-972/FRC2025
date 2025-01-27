@@ -15,8 +15,7 @@ import edu.wpi.first.math.util.Units;
 public class Intake extends SubsystemBase {
 
     // TODO put in proper id
-    private final TalonFX topMotor = new TalonFX(70);
-    private final TalonFX botMotor = new TalonFX(71);
+    private final TalonFX rollMotor = new TalonFX(70);
     private final TalonFX stowMotor = new TalonFX(68);
 
     private final PIDController stowPID = new PIDController(0, 0, 0);
@@ -62,8 +61,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setSpeed(double power){
-        topMotor.set(power);
-        botMotor.set(-power);
+        rollMotor.set(power);
     }
 
     public void stow(){
@@ -71,14 +69,12 @@ public class Intake extends SubsystemBase {
     }
 
     public void deactivate(){
-        topMotor.set(0);
-        botMotor.set(0);
+        rollMotor.set(0);
     }
 
     public void activate(){
         stowPID.setSetpoint(0);
-        topMotor.set(.8);
-        botMotor.set(-.8);
+        rollMotor.set(.8);
     }
 
     @Override
