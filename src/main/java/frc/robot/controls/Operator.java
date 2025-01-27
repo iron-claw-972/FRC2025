@@ -86,7 +86,7 @@ public class Operator {
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
-            driver.get(Button.RIGHT_JOY).onTrue(startIntake)
+            driver.get(Button.RIGHT_JOY).and(driver.get(Button.A)).onTrue(startIntake)
                 .onFalse(new ConditionalCommand(
                     new InstantCommand(()->startIntake.cancel()),
                     new FinishStationIntake(intake, indexer, elevator),

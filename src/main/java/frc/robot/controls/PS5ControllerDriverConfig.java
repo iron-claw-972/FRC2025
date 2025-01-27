@@ -77,11 +77,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Intake/outtake
         if(intake != null && indexer != null && elevator != null){
             driver.get(PS5Button.CROSS).and(menu.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
-            // TODO: temporary button
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
-            driver.get(PS5Button.RIGHT_JOY).onTrue(startIntake)
+            driver.get(PS5Button.RIGHT_JOY).and(driver.get(PS5Button.CROSS)).onTrue(startIntake)
                 .onFalse(new ConditionalCommand(
                     new InstantCommand(()->startIntake.cancel()),
                     new FinishStationIntake(intake, indexer, elevator),
