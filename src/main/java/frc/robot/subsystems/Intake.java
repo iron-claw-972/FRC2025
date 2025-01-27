@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
-
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,102 +8,66 @@ import frc.robot.constants.Constants;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-
-
-
-
 
 public class Intake extends SubsystemBase {
 
-
     public enum Mode {
         DISABLED(0),
-        INTAKE(.8),
+        INTAKE(0.8),
         INTAKE_UP(0),
-        PickedUpCoral(.8),
-        Wait(.8),
-        Pause (0),
-        ReverseMotors(-.8);
+        PICKED_UP_CORAL(0.8),
+        WAIT(0.8),
+        PAUSE(0),
+        REVERSE_MOTORS(-0.8);
 
-
-        private double power;
-
+        private final double power;
 
         Mode(double power) {
             this.power = power;
         }
 
-
         public double getPower() {
             return power;
         }
-
     }
 
-
-
-    // TODO put in proper id
     private final TalonFX topMotor = new TalonFX(70);
     private final TalonFX botMotor = new TalonFX(71);
     private final TalonFX intakeStower = new TalonFX(68);
 
-    private final PIDController stowPID = new PIDController(0, 0, 0);
-
-    private Timer waitTimer = new Timer();
-
-    private final double motorVoltage = 12.0;
+    private final PIDController stowPID = new PIDController(0.1, 0.0, 0.0); // Example gains; tune as needed
+    private final Timer waitTimer = new Timer();
 
     private Mode mode;
 
-
     public Intake() {
-
-        // set the mode to Idle; this will turn off the motors
         setMode(Mode.DISABLED);
-        stowPID.setTolerance(.5);
+        stowPID.setTolerance(0.5);
 
-
-        // Simulation objects
         if (RobotBase.isSimulation()) {
-            //TODO add sim stuff
+            // TODO: Add simulation-specific behavior if needed
         }
 
         waitTimer.start();
 
-        if (Constants.LOG_LEVEL.getValue() > 0) {
-            //TODO fix logging
-            /*
-            LogManager.add("Intake/motorVolts", () -> motor.get() * Constants.ROBOT_VOLTAGE);
-            LogManager.add("Intake/centeringMotorVolts", () -> centeringMotor.get() * Constants.ROBOT_VOLTAGE);
-            
-            LogManager.add("Intake/motorRPM", () -> motor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1));
-            LogManager.add("Intake/centeringMotorRPM", () -> centeringMotor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1)); */
-        }
-
         publish();
     }
 
-
-    // publish sensor to Smart Dashboard
     private void publish() {
-        //TODO publish stuff
+        // TODO: Add SmartDashboard or Shuffleboard publishing here if needed
     }
-
 
     public void setMode(Mode mode) {
         this.mode = mode;
 
-        
-        // set the motor powers to be the value appropriate for this mode
-        topMotor.set(mode.power);
-        botMotor.set(-mode.power);
+        // Set motor powers based on the mode
+        topMotor.set(ControlMode.PercentOutput, mode.getPower());
+        botMotor.set(ControlMode.PercentOutput, -mode.getPower());
 
-        if (mode == Mode.INTAKE_UP){
+        if (mode == Mode.INTAKE_UP) {
             stowPID.reset();
-            stowPID.setSetpoint(90);
-        }else{
+            stowPID.setSetpoint(90); // Example angle; tune as needed
+        } else {
             stowPID.reset();
             stowPID.setSetpoint(0);
         }
@@ -112,61 +75,50 @@ public class Intake extends SubsystemBase {
         waitTimer.reset();
     }
 
-
     @Override
     public void periodic() {
         publish();
 
-
-        /* */
         switch (mode) {
             case DISABLED:
-                // don't have to do anything
                 break;
-
 
             case INTAKE:
-                // motors are spinning and we are waiting to pick up a note
-                if (hasCoral()){
-                    setMode(Mode.PickedUpCoral);
+                if (hasCoral()) {
+                    setMode(Mode.PICKED_UP_CORAL);
                 }
                 break;
 
-
-            case PickedUpCoral:
+            case PICKED_UP_CORAL:
                 if (!hasCoral()) {
-                    setMode(Mode.Wait);
+                    setMode(Mode.WAIT);
                 } else if (waitTimer.hasElapsed(2)) {
-                    setMode(Mode.Pause);
-                }
-                break;
-           
-            case Pause:
-                if (waitTimer.hasElapsed(.2)) {
-                    setMode(Mode.ReverseMotors);
+                    setMode(Mode.PAUSE);
                 }
                 break;
 
+            case PAUSE:
+                if (waitTimer.hasElapsed(0.2)) {
+                    setMode(Mode.REVERSE_MOTORS);
+                }
+                break;
 
-            case ReverseMotors:
-                if (!hasCoral()){
-                    setMode(Mode.Wait);
+            case REVERSE_MOTORS:
+                if (!hasCoral()) {
+                    setMode(Mode.WAIT);
                 } else if (waitTimer.hasElapsed(5)) {
-                    setMode(Mode.Wait);
+                    setMode(Mode.WAIT);
                 }
                 break;
 
-
-            case Wait:
+            case WAIT:
                 if (waitTimer.hasElapsed(0.1)) {
                     setMode(Mode.DISABLED);
                 }
                 break;
-            
+
             case INTAKE_UP:
-                {
-                    intakeStower.set(stowPID.calculate(getStowPosition()));
-                }
+                intakeStower.set(stowPID.calculate(getStowPosition()));
                 break;
 
             default:
@@ -174,24 +126,21 @@ public class Intake extends SubsystemBase {
         }
     }
 
-    public double getStowPosition(){
-        return Units.rotationsToDegrees(intakeStower.getPosition().getValueAsDouble());
-    }
-
     public boolean intakeInactive() {
         return (mode == Mode.DISABLED || mode == Mode.INTAKE_UP);
+
+    public double getStowPosition() {
+        // Example method to retrieve position in degrees; update as needed for your setup
+        return Units.rotationsToDegrees(intakeStower.getSelectedSensorPosition());
     }
 
     public boolean hasCoral() {
-        //TODO check if intake has a coral
+        // TODO: Implement sensor logic to detect coral presence
         return false;
     }
 
-
     @Override
     public void simulationPeriodic() {
-        //TODO add sim stuff
+        // TODO: Add simulation-specific periodic logic if needed
     }
-
-
 }
