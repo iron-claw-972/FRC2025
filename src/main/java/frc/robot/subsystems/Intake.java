@@ -13,7 +13,7 @@ public class Intake extends SubsystemBase {
     // TODO put in proper id
     private final TalonFX rollMotor = new TalonFX(70);
     private final TalonFX stowMotor = new TalonFX(68);
-    private TalonFXSimState encoderSim;
+    private TalonFXSimState stowEncoderSim;
 
     private final PIDController stowPID = new PIDController(0, 0, 0);
     private final double motorVoltage = 12.0;
@@ -25,7 +25,7 @@ public class Intake extends SubsystemBase {
 
         if (RobotBase.isSimulation()) {
             // TODO: Add simulation-specific behavior if needed
-            encoderSim = stowMotor.getSimState();
+            stowEncoderSim = stowMotor.getSimState();
         }
 
         publish();
@@ -75,5 +75,6 @@ public class Intake extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         // TODO: Add simulation-specific periodic logic if needed
+        
     }
 }
