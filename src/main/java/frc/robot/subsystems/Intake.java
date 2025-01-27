@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
-
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,30 +28,16 @@ public class Intake extends SubsystemBase {
         //TODO set proper tolerance
         stowPID.setTolerance(.5);
 
-
-        // Simulation objects
         if (RobotBase.isSimulation()) {
-            //TODO add sim stuff
+            // TODO: Add simulation-specific behavior if needed
         }
 
-
-        if (Constants.LOG_LEVEL.getValue() > 0) {
-            //TODO fix logging
-            /*
-            LogManager.add("Intake/motorVolts", () -> motor.get() * Constants.ROBOT_VOLTAGE);
-            LogManager.add("Intake/centeringMotorVolts", () -> centeringMotor.get() * Constants.ROBOT_VOLTAGE);
-            
-            LogManager.add("Intake/motorRPM", () -> motor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1));
-            LogManager.add("Intake/centeringMotorRPM", () -> centeringMotor.getAbsoluteEncoder().getVelocity(), Duration.ofSeconds(1)); */
-        }
 
         publish();
     }
 
-
-    // publish sensor to Smart Dashboard
     private void publish() {
-        //TODO publish stuff
+        // TODO: Add SmartDashboard or Shuffleboard publishing here if needed
     }
 
     @Override
@@ -68,7 +53,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean hasCoral() {
-        //TODO check if intake has a coral
+        // TODO: Implement sensor logic to detect coral presence
         return false;
     }
 
@@ -98,8 +83,6 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        //TODO add sim stuff
+        // TODO: Add simulation-specific periodic logic if needed
     }
-
-
 }
