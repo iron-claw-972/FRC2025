@@ -12,8 +12,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
+    // TODO: Use that sim object to update the sim state using .addRotorPosition()
+    // with the sim velocity * time or .setRawRotorPosition() with the position.
+
+    // TODO: Tune the PID
+
+    // TODO: Add the sensor once they figure out what type it will be
+
+    // TODO: Maybe simulate that sensor and make it activate 1 second after the
+    // intake starts (low priority)
 
     // TODO: put in proper id
+
     private final TalonFX rollMotor = new TalonFX(70);
     private final TalonFX stowMotor = new TalonFX(68);
     private final SingleJointedArmSim stowArmSim;
@@ -28,6 +38,11 @@ public class Intake extends SubsystemBase {
     public Intake() {
         if (RobotBase.isSimulation()) {
             // TODO: Add more simulation-specific behavior if needed
+            double velocity = 0; // replace with actual value
+            double timeDelta = 0; // replace with actual value
+
+            // TODO: Simulate arm's position using velocity & timeDelta provided above
+
             stowEncoderSim = stowMotor.getSimState();
         }
         // IF USING SHUFFLEBOARD VVV
@@ -109,7 +124,7 @@ public class Intake extends SubsystemBase {
      * @return Boolean (True if has Coral, False otherwise)
      */
     public boolean hasCoral() {
-        // TODO: Implement sensor logic to detect coral presence
+        // TODO: Implement logic base on the sensor once identified
         return false;
     }
 
