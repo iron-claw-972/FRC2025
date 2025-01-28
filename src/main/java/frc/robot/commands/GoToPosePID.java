@@ -56,6 +56,6 @@ public class GoToPosePID extends Command {
 
   @Override
     public boolean isFinished() {
-        return pose == null ||| drive.getXController().atSetpoint() && drive.getYController().atSetpoint() && drive.getRotationController().atSetpoint();
+        return pose == null || drive.getXController().atSetpoint() && drive.getYController().atSetpoint() && drive.getRotationController().atSetpoint();
     }
 }
