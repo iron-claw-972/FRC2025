@@ -42,31 +42,61 @@ public class Intake extends SubsystemBase {
 
     }
 
+    /**
+     * Gets the rotation of the intake
+     * @return the rotation of the intake, in degrees
+     */
     public double getStowPosition() {
         return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble());
     }
+
 
     public boolean hasCoral() {
         // TODO: Implement sensor logic to detect coral presence
         return false;
     }
 
+    /**
+     * Sets the desired angle of the intake, mostly to stow or unstow
+     * @param angle desired angle of the intake
+     */
     public void setAngle(double angle) {
         stowPID.setSetpoint(angle);
     }
 
+    /**
+     * Sets the speed of the roller motor
+     * @param power The desired speed of the roller, between 1 and 0
+     */
     public void setSpeed(double power) {
         rollMotor.set(power);
     }
 
+    /**
+     * Stows the intake and deactivates the rollers
+     */
     public void stow() {
         stowPID.setSetpoint(90);
+        deactivate();
     }
 
+    /**
+     * Unstows the intake, does not affect the rollers
+     */
+    public void unstow(){
+        stowPID.setSetpoint(0);
+    }
+
+    /**
+     * Deactivates the rollers only, does not stow or unstow
+     */
     public void deactivate() {
         rollMotor.set(0);
     }
 
+    /**
+     * Ensures the intake is not stowed and activates the rollers
+     */
     public void activate() {
         stowPID.setSetpoint(0);
         rollMotor.set(.8);
