@@ -48,6 +48,7 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.addOption("Trial", new FollowPathCommand("Trial", true, drive));
         autoCommand.addOption("Tester", new FollowPathCommand("Tester", true, drive));
         autoCommand.addOption("Position Checker", new FollowPathCommand("Position Checker", true, drive));
+        autoCommand.addOption("test_2", new FollowPathCommand("test_2", true, drive));
 
         tab.add(autoCommand);
     }
