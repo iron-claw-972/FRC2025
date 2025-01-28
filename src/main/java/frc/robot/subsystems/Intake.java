@@ -38,10 +38,8 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
         SmartDashboard.putBoolean("Has Coral", hasCoral());
         SmartDashboard.putNumber("Roller Motor Power", rollMotor.get());
-        SmartDashboard.putBoolean("Is Stowed",
-                Math.abs(stowPID.getPositionError()) < positionTolerance && stowPID.getSetpoint() == 90);
-        SmartDashboard.putBoolean("Is Unstowed",
-                Math.abs(stowPID.getPositionError()) < positionTolerance && stowPID.getSetpoint() == 0);
+        SmartDashboard.putBoolean("Is Stowed", isAtSetpoint(90));
+        SmartDashboard.putBoolean("Is Unstowed", isAtSetpoint(0));
         SmartDashboard.putBoolean("Is Roller Active", rollMotor.get() > 0);
     }
 
@@ -62,7 +60,6 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         publish();
         stowMotor.set(stowPID.calculate(getStowPosition()));
-
     }
 
     /**
@@ -89,8 +86,8 @@ public class Intake extends SubsystemBase {
      * 
      * @return Boolean (True if at setpoint, False otherwise)
      */
-    private boolean isAtSetpoint() {
-        return Math.abs(stowPID.getPositionError()) < positionTolerance;
+    private boolean isAtSetpoint(double setpoint) {
+        return Math.abs(getStowPosition() - setpoint) < positionTolerance;
     }
 
     /**
