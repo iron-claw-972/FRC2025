@@ -10,13 +10,12 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
+import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -84,7 +83,7 @@ public class RobotContainer {
       case Vertigo:
       vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
         operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // // Detected objects need access to the drivetrain
@@ -95,7 +94,7 @@ public class RobotContainer {
         driver.configureControls();
         operator.configureControls();
          initializeAutoBuilder();
-        // registerCommands();
+        registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
  
