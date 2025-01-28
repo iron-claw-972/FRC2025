@@ -3,18 +3,20 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
 
 public class Intake extends SubsystemBase {
 
     // TODO: put in proper id
     private final TalonFX rollMotor = new TalonFX(70);
     private final TalonFX stowMotor = new TalonFX(68);
+    private final SingleJointedArmSim stowArmSim;
     private TalonFXSimState stowEncoderSim;
 
     // TODO: set proper tolerance
@@ -30,6 +32,16 @@ public class Intake extends SubsystemBase {
         }
         // IF USING SHUFFLEBOARD VVV
         // setupShuffleboard();
+
+        stowArmSim = new SingleJointedArmSim(
+                DCMotor.getKrakenX60(1),
+                1.0,
+                calculateMomentOfInertia(),
+                getStowMotorLength(),
+                Math.toRadians(0),
+                Math.toRadians(90),
+                true,
+                motorVoltage);
     }
 
     private void publish() {
@@ -72,6 +84,26 @@ public class Intake extends SubsystemBase {
     }
 
     /**
+     * Calculates intertia for the arm.
+     * 
+     * @return moment of inertia of the arm in kg·m²
+     */
+    private double calculateMomentOfInertia() {
+        double armMass = 5.0; // replace with actual value
+        double armLength = 0.5; // replace with actual value
+        return (1.0 / 3.0) * armMass * Math.pow(armLength, 2);
+    }
+
+    /**
+     * Retrieves the length of the arm.
+     * 
+     * @return The length of the arm in meters.
+     */
+    private double getStowMotorLength() {
+        return 0.5; // replace with actual value
+    }
+
+    /**
      * Checks if intake has coral.
      * 
      * @return Boolean (True if has Coral, False otherwise)
@@ -102,14 +134,14 @@ public class Intake extends SubsystemBase {
     /**
      * Sets the speed of the roller motor.
      * 
-     * @param power The desired speed of the roller, between 0 and 1
+     * @param power The desired speed of the roller, between 0 and 1.
      */
     public void setSpeed(double power) {
         rollMotor.set(power);
     }
 
     /**
-     * Stows the intake and deactivates the rollers.
+     * Moves the intake up and stops it.
      */
     public void stow() {
         stowPID.setSetpoint(90);
@@ -117,21 +149,21 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Unstows the intake, does not affect the rollers.
+     * Moves the intake down.
      */
     public void unstow() {
         stowPID.setSetpoint(0);
     }
 
     /**
-     * Deactivates the rollers only, does not stow or unstow.
+     * Stops the motor.
      */
     public void deactivate() {
         rollMotor.set(0);
     }
 
     /**
-     * Ensures the intake is not stowed and activates the rollers.
+     * Lowers the intake and starts the motor.
      */
     public void activate() {
         stowPID.setSetpoint(0);
