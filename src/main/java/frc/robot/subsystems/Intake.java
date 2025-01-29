@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
 
     // TODO: put in proper id
 
-    private final TalonFX rollMotor = new TalonFX(70);
+    private final TalonFX rollerMotor = new TalonFX(70);
     private final TalonFX stowMotor = new TalonFX(68);
     private final SingleJointedArmSim stowArmSim;
     private TalonFXSimState stowEncoderSim;
@@ -67,10 +67,10 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
         SmartDashboard.putBoolean("Has Coral", hasCoral());
-        SmartDashboard.putNumber("Roller Motor Power", rollMotor.get());
+        SmartDashboard.putNumber("Roller Motor Power", rollerMotor.get());
         SmartDashboard.putBoolean("Is Stowed", isAtSetpoint(90));
         SmartDashboard.putBoolean("Is Unstowed", isAtSetpoint(0));
-        SmartDashboard.putBoolean("Is Roller Active", rollMotor.get() > 0);
+        SmartDashboard.putBoolean("Is Roller Active", rollerMotor.get() > 0);
     }
 
     // IF USING SHUFFLEBOARD VVV
@@ -156,7 +156,7 @@ public class Intake extends SubsystemBase {
      * @param power The desired speed of the roller, between 0 and 1.
      */
     public void setSpeed(double power) {
-        rollMotor.set(power);
+        rollerMotor.set(power);
     }
 
     /**
@@ -178,7 +178,7 @@ public class Intake extends SubsystemBase {
      * Stops the motor.
      */
     public void deactivate() {
-        rollMotor.set(0);
+        rollerMotor.set(0);
     }
 
     /**
@@ -186,7 +186,7 @@ public class Intake extends SubsystemBase {
      */
     public void activate() {
         stowPID.setSetpoint(0);
-        rollMotor.set(.8);
+        rollerMotor.set(.8);
     }
 
     @Override
