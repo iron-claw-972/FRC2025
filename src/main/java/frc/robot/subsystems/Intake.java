@@ -192,6 +192,6 @@ public class Intake extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         // TODO: Add simulation-specific periodic logic if needed
-
+        
     }
 }
