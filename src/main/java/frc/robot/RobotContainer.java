@@ -72,7 +72,6 @@ public class RobotContainer {
         // Our competition subsystems go here
         intake = new Intake();
         indexer = new Indexer();
-        outtake = new Outtake();
         climb = new Climb();
         
       case Phil:
