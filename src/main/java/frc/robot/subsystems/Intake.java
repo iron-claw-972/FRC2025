@@ -59,6 +59,9 @@ public class Intake extends SubsystemBase {
                 motorVoltage);
     }
 
+    /**
+     * publishes stuff to smartdashboard
+     */
     private void publish() {
         // TODO: Add SmartDashboard or Shuffleboard publishing here as needed
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
@@ -104,6 +107,7 @@ public class Intake extends SubsystemBase {
      * @return moment of inertia of the arm in kg·m²
      */
     private double calculateMomentOfInertia() {
+        //TODO add propery numby
         double armMass = 5.0; // replace with actual value
         double armLength = 0.5; // replace with actual value
         return (1.0 / 3.0) * armMass * Math.pow(armLength, 2);
