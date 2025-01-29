@@ -93,7 +93,7 @@ public class Vision {
           PhotonCameraSim cameraSim = new PhotonCameraSim(c.camera);
           cameraSim.enableDrawWireframe(true);
           cameraSim.prop.setAvgLatencyMs(30);
-          cameraSim.prop.setCalibration(720, 1280, Rotation2d.fromDegrees(78));
+          cameraSim.prop.setCalibration(1280, 720, Rotation2d.fromDegrees(78));
           visionSim.addCamera(cameraSim, c.photonPoseEstimator.getRobotToCameraTransform());
         }
       }
