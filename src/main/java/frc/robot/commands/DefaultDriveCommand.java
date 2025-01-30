@@ -51,7 +51,7 @@ public class DefaultDriveCommand extends Command {
         sideTranslation *= allianceReversal;
 
         ChassisSpeeds driverInput = new ChassisSpeeds(forwardTranslation, sideTranslation, rotation);
-        ChassisSpeeds corrected = DriverAssist.calculate(swerve, driverInput, swerve.getDesiredPose());
+        ChassisSpeeds corrected = DriverAssist.calculate(swerve, driverInput, swerve.getDesiredPose(), true);
 
         // If the driver is pressing the align button or a command set the drivetrain to
         // align, then align to speaker

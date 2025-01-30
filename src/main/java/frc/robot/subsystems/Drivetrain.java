@@ -227,8 +227,8 @@ public class Drivetrain extends SubsystemBase {
      * @param isOpenLoop    whether to use velocity control for the drive motors
      */
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
-        rot = headingControl(rot, xSpeed, ySpeed);
-        ChassisSpeeds speeds = ChassisSpeeds.discretize(xSpeed, ySpeed, rot, Constants.LOOP_TIME);
+        // rot = headingControl(rot, xSpeed, ySpeed);
+        ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         if(fieldRelative){
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }
