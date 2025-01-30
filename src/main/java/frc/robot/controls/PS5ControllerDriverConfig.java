@@ -44,7 +44,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Outtake outtake;
     private final Climb climb;
     private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_TRIGGER);
-    private int alignmentDirection = -1;
+    private int alignmentDirection = 0;
 
     public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
         super(drive);
