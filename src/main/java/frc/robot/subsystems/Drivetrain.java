@@ -273,7 +273,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void updateOdometry() {
         // Wait for all modules to update
-        BaseStatusSignal.waitForAll(0.02, statusSignals);
+        BaseStatusSignal.waitForAll(0.01, statusSignals);
         
         synchronized(this){
             // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
