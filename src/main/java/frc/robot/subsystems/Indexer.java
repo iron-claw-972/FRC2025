@@ -1,17 +1,14 @@
 package frc.robot.subsystems;
 
-import org.ejml.simple.SimpleMatrix;
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -22,7 +19,7 @@ import frc.robot.util.LogManager;
 import frc.robot.util.LogManager.LogLevel;
 
 public class Indexer extends SubsystemBase {
-	enum Status {
+	public enum Status {
 		RUNNING, FINISHING, IDLE, ERROR
 	};
 
@@ -33,46 +30,27 @@ public class Indexer extends SubsystemBase {
 	private SparkMax motor;
 	private DigitalInput sensor;
 	private FlywheelSim flywheelSim;
-	private boolean sensorSim; // it's a pretty simple sensor
+	private DIOSim sensorSim;
 
 	public Indexer() {
-		if (Robot.isReal()) {
-		motor = new SparkMax(IdConstants.INDEXER_MOTOR, MotorType.kBrushless); // FIXME: is it brushless?
+		motor = new SparkMax(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
 		sensor = new DigitalInput(IdConstants.INDEXER_SENSOR);
-		}
 
 		timeSinceRequest = new Timer();
 		sensorToggled = false;
 		status = Status.IDLE;
 
 		if (Robot.isSimulation()) {
-			// see
-			// https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-intro.html#what-is-state-space-notation
-			flywheelSim = new FlywheelSim(new LinearSystem<N1, N1, N1>(
-					new Matrix<N1, N1>(new SimpleMatrix(
-							new double[] { -IndexerConstants.angularVelocity / IndexerConstants.angularAcceleration })),
-					new Matrix<N1, N1>(new SimpleMatrix(new double[] { 1. / IndexerConstants.angularAcceleration })),
-					new Matrix<N1, N1>(new SimpleMatrix(new double[] { 1 })),
-					new Matrix<N1, N1>(new SimpleMatrix(new double[] { 0 }))), DCMotor.getNEO(1));
-			sensorSim = false;
+			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
+					IndexerConstants.momentOfInertia, IndexerConstants.gearRatio), DCMotor.getNEO(1));
+			sensorSim = new DIOSim(sensor);
 		}
 
 		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
 	}
 
-	private void setMotor(double speed) {
-		if (Robot.isReal()) {
-			if (speed == 0)
-				motor.stopMotor();
-			else
-				motor.set(speed);
-		} else {
-			flywheelSim.setInput(speed * Constants.ROBOT_VOLTAGE);
-		}
-	}
-
-	/*
+	/**
 	 * @return the motor position in rotations
 	 */
 	private double getMotor() {
@@ -83,11 +61,15 @@ public class Indexer extends SubsystemBase {
 		}
 	}
 
+	/**
+	 * Gets the sensor's state
+	 * true means nothing is there, false means something is there
+	 */
 	private boolean getSensorValue() {
 		if (Robot.isReal()) {
 			return sensor.get();
 		} else {
-			return sensorSim;
+			return sensorSim.getValue();
 		}
 	}
 
@@ -96,11 +78,11 @@ public class Indexer extends SubsystemBase {
 		switch (status) {
 			case IDLE:
 			case ERROR:
-				setMotor(0);
+				motor.stopMotor();
 				break;
 
 			case RUNNING:
-				setMotor(IndexerConstants.speed);
+				motor.set(IndexerConstants.speed);
 
 				// trigger after sensor goes on, broken, on; or __/--\__
 				if (getSensorValue() == false) {
@@ -119,11 +101,11 @@ public class Indexer extends SubsystemBase {
 				break;
 
 			case FINISHING:
-				setMotor(IndexerConstants.speed);
+				motor.set(IndexerConstants.speed);
 
 				if (timeSinceRequest.hasElapsed(IndexerConstants.runForExtra)) {
 					timeSinceRequest.stop();
-					setMotor(0);
+					motor.stopMotor();
 				}
 
 				break;
@@ -132,7 +114,8 @@ public class Indexer extends SubsystemBase {
 
 	@Override
 	public void simulationPeriodic() {
-
+		flywheelSim.setInput(motor.getOutputCurrent() * Constants.ROBOT_VOLTAGE);
+		flywheelSim.update(Constants.LOOP_TIME);
 	}
 
 	/*
