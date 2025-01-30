@@ -132,6 +132,7 @@ public class Operator {
         isLeft).pose;
         drive.setDesiredPose(pose);
     }
+
     public Trigger getRightTrigger(){
         return new Trigger(driver.RIGHT_TRIGGER_BUTTON);
     }
