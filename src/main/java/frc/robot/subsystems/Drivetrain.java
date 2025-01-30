@@ -275,6 +275,7 @@ public class Drivetrain extends SubsystemBase {
         // Wait for all modules to update
         BaseStatusSignal.waitForAll(0.01, statusSignals);
         
+        // Adding synchronized to a method does the same thing as synchronized(this), so this section won't run with other synchronized methods
         synchronized(this){
             // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
             // Also stores the current pose in the buffer
