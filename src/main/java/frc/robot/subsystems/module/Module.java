@@ -383,9 +383,7 @@ public class Module extends SubsystemBase {
         return new BaseStatusSignal[]{
             drivePosition,
             driveVelocity,
-            driveAccel,
             steerAngle,
-            steerVelocity
         };
       }
 }
