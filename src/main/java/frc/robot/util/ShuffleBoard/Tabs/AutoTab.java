@@ -49,6 +49,18 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.addOption("Tester", new FollowPathCommand("Tester", true, drive));
         autoCommand.addOption("Position Checker", new FollowPathCommand("Position Checker", true, drive));
         autoCommand.addOption("test_2", new FollowPathCommand("test_2", true, drive));
+        
+        autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator))
+        .andThen(new FollowPathCommand("#2", true, drive)));
+
+    //     autoCommand.addOption("Sequential_1",
+    //     Commands.sequence(
+    //         new FollowPathCommand("#1", true, drive),
+    //         new InstantCommand(() -> System.out.println("Instant command."))
+    //     )
+    // );
 
         tab.add(autoCommand);
     }
