@@ -23,6 +23,10 @@ public class Indexer extends SubsystemBase {
 	private FlywheelSim flywheelSim;
 	private DIOSim sensorSim;
 
+	// where the coral is for simulation
+	// in meters
+	private double simCoralPos;
+
 	public Indexer() {
 		motor = new SparkMax(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
 		sensor = new DigitalInput(IdConstants.INDEXER_SENSOR);
@@ -31,6 +35,7 @@ public class Indexer extends SubsystemBase {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
 					IndexerConstants.momentOfInertia, IndexerConstants.gearRatio), DCMotor.getNEO(1));
 			sensorSim = new DIOSim(sensor);
+			simCoralPos = IndexerConstants.startSimPosAt;
 		}
 
 		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
@@ -68,24 +73,8 @@ public class Indexer extends SubsystemBase {
 	 * @return the sensor's state
 	 */
 	public boolean getSensorValue() {
-		if (Robot.isReal()) {
-			return sensor.get();
-		} else {
-			return sensorSim.getValue();
-		}
+		return sensor.get();
 	}
-	
-	/**
-	 * Set the sensor's state
-	 * true means nothing is there, false means something is there
-	 * Use for simulation (do NOT call on a real robot)
-	 * 
-	 * @param value the state to set the sensor to
-	 */
-	public void setSensorState(boolean value) {
-		assert(Robot.isSimulation());
-		sensorSim.setValue(value);
-	};
 
 	@Override
 	public void periodic() { }
@@ -94,5 +83,15 @@ public class Indexer extends SubsystemBase {
 	public void simulationPeriodic() {
 		flywheelSim.setInput(motor.getOutputCurrent() * Constants.ROBOT_VOLTAGE);
 		flywheelSim.update(Constants.LOOP_TIME);
+
+		// pretend we have a fake coral
+		simCoralPos += flywheelSim.getAngularVelocityRPM() * IndexerConstants.wheelCircumference;
+		// wrap around at the end
+		if (simCoralPos > IndexerConstants.endSimPosAt)
+			simCoralPos -= (IndexerConstants.endSimPosAt - IndexerConstants.startSimPosAt);
+
+		// toggle the sensor (values are backwards because that's how the sensor works)
+		sensorSim.setValue(simCoralPos < IndexerConstants.startSimSensorPosAt
+		                   || simCoralPos > IndexerConstants.endSimSensorPosAt);
 	}
 }
