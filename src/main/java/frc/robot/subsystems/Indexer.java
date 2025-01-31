@@ -77,21 +77,23 @@ public class Indexer extends SubsystemBase {
 	}
 
 	@Override
-	public void periodic() { }
+	public void periodic() {
+	}
 
 	@Override
 	public void simulationPeriodic() {
-		flywheelSim.setInput(motor.getOutputCurrent() * Constants.ROBOT_VOLTAGE);
+		flywheelSim.setInput(motor.get() * Constants.ROBOT_VOLTAGE);
 		flywheelSim.update(Constants.LOOP_TIME);
 
 		// pretend we have a fake coral
-		simCoralPos += flywheelSim.getAngularVelocityRPM() * IndexerConstants.wheelCircumference;
+		simCoralPos += flywheelSim.getAngularVelocityRPM() / 60. * Constants.LOOP_TIME
+				* IndexerConstants.wheelCircumference;
 		// wrap around at the end
 		if (simCoralPos > IndexerConstants.endSimPosAt)
 			simCoralPos -= (IndexerConstants.endSimPosAt - IndexerConstants.startSimPosAt);
 
 		// toggle the sensor (values are backwards because that's how the sensor works)
 		sensorSim.setValue(simCoralPos < IndexerConstants.startSimSensorPosAt
-		                   || simCoralPos > IndexerConstants.endSimSensorPosAt);
+				|| simCoralPos > IndexerConstants.endSimSensorPosAt);
 	}
 }
