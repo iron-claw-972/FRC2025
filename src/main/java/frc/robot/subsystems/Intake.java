@@ -56,7 +56,7 @@ public class Intake extends SubsystemBase {
                 Math.toRadians(0),
                 Math.toRadians(90),
                 true,
-                motorVoltage);
+                0);
     }
 
     /**
@@ -163,7 +163,7 @@ public class Intake extends SubsystemBase {
      * Moves the intake up and stops it.
      */
     public void stow() {
-        stowPID.setSetpoint(90);
+        stowPID.setSetpoint(0);
         deactivate();
     }
 
@@ -171,7 +171,7 @@ public class Intake extends SubsystemBase {
      * Moves the intake down.
      */
     public void unstow() {
-        stowPID.setSetpoint(0);
+        stowPID.setSetpoint(90);
     }
 
     /**
