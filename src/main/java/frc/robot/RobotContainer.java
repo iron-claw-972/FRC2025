@@ -3,6 +3,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
@@ -53,6 +54,13 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+
+    climb = new Climb();
+
+    SmartDashboard.putData("0", new InstantCommand(() -> climb.setAngle(0)));
+    SmartDashboard.putData("90", new InstantCommand(() -> climb.setAngle(90)));
+    SmartDashboard.putData("180", new InstantCommand(() -> climb.setAngle(180)));
+    SmartDashboard.putData("270", new InstantCommand(() -> climb.setAngle(270)));
     // dispatch on the robot
     switch (robotId) {
 
