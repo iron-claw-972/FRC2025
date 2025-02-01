@@ -70,6 +70,8 @@ public class AutoTab extends ShuffleBoardTabs {
     //     )
     // );
 
+    //autoCommand.addOption("test_2", new FollowPathCommand("test_2", true, drive));
+       
         tab.add(autoCommand);
     }
 
