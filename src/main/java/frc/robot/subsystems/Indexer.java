@@ -42,17 +42,14 @@ public class Indexer extends SubsystemBase {
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
 	}
 
-	/**
-	 * Set the indexer motor's speed
-	 * setMotor(0) stops the indexer
-	 * 
-	 * @param speed the speed to set the motor to
-	 */
-	public void setMotor(double speed) {
-		if (Math.abs(speed) <= 0.001) // if speed is really close to 0
-			motor.stopMotor();
-		else
-			motor.set(speed);
+	/** Runs the indexer. */
+	public void run() {
+		motor.set(IndexerConstants.SPEED);
+	}
+
+	/** Stops the indexer */
+	public void stop() {
+		motor.stopMotor();
 	}
 
 	/**
