@@ -4,10 +4,13 @@
   "holonomicMode": true,
   "pathFolders": [
     "Bad",
-    "Sequential Path",
+    "Sequential Path 1",
+    "Sequential Path Trial",
     "Trials"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Combined"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
