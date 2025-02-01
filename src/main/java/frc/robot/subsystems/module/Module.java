@@ -69,6 +69,7 @@ public class Module extends SubsystemBase {
     private StatusSignal<AngularAcceleration> driveAccel;
     private StatusSignal<Angle> steerAngle;
     private StatusSignal<AngularVelocity> steerVelocity;
+    private StatusSignal<Angle> CANangle;
 
 
     private ModuleConstants moduleConstants;
@@ -128,16 +129,18 @@ public class Module extends SubsystemBase {
         driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.DRIVE_MOTOR_CAN);
         configDriveMotor();
 
-        ParentDevice.optimizeBusUtilizationForAll(angleMotor, driveMotor);
+        ParentDevice.optimizeBusUtilizationForAll(angleMotor, driveMotor, CANcoder);
 
         drivePosition = driveMotor.getPosition();
         driveVelocity = driveMotor.getVelocity();
         driveAccel  = driveMotor.getAcceleration();
         steerAngle = angleMotor.getPosition();
         steerVelocity = angleMotor.getVelocity();
+        CANangle = CANcoder.getAbsolutePosition();
 
         StatusSignal.setUpdateFrequencyForAll(100, drivePosition, driveVelocity, steerAngle);
-        StatusSignal.setUpdateFrequencyForAll(20, driveAccel, steerVelocity);
+        StatusSignal.setUpdateFrequencyForAll(20, driveAccel, steerVelocity, CANangle);
+
 
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
 

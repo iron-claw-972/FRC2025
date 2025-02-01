@@ -5,8 +5,10 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
@@ -111,6 +113,7 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean slipped = false;
 
+
     private BaseStatusSignal[] statusSignals = null;
 
     /**
@@ -136,6 +139,7 @@ public class Drivetrain extends SubsystemBase {
         // The Pigeon is a gyroscope and implements WPILib's Gyro interface
         pigeon = new Pigeon2(IdConstants.PIGEON, DriveConstants.PIGEON_CAN);
         pigeon.getConfigurator().apply(new Pigeon2Configuration());
+        
         // Our pigeon is mounted with y forward, and z upward
         MountPoseConfigs mountPoseConfigs = new MountPoseConfigs();
         mountPoseConfigs.deserialize("");
@@ -181,10 +185,11 @@ public class Drivetrain extends SubsystemBase {
             }
             // Add all signals from this module
             for(int j = 0; j < signals.length; j++){
-                statusSignals[i*signals.length+j+1] = signals[i];
+                statusSignals[i*signals.length+j+1] = signals[j];
             }
         }
-
+        StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
+        ParentDevice.optimizeBusUtilizationForAll(pigeon);
         LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
         LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
         LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
@@ -273,7 +278,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void updateOdometry() {
         // Wait for all modules to update
-        BaseStatusSignal.waitForAll(0.01, statusSignals);
+        BaseStatusSignal.waitForAll(0.012, statusSignals);
         
         // Adding synchronized to a method does the same thing as synchronized(this), so this section won't run with other synchronized methods
         synchronized(this){
