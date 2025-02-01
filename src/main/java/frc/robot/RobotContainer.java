@@ -76,7 +76,7 @@ public class RobotContainer {
         
       case Phil:
         outtake = new Outtake();
-        elevator = new Elevator();
+        //elevator = new Elevator();
         SmartDashboard.putNumber("wheel speed", 0.2);
       case Vivace:
       case Vertigo:
@@ -93,7 +93,7 @@ public class RobotContainer {
         driver.configureControls();
         operator.configureControls();
          initializeAutoBuilder();
-        registerCommands();
+        //registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
  
@@ -148,6 +148,9 @@ public class RobotContainer {
         getAllianceColorBooleanSupplier(),
         drive);
   }
+
+
+  
 
   public void registerCommands() {
 
