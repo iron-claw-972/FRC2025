@@ -7,7 +7,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,6 +31,9 @@ public class Intake extends SubsystemBase {
     private final TalonFX stowMotor = new TalonFX(68);
     private final SingleJointedArmSim stowArmSim;
     private TalonFXSimState stowEncoderSim;
+    private Mechanism2d stowMechanism2d;
+    private MechanismLigament2d stowWheelLigament;
+    private PIDController stowPIDController;
 
     // TODO: set proper tolerance
     private final double positionTolerance = 0.5;
@@ -45,7 +51,7 @@ public class Intake extends SubsystemBase {
 
             stowEncoderSim = stowMotor.getSimState();
         }
-        // IF USING SHUFFLEBOARD VVV
+      //  IF USING SHUFFLEBOARD VVV
         // setupShuffleboard();
 
         stowArmSim = new SingleJointedArmSim(
@@ -66,11 +72,16 @@ public class Intake extends SubsystemBase {
         // TODO: Add SmartDashboard or Shuffleboard publishing here as needed
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
-        SmartDashboard.putBoolean("Has Coral", hasCoral());
         SmartDashboard.putNumber("Roller Motor Power", rollerMotor.get());
-        SmartDashboard.putBoolean("Is Stowed", isAtSetpoint(90));
-        SmartDashboard.putBoolean("Is Unstowed", isAtSetpoint(0));
+
+        SmartDashboard.putBoolean("Has Coral", hasCoral());
+        SmartDashboard.putBoolean("Stow Arm Sim - Is Stowed", isAtSetpoint(90));
+        SmartDashboard.putBoolean("Stow Arm Sim - Is Unstowed", isAtSetpoint(0));
         SmartDashboard.putBoolean("Is Roller Active", rollerMotor.get() > 0);
+
+        SmartDashboard.putData("Stow Arm", stowMechanism2d);
+        SmartDashboard.putData("PID Controller", getPID());
+
     }
 
     // IF USING SHUFFLEBOARD VVV
@@ -80,10 +91,11 @@ public class Intake extends SubsystemBase {
     // intakeTab.addNumber("Stow Motor Position", this::getStowPosition);
     // intakeTab.addNumber("Target Angle", stowPID::getSetpoint);
     // intakeTab.addBoolean("Has Coral", this::hasCoral);
-    // intakeTab.addNumber("Roller Motor Power", rollMotor::get);
+    // intakeTab.addNumber("Roller Motor Power", rollerMotor::get);
     // intakeTab.addBoolean("Is Stowed", () -> isAtSetpoint(90));
     // intakeTab.addBoolean("Is Unstowed", () -> isAtSetpoint(0));
-    // intakeTab.addBoolean("Is Roller Active", () -> rollMotor.get() > 0);
+    // intakeTab.addBoolean("Is Roller Active", () -> rollerMotor.get() > 0);
+
     // }
 
     @Override
@@ -101,13 +113,17 @@ public class Intake extends SubsystemBase {
         return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble());
     }
 
+    public PIDController getPID() {
+        return stowPIDController;
+    }
+
     /**
      * Calculates intertia for the arm.
      * 
      * @return moment of inertia of the arm in kg·m²
      */
     private double calculateMomentOfInertia() {
-        //TODO add propery numby
+        // TODO add propery numby
         double armMass = 5.0; // replace with actual value
         double armLength = 0.5; // replace with actual value
         return (1.0 / 3.0) * armMass * Math.pow(armLength, 2);
@@ -159,7 +175,7 @@ public class Intake extends SubsystemBase {
         rollerMotor.set(power);
     }
 
-    /**sssssss
+    /**
      * Moves the intake up and stops it.
      */
     public void stow() {
@@ -192,6 +208,5 @@ public class Intake extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         // TODO: Add simulation-specific periodic logic if needed
-        
     }
 }
