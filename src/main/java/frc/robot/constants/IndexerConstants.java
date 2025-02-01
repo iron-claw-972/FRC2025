@@ -9,8 +9,7 @@ public class IndexerConstants {
 	// this stuff is for sim, all in meters
 	public static final double WHEEL_CIRCUMFERENCE = Math.PI * 0.1;
 	public static final double START_SIM_POS_AT = -1.0; // start coral here
-	public static final double END_SIM_POS_AT = 1.0; // wrap around here
 	public static final double START_SIM_SENSOR_POS_AT = -0.5; // activate the sensor here
-	public static final double END_SIM_SENSOR_POS_AT = 0.5; // deactivte the sensor here
+	public static final double END_SIM_SENSOR_POS_AT = 0.5; // deactivate the sensor here
 }
 

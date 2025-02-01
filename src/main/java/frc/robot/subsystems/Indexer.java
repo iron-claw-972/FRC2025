@@ -35,8 +35,8 @@ public class Indexer extends SubsystemBase {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
 					IndexerConstants.MOMENT_OF_INERTIA, IndexerConstants.GEAR_RATIO), DCMotor.getNEO(1));
 			sensorSim = new DIOSim(sensor);
-			simCoralPos = IndexerConstants.START_SIM_POS_AT;
 		}
+		simCoralPos = IndexerConstants.START_SIM_POS_AT; // initialize it anyway, it's easier
 
 		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
@@ -45,6 +45,7 @@ public class Indexer extends SubsystemBase {
 	/** Runs the indexer. */
 	public void run() {
 		motor.set(IndexerConstants.SPEED);
+		simCoralPos = IndexerConstants.START_SIM_POS_AT;
 	}
 
 	/** Stops the indexer */
@@ -85,9 +86,6 @@ public class Indexer extends SubsystemBase {
 		// pretend we have a fake coral
 		simCoralPos += flywheelSim.getAngularVelocityRPM() / 60. * Constants.LOOP_TIME
 				* IndexerConstants.WHEEL_CIRCUMFERENCE;
-		// wrap around at the end
-		if (simCoralPos > IndexerConstants.END_SIM_POS_AT)
-			simCoralPos -= (IndexerConstants.END_SIM_POS_AT - IndexerConstants.START_SIM_POS_AT);
 
 		// toggle the sensor (values are backwards because that's how the sensor works)
 		sensorSim.setValue(simCoralPos < IndexerConstants.START_SIM_SENSOR_POS_AT
