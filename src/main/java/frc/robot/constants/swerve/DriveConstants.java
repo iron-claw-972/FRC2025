@@ -47,7 +47,7 @@ public class DriveConstants {
     public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
 
     /** Theoretical maximum speed of the robot based on maximum motor RPM, gear ratio, and wheel radius */
-    public static final double MAX_SPEED = (Constants.MAX_RPM / 60.0) * WHEEL_RADIUS * 2 * Math.PI / DRIVE_GEAR_RATIO;
+    public static final double MAX_SPEED = 4.1;
 
     // Need to convert tangential velocity (the m/s of the edge of the robot) to angular velocity (the radians/s of the robot)
     // To do so, divide by the radius. The radius is the diagonal of the square chassis, diagonal = sqrt(2) * side_length.
