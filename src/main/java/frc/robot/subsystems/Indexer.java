@@ -33,9 +33,9 @@ public class Indexer extends SubsystemBase {
 
 		if (Robot.isSimulation()) {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
-					IndexerConstants.momentOfInertia, IndexerConstants.gearRatio), DCMotor.getNEO(1));
+					IndexerConstants.MOMENT_OF_INERTIA, IndexerConstants.GEAR_RATIO), DCMotor.getNEO(1));
 			sensorSim = new DIOSim(sensor);
-			simCoralPos = IndexerConstants.startSimPosAt;
+			simCoralPos = IndexerConstants.START_SIM_POS_AT;
 		}
 
 		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
@@ -56,11 +56,11 @@ public class Indexer extends SubsystemBase {
 	}
 
 	/**
-	 * @return the motor position in rotations
+	 * @return the motor velocity in rotations per minute
 	 */
 	public double getMotor() {
 		if (Robot.isReal()) {
-			return motor.getEncoder().getVelocity();
+			return motor.getEncoder().getVelocity() / IndexerConstants.GEAR_RATIO;
 		} else {
 			return flywheelSim.getAngularVelocityRPM();
 		}
@@ -87,13 +87,13 @@ public class Indexer extends SubsystemBase {
 
 		// pretend we have a fake coral
 		simCoralPos += flywheelSim.getAngularVelocityRPM() / 60. * Constants.LOOP_TIME
-				* IndexerConstants.wheelCircumference;
+				* IndexerConstants.WHEEL_CIRCUMFERENCE;
 		// wrap around at the end
-		if (simCoralPos > IndexerConstants.endSimPosAt)
-			simCoralPos -= (IndexerConstants.endSimPosAt - IndexerConstants.startSimPosAt);
+		if (simCoralPos > IndexerConstants.END_SIM_POS_AT)
+			simCoralPos -= (IndexerConstants.END_SIM_POS_AT - IndexerConstants.START_SIM_POS_AT);
 
 		// toggle the sensor (values are backwards because that's how the sensor works)
-		sensorSim.setValue(simCoralPos < IndexerConstants.startSimSensorPosAt
-				|| simCoralPos > IndexerConstants.endSimSensorPosAt);
+		sensorSim.setValue(simCoralPos < IndexerConstants.START_SIM_SENSOR_POS_AT
+				|| simCoralPos > IndexerConstants.END_SIM_SENSOR_POS_AT);
 	}
 }
