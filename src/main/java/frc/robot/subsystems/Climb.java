@@ -6,5 +6,5 @@ public class Climb extends SubsystemBase {
     // TODO: finish and possibly rename class/methods
     // These methods should probably also be renamed
     public void extend(){}
-    public void climb(){}
+    public void climb(){} 
 }
