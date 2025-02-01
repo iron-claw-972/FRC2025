@@ -157,7 +157,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Trials",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0.5,
     "rotation": 0.0
