@@ -78,10 +78,6 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putBoolean("Stow Arm Sim - Is Stowed", isAtSetpoint(90));
         SmartDashboard.putBoolean("Stow Arm Sim - Is Unstowed", isAtSetpoint(0));
         SmartDashboard.putBoolean("Is Roller Active", rollerMotor.get() > 0);
-
-        SmartDashboard.putData("Stow Arm", stowMechanism2d);
-        SmartDashboard.putData("PID Controller", getPID());
-
     }
 
     // IF USING SHUFFLEBOARD VVV
