@@ -17,6 +17,7 @@ public class ClimbArmSim extends SingleJointedArmSim {
   private double m_maxAngle;
   private double mass;
   private double momentOfInertia;
+  private boolean isClimbing;
 
   /**
    * Creates a simulated arm mechanism.
@@ -53,6 +54,7 @@ public class ClimbArmSim extends SingleJointedArmSim {
     m_simulateGravity = simulateGravity;
     mass = robotMasKilograms;
     momentOfInertia = 1.0/3.0 * mass * armLengthMeters * armLengthMeters;
+    isClimbing = false;
   }
 
   /**
@@ -93,6 +95,10 @@ public class ClimbArmSim extends SingleJointedArmSim {
         robotMassKilograms,
         measurementStdDevs);
     momentOfInertia = jKgMetersSquared;
+  }
+
+  public void setIsClimbing(boolean climbing){
+    isClimbing = climbing;
   }
   
   /**
@@ -136,7 +142,7 @@ public class ClimbArmSim extends SingleJointedArmSim {
             (Matrix<N2, N1> x, Matrix<N1, N1> _u) -> {
               Matrix<N2, N1> xdot = m_plant.getA().times(x).plus(m_plant.getB().times(_u));
               if (m_simulateGravity) {
-                double alphaGrav = 3.0 / 2.0 * -9.8 * Math.cos(x.get(0, 0)) / m_armLenMeters + mass * 9.8 * Math.cos(x.get(0, 0)) * m_armLenMeters / momentOfInertia;
+                double alphaGrav = 3.0 / 2.0 * -9.8 * Math.cos(x.get(0, 0)) / m_armLenMeters + (isClimbing ? mass * 9.8 * Math.cos(x.get(0, 0)) * m_armLenMeters / momentOfInertia : 0);
                 xdot = xdot.plus(VecBuilder.fill(0, alphaGrav));
               }
               return xdot;
