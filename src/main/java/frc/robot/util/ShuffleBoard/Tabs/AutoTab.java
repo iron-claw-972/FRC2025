@@ -63,11 +63,12 @@ public class AutoTab extends ShuffleBoardTabs {
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake, elevator)));
 
-
-        autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)      
+        autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
         .andThen(new FollowPathCommand("#2", true, drive))
-        .andThen(new FollowPathCommand("#3", true, drive)));
-
+        .andThen(new FollowPathCommand("#3", true, drive))
+        .andThen(new FollowPathCommand("#4", true, drive))
+        .andThen(new FollowPathCommand("#5", true, drive)));
+                        
     //     autoCommand.addOption("Sequential_1",
     //     Commands.sequence(
     //         new FollowPathCommand("#1", true, drive),
@@ -75,8 +76,6 @@ public class AutoTab extends ShuffleBoardTabs {
     //     )
     // );
 
-    autoCommand.addOption("Command Grouped [1,2,3]", new FollowPathCommand("Command Grouped [1,2,3]", true, drive));
-       
         tab.add(autoCommand);
     }
 

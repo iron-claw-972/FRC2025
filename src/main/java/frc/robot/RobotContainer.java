@@ -14,6 +14,7 @@ import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
+import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
@@ -24,6 +25,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
+import lib.controllers.GameController;
 import frc.robot.util.Vision;
 import java.util.function.BooleanSupplier;
 
@@ -76,13 +78,14 @@ public class RobotContainer {
         
       case Phil:
         outtake = new Outtake();
-        //elevator = new Elevator();
+        elevator = new Elevator();
         SmartDashboard.putNumber("wheel speed", 0.2);
       case Vivace:
       case Vertigo:
       vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         drive = new Drivetrain(vision);
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+        driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
+        //driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
         operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // // Detected objects need access to the drivetrain
@@ -93,7 +96,7 @@ public class RobotContainer {
         driver.configureControls();
         operator.configureControls();
          initializeAutoBuilder();
-        //registerCommands();
+        registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
  

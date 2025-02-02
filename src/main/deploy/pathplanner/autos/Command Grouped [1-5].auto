@@ -11,27 +11,27 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "#2"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 2.0
+            "pathName": "#3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#3"
+            "pathName": "#4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "#5"
           }
         }
       ]
