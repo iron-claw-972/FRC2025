@@ -235,9 +235,9 @@ public class Module extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
-        double adjustedAngle = StatusSignal.getLatencyCompensatedValueAsDouble(steerAngle, steerVelocity);
+        
         return Rotation2d.fromRotations(
-            adjustedAngle/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+            steerAngle.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     public Rotation2d getCANcoder() {
@@ -290,8 +290,7 @@ public class Module extends SubsystemBase {
      * @return Speed in RPM
      */
     public double getDriveVelocity() {
-        double adjustedVelocity = StatusSignal.getLatencyCompensatedValueAsDouble(driveVelocity, driveAccel);
-        return adjustedVelocity*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
+        return driveVelocity.getValueAsDouble()*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
     }
 
     public double getDriveVoltage(){
@@ -329,13 +328,8 @@ public class Module extends SubsystemBase {
     }
 
     public SwerveModulePosition getPosition() {
-        double position = drivePosition.getValueAsDouble();
-        double velocity = drivePosition.getValueAsDouble();
-        double acceleration = drivePosition.getValueAsDouble();
-        double latency = Math.min(0.3, drivePosition.getTimestamp().getLatency());
-        double adjustedPosition = position + velocity*latency + acceleration*Math.pow(latency, 2)/2;
         return new SwerveModulePosition(
-                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(adjustedPosition*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
+                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(drivePosition.getValueAsDouble()*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
                                                DriveConstants.DRIVE_GEAR_RATIO),
                 getAngle());
     }

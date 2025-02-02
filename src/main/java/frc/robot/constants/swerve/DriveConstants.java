@@ -53,7 +53,7 @@ public class DriveConstants {
     // To do so, divide by the radius. The radius is the diagonal of the square chassis, diagonal = sqrt(2) * side_length.
     public static final double MAX_ANGULAR_SPEED = MAX_SPEED / ((TRACK_WIDTH / 2) * Math.sqrt(2));
 
-    public static final double COSF = 1.1;
+    public static final double COSF = 0.9;
     
     // The maximum acceleration of the robot, limited by friction
     public static final double MAX_LINEAR_ACCEL = COSF * Constants.GRAVITY_ACCELERATION;

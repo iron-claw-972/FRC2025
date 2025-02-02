@@ -34,6 +34,7 @@ public class SwerveModulePose {
         angles = new double[4];
         reset();
         update();
+        reset();
     }
 
     public void update(){
