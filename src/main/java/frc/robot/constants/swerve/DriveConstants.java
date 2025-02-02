@@ -25,12 +25,12 @@ public class DriveConstants {
     public static final double ROBOT_WIDTH_WITH_BUMPERS = Units.inchesToMeters(26.5 + 3.25 * 2);
 
     //TODO update to actual values for each robot
-    public static double ROBOT_WHEIGHT = 23.36;
+    public static double ROBOT_MASS = 23.36;
 
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
 
-    public static double WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
+    public static double WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
     
     /** Distance between the left and right wheels [meters]. */
@@ -202,12 +202,10 @@ public class DriveConstants {
             STEER_OFFSET_BACK_LEFT = 304.795-180;
             STEER_OFFSET_BACK_RIGHT = 201.177-180;
 
-            ROBOT_WHEIGHT = 50;
-            WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
+            ROBOT_MASS = 50;
+            WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
         } else if (robotId == RobotId.Vertigo) {
-            TRACK_WIDTH = Units.inchesToMeters(22.75);//22.75 swerve bot, 20.75 comp bot
-            
             STEER_OFFSET_FRONT_LEFT = 4.185;
             STEER_OFFSET_FRONT_RIGHT = 101.519+90;
             STEER_OFFSET_BACK_LEFT = 38.997+180;
@@ -215,24 +213,16 @@ public class DriveConstants {
             
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
 
-            ROBOT_WHEIGHT = 20;
+            ROBOT_MASS = 20;
 
-            WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
+            WHEEL_MOI = 0.000326 * ROBOT_MASS;
             
             // Falcon Speed
             Constants.MAX_RPM = 6080.0;
         } else if (robotId == RobotId.Phil) {
+            ROBOT_MASS = 30;
+            WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
-            DRIVE_MOTOR_CAN = Constants.RIO_CAN;
-            STEER_MOTOR_CAN = Constants.RIO_CAN;
-            STEER_ENCODER_CAN = Constants.RIO_CAN;
-            PIGEON_CAN = Constants.RIO_CAN;
-
-            ROBOT_WHEIGHT = 20;
-            WHEEL_MOI = 0.000326 * ROBOT_WHEIGHT;
-
-            TRACK_WIDTH = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
-        
             STEER_OFFSET_FRONT_LEFT = 121.463+180;
             STEER_OFFSET_FRONT_RIGHT = 284.242;
             STEER_OFFSET_BACK_LEFT = 157.676;
