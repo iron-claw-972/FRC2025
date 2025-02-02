@@ -6,6 +6,7 @@ import frc.robot.subsystems.Outtake;
 /**
  * Command to eject coral.
  * Wants coral to be present.
+ * This should generally be accompanied by a time out!!!
  */
 public class OuttakeCoralBasic extends Command {
     private Outtake outtake;
@@ -25,12 +26,9 @@ public class OuttakeCoralBasic extends Command {
 
     @Override
     public void initialize(){
-        // set the timer to zero
-        ticks = 0;
 
         if (outtake.coralLoaded()) {
             // coral is present, ejecting makes sense
-            outtake.outtake();
             state = State.LOADED;
         }
         else {
@@ -42,6 +40,10 @@ public class OuttakeCoralBasic extends Command {
     public void execute(){
         // bump the timer
         ticks++;
+        /*if(ticks>200){
+            state = State.DONE;
+        }
+            */
 
         switch (state) {
             case EMPTY:
@@ -50,14 +52,17 @@ public class OuttakeCoralBasic extends Command {
 
             case LOADED:
             // waiting for ejected to become true
-            if (outtake.coralEjected()) {
+            // FIXME: is this supposed to be coralLoaded????
+            if (outtake.coralEjecting()) {
+                ticks = 0;
                 state = State.MOVING;
+                outtake.outtake();
             }
             break;
 
             case MOVING:
             // waiting for ejected to become false (success)
-            if(!outtake.coralEjected()){
+            if(!outtake.coralEjecting()){
                 state = State.DONE;
             }
             // waiting for a timeout; 100 ticks is 2 seconds.
@@ -67,16 +72,17 @@ public class OuttakeCoralBasic extends Command {
             break;
 
             case JAMMED:
-            // reverse the motor
-            outtake.setMotor(-0.15);
+            // reverse the motor, at -0.1: sometimes did not have the power to reverse, at -0.15: ejected all the way back, hit the funnel
+            outtake.setMotor(-0.125);
+
             state = State.REVERSING;
             break;
 
             case REVERSING:
             // waiting for ejected to be false
             if(!outtake.coralEjected()){
-                state = State.DONE;
-                outtake.stop();
+                state = State.LOADED;
+                // outtake.stop();
             }
             break;
 

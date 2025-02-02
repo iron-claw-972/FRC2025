@@ -20,7 +20,7 @@ public class Outtake extends SubsystemBase {
     /** Coral detected before the rollers */
     private DigitalInput digitalInputLoaded = new DigitalInput(9);
     /** Coral detected after the rollers */
-    private DigitalInput digitalInputEjected = new DigitalInput(8);
+    private DigitalInput digitalInputEjecting = new DigitalInput(8);
 
     public Outtake(){
         motor.configure(new SparkFlexConfig()
@@ -60,8 +60,22 @@ public class Outtake extends SubsystemBase {
        return !digitalInputLoaded.get();
     }
 
+    /**
+     *  Coral is at the ejecting beam break sensor.
+     * @return coral is interrupting the beam breaker.
+     */ 
+    public boolean coralEjecting() {
+        return !digitalInputEjecting.get();
+    }
+
+    /**
+     * Coral is at the ejecting beam break sensor.
+     * @deprecated Use coralEjecting() instead.
+     * @return
+     */
+    @Deprecated
     public boolean coralEjected(){
-        return !digitalInputEjected.get();
+        return coralEjecting();
     }
 
     public void reverse(){
