@@ -4,8 +4,11 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
@@ -22,7 +25,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -104,7 +106,15 @@ public class Drivetrain extends SubsystemBase {
 
     private SwerveModulePose modulePoses;
 
+    // The previous pose to reset to if the current pose gets too far off the field
+    private Pose2d prevPose = new Pose2d();
+
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+
     private boolean slipped = false;
+
+
+    private BaseStatusSignal[] statusSignals = null;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -115,7 +125,7 @@ public class Drivetrain extends SubsystemBase {
         modules = new Module[4];
 
         ModuleConstants[] constants = Arrays.copyOfRange(ModuleConstants.values(), 0, 4);
-        
+
         if(RobotBase.isReal()){
             Arrays.stream(constants).forEach(moduleConstants -> {
                 modules[moduleConstants.ordinal()] = new Module(moduleConstants);
@@ -129,6 +139,7 @@ public class Drivetrain extends SubsystemBase {
         // The Pigeon is a gyroscope and implements WPILib's Gyro interface
         pigeon = new Pigeon2(IdConstants.PIGEON, DriveConstants.PIGEON_CAN);
         pigeon.getConfigurator().apply(new Pigeon2Configuration());
+        
         // Our pigeon is mounted with y forward, and z upward
         MountPoseConfigs mountPoseConfigs = new MountPoseConfigs();
         mountPoseConfigs.deserialize("");
@@ -147,7 +158,7 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator = new SwerveDrivePoseEstimator(
                 DriveConstants.KINEMATICS,
                 Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
-                getModulePositions(),
+                updateModulePositions(),
                 new Pose2d(),
                 // Defaults, except trust pigeon more
                 VecBuilder.fill(0.1, 0.1, 0),
@@ -164,6 +175,21 @@ public class Drivetrain extends SubsystemBase {
 
         modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
 
+        // Store all status signals that we need to wait for
+        for(int i = 0; i < modules.length; i++){
+            BaseStatusSignal[] signals = modules[0].getStatusSignals();
+            // Initialize array length and add pigeon if this is the first module
+            if(i == 0){
+                statusSignals = new BaseStatusSignal[4*signals.length+1];
+                statusSignals[0] = pigeon.getYaw();
+            }
+            // Add all signals from this module
+            for(int j = 0; j < signals.length; j++){
+                statusSignals[i*signals.length+j+1] = signals[j];
+            }
+        }
+        StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
+        ParentDevice.optimizeBusUtilizationForAll(pigeon);
         LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
         LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
         LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
@@ -191,9 +217,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateOdometry();
-        
-        SmartDashboard.putBoolean("Slipped", modulePoses.slipped());
+        updateOdometryVision();
     }
 
     // DRIVE
@@ -207,11 +231,9 @@ public class Drivetrain extends SubsystemBase {
      * @param fieldRelative whether the provided x and y speeds are relative to the field
      * @param isOpenLoop    whether to use velocity control for the drive motors
      */
-
-    
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         // rot = headingControl(rot, xSpeed, ySpeed);
-        ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
+        ChassisSpeeds speeds = ChassisSpeeds.discretize(xSpeed, ySpeed, rot, Constants.LOOP_TIME);
         if(fieldRelative){
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }
@@ -244,9 +266,10 @@ public class Drivetrain extends SubsystemBase {
      * @param rot the angle to move to, in radians
      */
     public void driveWithPID(double x, double y, double rot) {
-        double xSpeed = xController.calculate(poseEstimator.getEstimatedPosition().getX(), x);
-        double ySpeed = yController.calculate(poseEstimator.getEstimatedPosition().getY(), y);
-        double rotRadians = rotationController.calculate(getYaw().getRadians(), rot);
+        Pose2d pose = getPose();
+        double xSpeed = xController.calculate(pose.getX(), x);
+        double ySpeed = yController.calculate(pose.getY(), y);
+        double rotRadians = rotationController.calculate(pose.getRotation().getRadians(), rot);
         drive(xSpeed, ySpeed, rotRadians, true, false);
     }
 
@@ -254,13 +277,23 @@ public class Drivetrain extends SubsystemBase {
      * Updates the field relative position of the robot.
      */
     public void updateOdometry() {
+        // Wait for all modules to update
+        BaseStatusSignal.waitForAll(0.012, statusSignals);
+        
+        // Adding synchronized to a method does the same thing as synchronized(this), so this section won't run with other synchronized methods
+        synchronized(this){
+            // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
+            // Also stores the current pose in the buffer
+            poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), updateModulePositions()));
+        }
+    }
+
+    /**
+     * Updates odometry using vision
+     */
+    public synchronized void updateOdometryVision() {
         // Start the timer if it hasn't started yet
         visionEnableTimer.start();
-
-        Pose2d pose1 = getPose();
-
-        // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
-        poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions());
 
         // Update the swerve module poses
         modulePoses.update();
@@ -284,27 +317,32 @@ public class Drivetrain extends SubsystemBase {
 
         Pose2d pose3 = getPose();
         
-        // Reset the pose to a position on the field if it is off the field
-        if(!Vision.onField(pose1)){
+        // Reset the pose to a position on the field if it is too far off the field
+        // This uses nearField() instead of onField() so we don't reset the odometry when the wheels slip near the edge of the field
+        // This is meant for poses that are caused by errors
+        if(!Vision.nearField(prevPose)){
             // If the pose at the beginning of the method is off the field, reset to a position in the middle of the field
             // Use the rotation of the pose after updating odometry so the yaw is right
-            resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation()));
-        }else if(!Vision.onField(pose2)){
+            prevPose = new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, pose2.getRotation());
+            resetOdometry(prevPose);
+        }else if(!Vision.nearField(pose2)){
             // if the drivetrain pose is off the field, reset our odometry to the pose before(this is the right pose)
             // Keep the rotation from pose2 so yaw is correct for driver
-            resetOdometry(new Pose2d(pose1.getTranslation(), pose2.getRotation()));
-        }else if(!Vision.onField(pose3)){
-            //if our vision+drivetrain odometry is off the field, reset our odometry to the pose before(this is the right pose)
+            prevPose = new Pose2d(prevPose.getTranslation(), pose2.getRotation());
+            resetOdometry(prevPose);
+        }else if(!Vision.nearField(pose3)){
+            //if our vision+drivetrain odometry isn't near the field, reset our odometry to the pose before(this is the right pose)
             resetOdometry(pose2);
+            prevPose = pose2;
+        }else{
+            // Set the previous pose to the current pose if we need to return to that
+            prevPose = pose3;
         }
 
         if (Robot.isSimulation()) {
             pigeon.getSimState().addYaw(
                     +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
-
-        // Store the current pose in the buffer
-        poseBuffer.addSample(Timer.getFPGATimestamp(), getPose());
     }
 
     /**
@@ -395,12 +433,21 @@ public class Drivetrain extends SubsystemBase {
 
 
     /**
+     * Updates and returns the array of SwerveModulePositions, which store the distance travleled by the drive and the steer angle.
+     *
+     * @return An array of all swerve module positions
+     */
+    private SwerveModulePosition[] updateModulePositions() {
+        return modulePositions = Arrays.stream(modules).map(Module::getPosition).toArray(SwerveModulePosition[]::new);
+    }
+
+    /**
      * Gets an array of SwerveModulePositions, which store the distance travleled by the drive and the steer angle.
      *
-     * @return an array of all swerve module positions
+     * @return An array of all swerve module positions
      */
     public SwerveModulePosition[] getModulePositions() {
-        return Arrays.stream(modules).map(Module::getPosition).toArray(SwerveModulePosition[]::new);
+        return modulePositions;
     }
 
     /**
@@ -451,7 +498,7 @@ public class Drivetrain extends SubsystemBase {
      * @return the yaw of the robot, aka heading, the direction it is facing
      */
     public Rotation2d getYaw() {
-        return poseEstimator.getEstimatedPosition().getRotation();
+        return getPose().getRotation();
     }
 
     /**
@@ -475,7 +522,7 @@ public class Drivetrain extends SubsystemBase {
      *
      * @param pose the pose to reset to.
      */
-    public void resetOdometry(Pose2d pose) {
+    public synchronized void resetOdometry(Pose2d pose) {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
         poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
