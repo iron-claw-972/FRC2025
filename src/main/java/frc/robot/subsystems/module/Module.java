@@ -33,7 +33,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -66,9 +65,7 @@ public class Module extends SubsystemBase {
 
     private StatusSignal<Angle> drivePosition;
     private StatusSignal<AngularVelocity> driveVelocity;
-    private StatusSignal<AngularAcceleration> driveAccel;
     private StatusSignal<Angle> steerAngle;
-    private StatusSignal<AngularVelocity> steerVelocity;
     private StatusSignal<Angle> CANangle;
 
 
@@ -133,13 +130,11 @@ public class Module extends SubsystemBase {
 
         drivePosition = driveMotor.getPosition();
         driveVelocity = driveMotor.getVelocity();
-        driveAccel  = driveMotor.getAcceleration();
         steerAngle = angleMotor.getPosition();
-        steerVelocity = angleMotor.getVelocity();
         CANangle = CANcoder.getAbsolutePosition();
 
         StatusSignal.setUpdateFrequencyForAll(100, drivePosition, driveVelocity, steerAngle);
-        StatusSignal.setUpdateFrequencyForAll(20, driveAccel, steerVelocity, CANangle);
+        StatusSignal.setUpdateFrequencyForAll(5, CANangle);
 
 
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
@@ -253,7 +248,7 @@ public class Module extends SubsystemBase {
     }
 
     public void refreshStatusSignals(){
-        StatusSignal.refreshAll(drivePosition, driveVelocity, driveAccel,steerAngle, steerVelocity );
+        StatusSignal.refreshAll(drivePosition, driveVelocity, steerAngle);
     }
 
     private void configCANcoder() {
@@ -282,12 +277,6 @@ public class Module extends SubsystemBase {
         resetToAbsolute();
     }
 
-    /**
-     * @return Speed in RPM
-     */
-    public double getSteerVelocity() {
-        return steerVelocity.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio*60;
-    }
     /**
      * @return Speed in RPM
      */
