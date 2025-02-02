@@ -52,7 +52,6 @@ public class AngledElevatorSim extends ElevatorSim {
     }
 
     // Copied from ElevatorSim with one difference
-    // ElevatorSim has been updated since then, but htis should still work.
     /**
      * Creates a simulated elevator mechanism.
      *
