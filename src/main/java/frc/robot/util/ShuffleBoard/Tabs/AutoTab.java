@@ -4,12 +4,6 @@
 
 package frc.robot.util.ShuffleBoard.Tabs;
 
-import java.util.List;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
@@ -69,12 +63,11 @@ public class AutoTab extends ShuffleBoardTabs {
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake, elevator)));
 
-        autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive));
-        // .andThen(new FollowPathCommand("#2", true, drive))
-        // .andThen(new FollowPathCommand("#3", true, drive)));
-      
-        
-        //Command autoCommand = new PathPlannerAuto("Command Grouped [1,2,3]");
+
+        autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)      
+        .andThen(new FollowPathCommand("#2", true, drive))
+        .andThen(new FollowPathCommand("#3", true, drive)));
+
     //     autoCommand.addOption("Sequential_1",
     //     Commands.sequence(
     //         new FollowPathCommand("#1", true, drive),
@@ -82,11 +75,10 @@ public class AutoTab extends ShuffleBoardTabs {
     //     )
     // );
 
-    //autoCommand.addOption("test_2", new FollowPathCommand("test_2", true, drive));
+    autoCommand.addOption("Command Grouped [1,2,3]", new FollowPathCommand("Command Grouped [1,2,3]", true, drive));
        
         tab.add(autoCommand);
     }
- 
 
     public void update(){
     }
