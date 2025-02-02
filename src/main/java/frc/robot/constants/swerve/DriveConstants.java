@@ -206,8 +206,6 @@ public class DriveConstants {
             WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
         } else if (robotId == RobotId.Vertigo) {
-            TRACK_WIDTH = Units.inchesToMeters(22.75);//22.75 swerve bot, 20.75 comp bot
-            
             STEER_OFFSET_FRONT_LEFT = 4.185;
             STEER_OFFSET_FRONT_RIGHT = 101.519+90;
             STEER_OFFSET_BACK_LEFT = 38.997+180;
@@ -222,17 +220,9 @@ public class DriveConstants {
             // Falcon Speed
             Constants.MAX_RPM = 6080.0;
         } else if (robotId == RobotId.Phil) {
-
-            DRIVE_MOTOR_CAN = Constants.RIO_CAN;
-            STEER_MOTOR_CAN = Constants.RIO_CAN;
-            STEER_ENCODER_CAN = Constants.RIO_CAN;
-            PIGEON_CAN = Constants.RIO_CAN;
-
             ROBOT_MASS = 30;
             WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
-            TRACK_WIDTH = Units.inchesToMeters(22.75); //22.75 swerve bot, 20.75 comp bot
-        
             STEER_OFFSET_FRONT_LEFT = 121.463;
             STEER_OFFSET_FRONT_RIGHT = 284.242-180;
             STEER_OFFSET_BACK_LEFT = 157.676+180;
