@@ -15,7 +15,7 @@ public class IdConstants {
     public static final int STEER_BACK_RIGHT_ID = 5;
     public static final int ENCODER_BACK_RIGHT_ID = 6;
     public static final int PIGEON = 13;
-    
+
     // LEDs
     public static final int CANDLE_ID = 1;
 
@@ -27,7 +27,9 @@ public class IdConstants {
 
     // Add other subsystems here
 
-	// Indexer
-	public static final int INDEXER_MOTOR = -1;
-	public static final int INDEXER_SENSOR = -1;
+    // Indexer
+    public static final int INDEXER_MOTOR = -1;
+
+    // Modify the ID as needed later, changed to 0 because sim won't run
+    public static final int INDEXER_SENSOR = 0;
 }
