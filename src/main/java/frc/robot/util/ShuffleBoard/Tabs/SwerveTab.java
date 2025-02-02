@@ -5,6 +5,7 @@
 package frc.robot.util.ShuffleBoard.Tabs;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -26,7 +27,6 @@ public class SwerveTab extends ShuffleBoardTabs {
     private GenericEntry xOdemetry;
     private GenericEntry yOdemetry;
     private GenericEntry rotOdemetry;
-    private GenericEntry[] steerSpeed = new GenericEntry[4];
     private GenericEntry[] driveSpeed = new GenericEntry[4];
     private GenericEntry[] driveAccel = new GenericEntry[4];
     private GenericEntry[] rotationalPosition = new GenericEntry[4];
@@ -47,11 +47,6 @@ public class SwerveTab extends ShuffleBoardTabs {
             String moduleName = modules[i].getModuleType().name();
             
             driveLayouts[i] = tab.getLayout(moduleName+" swerve module", BuiltInLayouts.kList).withSize(2, 2).withPosition(2*i, 0);
-
-            steerSpeed[i] = driveLayouts[i]
-            .add("steer Speed", 0)
-            .withPosition(0, 0)
-            .getEntry();
 
             driveSpeed[i] = driveLayouts[i]
             .add("drive Speed", 0)
@@ -88,7 +83,6 @@ public class SwerveTab extends ShuffleBoardTabs {
 
     public void update(){
         for(int i = 0; i<modules.length; i++){
-            steerSpeed[i].setDouble(truncate(modules[i].getSteerVelocity()));
             driveSpeed[i].setDouble(truncate(modules[i].getDriveVelocity()));
             rotationalPosition[i].setDouble(truncate(MathUtil.inputModulus(modules[i].getAngle().getDegrees(), 0, 360)));
             voltage[i].setDouble(truncate(drive.getModules()[i].getDriveVoltage()));
@@ -98,8 +92,9 @@ public class SwerveTab extends ShuffleBoardTabs {
             }
             moduleDistance[i].setDouble(modules[i].getPosition().distanceMeters);
         }
-        xOdemetry.setDouble(truncate(drive.getPose().getX()));
-        yOdemetry.setDouble(truncate(drive.getPose().getY()));
-        rotOdemetry.setDouble(truncate(drive.getPose().getRotation().getDegrees()));
+        Pose2d drivePose = drive.getPose();
+        xOdemetry.setDouble(truncate(drivePose.getX()));
+        yOdemetry.setDouble(truncate(drivePose.getY()));
+        rotOdemetry.setDouble(truncate(drivePose.getRotation().getDegrees()));
     }
 }
