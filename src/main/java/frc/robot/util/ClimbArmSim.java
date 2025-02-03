@@ -46,6 +46,7 @@ public class ClimbArmSim extends SingleJointedArmSim {
       boolean simulateGravity,
       double startingAngleRads,
       double robotMasKilograms,
+      double armMassKilograms,
       double... measurementStdDevs) {
     super(plant, gearbox, gearing, armLengthMeters, minAngleRads, maxAngleRads, simulateGravity, startingAngleRads, measurementStdDevs);
     m_armLenMeters = armLengthMeters;
@@ -53,7 +54,7 @@ public class ClimbArmSim extends SingleJointedArmSim {
     m_maxAngle = maxAngleRads;
     m_simulateGravity = simulateGravity;
     mass = robotMasKilograms;
-    momentOfInertia = 1.0/3.0 * mass * armLengthMeters * armLengthMeters;
+    momentOfInertia = 1.0/3.0 * armMassKilograms * armLengthMeters * armLengthMeters;
     isClimbing = false;
   }
 
@@ -93,6 +94,7 @@ public class ClimbArmSim extends SingleJointedArmSim {
         simulateGravity,
         startingAngleRads,
         robotMassKilograms,
+        1,
         measurementStdDevs);
     momentOfInertia = jKgMetersSquared;
   }
