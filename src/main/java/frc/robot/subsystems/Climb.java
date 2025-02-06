@@ -41,6 +41,7 @@ public class Climb extends SubsystemBase {
 
     private ClimbArmSim climbSim;
 
+
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
@@ -56,6 +57,8 @@ public class Climb extends SubsystemBase {
                 0.0,
                 60
                 );
+
+                climbSim.setIsClimbing(true);
         }
 
         pid.setIZone(Units.degreesToRadians(5));
@@ -83,6 +86,7 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
+
         climbSim.setInput(motor.get() * Constants.ROBOT_VOLTAGE);
         climbSim.update(Constants.LOOP_TIME);
 
