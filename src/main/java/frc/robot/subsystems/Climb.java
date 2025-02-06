@@ -11,7 +11,6 @@ import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -20,6 +19,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
     //Motors
@@ -39,21 +39,22 @@ public class Climb extends SubsystemBase {
     private final double climbGearRatio = 75.0/1.0;
     private final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
 
-    private SingleJointedArmSim climbSim;
+    private ClimbArmSim climbSim;
 
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
 
-            climbSim = new SingleJointedArmSim(
+            climbSim = new ClimbArmSim(
                 climbGearBox, 
                 totalGearRatio, 
                 1.014, 
                 0.127, 
-                Double.NEGATIVE_INFINITY, 
-                Double.POSITIVE_INFINITY, 
+                Double.NEGATIVE_INFINITY, //min angle 
+                Double.POSITIVE_INFINITY, //max angle
                 false, 
-                0.0
+                0.0,
+                60
                 );
         }
 
@@ -102,11 +103,12 @@ public class Climb extends SubsystemBase {
         return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
     }
 
-
-    
-    
-    // TODO: finish and possibly rename class/methods
-    // These methods should probably also be renamed
-    public void extend(){}
-    public void climb(){}
+    public void extend(){
+        double extendAngle = 90;
+        setAngle(extendAngle);
+    }
+    public void climb(){
+        double climbAngle = 0;
+        setAngle(climbAngle);
+    }
 }
