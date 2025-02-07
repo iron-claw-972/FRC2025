@@ -23,8 +23,9 @@ import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
     //Motors
-    private final PIDController pid = new PIDController(0.8, 0.4, 0.0);
-    private TalonFX motor = new TalonFX(0);
+    private final PIDController pid = new PIDController(0.1, 0.0, 0.0);
+
+    private TalonFX motor = new TalonFX(20);
     private final DCMotor climbGearBox = DCMotor.getFalcon500(1);
     private TalonFXSimState encoderSim;
 
@@ -62,6 +63,8 @@ public class Climb extends SubsystemBase {
 
         SmartDashboard.putData("PID", pid);
         SmartDashboard.putData("Climb Display", simulationMechanism);       
+
+        motor.setPosition(0);
     }
 
     @Override
@@ -97,6 +100,7 @@ public class Climb extends SubsystemBase {
     public void setAngle(double angle) {
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
+        System.out.println("hamburger");
     }
 
     public double getAngle() {
