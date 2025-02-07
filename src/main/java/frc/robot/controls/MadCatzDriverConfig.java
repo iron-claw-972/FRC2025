@@ -1,5 +1,7 @@
 package frc.robot.controls;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.constants.Constants;
@@ -15,6 +17,7 @@ import lib.controllers.MadCatzController.MadCatzButton;
 public class MadCatzDriverConfig extends BaseDriverConfig {
 
     private final MadCatzController kDriver = new MadCatzController(Constants.DRIVER_JOY);
+    private final BooleanSupplier slowModeSupplier = kDriver.get(MadCatzButton.B6);
 
     public MadCatzDriverConfig(Drivetrain drive) {
         super(drive);
@@ -23,7 +26,7 @@ public class MadCatzDriverConfig extends BaseDriverConfig {
     @Override
     public void configureControls() {
         kDriver.get(MadCatzButton.B1).whileTrue(new SetFormationX(super.getDrivetrain()));
-        kDriver.get(MadCatzButton.B2).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(DriveConstants.kStartingHeading)));
+        kDriver.get(MadCatzButton.B2).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(DriveConstants.STARTING_HEADING)));
     }
 
     @Override
@@ -53,12 +56,12 @@ public class MadCatzDriverConfig extends BaseDriverConfig {
 
     @Override
     public boolean getIsSlowMode() {
-        return kDriver.get(MadCatzButton.B6).getAsBoolean();
+        return slowModeSupplier.getAsBoolean();
     }
 
     @Override
     public boolean getIsAlign() {
-        return kDriver.get(MadCatzButton.B7).getAsBoolean();
+        return false;
     }
 
 }

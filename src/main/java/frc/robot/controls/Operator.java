@@ -4,124 +4,142 @@
 
 package frc.robot.controls;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.OuttakeAmp;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.gpm.IntakeNote;
-import frc.robot.commands.gpm.PrepareShooter;
-import frc.robot.commands.gpm.ShootKnownPos;
-import frc.robot.commands.gpm.ShootKnownPos.ShotPosition;
-import frc.robot.constants.ArmConstants;
+import frc.robot.Robot;
+import frc.robot.commands.gpm.FinishStationIntake;
+import frc.robot.commands.gpm.IntakeAlgae;
+import frc.robot.commands.gpm.IntakeCoral;
+import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeAlgae;
+import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.ReverseMotors;
+import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
-import frc.robot.constants.ShooterConstants;
+import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.VisionConstants;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.gpm.Arm;
-import frc.robot.subsystems.gpm.Intake;
-import frc.robot.subsystems.gpm.Intake.Mode;
-import frc.robot.subsystems.gpm.Shooter;
-import frc.robot.subsystems.gpm.StorageIndex;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Outtake;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Button;
+import lib.controllers.GameController.DPad;
 
-import java.util.function.Consumer;
-
-/** Add your docs here. */
+/** 
+ * Controls for the operator, which are almost a duplicate of most of the driver's controls
+ */
 public class Operator {
 
-    private final GameController kDriver = new GameController(Constants.OPERATOR_JOY);
+    private final GameController driver = new GameController(Constants.OPERATOR_JOY);
 
-    private Intake intake;
-    private Arm arm;
-    private StorageIndex index;
-    private Shooter shooter;
-    private Drivetrain drive;
-    private Consumer<Boolean> consumer;
-    IntakeNote intakeNote;
+    private final Drivetrain drive;
+    private final Elevator elevator;
+    private final Intake intake;
+    private final Indexer indexer;
+    private final Outtake outtake;
+    private final Climb climb;
+    private int alignmentDirection = 0;
     
-    public Operator(Intake intake, Arm arm, StorageIndex index, Shooter shooter, Drivetrain drive, Consumer<Boolean> consumer) {
-        this.intake = intake;
-        this.arm = arm;
-        this.index = index;
-        this.shooter = shooter;
+    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
         this.drive = drive;
-        this.consumer = consumer;
+        this.elevator = elevator;
+        this.intake = intake;
+        this.indexer = indexer;
+        this.outtake = outtake;
+        this.climb = climb;
     }
 
     public void configureControls() {
-        if (intake != null) {
-           // Command intakeNote = new IntakeNote(intake, index, arm);
-          // kDriver.setRumble(RumbleStatus.RUMBLE_ON);
-
-            kDriver.get(Button.B).onTrue(new InstantCommand(() -> intake.setMode(Mode.ReverseMotors),intake));
-            kDriver.get(Button.B).onFalse(new InstantCommand(() -> intake.setMode(Mode.DISABLED), intake));
-        }
-        
-        if (intake != null) {
-            intakeNote = new IntakeNote(intake, index, arm, consumer);
-            kDriver.get(Button.X).onTrue(intakeNote);
-            kDriver.get(Button.X).onFalse(new InstantCommand(()->intakeNote.cancel()));
-        //     kDriver.get(Button.B).onTrue(new InstantCommand(() -> intake.setMode(Mode.ReverseMotors),intake));
-        //     kDriver.get(Button.B).onFalse(new InstantCommand(() -> intake.setMode(Mode.DISABLED), intake));
-        }
-        if(index != null){
-            kDriver.get(Button.B).onTrue(new InstantCommand(() -> index.ejectBack(), index));
-            kDriver.get(Button.B).onFalse(new InstantCommand(() -> index.stopIndex(), index));
-        }
-        kDriver.get(Button.BACK).onTrue(new InstantCommand(()->{
-            if(shooter != null){
-                shooter.setTargetRPM(0);
-                shooter.resetPID();
+        driver.get(Button.BACK).onTrue(new InstantCommand(()->{
+            if(elevator != null){
+                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
             }
-            if(intake != null){
-                intake.setMode(Mode.DISABLED);
-            }
-            if(arm != null){
-                arm.setAngle(ArmConstants.stowedSetpoint);
-            }
-            if(index != null){
-                index.stopIndex();
+            if(climb != null){
+                climb.climb();
             }
             CommandScheduler.getInstance().cancelAll();
         }));
-        if (index != null && arm != null && shooter != null && drive != null) {
-            getRightTrigger().onTrue(new Shoot(shooter, arm, drive, index));
-        }
-        if(shooter != null){
-            getLeftTrigger().onTrue(new PrepareShooter(shooter, Shooter.addSlip(Shooter.shooterSpeedToRPM(ShooterConstants.SHOOT_SPEED_MPS))));
-        }
-        if(arm != null && shooter != null && index != null){
-            kDriver.get(Button.Y).onTrue(new ShootKnownPos(shooter, arm, index, ShotPosition.SUBWOOFER));
-            kDriver.get(Button.A).onTrue(new OuttakeAmp(arm, index, shooter));
-        }
-        if(arm != null){
-            kDriver.get(Button.RB).onTrue(new InstantCommand(()->arm.setAngle(ArmConstants.preClimbSetpoint), arm));
-            kDriver.get(Button.LB).onTrue(new InstantCommand(()->arm.setAngle(ArmConstants.climbSetpoint), arm));
-            kDriver.get(Button.START).onTrue(new InstantCommand(()->arm.setAngle(ArmConstants.zeroSetpoint), arm));
-          }
 
-        // Find buttons for shuttling, 10m/s is good
-        kDriver.get(GameController.DPad.UP)
-                .toggleOnTrue(new InstantCommand(() -> shooter.setTargetVelocity(10)));
-        kDriver.get(GameController.DPad.RIGHT).onTrue(new InstantCommand(()->{
-            ArmConstants.armFudgeFactor+=0.5;
-            ArmConstants.armFudgeFactorChanges++;
-        }));
-        kDriver.get(GameController.DPad.LEFT).onTrue(new InstantCommand(()->{
-            ArmConstants.armFudgeFactor-=0.5;
-            ArmConstants.armFudgeFactorChanges++;
+        Trigger menu = driver.get(Button.LEFT_JOY);
 
-        }));
-   
+        // Elevator setpoints
+        if(elevator != null){
+            driver.get(Button.START).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+            driver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+            driver.get(Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+            getLeftTrigger().onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+            driver.get(Button.Y).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
+        }
+
+        // Intake/outtake
+        if(intake != null && indexer != null && elevator != null){
+            driver.get(Button.A).and(menu.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
+            // TODO: temporary button
+            // On true, run the command to start intaking
+            // On false, run the command to finish intaking if it has a coral
+            Command startIntake = new StartStationIntake(intake);
+            driver.get(Button.RIGHT_JOY).onTrue(startIntake)
+                .onFalse(new ConditionalCommand(
+                    new InstantCommand(()->startIntake.cancel()),
+                    new FinishStationIntake(intake, indexer, elevator),
+                    startIntake::isScheduled
+                ));
+        }
+        if(outtake != null && elevator != null){
+            driver.get(Button.RIGHT_JOY).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+        }
+        if(intake != null){
+            driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
+            driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
+        }
+        if(intake != null && outtake != null){
+            driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
+        }
+
+        // Climb
+        if(climb != null){
+            driver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
+                .onFalse(new InstantCommand(()->climb.climb(), climb));
+        }
+
+        // Alignment
+        driver.get(Button.B).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 0));
+        driver.get(Button.RB).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 1));
+        driver.get(Button.Y).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 2));
+        driver.get(Button.X).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 3));
+        driver.get(DPad.DOWN).onTrue(new InstantCommand(()->alignmentDirection = 4));
+        driver.get(DPad.UP).onTrue(new InstantCommand(()->alignmentDirection = 5));
+        driver.get(DPad.LEFT).onTrue(new InstantCommand(()->setAlignmentPose(true)));
+        driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->setAlignmentPose(false)));
     }
+
+    /**
+     * Sets the drivetrain's alignmetn pose to the selected position
+     * @param isLeft True for left branch, false for right
+     */
+    private void setAlignmentPose(boolean isLeft){
+        Pose2d pose = VisionConstants.REEF.fromAprilTagIdAndPose(
+            Robot.getAlliance() == Alliance.Blue ? alignmentDirection + 17
+            : (8-alignmentDirection) % 6 + 6,
+        isLeft).pose;
+        drive.setDesiredPose(pose);
+    }
+
     public Trigger getRightTrigger(){
-        return new Trigger(kDriver.RIGHT_TRIGGER_BUTTON);
+        return new Trigger(driver.RIGHT_TRIGGER_BUTTON);
     }
     public Trigger getLeftTrigger(){
-        return new Trigger(kDriver.LEFT_TRIGGER_BUTTON);
+        return new Trigger(driver.LEFT_TRIGGER_BUTTON);
     }
     public GameController getGameController(){
-        return kDriver;
+        return driver;
     }
 }

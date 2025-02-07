@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.AutoConstants;
-import frc.robot.constants.miscConstants.VisionConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -51,7 +51,7 @@ public class GoToPose extends SequentialCommandGroup {
     this.drive = drive;
     addCommands(
       new InstantCommand(()->drive.setVisionEnabled(VisionConstants.ENABLED_GO_TO_POSE)),
-      new SupplierCommand(() -> createCommand(), drive),
+      new SupplierCommand(() -> createCommand(), drive).handleInterrupt(()->drive.setVisionEnabled(true)),
       new InstantCommand(()->drive.setVisionEnabled(true))
     );
   }
@@ -66,15 +66,15 @@ public class GoToPose extends SequentialCommandGroup {
     }
     Command command = AutoBuilder.pathfindToPose(
       pose,
-      new PathConstraints(maxSpeed, maxAccel, DriveConstants.kMaxAngularSpeed, DriveConstants.kMaxAngularAccel),
+      new PathConstraints(maxSpeed, maxAccel, DriveConstants.MAX_ANGULAR_SPEED, DriveConstants.MAX_ANGULAR_ACCEL),
       0
     );
 
     // get the distance to the pose.
     double dist = drive.getPose().minus(pose).getTranslation().getNorm();
 
-    // if greater than 6m or less than 10 cm, don't run it. If the path is too small pathplanner makes weird paths.
-    if (dist > 6) {
+    // if greater than 3m or less than 2 cm, don't run it. If the path is too small pathplanner makes weird paths.
+    if (dist > 3) {
       command = new DoNothing();
       DriverStation.reportWarning("Alignment Path too long, doing nothing, GoToPose.java", false);
     } else if (dist < 0.02) {
@@ -82,6 +82,6 @@ public class GoToPose extends SequentialCommandGroup {
       DriverStation.reportWarning("Alignment Path too short, doing nothing, GoToPose.java", false);
     }
 
-    return command.handleInterrupt(()->drive.setVisionEnabled(true));
+    return command;
   }
 }

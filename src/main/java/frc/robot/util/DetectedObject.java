@@ -1,10 +1,13 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
@@ -16,7 +19,20 @@ public class DetectedObject {
     private static Drivetrain drive;
     public final Pose3d pose;
     public final ObjectType type;
-    public enum ObjectType{NOTE, RED_ROBOT, BLUE_ROBOT, NONE};
+
+    public enum ObjectType{
+        CORAL(Units.inchesToMeters(4.5/2)),
+        ALGAE(Units.inchesToMeters(16.25/2)),
+        RED_ROBOT(0),
+        BLUE_ROBOT(0),
+        NONE(0);
+
+        public final double height;
+
+        private ObjectType(double h){
+            height = h;
+        }
+    };
 
     /**
      * Sets the drivetrain to use for pose calculations
@@ -33,6 +49,7 @@ public class DetectedObject {
         pose = new Pose3d();
         type = ObjectType.NONE;
     }
+
     /**
      * Creates a new DetectedObject
      * @param xOffset The x offset from the camera to the object in radians
@@ -42,21 +59,33 @@ public class DetectedObject {
      * @param robotToCamera The transformation form the robot to the camera
      */
     public DetectedObject(double xOffset, double yOffset, double distance, ObjectType type, Transform3d robotToCamera){
+        this(xOffset, yOffset, distance, type, robotToCamera, -1);
+    }
+
+    /**
+     * Creates a new DetectedObject
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param distance The distance from the camera to the object in meters
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     * @param timestamp The timestamp of the picture in seconds
+     */
+    public DetectedObject(double xOffset, double yOffset, double distance, ObjectType type, Transform3d robotToCamera, double timestamp){
         this.type = type;
         // Get the position relative to the camera
-        Translation3d translation = new Translation3d(distance, new Rotation3d(0, yOffset, -xOffset));
+        Translation3d translation = new Translation3d(distance, new Rotation3d(0, -yOffset, -xOffset))
         // Rotate and translate it to get the position relative to the robot
-        translation = translation.rotateBy(robotToCamera.getRotation());
-        translation = translation.plus(robotToCamera.getTranslation());
+            .rotateBy(robotToCamera.getRotation())
+            .plus(robotToCamera.getTranslation());
         // If the drivetrain exists, rotate and translate it to get the field relative position
         if(drive != null){
+            Pose2d drivePose = drive.getPoseAt(timestamp);
             translation = translation.rotateBy(new Rotation3d(
                 0,
                 0,
-                drive.getYaw().getRadians()
-            ));
-            Translation2d drivePose = drive.getPose().getTranslation();
-            translation = translation.plus(new Translation3d(
+                drivePose.getRotation().getRadians()
+            )).plus(new Translation3d(
                 drivePose.getX(),
                 drivePose.getY(),
                 0
@@ -64,6 +93,20 @@ public class DetectedObject {
         }
         pose = new Pose3d(translation, new Rotation3d());
     }
+    
+    /**
+     * Creates a new DetectedObject
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param distance The distance from the camera to the object in meters
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     * @param timestamp The timestamp of the picture in seconds
+     */
+    public DetectedObject(double xOffset, double yOffset, double distance, int type, Transform3d robotToCamera, double timestamp){
+        this(xOffset, yOffset, distance, getType(type), robotToCamera, timestamp);
+    }
+
     /**
      * Creates a new DetectedObject
      * @param xOffset The x offset from the camera to the object in radians
@@ -72,9 +115,35 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, double distance, long type, Transform3d robotToCamera){
-        this(xOffset, yOffset, distance, getType(type), robotToCamera);
+    public DetectedObject(double xOffset, double yOffset, double distance, int type, Transform3d robotToCamera){
+        this(xOffset, yOffset, distance, getType(type), robotToCamera, -1);
     }
+
+    /**
+     * Creates a new DetectedObject
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param distance The distance from the camera to the object in meters
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     * @param timestamp The timestamp of the picture in seconds
+     */
+    public DetectedObject(double xOffset, double yOffset, double distance, String type, Transform3d robotToCamera, double timestamp){
+        this(xOffset, yOffset, distance, getType(type), robotToCamera, timestamp);
+    }
+    
+    /**
+     * Creates a new DetectedObject
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param distance The distance from the camera to the object in meters
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     */
+    public DetectedObject(double xOffset, double yOffset, double distance, String type, Transform3d robotToCamera){
+        this(xOffset, yOffset, distance, getType(type), robotToCamera, -1);
+    }
+
     /**
      * Creates a new DetectedObject, assuming the object is on the ground
      * @param xOffset The x offset from the camera to the object in radians
@@ -83,14 +152,26 @@ public class DetectedObject {
      * @param robotToCamera The transformation form the robot to the camera
      */
     public DetectedObject(double xOffset, double yOffset, ObjectType type, Transform3d robotToCamera){
+        this(xOffset, yOffset, type, robotToCamera, -1);
+    }
+    
+    /**
+     * Creates a new DetectedObject, assuming the object is on the ground
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     * @param timestamp The timestamp of the picture in seconds
+     */
+    public DetectedObject(double xOffset, double yOffset, ObjectType type, Transform3d robotToCamera, double timestamp){
         this.type = type;
         // Get the position relative to the camera
-        Translation3d translation = new Translation3d(1, new Rotation3d(0, yOffset, -xOffset));
+        Translation3d translation = new Translation3d(1, new Rotation3d(0, -yOffset, -xOffset))
         // Rotate it to get the position relative to the rotated camera
-        translation = translation.rotateBy(robotToCamera.getRotation());
+            .rotateBy(robotToCamera.getRotation());
         // Scale it so that the object will be on the ground (- because translation's z will be negative)
         if(!isRobot()){
-            translation = translation.times(-robotToCamera.getZ()/translation.getZ());
+            translation = translation.times(-(robotToCamera.getZ()-type.height)/translation.getZ());
         }else{
             // Assume all robots are ~3m from the camera
             translation = translation.times(3);
@@ -99,13 +180,12 @@ public class DetectedObject {
         translation = translation.plus(robotToCamera.getTranslation());
         // If the drivetrain exists, rotate and translate it to be field relative
         if(drive != null){
+            Pose2d drivePose = drive.getPoseAt(timestamp);
             translation = translation.rotateBy(new Rotation3d(
                 0,
                 0,
-                drive.getYaw().getRadians()
-            ));
-            Translation2d drivePose = drive.getPose().getTranslation();
-            translation = translation.plus(new Translation3d(
+                drivePose.getRotation().getRadians()
+            )).plus(new Translation3d(
                 drivePose.getX(),
                 drivePose.getY(),
                 0
@@ -113,6 +193,19 @@ public class DetectedObject {
         }
         pose = new Pose3d(translation, new Rotation3d());
     }
+    
+    /**
+     * Creates a new DetectedObject, assuming the object is on the ground
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     * @param timestamp The timestamp of the picture in seconds
+     */
+    public DetectedObject(double xOffset, double yOffset, int type, Transform3d robotToCamera, double timestamp){
+        this(xOffset, yOffset, getType(type), robotToCamera, timestamp);
+    }
+
     /**
      * Creates a new DetectedObject, assuming the object is on the ground
      * @param xOffset The x offset from the camera to the object in radians
@@ -120,8 +213,44 @@ public class DetectedObject {
      * @param type What type of object it is
      * @param robotToCamera The transformation form the robot to the camera
      */
-    public DetectedObject(double xOffset, double yOffset, long type, Transform3d robotToCamera){
-        this(xOffset, yOffset, getType(type), robotToCamera);
+    public DetectedObject(double xOffset, double yOffset, int type, Transform3d robotToCamera){
+        this(xOffset, yOffset, getType(type), robotToCamera, -1);
+    }
+
+    /**
+     * Creates a new DetectedObject, assuming the object is on the ground
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     * @param timestamp The timestamp of the picture in seconds
+     */
+    public DetectedObject(double xOffset, double yOffset, String type, Transform3d robotToCamera, double timestamp){
+        this(xOffset, yOffset, getType(type), robotToCamera, timestamp);
+    }
+
+    /**
+     * Creates a new DetectedObject, assuming the object is on the ground
+     * @param xOffset The x offset from the camera to the object in radians
+     * @param yOffset The y offset form the camera to the object in radians
+     * @param type What type of object it is
+     * @param robotToCamera The transformation form the robot to the camera
+     */
+    public DetectedObject(double xOffset, double yOffset, String type, Transform3d robotToCamera){
+        this(xOffset, yOffset, getType(type), robotToCamera, -1);
+    }
+
+    /**
+     * Converts an int to an ObjectType
+     * @param type The type as an int, between 0 and the number of object types - 1
+     * @return The type as an ObjectType
+     */
+    public static ObjectType getType(int type){
+        ObjectType[] values = ObjectType.values();
+        if(type < 0 || type >= values.length){
+            return ObjectType.NONE;
+        }
+        return values[type];
     }
 
     /**
@@ -129,20 +258,17 @@ public class DetectedObject {
      * @param type The type as a String
      * @return The type as an ObjectType
      */
-    public static ObjectType getType(long type){
-        return
-            type==0?ObjectType.NOTE:
-            type==1?ObjectType.RED_ROBOT:
-            type==2?ObjectType.BLUE_ROBOT:
-            ObjectType.NONE;
+    public static ObjectType getType(String type){
+        ObjectType result = ObjectType.valueOf(type.toUpperCase());
+        return result==null ? ObjectType.NONE : result;
     }
 
     /**
      * Returns if the object is a game piece
-     * @return True if the object is a note, false otherwise
+     * @return True if the object is a game piece, false otherwise
      */
     public boolean isGamePiece(){
-        return type==ObjectType.NOTE;
+        return type==ObjectType.CORAL || type==ObjectType.ALGAE;
     }
     /**
      * Returns if the object is a robot
@@ -173,26 +299,33 @@ public class DetectedObject {
     public double getDistance(){
         return drive.getPose().getTranslation().getDistance(pose.getTranslation().toTranslation2d());
     }
+
     /**
      * Gets the field relative angle from the robot to the object
      * @return The angle in radians
      */
     public double getAngle(){
-        return Math.atan2(pose.getY()-drive.getPose().getY(), pose.getX()-drive.getPose().getX());
+        Pose2d drivePose = drive.getPose();
+        return Math.atan2(pose.getY()-drivePose.getY(), pose.getX()-drivePose.getX());
     }
 
     /**
-     * Gets the angle relative to the robot (0 is in front, positive counterclockwise)
+     * Gets the angle relative to the front of the robot (0 is in front, positive counterclockwise)
      * @return The relative angle in radians
      */
     public double getRelativeAngle(){
         double angle = getAngle()-drive.getYaw().getRadians();
-        if(angle > Math.PI){
-            angle -= Math.PI*2;
-        }else if(angle < -Math.PI){
-            angle += Math.PI*2;
-        }
-        return angle;
+        return MathUtil.angleModulus(angle);
+    }
+
+    /**
+     * Gets the angle of the object relative to the robot's velocity (0 is in front, positive counterclockwise)
+     * @return The relative angle in radians
+     */
+    public double getVelocityRelativeAngle(){
+        ChassisSpeeds speeds = drive.getChassisSpeeds();
+        double angle = getRelativeAngle() - Math.atan2(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond);
+        return MathUtil.angleModulus(angle);
     }
 
     public String toString(){

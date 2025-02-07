@@ -1,11 +1,13 @@
 package frc.robot.subsystems.module;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.constants.Constants;
+import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import lib.CTREModuleState;
 
@@ -43,12 +45,15 @@ public class ModuleSim extends Module {
      * @param isOpenLoop   whether to use closed/open loop control for drive velocity
      */
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
-            currentSpeed = 0;
-            return;
+        if(!DriveConstants.DISABLE_DEADBAND_AND_OPTIMIZATION){
+            // If the module isn't moving, don't rotate it
+            if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
+                currentSpeed = 0;
+                return;
+            }
+            // Optimize the reference state to avoid spinning further than 90 degrees
+            desiredState = CTREModuleState.optimize(desiredState, new Rotation2d(currentSteerPositionRad));
         }
-        // Optimize the reference state to avoid spinning further than 90 degrees
-        desiredState = CTREModuleState.optimize(desiredState, new Rotation2d(currentSteerPositionRad));
 
         currentSpeed = desiredState.speedMetersPerSecond;
         currentSteerPositionRad = desiredState.angle.getRadians();
@@ -122,5 +127,10 @@ public class ModuleSim extends Module {
     }
     public double getDriveVelocity() {
         return 0;
+    }
+
+    @Override
+    public BaseStatusSignal[] getStatusSignals(){
+        return new BaseStatusSignal[0];
     }
 }
