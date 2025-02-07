@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.PDPSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
@@ -18,10 +18,10 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
  * <p>
  * The BatterySim class works.
  * <p>
- * The PowerDistribution class work for both the PDP and the PDH.
+ * The PowerDistribution class works for both the PDP and the PDH.
  * <p>
  * The RoboRioSim class fails completely.
- * After working on some other issues, some tests started working!
+ * After working on some other issues, some tests started working.
  * I can set the simulated voltage.
  * I do not know why.
  * <p>
@@ -82,7 +82,8 @@ public class PowerPanelTest {
         assertEquals(0, pdp.getModule());
 
         // check the number of channels
-        System.out.println(pdp.getNumChannels());
+        // prints 24!
+        // System.out.println(pdp.getNumChannels());
         // TODO: Bad answer. Should be 16 but returns 24.
         assertEquals(24, pdp.getNumChannels());
         // Notes.

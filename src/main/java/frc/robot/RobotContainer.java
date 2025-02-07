@@ -16,6 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.PowerPanel;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -41,6 +42,8 @@ public class RobotContainer {
   private Outtake outtake = null;
   private Elevator elevator = null;
   private Climb climb = null;
+  // all robots should have a power distribution panel or hub
+  public static PowerPanel pdh;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -55,6 +58,11 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+    // all robots have a power panel
+    if (pdh == null) {
+      pdh = new PowerPanel();
+    }
+
     // dispatch on the robot
     switch (robotId) {
 
@@ -177,6 +185,18 @@ public class RobotContainer {
 
   public void interruptOdometryThraed(){
     odometryThread.interrupt();
+  }
+
+  /**
+   * Get the PowerPanel subsystem.
+   * <p>
+   * Obtain the PowerPanel.
+   * This method avoids passing in the PowerPanel to every substem because the PowerPanel is only needed for simulation.
+   * The PowerPanel subsystem can be used to get the battery voltage an to get or set channel currents.
+   * @return PowerPanel subsystem
+   */
+  public static PowerPanel getPowerPanel() {
+    return pdh;
   }
 }
 
