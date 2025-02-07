@@ -14,7 +14,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -44,7 +43,7 @@ public class SingleJointedArm extends SubsystemBase {
     // Inputs (what we can "put in"): [voltage], in volts.
     // Outputs (what we can measure): [position], in radians.
     private final LinearSystem<N2, N1, N2> m_armPlant =
-        LinearSystemId.createSingleJointedArmSystem(DCMotor.getNEO(1), IntakeConstants.MOI, IntakeConstants.GEARING);
+        LinearSystemId.createSingleJointedArmSystem(IntakeConstants.MOTOR, IntakeConstants.MOI, IntakeConstants.GEARING);
 
     // The observer fuses our encoder data and voltage inputs to reject noise.
     @SuppressWarnings("unchecked")
@@ -105,13 +104,22 @@ public class SingleJointedArm extends SubsystemBase {
         m_lastProfiledReference =
             new TrapezoidProfile.State(getPosition(), getVelocity());
         if (RobotBase.isSimulation()) {
-            sim = new SingleJointedArmSim(m_armPlant, DCMotor.getNEO(1), IntakeConstants.GEARING, IntakeConstants.ARM_LENGTH, IntakeConstants.MIN_ANGLE, IntakeConstants.MAX_ANGLE, true, IntakeConstants.STARTING_ANGLE);
+            sim = new SingleJointedArmSim(
+                m_armPlant,
+                IntakeConstants.MOTOR,
+                IntakeConstants.GEARING,
+                IntakeConstants.ARM_LENGTH,
+                IntakeConstants.MIN_ANGLE,
+                IntakeConstants.MAX_ANGLE,
+                true,
+                IntakeConstants.STARTING_ANGLE
+            );
             mechanism = new Mechanism2d(10, 10);
             ligament = mechanism.getRoot("root", 5, 5).append(
                 new MechanismLigament2d("Intake pivot", 4, Units.radiansToDegrees(IntakeConstants.STARTING_ANGLE))
             );
             encoderSim = new SparkRelativeEncoderSim(motor);
-            encoderSim.setPosition(Units.radiansToRotations(IntakeConstants.STARTING_ANGLE));
+            encoderSim.setPosition(Units.radiansToRotations(IntakeConstants.STARTING_ANGLE)*IntakeConstants.GEARING);
             SmartDashboard.putData("Intake pivot", mechanism);
         }
         setpoint = Math.PI/4;
@@ -160,11 +168,11 @@ public class SingleJointedArm extends SubsystemBase {
     }
 
     public double getPosition(){
-       return encoder.getPosition()*2*Math.PI/IntakeConstants.GEARING;
+       return Units.rotationsToRadians(encoder.getPosition())/IntakeConstants.GEARING;
     }
     
     public double getVelocity(){
-        return encoder.getVelocity()*2*Math.PI/60/IntakeConstants.GEARING;
+        return Units.rotationsPerMinuteToRadiansPerSecond(encoder.getVelocity())/IntakeConstants.GEARING;
      }
 
      public void setSetpoint(double setpoint){

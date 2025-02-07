@@ -4,13 +4,15 @@
 
 package frc.robot.constants;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+
 /**
  * Constants for the intake
 */
 public class IntakeConstants {
 
-
-    public static final double GEARING = 10;
+    public static final DCMotor MOTOR = DCMotor.getNEO(1);
+    public static final double GEARING = 20;
     public static final double MOI = 0.3;
     public static final double ARM_LENGTH = 0.3;
     public static final double MIN_ANGLE = 0;
