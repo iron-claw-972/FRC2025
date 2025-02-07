@@ -16,6 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.SingleJointedArm;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -41,6 +42,7 @@ public class RobotContainer {
   private Outtake outtake = null;
   private Elevator elevator = null;
   private Climb climb = null;
+  private SingleJointedArm arm = null;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -72,6 +74,7 @@ public class RobotContainer {
         outtake = new Outtake();
         elevator = new Elevator();
         climb = new Climb();
+        arm = new SingleJointedArm();
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
 
       case Vivace:

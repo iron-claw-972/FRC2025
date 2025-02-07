@@ -4,15 +4,17 @@
 
 package frc.robot.constants;
 
-/** Add your docs here. */
+/**
+ * Constants for the intake
+*/
 public class IntakeConstants {
 
 
-    public static final double gearing = 0;
-    public static final double MOI = 0;
-    public static final double armLength = 0;
-    public static final double minAngle = 0;
-    public static final double maxAngle = Math.PI;
-    public static final double startingAngle = Math.PI;
+    public static final double GEARING = 10;
+    public static final double MOI = 0.3;
+    public static final double ARM_LENGTH = 0.3;
+    public static final double MIN_ANGLE = 0;
+    public static final double MAX_ANGLE = Math.PI/2;
+    public static final double STARTING_ANGLE = Math.PI/2;
     
 }
