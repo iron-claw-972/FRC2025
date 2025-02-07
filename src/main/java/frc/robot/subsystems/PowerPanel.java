@@ -10,14 +10,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * Power Distribution.
  * <p>
- * The primary goal PowerPanel is to provide feedback to the driver and operator about how much current is used.
- * The real PDP/PDH measures the total current draw, and that value is reported to the driver/operator on the SmartDashboard.
+ * The primary goal PowerPanel is to provide feedback to the driver, operator, and programmers about how much current is drawn.
+ * The real PDP/PDH measures the total current draw, and that value is reported on the SmartDashboard.
+ * For the past 3 years, Iron Claw has fielded robots with excessive current draw.
+ * At 2024 SVR, we were drawing 320 amperes and browning out the roboRIO.
+ * Consider a 300 ampere draw: 12.6 volts - 300 amperes * 0.033 ohms = 2.6 volts.
  * <p>
  * It is also possible to do simulations that calculate current.
- * That work should be done, but it need not cover all systems (e.g., swerve) yet.
+ * That work should be done, but it need not cover all subsystems (e.g., swerve) yet.
  * The total current will not be accurate, but that is a relatively minor issue right now.
+ * Learning to do better simulations is an immediate benefit.
  * <p>
  * Robots will have either a CTRE PDP at CAN id 0 or a REV PDH at CAN id 1.
+ * <p>
+ * TODO: a map for subsystem loads to channel numbers
  */
 public class PowerPanel extends SubsystemBase {
 	/**
@@ -57,7 +63,7 @@ public class PowerPanel extends SubsystemBase {
 			setCurrent(18, 12.4);
 		}
 
-		// make the SmartDashboard keys to avoid overruns later
+		// make the SmartDashboard keys now to avoid overruns later
 		SmartDashboard.putNumber("PDH voltage", voltsBattery);
 		SmartDashboard.putNumber("PDH total current", currentTotal);
 		SmartDashboard.putNumber("PDH peak current", currentPeak);
@@ -114,22 +120,24 @@ public class PowerPanel extends SubsystemBase {
 		// This method relies on subsystems calculating a simulated current and setting the current draw for that channel.
 		// If all subsystems do that, then we have an accurate total current.
 
+		// as a test, every 20 seconds, impose a 100-ampere load on channel 3
+		// remove this code when current draw simulations are working
 		int ticksTest = ticks % 1000;
 		if (ticksTest == 10) {
 			setCurrent(3, 100.0);
 		}
-		if (ticksTest == 100) {
+		if (ticksTest == 110) {
 			setCurrent(3, 0.0);
 		}
 
 		// From the total current, estimate the battery voltage
 		voltsBattery = 12.6 - currentTotal * ohmsResistance;
 
-		// tell the PDH what the battery voltage is
+		// tell the PDH what the battery voltage is. Can access with pdh.getVoltage()
 		pdhSim.setVoltage(voltsBattery);
 
 		// This object can supply the battery voltage, and PDH can supply the battery voltage.
-		// Code may get the battery voltage from another place such as the roboRIO.
+		// Code may get the battery voltage with RobotController.getBatteryVoltage()
 		RoboRioSim.setVInVoltage(voltsBattery);
 	}
 

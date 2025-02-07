@@ -42,8 +42,11 @@ public class RobotContainer {
   private Outtake outtake = null;
   private Elevator elevator = null;
   private Climb climb = null;
-  // all robots should have a power distribution panel or hub
-  public static PowerPanel pdh;
+  // all robots should have a Power Distribution Panel (PDP) or Power Distribution Hub
+  // Subsystems only need access to the PowerPanel during simulation.
+  // Consequently, the PowerPanel is public static so simulations can access it
+  // with RobotContainer.powerPanel
+  public static PowerPanel powerPanel;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -59,8 +62,9 @@ public class RobotContainer {
    */
   public RobotContainer(RobotId robotId) {
     // all robots have a power panel
-    if (pdh == null) {
-      pdh = new PowerPanel();
+    if (powerPanel == null) {
+      // set the public static powerPanel so subsystems can reference the pdh
+      powerPanel = new PowerPanel();
     }
 
     // dispatch on the robot
@@ -196,7 +200,7 @@ public class RobotContainer {
    * @return PowerPanel subsystem
    */
   public static PowerPanel getPowerPanel() {
-    return pdh;
+    return powerPanel;
   }
 }
 
