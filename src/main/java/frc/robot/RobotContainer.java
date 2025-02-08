@@ -25,7 +25,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
-import lib.controllers.GameController;
 import frc.robot.util.Vision;
 import java.util.function.BooleanSupplier;
 
