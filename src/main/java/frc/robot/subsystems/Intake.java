@@ -7,12 +7,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
 
 public class Intake extends SubsystemBase {
     // TODO: Use that sim object to update the sim state using .addRotorPosition()
@@ -29,47 +29,44 @@ public class Intake extends SubsystemBase {
 
     private final TalonFX rollerMotor = new TalonFX(70);
     private final TalonFX stowMotor = new TalonFX(68);
-    private final SingleJointedArmSim stowArmSim;
-    private TalonFXSimState stowEncoderSim;
+    private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
     private PIDController stowPIDController;
 
-    // TODO: set proper tolerance
-    private final double positionTolerance = 0.5;
+    private final double positionTolerance = 1;
+    // TODO: replace these with actual values
+    private final double gearRatio = 10;
+    private final double momentOfInertia = 0.3;
+    private final double armLength = 0.3;
 
-    private final PIDController stowPID = new PIDController(0, 0, 0);
-    private final double motorVoltage = 12.0;
+    // TODO: tune
+    private final PIDController stowPID = new PIDController(0.01, 0, 0.001);
+    private double power;
 
     public Intake() {
+        stowMotor.setPosition(0.25*gearRatio);
         if (RobotBase.isSimulation()) {
-            // TODO: Add more simulation-specific behavior if needed
-            double velocity = 0; // replace with actual value
-            double timeDelta = 0; // replace with actual value
-
-            // TODO: Simulate arm's position using velocity & timeDelta provided above
-
-            stowEncoderSim = stowMotor.getSimState();
-        }
-      //  IF USING SHUFFLEBOARD VVV
-        // setupShuffleboard();
-
-        stowArmSim = new SingleJointedArmSim(
+            stowMechanism2d = new Mechanism2d(10, 10);
+            stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5).append(new MechanismLigament2d("Intake", 4, 90));
+            SmartDashboard.putData("Intake pivot", stowMechanism2d);
+            stowArmSim = new SingleJointedArmSim(
                 DCMotor.getKrakenX60(1),
-                1.0,
-                calculateMomentOfInertia(),
-                getStowMotorLength(),
+                gearRatio,
+                momentOfInertia,
+                armLength,
                 Math.toRadians(0),
                 Math.toRadians(90),
                 true,
                 Math.PI/2);
-    }
+            }
+            stowPID.setSetpoint(45);
+        }
 
     /**
      * publishes stuff to smartdashboard
      */
     private void publish() {
-        // TODO: Add SmartDashboard or Shuffleboard publishing here as needed
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
         SmartDashboard.putNumber("Roller Motor Power", rollerMotor.get());
@@ -80,24 +77,18 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putBoolean("Is Roller Active", rollerMotor.get() > 0);
     }
 
-    // IF USING SHUFFLEBOARD VVV
-    // private void setupShuffleboard() {
-    // var intakeTab = Shuffleboard.getTab("Intake");
-
-    // intakeTab.addNumber("Stow Motor Position", this::getStowPosition);
-    // intakeTab.addNumber("Target Angle", stowPID::getSetpoint);
-    // intakeTab.addBoolean("Has Coral", this::hasCoral);
-    // intakeTab.addNumber("Roller Motor Power", rollerMotor::get);
-    // intakeTab.addBoolean("Is Stowed", () -> isAtSetpoint(90));
-    // intakeTab.addBoolean("Is Unstowed", () -> isAtSetpoint(0));
-    // intakeTab.addBoolean("Is Roller Active", () -> rollerMotor.get() > 0);
-
-    // }
-
     @Override
     public void periodic() {
         publish();
-        stowMotor.set(stowPID.calculate(getStowPosition()));
+        power = stowPID.calculate(getStowPosition());
+        stowMotor.set(power);
+    }
+
+    @Override
+    public void simulationPeriodic(){
+        stowArmSim.setInputVoltage(power*Constants.ROBOT_VOLTAGE);
+        stowArmSim.update(Constants.LOOP_TIME);
+        stowWheelLigament.setAngle(Units.radiansToDegrees(stowArmSim.getAngleRads()));
     }
 
     /**
@@ -106,32 +97,16 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble());
+        // TalonFXSimState doens't work after the update, so this is now the best way to get the position in sim
+        if(RobotBase.isReal()){
+            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/gearRatio;
+        }else{
+            return Units.radiansToDegrees(stowArmSim.getAngleRads());
+        }
     }
 
     public PIDController getPID() {
         return stowPIDController;
-    }
-
-    /**
-     * Calculates intertia for the arm.
-     * 
-     * @return moment of inertia of the arm in kg·m²
-     */
-    private double calculateMomentOfInertia() {
-        // TODO add propery numby
-        double armMass = 5.0; // replace with actual value
-        double armLength = 0.5; // replace with actual value
-        return (1.0 / 3.0) * armMass * Math.pow(armLength, 2);
-    }
-
-    /**
-     * Retrieves the length of the arm.
-     * 
-     * @return The length of the arm in meters.
-     */
-    private double getStowMotorLength() {
-        return 0.5; // replace with actual value
     }
 
     /**
@@ -154,9 +129,17 @@ public class Intake extends SubsystemBase {
     }
 
     /**
+     * Returns whether or not the intake is at its setpoint
+     * @return True if it is at the setpoint, false otherwise
+     */
+    public boolean isAtSetpoint(){
+        return stowPID.atSetpoint();
+    }
+
+    /**
      * Sets the desired angle of the intake, mostly to stow or unstow.
      * 
-     * @param angle desired angle of the intake
+     * @param angle desired angle of the intake in degrees
      */
     public void setAngle(double angle) {
         stowPID.setSetpoint(angle);
@@ -199,10 +182,5 @@ public class Intake extends SubsystemBase {
     public void activate() {
         stowPID.setSetpoint(90);
         rollerMotor.set(.8);
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // TODO: Add simulation-specific periodic logic if needed
     }
 }
