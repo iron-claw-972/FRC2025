@@ -23,7 +23,7 @@ import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
     //Motors
-    private final PIDController pid = new PIDController(0.4, 0.4, 0.04);
+    private final PIDController pid = new PIDController(0.4, 4, 0.04);
 
     private TalonFX motor = new TalonFX(20);
     private final DCMotor climbGearBox = DCMotor.getFalcon500(1);
