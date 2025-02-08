@@ -27,6 +27,7 @@ public class OuttakeCoralBasic extends Command {
 
     @Override
     public void initialize(){
+        ticks = 0;
 
         if (outtake.coralLoaded()) {
             // coral is present, ejecting makes sense
@@ -62,7 +63,7 @@ public class OuttakeCoralBasic extends Command {
                 // at this point, ticks represents how long it took to move the coral to the ejecting sensor.
                 SmartDashboard.putNumber("Coral Ejection Time", ticks * 0.020);
 
-                // reset the timer
+                // reset the timer 
                 ticks = 0;
                 // we know the coral is moving
                 state = State.MOVING;
@@ -76,8 +77,8 @@ public class OuttakeCoralBasic extends Command {
                 SmartDashboard.putNumber("Coral Transit Time", ticks * 0.020);
                 state = State.DONE;
             }
-            // waiting for a timeout; 100 ticks is 2 seconds.
-            if (ticks > 25) {
+            // waiting for a timeout; 13 ticks is 0.26 seconds. It only takes 0.18 seconds to eject a coral.
+            if (ticks > 13) {
                 // reverse the motor, at -0.1: sometimes did not have the power to reverse, at -0.15: ejected all the way back, hit the funnel
                 outtake.setMotor(-0.125);
 
