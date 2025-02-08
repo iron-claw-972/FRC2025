@@ -188,7 +188,7 @@ public class Drivetrain extends SubsystemBase {
                 statusSignals[i*signals.length+j+1] = signals[j];
             }
         }
-        StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
+        StatusSignal.setUpdateFrequencyForAll(500, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
         LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
         LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
