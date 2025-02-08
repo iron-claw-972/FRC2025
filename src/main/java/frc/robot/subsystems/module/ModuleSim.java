@@ -1,5 +1,6 @@
 package frc.robot.subsystems.module;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -126,5 +127,10 @@ public class ModuleSim extends Module {
     }
     public double getDriveVelocity() {
         return 0;
+    }
+
+    @Override
+    public BaseStatusSignal[] getStatusSignals(){
+        return new BaseStatusSignal[0];
     }
 }

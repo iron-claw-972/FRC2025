@@ -54,6 +54,8 @@ public class RobotContainer {
   private Operator operator = null;
   private ShuffleBoardManager shuffleboardManager = null;
 
+  private Thread odometryThread = null;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    * <p>
@@ -111,6 +113,16 @@ public class RobotContainer {
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
     LiveWindow.setEnabled(false);
+    
+    // Start a new thread to update the odometry
+    if(drive != null){
+      odometryThread = new Thread(()->{
+        while(!odometryThread.isInterrupted()){
+          drive.updateOdometry();
+        }
+      });
+      odometryThread.start();
+    }
   }
 
   /**
@@ -188,6 +200,11 @@ public class RobotContainer {
       return false;
     };
   }
+
+  public void interruptOdometryThraed(){
+    odometryThread.interrupt();
+  }
 }
+
 
 
