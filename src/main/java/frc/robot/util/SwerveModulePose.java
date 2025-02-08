@@ -27,6 +27,11 @@ public class SwerveModulePose {
     private double prevRotation;
     private Pose2d[] displayPoses;
 
+    /**
+     * Creates a new SwerveModulePose object to store and update the positions of each module
+     * @param drive The drivetrain
+     * @param modulePositions The translations of the modules relative to the center of the robot
+     */
     public SwerveModulePose(Drivetrain drive, Translation2d... modulePositions){
         this.drive = drive;
         this.moduleTranslations = modulePositions;
@@ -34,8 +39,12 @@ public class SwerveModulePose {
         angles = new double[4];
         reset();
         update();
+        reset();
     }
 
+    /**
+     * Updates the module positions
+     */
     public void update(){
         SwerveModuleState[] states = drive.getModuleStates();
         double currentRotation = drive.getYaw().getRadians();
@@ -60,10 +69,17 @@ public class SwerveModulePose {
         prevRotation = currentRotation;
     }
 
+    /**
+     * Gets the positions of the modules
+     * @return The module poses as an array of Pose2ds
+     */
     public Pose2d[] getModulePoses(){
         return displayPoses;
     }
 
+    /**
+     * Resets the modules to the correct positions relative to the robot
+     */
     public void reset(){
         Pose2d chassisPose2d = drive.getPose();
         SwerveModuleState[] states = drive.getModuleStates();
@@ -75,6 +91,11 @@ public class SwerveModulePose {
         displayPoses = Arrays.copyOf(modulePositions, 4);
     }
 
+    /**
+     * Gets whehter or not the modules have slipped
+     * A module has slipped if it has moved 0.3m (about 1ft) from its correct position relative to the other modules
+     * @return True if any of the modules have slipped, false otherwise
+     */
     public boolean slipped(){
         Translation2d total = new Translation2d();
         for(Pose2d pose : modulePositions){
@@ -88,5 +109,22 @@ public class SwerveModulePose {
             }
         }
         return false;
+    }
+
+    /**
+     * Gets the average slip distance
+     * @return The average distance between each module and its correct position
+     */
+    public double getAverageSlip(){
+        Translation2d total = new Translation2d();
+        for(Pose2d pose : modulePositions){
+            total = total.plus(pose.getTranslation());
+        }
+        Pose2d drivePose = new Pose2d(total.div(4), drive.getYaw());
+        double slip = 0;
+        for(int i = 0; i < 4; i++){
+            slip += modulePositions[i].relativeTo(drivePose).getTranslation().getDistance(moduleTranslations[i]);
+        }
+        return slip/4;
     }
 }

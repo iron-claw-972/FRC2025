@@ -59,6 +59,8 @@ public class Climb extends SubsystemBase {
                 0.0,
                 60
                 );
+
+                climbSim.setIsClimbing(true);
         }
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
