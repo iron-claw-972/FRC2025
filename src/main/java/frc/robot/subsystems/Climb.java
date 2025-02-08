@@ -108,7 +108,6 @@ public class Climb extends SubsystemBase {
     public void setAngle(double angle) {
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
-        System.out.println("hamburger");
     }
 
     public double getAngle() {
