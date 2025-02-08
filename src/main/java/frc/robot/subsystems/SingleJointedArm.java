@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.numbers.N20;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -33,8 +34,8 @@ public class SingleJointedArm extends SubsystemBase {
     private final TrapezoidProfile m_profile =
         new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
-                Units.degreesToRadians(90),
-                Units.degreesToRadians(90))); // Max arm speed and acceleration.
+                Units.degreesToRadians(90)*10,
+                Units.degreesToRadians(90)*10)); // Max arm speed and acceleration.
     private TrapezoidProfile.State m_lastProfiledReference = new TrapezoidProfile.State();
 
     // The plant holds a state-space model of our arm. This system has the following properties:
@@ -47,23 +48,23 @@ public class SingleJointedArm extends SubsystemBase {
 
     // The observer fuses our encoder data and voltage inputs to reject noise.
     @SuppressWarnings("unchecked")
-    private final KalmanFilter<N2, N1, N1> m_observer =
+    private final KalmanFilter<N2, N1, N2> m_observer =
         new KalmanFilter<>(
             Nat.N2(),
-            Nat.N1(),
-            (LinearSystem<N2, N1, N1>) m_armPlant.slice(0),
-            VecBuilder.fill(0.015, 0.17), // How accurate we
+            Nat.N2(),
+            (LinearSystem<N2, N1, N2>) m_armPlant,
+            VecBuilder.fill(0.15, 0.17), // How accurate we
             // think our model is, in radians and radians/sec
-            VecBuilder.fill(0.01), // How accurate we think our encoder position
+            VecBuilder.fill(0.0001,0.0001), // How accurate we think our encoder position
             // data is. In this case we very highly trust our encoder position reading.
             0.020);
 
     // A LQR uses feedback to create voltage commands.
     @SuppressWarnings("unchecked")
-    private final LinearQuadraticRegulator<N2, N1, N1> m_controller =
+    private final LinearQuadraticRegulator<N2, N1, N2> m_controller =
         new LinearQuadraticRegulator<>(
-            (LinearSystem<N2, N1, N1>) m_armPlant.slice(0),
-            VecBuilder.fill(Units.degreesToRadians(1.0), Units.degreesToRadians(10.0)), // qelms.
+            (LinearSystem<N2, N1, N2>) m_armPlant,
+            VecBuilder.fill(Units.degreesToRadians(0.1), Units.degreesToRadians(1.0)), // qelms.
             // Position and velocity error tolerances, in radians and radians per second. Decrease
             // this
             // to more heavily penalize state excursion, or make the controller behave more
@@ -79,9 +80,9 @@ public class SingleJointedArm extends SubsystemBase {
 
     // The state-space loop combines a controller, observer, feedforward and plant for easy control.
     @SuppressWarnings("unchecked")
-    private final LinearSystemLoop<N2, N1, N1> m_loop =
+    private final LinearSystemLoop<N2, N1, N2> m_loop =
         new LinearSystemLoop<>(
-            (LinearSystem<N2, N1, N1>) m_armPlant.slice(0), m_controller, m_observer, 12.0, 0.020);
+            (LinearSystem<N2, N1, N2>) m_armPlant, m_controller, m_observer, 12.0, 0.020);
 
     private SparkMax motor = new SparkMax(IdConstants.INTAKE_PIVOT, MotorType.kBrushless);
     private RelativeEncoder encoder = motor.getEncoder();
@@ -121,6 +122,7 @@ public class SingleJointedArm extends SubsystemBase {
             encoderSim = new SparkRelativeEncoderSim(motor);
             encoderSim.setPosition(Units.radiansToRotations(IntakeConstants.STARTING_ANGLE)*IntakeConstants.GEARING);
             SmartDashboard.putData("Intake pivot", mechanism);
+            SmartDashboard.putNumber("setpoint", 0);
         }
         setpoint = Math.PI/4;
     }
@@ -132,12 +134,14 @@ public class SingleJointedArm extends SubsystemBase {
     public void periodic() {
         // Sets the target position of our arm. This is similar to setting the setpoint of a
         // PID controller.
-        TrapezoidProfile.State goal = new State(setpoint,0);
+    
+        TrapezoidProfile.State goal = new State(SmartDashboard.getNumber("setpoint", 0),0);
         // Step our TrapezoidalProfile forward 20ms and set it as our next reference
         m_lastProfiledReference = m_profile.calculate(0.020, m_lastProfiledReference, goal);
         m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
         // Correct our Kalman filter's state vector estimate with encoder data.
-        m_loop.correct(VecBuilder.fill(getPosition()));
+        m_loop.correct(VecBuilder.fill(getPosition(), getVelocity()));
+        
 
         // Update our LQR to generate new voltage commands and use the voltages to predict the next
         // state with out Kalman filter.
@@ -148,6 +152,7 @@ public class SingleJointedArm extends SubsystemBase {
         // duty cycle = voltage / battery voltage
         // Stored for sim
         voltage = m_loop.getU(0);
+        
         motor.setVoltage(voltage);
     }
     
@@ -165,6 +170,8 @@ public class SingleJointedArm extends SubsystemBase {
         encoderSim.setPosition(Units.radiansToRotations(sim.getAngleRads())*IntakeConstants.GEARING);
         encoderSim.setVelocity(Units.radiansPerSecondToRotationsPerMinute(sim.getVelocityRadPerSec())*IntakeConstants.GEARING);
         ligament.setAngle(Units.radiansToDegrees(sim.getAngleRads()));
+        System.out.println("voltage "+voltage);
+        System.out.println("position "+sim.getAngleRads());
     }
 
     public double getPosition(){
