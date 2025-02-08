@@ -110,7 +110,7 @@ public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   public Elevator() {
     // Left motor follows right motor in the opposite direction
-    if (!RobotBase.isSimulation()){
+    if (!isSimulation()){
       leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
       rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     }
@@ -118,7 +118,7 @@ public class Elevator extends SubsystemBase {
 
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
-    if (RobotBase.isSimulation()) {
+    if (isSimulation()) {
       sim = new AngledElevatorSim(ElevatorConstants.MOTOR, ElevatorConstants.GEARING, ElevatorConstants.CARRIAGE_MASS,
         ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true,
         ElevatorConstants.START_HEIGHT, ElevatorConstants.ANGLE, ElevatorConstants.SPRING_FORCE);
@@ -194,7 +194,7 @@ public class Elevator extends SubsystemBase {
   public void resetEncoder(double height) {
     // Without the if statement, this causes loop overruns in simulation, and this
     // code does nothing anyway on sim (it sets the position to itself)
-    if (RobotBase.isReal()) {
+    if (!isSimulation()) {
       rightMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
     }
   }
@@ -258,5 +258,9 @@ public class Elevator extends SubsystemBase {
 
   public double getCenterOfMassHeight(){
     return (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
+  }
+
+  public boolean isSimulation(){
+    return RobotBase.isSimulation();
   }
 }

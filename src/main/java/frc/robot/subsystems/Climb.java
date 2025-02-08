@@ -44,7 +44,7 @@ public class Climb extends SubsystemBase {
     private double power;
 
     public Climb() {
-        if (RobotBase.isSimulation()) {
+        if (isSimulation()) {
             encoderSim = motor.getSimState();
 
             climbSim = new ClimbArmSim(
@@ -57,9 +57,9 @@ public class Climb extends SubsystemBase {
                 true, 
                 0.0,
                 60
-                );
+            );
 
-                climbSim.setIsClimbing(true);
+            climbSim.setIsClimbing(true);
         }
 
         pid.enableContinuousInput(-Math.PI, Math.PI);
@@ -120,5 +120,9 @@ public class Climb extends SubsystemBase {
     public void climb(){
         double climbAngle = 0;
         setAngle(climbAngle);
+    }
+
+    public boolean isSimulation(){
+        return RobotBase.isSimulation();
     }
 }

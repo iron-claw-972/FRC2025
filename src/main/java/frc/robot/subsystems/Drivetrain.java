@@ -26,7 +26,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.IdConstants;
@@ -126,7 +125,7 @@ public class Drivetrain extends SubsystemBase {
 
         ModuleConstants[] constants = Arrays.copyOfRange(ModuleConstants.values(), 0, 4);
 
-        if(RobotBase.isReal()){
+        if(!isSimulation()){
             Arrays.stream(constants).forEach(moduleConstants -> {
                 modules[moduleConstants.ordinal()] = new Module(moduleConstants);
             });
@@ -339,7 +338,7 @@ public class Drivetrain extends SubsystemBase {
             prevPose = pose3;
         }
 
-        if (Robot.isSimulation()) {
+        if (isSimulation()) {
             pigeon.getSimState().addYaw(
                     +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
@@ -670,5 +669,9 @@ public class Drivetrain extends SubsystemBase {
 
     public SwerveModulePose getSwerveModulePose(){
         return modulePoses;
+    }
+
+    public boolean isSimulation(){
+        return RobotBase.isSimulation();
     }
 }

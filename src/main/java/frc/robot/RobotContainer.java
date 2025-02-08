@@ -2,12 +2,15 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
+import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
+import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
@@ -16,6 +19,12 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.sim.SimClimb;
+import frc.robot.subsystems.sim.SimDrivetrain;
+import frc.robot.subsystems.sim.SimElevator;
+import frc.robot.subsystems.sim.SimIndexer;
+import frc.robot.subsystems.sim.SimIntake;
+import frc.robot.subsystems.sim.SimOuttake;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -55,49 +64,60 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+    // Our normal switch statement doesn't work because each case continues to the next one, possibly creating duplicate sim subsystems
 
-    // dispatch on the robot
-    switch (robotId) {
+    // 2 robots have an elevator, outtake, and vision
+    if(robotId == RobotId.Phil || robotId == RobotId.SwerveCompetition){
+      elevator = new Elevator();
+      outtake = new Outtake();
+      vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+    }else{
+      elevator = new SimElevator();
+      outtake = new SimOuttake();
+      // Vision doesn't have a sim version
+    }
 
-      case TestBed1:
-        break;
+    // Only the competition robot has the rest of the subsystems
+    if(robotId == RobotId.SwerveCompetition){
+      intake = new Intake();
+      indexer = new Indexer();
+      climb = new Climb();
+    }else{
+      intake = new SimIntake();
+      indexer = new SimIndexer();
+      climb = new SimClimb();
+    }
 
-      case TestBed2:
-        break;
+    // All of these robots need a drivetrain
+    if(robotId == RobotId.SwerveCompetition || robotId == RobotId.Phil || robotId == RobotId.Vertigo || robotId == RobotId.Vivace){
+      drive = new Drivetrain(vision);
+    }else{
+      drive = new SimDrivetrain(vision);
+    }
 
-      default:
-      case SwerveCompetition:
-        // Our competition subsystems go here
-        intake = new Intake();
-        indexer = new Indexer();
-        outtake = new Outtake();
-        elevator = new Elevator();
-        climb = new Climb();
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+    // All robots need controllers
+    // Check the controller type to prevent it from breaking
+    double axis = (new Joystick(Constants.DRIVER_JOY)).getRawAxis(3);
+    if(axis < -0.25){
+      driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+    }else{
+      driver = new GameControllerDriverConfig(drive, vision);
+    }
+    operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
-      case Vivace:
-      case Phil:
-      case Vertigo:
-        drive = new Drivetrain(vision);
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-        operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
-
-        // Detected objects need access to the drivetrain
-        DetectedObject.setDrive(drive);
+    // Detected objects need access to the drivetrain
+    DetectedObject.setDrive(drive);
         
-        //SignalLogger.start();
+    //SignalLogger.start();
 
-        driver.configureControls();
-        operator.configureControls();
-        initializeAutoBuilder();
-        registerCommands();
-        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        PathGroupLoader.loadPathGroups();
- 
-        shuffleboardManager = new ShuffleBoardManager(drive, vision);
-      
-        break;
-      }
+    driver.configureControls();
+    operator.configureControls();
+    initializeAutoBuilder();
+    registerCommands();
+    drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+    PathGroupLoader.loadPathGroups();
+
+    shuffleboardManager = new ShuffleBoardManager(drive, vision);
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -108,14 +128,12 @@ public class RobotContainer {
     LiveWindow.setEnabled(false);
     
     // Start a new thread to update the odometry
-    if(drive != null){
-      odometryThread = new Thread(()->{
-        while(!odometryThread.isInterrupted()){
-          drive.updateOdometry();
-        }
-      });
-      odometryThread.start();
-    }
+    odometryThread = new Thread(()->{
+      while(!odometryThread.isInterrupted()){
+        drive.updateOdometry();
+      }
+    });
+    odometryThread.start();
   }
 
   /**
@@ -137,8 +155,7 @@ public class RobotContainer {
    * Sets whether the drivetrain uses vision to update odometry
    */
   public void setVisionEnabled(boolean enabled) {
-    if (drive != null)
-      drive.setVisionEnabled(enabled);
+    drive.setVisionEnabled(enabled);
   }
 
   public void initializeAutoBuilder() {
