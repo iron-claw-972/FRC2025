@@ -201,7 +201,7 @@ public class RobotContainer {
     };
   }
 
-  public void interruptOdometryThraed(){
+  public void interruptOdometryThread(){
     odometryThread.interrupt();
   }
 }
