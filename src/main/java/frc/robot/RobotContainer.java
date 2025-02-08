@@ -57,6 +57,10 @@ public class RobotContainer {
 
     climb = new Climb();
 
+    SmartDashboard.putData("Extend", new InstantCommand(() -> climb.extend()));
+    SmartDashboard.putData("Climb", new InstantCommand(() -> climb.climb()));
+
+
     SmartDashboard.putData("0", new InstantCommand(() -> climb.setAngle(0)));
     SmartDashboard.putData("90", new InstantCommand(() -> climb.setAngle(90)));
     SmartDashboard.putData("180", new InstantCommand(() -> climb.setAngle(180)));

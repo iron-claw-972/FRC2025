@@ -23,7 +23,7 @@ import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
     //Motors
-    private final PIDController pid = new PIDController(0.1, 0.0, 0.0);
+    private final PIDController pid = new PIDController(0.4, 0.4, 0.04);
 
     private TalonFX motor = new TalonFX(20);
     private final DCMotor climbGearBox = DCMotor.getFalcon500(1);
@@ -36,11 +36,13 @@ public class Climb extends SubsystemBase {
         new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kAntiqueWhite))
     );
 
-    private final double versaPlanetaryGearRatio = 5;
+    private final double versaPlanetaryGearRatio = 1.0;
     private final double climbGearRatio = 75.0/1.0;
     private final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
 
     private ClimbArmSim climbSim;
+
+    private double power;
 
     public Climb() {
         if (RobotBase.isSimulation()) {
@@ -49,30 +51,34 @@ public class Climb extends SubsystemBase {
             climbSim = new ClimbArmSim(
                 climbGearBox, 
                 totalGearRatio, 
-                1.014, 
+                0.1, 
                 0.127, 
-                Double.NEGATIVE_INFINITY, //min angle 
-                Double.POSITIVE_INFINITY, //max angle
-                false, 
+                0, //min angle 
+                Units.degreesToRadians(90), //max angle
+                true, 
                 0.0,
                 60
                 );
         }
 
-        pid.setIZone(Units.degreesToRadians(5));
+        pid.enableContinuousInput(-Math.PI, Math.PI);
+
+        pid.setIZone(1);
 
         SmartDashboard.putData("PID", pid);
         SmartDashboard.putData("Climb Display", simulationMechanism);       
 
         motor.setPosition(0);
+
+        climbSim.setIsClimbing(true);
     }
 
     @Override
-    public void periodic() {
+    public void periodic() { 
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
 
-        double power = pid.calculate(currentPosition);
+        power = pid.calculate(currentPosition);
         motor.set(MathUtil.clamp(power, -1, 1));
 
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
@@ -86,10 +92,10 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        climbSim.setInput(motor.get() * Constants.ROBOT_VOLTAGE);
+        climbSim.setInput(power * Constants.ROBOT_VOLTAGE);
         climbSim.update(Constants.LOOP_TIME);
 
-        double climbRotations = Units.radiansToDegrees(climbSim.getAngleRads());
+        double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
 
         RoboRioSim.setVInVoltage(
