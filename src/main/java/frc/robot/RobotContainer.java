@@ -86,7 +86,7 @@ public class RobotContainer {
       case Vertigo:
       vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         drive = new Drivetrain(vision);
-        driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
         //driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
         operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
