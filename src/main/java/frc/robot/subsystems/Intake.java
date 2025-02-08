@@ -2,10 +2,18 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
+import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
+import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -15,13 +23,6 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 
 public class Intake extends SubsystemBase {
-    // TODO: Add the sensor once they figure out what type it will be
-
-    // TODO: Maybe simulate that sensor and make it activate 1 second after the
-    // intake starts (low priority)
-
-    // TODO: put in proper id
-
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
     private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
     private SingleJointedArmSim stowArmSim;
@@ -39,6 +40,12 @@ public class Intake extends SubsystemBase {
     private final PIDController stowPID = new PIDController(0.01, 0, 0.001);
     private double power;
 
+    private LaserCan laserCan;
+    private boolean hasCoral = false;
+    private double detectDist = 0.15;
+    private boolean isMoving = false;
+    private Timer laserCanSimTimer;
+
     public Intake() {
         stowMotor.setPosition(0.25*gearRatio);
         if (RobotBase.isSimulation()) {
@@ -54,9 +61,19 @@ public class Intake extends SubsystemBase {
                 Math.toRadians(90),
                 true,
                 Math.PI/2);
+            laserCanSimTimer = new Timer();
+        }else{
+            laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
+            try {
+                laserCan.setRangingMode(RangingMode.SHORT);
+                laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+                laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
+            } catch (ConfigurationFailedException e) {
+                DriverStation.reportError("LaserCan configuration error", true);
             }
-            stowPID.setSetpoint(45);
         }
+        setAngle(90);
+    }
 
     /**
      * publishes stuff to smartdashboard
@@ -77,6 +94,10 @@ public class Intake extends SubsystemBase {
         publish();
         power = stowPID.calculate(getStowPosition());
         stowMotor.set(power);
+        if(laserCan != null){
+            Measurement measurement = laserCan.getMeasurement();
+            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT && measurement.distance_mm <= 1000*detectDist;
+        }
     }
 
     @Override
@@ -84,6 +105,16 @@ public class Intake extends SubsystemBase {
         stowArmSim.setInputVoltage(power*Constants.ROBOT_VOLTAGE);
         stowArmSim.update(Constants.LOOP_TIME);
         stowWheelLigament.setAngle(Units.radiansToDegrees(stowArmSim.getAngleRads()));
+        if(!isMoving){
+            laserCanSimTimer.reset();
+            laserCanSimTimer.start();
+            hasCoral = false;
+        }else{
+            if(isAtSetpoint()){
+                laserCanSimTimer.start();
+            }
+            hasCoral = laserCanSimTimer.hasElapsed(0.5) && !laserCanSimTimer.hasElapsed(1);
+        }
     }
 
     /**
@@ -110,8 +141,7 @@ public class Intake extends SubsystemBase {
      * @return Boolean (True if has Coral, False otherwise)
      */
     public boolean hasCoral() {
-        // TODO: Implement logic base on the sensor once identified
-        return false;
+        return hasCoral;
     }
 
     /**
@@ -147,6 +177,7 @@ public class Intake extends SubsystemBase {
      */
     public void setSpeed(double power) {
         rollerMotor.set(power);
+        isMoving = Math.abs(power) < 0.01;
     }
 
     /**
