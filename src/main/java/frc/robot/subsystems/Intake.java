@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -13,13 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.constants.IdConstants;
 
 public class Intake extends SubsystemBase {
-    // TODO: Use that sim object to update the sim state using .addRotorPosition()
-    // with the sim velocity * time or .setRawRotorPosition() with the position.
-
-    // TODO: Tune the PID
-
     // TODO: Add the sensor once they figure out what type it will be
 
     // TODO: Maybe simulate that sensor and make it activate 1 second after the
@@ -27,8 +22,8 @@ public class Intake extends SubsystemBase {
 
     // TODO: put in proper id
 
-    private final TalonFX rollerMotor = new TalonFX(70);
-    private final TalonFX stowMotor = new TalonFX(68);
+    private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
+    private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
@@ -97,7 +92,7 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        // TalonFXSimState doens't work after the update, so this is now the best way to get the position in sim
+        // For some reason, TalonFXSimState isn't working, so this is the next best way of getting the position
         if(RobotBase.isReal()){
             return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/gearRatio;
         }else{
