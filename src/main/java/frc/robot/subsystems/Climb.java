@@ -22,6 +22,9 @@ import frc.robot.constants.IdConstants;
 import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
+    
+    private double startingPosition = 0;
+
     //Motors
     private final PIDController pid = new PIDController(0.4, 4, 0.04);
 
@@ -33,7 +36,7 @@ public class Climb extends SubsystemBase {
     private final Mechanism2d simulationMechanism = new Mechanism2d(3, 3);
     private final MechanismRoot2d mechanismRoot = simulationMechanism.getRoot("Climb", 1.5, 1.5);
     private final MechanismLigament2d simLigament = mechanismRoot.append(
-        new MechanismLigament2d("angle", 1, 0, 4, new Color8Bit(Color.kAntiqueWhite))
+        new MechanismLigament2d("angle", 1, startingPosition, 4, new Color8Bit(Color.kAntiqueWhite))
     );
 
     private final double versaPlanetaryGearRatio = 1.0;
@@ -43,8 +46,6 @@ public class Climb extends SubsystemBase {
     private ClimbArmSim climbSim;
 
     private double power;
-
-    private double startingPosition = 0;
 
     public Climb() {
         if (RobotBase.isSimulation()) {
@@ -58,7 +59,7 @@ public class Climb extends SubsystemBase {
                 0, //min angle 
                 Units.degreesToRadians(90), //max angle
                 true, 
-                0.0,
+                Units.degreesToRadians(startingPosition),
                 60
                 );
 
