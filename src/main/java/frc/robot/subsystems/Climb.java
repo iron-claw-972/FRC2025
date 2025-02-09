@@ -132,7 +132,6 @@ public class Climb extends SubsystemBase {
      * Turns the motor to 0 degrees (climb position)
      */
     public void climb(){
-        double climbAngle = 0;
-        setAngle(climbAngle);
+        setAngle(startingPosition);
     }
 }
