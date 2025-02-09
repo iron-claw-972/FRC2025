@@ -29,6 +29,9 @@ public class IdConstants {
     public static final int INDEXER_MOTOR = -1;
     public static final int INDEXER_SENSOR = 0;
 
+    // Climb
+    public static final int CLIMB_MOTOR = 20;
+
     // Intake
     public static final int INTAKE_ROLLER = -1;
     public static final int INTAKE_PIVOT = -1;

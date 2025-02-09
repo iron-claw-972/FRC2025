@@ -178,7 +178,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void endCompetition(){
-        robotContainer.interruptOdometryThraed();
+        robotContainer.interruptOdometryThread();
         super.endCompetition();
     }
 }
