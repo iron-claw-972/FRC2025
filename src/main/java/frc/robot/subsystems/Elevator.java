@@ -41,9 +41,7 @@ public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
   private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
-  private DigitalInput topLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_TOP_LIMIT_SWITCH);
   private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
-  private DIOSim topLimitSwitchSim;
   private DIOSim bottomLimitSwitchSim;
   // TODO: Use or delete
   private boolean limitSwitchPressed = false;
@@ -129,7 +127,6 @@ public class Elevator extends SubsystemBase {
       ligament = mechanism.getRoot("base", size / 2 - width / 2, size / 2 - height / 2).append(new MechanismLigament2d(
         "elevator", ElevatorConstants.START_HEIGHT, 90 - Units.radiansToDegrees(Math.abs(ElevatorConstants.ANGLE))));
 
-      topLimitSwitchSim = new DIOSim(topLimitSwitch);
       bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
     }
     Timer.delay(1.0);
@@ -165,7 +162,6 @@ public class Elevator extends SubsystemBase {
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
     SmartDashboard.putBoolean("bottom Sensor", getBottomLimitSwitch());
-    SmartDashboard.putBoolean("top sensor", getTopLimitSwitch());
     SmartDashboard.putNumber("next voltage", nextVoltage);
     SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("right motor encoder", rightMotor.getPosition().getValueAsDouble());
@@ -178,8 +174,6 @@ public class Elevator extends SubsystemBase {
     sim.setInputVoltage(voltage);
     sim.update(Constants.LOOP_TIME);
     ligament.setLength(getPosition());
-    topLimitSwitchSim.setValue(Math.abs(getPosition()
-        - ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
     bottomLimitSwitchSim.setValue(Math.abs(getPosition()
         - ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
     rightMotor.getSimState().setRawRotorPosition(
@@ -219,10 +213,6 @@ public class Elevator extends SubsystemBase {
     return !bottomLimitSwitch.get();
   }
 
-  public boolean getTopLimitSwitch() {
-    return !topLimitSwitch.get();
-  }
-
   public void setSetpoint(double setpoint) {
     this.setpoint = MathUtil.clamp(setpoint, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT);
   }
@@ -237,9 +227,6 @@ public class Elevator extends SubsystemBase {
 
   /**
    * Starts the elevator calibration.
-   * <p>
-   * Note: The elevator will probably break if the code is deployed and enabled
-   * when the elvator is above the top limit switch
    * @deprecated Currently not supported
    */
   @Deprecated
@@ -247,7 +234,7 @@ public class Elevator extends SubsystemBase {
     calibrated = false;
     start = getPosition();
     // This prevents it from breaking on a second calibration
-    movingUp = start <= ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT;
+    movingUp = true;
     // If it is already at the limit switch, it can reset the encoder
     limitSwitchPressed = false;
   }
