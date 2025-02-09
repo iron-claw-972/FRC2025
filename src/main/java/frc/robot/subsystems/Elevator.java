@@ -148,7 +148,7 @@ public class Elevator extends SubsystemBase {
     calibrate();
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
-    ParentDevice.optimizeBusUtilizationForAll(leftMotor);
+    //ParentDevice.optimizeBusUtilizationForAll(leftMotor);
     
     LogManager.logSupplier("Elevator/voltage", () -> getVoltage(), 100, LogLevel.COMP);
     LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.COMP);

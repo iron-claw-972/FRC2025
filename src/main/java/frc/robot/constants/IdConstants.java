@@ -30,5 +30,5 @@ public class IdConstants {
 
 	// Indexer
 	public static final int INDEXER_MOTOR = 0;
-	public static final int INDEXER_SENSOR = 20;
+	public static final int INDEXER_SENSOR = 29;
 }
