@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -36,6 +38,8 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.AngledElevatorSim;
+import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
@@ -85,7 +89,7 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       VecBuilder.fill(Units.inchesToMeters(2), Units.inchesToMeters(20)), // How accurate we
       // think our model is, in meters and meters/second.
-      VecBuilder.fill(0.001,0.001), // How accurate we think our encoder position
+      VecBuilder.fill(0.001, 0.001), // How accurate we think our encoder position
       // data is. In this case we very highly trust our encoder position reading.
       Constants.LOOP_TIME);
   private final LinearQuadraticRegulator<N2, N1, N2> m_controller = new LinearQuadraticRegulator<>(
@@ -148,7 +152,11 @@ public class Elevator extends SubsystemBase {
     calibrate();
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
-
+    ParentDevice.optimizeBusUtilizationForAll(leftMotor);
+    
+    LogManager.logSupplier("Elevator/voltage", () -> getVoltage(), 100, LogLevel.COMP);
+    LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.COMP);
+    LogManager.logSupplier("Elevator/velocity", () -> getVelocity(), 100, LogLevel.COMP);
   }
   // 14 inches verically
   // 2.901 icnehs toward battery
@@ -171,7 +179,8 @@ public class Elevator extends SubsystemBase {
     // } else {
     //   limitSwitchPressed = false;
     // }
-
+    SmartDashboard.putNumber("position", getPosition());
+    SmartDashboard.putNumber("velocity", getVelocity());
     // // The final state that the elevator is trying to get to
      State goal = new State(setpoint, 0.0);
 
@@ -210,12 +219,7 @@ public class Elevator extends SubsystemBase {
     // rightMotorEncoder.setDouble(rightMotor.getPosition().getValue());
     // bottomSensor.setBoolean(getBottomLimitSwitch());
     // topSensor.setBoolean(getTopLimitSwitch());
-    SmartDashboard.putBoolean("bottom Sensor", getBottomLimitSwitch());
-    SmartDashboard.putBoolean("top sensor", getTopLimitSwitch());
-    SmartDashboard.putNumber("next voltage", nextVoltage);
-    SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("right motor encoder", rightMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("height", getPosition());
+  
     //Voltage.setDouble(nextVoltage);
     set(nextVoltage);
     ElevatorConstants.CENTER_OF_MASS_HEIGHT = (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
