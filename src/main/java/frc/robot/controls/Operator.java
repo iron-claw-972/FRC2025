@@ -46,7 +46,7 @@ public class Operator {
     private final Indexer indexer;
     private final Outtake outtake;
     private final Climb climb;
-    private int alignmentDirection = -1;
+    private int alignmentDirection = 0;
     
     public Operator(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
         this.drive = drive;

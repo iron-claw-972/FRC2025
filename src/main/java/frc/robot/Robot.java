@@ -172,4 +172,13 @@ public class Robot extends TimedRobot {
 		else
 			return Alliance.Red; // default to Red alliance
 	}
+
+    /**
+     * Interrupt all threads and call TimedRobot's endCompetition method
+     */
+    @Override
+    public void endCompetition(){
+        robotContainer.interruptOdometryThraed();
+        super.endCompetition();
+    }
 }
