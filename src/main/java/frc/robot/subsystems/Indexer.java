@@ -6,10 +6,10 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IndexerConstants;
@@ -31,7 +31,7 @@ public class Indexer extends SubsystemBase {
 		motor = new SparkMax(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
 		sensor = new DigitalInput(IdConstants.INDEXER_SENSOR);
 
-		if (Robot.isSimulation()) {
+		if (isSimulation()) {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
 					IndexerConstants.MOMENT_OF_INERTIA, IndexerConstants.GEAR_RATIO), DCMotor.getNEO(1));
 			sensorSim = new DIOSim(sensor);
@@ -57,7 +57,7 @@ public class Indexer extends SubsystemBase {
 	 * @return the motor velocity in rotations per minute
 	 */
 	public double getMotor() {
-		if (Robot.isReal()) {
+		if (!isSimulation()) {
 			return motor.getEncoder().getVelocity() / IndexerConstants.GEAR_RATIO;
 		} else {
 			return flywheelSim.getAngularVelocityRPM();
@@ -90,5 +90,9 @@ public class Indexer extends SubsystemBase {
 		// toggle the sensor (values are backwards because that's how the sensor works)
 		sensorSim.setValue(simCoralPos < IndexerConstants.START_SIM_SENSOR_POS_AT
 				|| simCoralPos > IndexerConstants.END_SIM_SENSOR_POS_AT);
+	}
+
+	public boolean isSimulation(){
+		return RobotBase.isSimulation();
 	}
 }

@@ -29,7 +29,6 @@ public class IdConstants {
     public static final int OUTTAKE_MOTOR = 14;
 
 	// Indexer
-    // TODO: replace with actual ids
-	public static final int INDEXER_MOTOR = 51;
-	public static final int INDEXER_SENSOR = 52;
+	public static final int INDEXER_MOTOR = 0;
+	public static final int INDEXER_SENSOR = 20;
 }
