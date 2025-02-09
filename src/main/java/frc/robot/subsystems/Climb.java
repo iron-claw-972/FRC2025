@@ -25,7 +25,7 @@ public class Climb extends SubsystemBase {
     private final PIDController pid = new PIDController(0.4, 4, 0.04);
 
     private TalonFX motor = new TalonFX(20);
-    private final DCMotor climbGearBox = DCMotor.getFalcon500(1);
+    private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
     private TalonFXSimState encoderSim;
 
     //Mechism2d display
@@ -62,16 +62,12 @@ public class Climb extends SubsystemBase {
                 climbSim.setIsClimbing(true);
         }
 
-        pid.enableContinuousInput(-Math.PI, Math.PI);
-
         pid.setIZone(1);
 
         SmartDashboard.putData("PID", pid);
         SmartDashboard.putData("Climb Display", simulationMechanism);       
 
         motor.setPosition(0);
-
-        climbSim.setIsClimbing(true);
     }
 
     @Override
@@ -97,26 +93,41 @@ public class Climb extends SubsystemBase {
         climbSim.update(Constants.LOOP_TIME);
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
-        encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+        // encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
 
-        RoboRioSim.setVInVoltage(
-            BatterySim.calculateDefaultBatteryLoadedVoltage(climbSim.getCurrentDrawAmps())
-        );
+        // RoboRioSim.setVInVoltage(
+        //     BatterySim.calculateDefaultBatteryLoadedVoltage(climbSim.getCurrentDrawAmps())
+        // );
     }
 
+    /**
+     * Sets the motor to an angle from 0-90 deg
+     * @param angle in degrees
+     */
     public void setAngle(double angle) {
         pid.reset();
         pid.setSetpoint(Units.degreesToRadians(angle));
     }
 
+    /**
+     * Gets the current position of the motor in degrees
+     * @return
+     */
     public double getAngle() {
         return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
     }
 
+    /**
+     * Turns the motor to 90 degrees (extended positiion)
+     */
     public void extend(){
         double extendAngle = 90;
         setAngle(extendAngle);
     }
+
+    /**
+     * Turns the motor to 0 degrees (climb position)
+     */
     public void climb(){
         double climbAngle = 0;
         setAngle(climbAngle);
