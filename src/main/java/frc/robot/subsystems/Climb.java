@@ -67,7 +67,7 @@ public class Climb extends SubsystemBase {
         SmartDashboard.putData("PID", pid);
         SmartDashboard.putData("Climb Display", simulationMechanism);       
 
-        motor.setPosition(0);
+        motor.setPosition(Units.degreesToRotations(30));
     }
 
     @Override
