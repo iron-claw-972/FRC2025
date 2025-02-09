@@ -44,6 +44,8 @@ public class Climb extends SubsystemBase {
 
     private double power;
 
+    private double startingPosition = 0;
+
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
@@ -68,7 +70,7 @@ public class Climb extends SubsystemBase {
         SmartDashboard.putData("PID", pid);
         SmartDashboard.putData("Climb Display", simulationMechanism);       
 
-        motor.setPosition(Units.degreesToRotations(30));
+        motor.setPosition(Units.degreesToRotations(startingPosition));
     }
 
     @Override
