@@ -18,13 +18,14 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.constants.IdConstants;
 import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
     //Motors
     private final PIDController pid = new PIDController(0.4, 4, 0.04);
 
-    private TalonFX motor = new TalonFX(20);
+    private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
     private TalonFXSimState encoderSim;
 
@@ -93,7 +94,7 @@ public class Climb extends SubsystemBase {
         climbSim.update(Constants.LOOP_TIME);
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
-        // encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+        encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
 
         // RoboRioSim.setVInVoltage(
         //     BatterySim.calculateDefaultBatteryLoadedVoltage(climbSim.getCurrentDrawAmps())
