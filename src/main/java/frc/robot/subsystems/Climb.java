@@ -24,6 +24,7 @@ public class Climb extends SubsystemBase {
     private double startingPosition = 0;
 
     //Motors
+    // TODO: tune better once design is finalized
     private final PIDController pid = new PIDController(0.4, 4, 0.04);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
