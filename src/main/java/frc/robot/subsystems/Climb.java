@@ -8,8 +8,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -50,6 +48,7 @@ public class Climb extends SubsystemBase {
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
+            encoderSim.setRawRotorPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
 
             climbSim = new ClimbArmSim(
                 climbGearBox, 
@@ -61,17 +60,18 @@ public class Climb extends SubsystemBase {
                 true, 
                 Units.degreesToRadians(startingPosition),
                 60
-                );
+            );
 
-                climbSim.setIsClimbing(true);
+            climbSim.setIsClimbing(true);
         }
 
         pid.setIZone(1);
+        pid.setSetpoint(Units.degreesToRadians(startingPosition));
+
+        motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
 
         SmartDashboard.putData("PID", pid);
-        SmartDashboard.putData("Climb Display", simulationMechanism);       
-
-        motor.setPosition(Units.degreesToRotations(startingPosition));
+        SmartDashboard.putData("Climb Display", simulationMechanism);
     }
 
     @Override
@@ -84,7 +84,6 @@ public class Climb extends SubsystemBase {
 
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
-        SmartDashboard.putNumber("Climb VIN Voltage", RoboRioSim.getVInVoltage());
         SmartDashboard.putNumber("Climb Position", getAngle());
 
         SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
@@ -98,10 +97,6 @@ public class Climb extends SubsystemBase {
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
-
-        // RoboRioSim.setVInVoltage(
-        //     BatterySim.calculateDefaultBatteryLoadedVoltage(climbSim.getCurrentDrawAmps())
-        // );
     }
 
     /**
@@ -115,7 +110,7 @@ public class Climb extends SubsystemBase {
 
     /**
      * Gets the current position of the motor in degrees
-     * @return
+     * @return The angle in degrees
      */
     public double getAngle() {
         return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
