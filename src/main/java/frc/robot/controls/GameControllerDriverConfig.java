@@ -51,8 +51,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     kDriver.get(Button.BACK).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
 
     kDriver.get(Button.Y).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
-    kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-    kDriver.get(Button.RB).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+    kDriver.get(Button.RB ).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+    kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
     new Trigger(kDriver.LEFT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
     kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
     kDriver.get(Button.A).onTrue(new OuttakeCoral(outtake, elevator));
