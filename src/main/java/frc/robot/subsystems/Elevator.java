@@ -179,8 +179,8 @@ public class Elevator extends SubsystemBase {
     // } else {
     //   limitSwitchPressed = false;
     // }
-    SmartDashboard.putNumber("position", getPosition());
-    SmartDashboard.putNumber("velocity", getVelocity());
+    // SmartDashboard.putNumber("position", getPosition());
+    // SmartDashboard.putNumber("velocity", getVelocity());
     // // The final state that the elevator is trying to get to
      State goal = new State(setpoint, 0.0);
 
