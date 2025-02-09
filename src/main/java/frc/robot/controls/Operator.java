@@ -59,56 +59,39 @@ public class Operator {
 
     public void configureControls() {
         driver.get(Button.BACK).onTrue(new InstantCommand(()->{
-            if(elevator != null){
-                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
-            }
-            if(climb != null){
-                climb.climb();
-            }
+            elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+            climb.climb();
             CommandScheduler.getInstance().cancelAll();
         }));
 
         Trigger menu = driver.get(Button.LEFT_JOY);
 
         // Elevator setpoints
-        if(elevator != null){
-            driver.get(Button.START).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-            driver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-            driver.get(Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-            getLeftTrigger().onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
-            driver.get(Button.Y).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
-        }
+        driver.get(Button.START).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+        driver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+        driver.get(Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+        getLeftTrigger().onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+        driver.get(Button.Y).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
 
         // Intake/outtake
-        if(intake != null && indexer != null && elevator != null){
-            driver.get(Button.A).and(menu.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
-            // TODO: temporary button
-            // On true, run the command to start intaking
-            // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StartStationIntake(intake);
-            driver.get(Button.RIGHT_JOY).and(driver.get(Button.A)).onTrue(startIntake)
-                .onFalse(new ConditionalCommand(
-                    new InstantCommand(()->startIntake.cancel()),
-                    new FinishStationIntake(intake, indexer, elevator),
-                    startIntake::isScheduled
-                ));
-        }
-        if(outtake != null && elevator != null){
-            driver.get(Button.RIGHT_JOY).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
-        }
-        if(intake != null){
-            driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
-            driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
-        }
-        if(intake != null && outtake != null){
-            driver.get(Button.B).and(menu.negate()).onTrue(new ReverseMotors(intake, outtake));
-        }
+        driver.get(Button.A).and(menu.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
+        // On true, run the command to start intaking
+        // On false, run the command to finish intaking if it has a coral
+        Command startIntake = new StartStationIntake(intake);
+        driver.get(Button.RIGHT_JOY).and(driver.get(Button.A)).onTrue(startIntake)
+            .onFalse(new ConditionalCommand(
+                new InstantCommand(()->startIntake.cancel()),
+                new FinishStationIntake(intake, indexer, elevator),
+                startIntake::isScheduled
+            ));
+        driver.get(Button.RIGHT_JOY).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+        driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
+        driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
+        driver.get(Button.B).and(menu.negate()).onTrue(new ReverseMotors(intake, outtake));
 
         // Climb
-        if(climb != null){
-            driver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
-                .onFalse(new InstantCommand(()->climb.climb(), climb));
-        }
+        driver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
+            .onFalse(new InstantCommand(()->climb.climb(), climb));
 
         // Alignment
         driver.get(Button.B).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 0));

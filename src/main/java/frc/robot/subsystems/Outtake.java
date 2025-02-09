@@ -7,15 +7,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.constants.IdConstants;
 
 public class Outtake extends SubsystemBase {
@@ -117,17 +113,11 @@ public class Outtake extends SubsystemBase {
         return !digitalInputEjecting.get();
     }
 
-    /**
-     * Coral is at the ejecting beam break sensor.
-     * @deprecated Use coralEjecting() instead.
-     * @return
-     */
-    @Deprecated
-    public boolean coralEjected(){
-        return coralEjecting();
-    }
-
     public void reverse(){
         setMotor(-0.2);
+    }
+
+    public boolean isSimulation(){
+        return RobotBase.isSimulation();
     }
 }

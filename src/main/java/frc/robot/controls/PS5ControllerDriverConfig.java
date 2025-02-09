@@ -59,44 +59,32 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
-        if(elevator != null){
-            driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-            driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
-            driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
-        }
+        driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+        driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+        driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+        driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+        driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
 
         // Intake/outtake
-        if(intake != null && indexer != null && elevator != null){
-            Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
-            driver.get(PS5Button.CROSS).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
-            // On true, run the command to start intaking
-            // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StartStationIntake(intake);
-            driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
-                .onFalse(new ConditionalCommand(
-                    new InstantCommand(()->startIntake.cancel()),
-                    new FinishStationIntake(intake, indexer, elevator),
-                    startIntake::isScheduled
-                ));
-        }
-        if(outtake != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
-        }
-        if(intake != null){
-            driver.get(PS5Button.CROSS).and(menu).whileTrue(new IntakeAlgae(intake));
-            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
-        }
-        if(outtake != null){
-            driver.get(PS5Button.CIRCLE).and(menu.negate()).onTrue(new ReverseMotors(intake, outtake));
-        }
+        Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
+        driver.get(PS5Button.CROSS).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
+        // On true, run the command to start intaking
+        // On false, run the command to finish intaking if it has a coral
+        Command startIntake = new StartStationIntake(intake);
+        driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
+            .onFalse(new ConditionalCommand(
+                new InstantCommand(()->startIntake.cancel()),
+                new FinishStationIntake(intake, indexer, elevator),
+                startIntake::isScheduled
+            ));
+        driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+        driver.get(PS5Button.CROSS).and(menu).whileTrue(new IntakeAlgae(intake));
+        driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
+        driver.get(PS5Button.CIRCLE).and(menu.negate()).onTrue(new ReverseMotors(intake, outtake));
 
         // Climb
-        if(climb != null){
-            driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
-                .onFalse(new InstantCommand(()->climb.climb(), climb));
-        }
+        driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
+            .onFalse(new InstantCommand(()->climb.climb(), climb));
 
         // Alignment
         driver.get(PS5Button.CIRCLE).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 0));
