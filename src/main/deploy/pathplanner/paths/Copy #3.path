@@ -16,28 +16,28 @@
     },
     {
       "anchor": {
-        "x": 2.9815056818181818,
-        "y": 6.38328125
+        "x": 3.0413352272727274,
+        "y": 6.064190340909091
       },
       "prevControl": {
-        "x": 2.7091042127452276,
-        "y": 6.570028200166484
+        "x": 2.821960227272727,
+        "y": 6.243678977272728
       },
       "nextControl": {
-        "x": 3.1877029437452773,
-        "y": 6.241921110024939
+        "x": 3.2348245520735577,
+        "y": 5.905880893344776
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.4,
-        "y": 5.435
+        "x": 4.055,
+        "y": 5.275
       },
       "prevControl": {
-        "x": 4.047941812245878,
-        "y": 5.686920798201975
+        "x": 3.7592897727272727,
+        "y": 5.515752840909091
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -61,7 +61,7 @@
     "rotation": 29.999999999999996
   },
   "reversed": false,
-  "folder": "Sequential Path",
+  "folder": "Copy of Sequential Path [Secondary]",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 29.999999999999996

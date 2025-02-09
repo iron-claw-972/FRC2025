@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.FollowPathCommand;
+import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Outtake;
@@ -65,6 +68,35 @@ public class AutoTab extends ShuffleBoardTabs {
         .andThen(new FollowPathCommand("#3", true, drive))
         .andThen(new FollowPathCommand("#4", true, drive))
         .andThen(new FollowPathCommand("#5", true, drive)));
+
+        // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake,elevator))
+        // .andThen(new FollowPathCommand("#2", true, drive))
+        // .andThen(new FollowPathCommand("#3", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new FollowPathCommand("#4", true, drive))
+        // .andThen(new FollowPathCommand("#5", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));
+
+
+        autoCommand.addOption("Copy #1", new FollowPathCommand("Copy #1", true, drive)
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        .andThen(new OuttakeCoral(outtake,elevator))
+        .andThen(new FollowPathCommand("Copy #2", true, drive))
+        .andThen(new FollowPathCommand("Copy #3", true, drive))
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator))
+        .andThen(new FollowPathCommand("Copy #4", true, drive))
+        .andThen(new FollowPathCommand("Copy #5", true, drive))
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator)));
+        
+
+
+
                         
     //     autoCommand.addOption("Sequential_1",
     //     Commands.sequence(

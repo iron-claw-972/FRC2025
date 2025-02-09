@@ -92,6 +92,10 @@ public class RobotContainer {
       indexer = new SimIndexer();
       climb = new SimClimb();
     }
+    
+    // if(robotId == RobotId.Phil){
+    //   driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+    // }
 
     // All of these robots need a drivetrain
     if(robotId == RobotId.SwerveCompetition || robotId == RobotId.Phil || robotId == RobotId.Vertigo || robotId == RobotId.Vivace){
@@ -108,6 +112,7 @@ public class RobotContainer {
     }else{
       driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
     }
+
     operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
     // Detected objects need access to the drivetrain
