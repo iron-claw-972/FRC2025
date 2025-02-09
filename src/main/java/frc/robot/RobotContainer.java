@@ -3,16 +3,13 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -109,7 +106,7 @@ public class RobotContainer {
     if(axis < -0.25){
       driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
     }else{
-      driver = new GameControllerDriverConfig(drive, vision);
+      driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
     }
     operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
@@ -125,7 +122,7 @@ public class RobotContainer {
     drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
     PathGroupLoader.loadPathGroups();
 
-    shuffleboardManager = new ShuffleBoardManager(drive, vision);
+    shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator, outtake);
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);

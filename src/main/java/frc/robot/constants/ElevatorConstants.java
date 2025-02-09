@@ -12,8 +12,8 @@ import frc.robot.RobotId;
 public class ElevatorConstants {
     public static final double ANGLE = 0; // radians, from vertical
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(2);
-    public static final int NUMBER_OF_STAGES = 2;
-    public static final double GEARING = 12.5/NUMBER_OF_STAGES;
+    public static int NUMBER_OF_STAGES = 2;
+    public static double GEARING = 12.5/NUMBER_OF_STAGES;
     public static final double MIN_HEIGHT = 0.0; // meters
     public static double MAX_HEIGHT = 1.257; // meters
     public static final double START_HEIGHT = MIN_HEIGHT; // meters

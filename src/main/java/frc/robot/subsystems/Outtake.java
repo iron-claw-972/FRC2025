@@ -50,7 +50,7 @@ public class Outtake extends SubsystemBase {
     public void periodic(){
         motor.set(power);
         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-        SmartDashboard.putBoolean("Coral ejected", coralEjected());
+        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
     }
 
     @Override
