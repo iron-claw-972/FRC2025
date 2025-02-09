@@ -3,6 +3,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -81,6 +83,7 @@ public class RobotContainer {
         outtake = new Outtake();
         elevator = new Elevator();
         SmartDashboard.putNumber("wheel speed", 0.2);
+        SmartDashboard.putData("OuttakeCorralEject", new OuttakeCoralBasic(outtake));
       case Vivace:
       case Vertigo:
       vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
@@ -209,7 +212,7 @@ public class RobotContainer {
     };
   }
 
-  public void interruptOdometryThraed(){
+  public void interruptOdometryThread(){
     odometryThread.interrupt();
   }
 }
