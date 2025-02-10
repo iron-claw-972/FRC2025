@@ -83,7 +83,7 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(2.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(11.0), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -96,7 +96,7 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      2.0,
+      11.0,
       Constants.LOOP_TIME);
 
   ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(11, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
@@ -132,17 +132,20 @@ public class Elevator extends SubsystemBase {
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
 
+    SmartDashboard.putData("elevator", mechanism);
+
     //Logging
     LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
     SmartDashboard.putNumber("setpoint", 0);
-    SmartDashboard.putData(mechanism);
 
+    
   }
 
   @Override
   public void periodic() {
+  
     setSetpoint(SmartDashboard.getNumber("setpoint", 0));
     // The final state that the elevator is trying to get to
     ExponentialProfile.State goal = new ExponentialProfile.State(setpoint, 0.0);
