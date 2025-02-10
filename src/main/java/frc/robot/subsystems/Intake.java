@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
+import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
@@ -31,32 +33,26 @@ public class Intake extends SubsystemBase {
     private PIDController stowPIDController;
 
     private final double positionTolerance = 1;
-    // TODO: replace these with actual values
-    private final double gearRatio = 10;
-    private final double momentOfInertia = 0.3;
-    private final double armLength = 0.3;
-
     // TODO: tune
     private final PIDController stowPID = new PIDController(0.01, 0, 0.001);
     private double power;
 
     private LaserCan laserCan;
     private boolean hasCoral = false;
-    private double detectDist = 0.15;
     private boolean isMoving = false;
     private Timer laserCanSimTimer;
 
     public Intake() {
-        stowMotor.setPosition(0.25*gearRatio);
+        stowMotor.setPosition(0.25*IntakeConstants.GEAR_RATIO);
         if (RobotBase.isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
             stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5).append(new MechanismLigament2d("Intake", 4, 90));
             SmartDashboard.putData("Intake pivot", stowMechanism2d);
             stowArmSim = new SingleJointedArmSim(
                 DCMotor.getKrakenX60(1),
-                gearRatio,
-                momentOfInertia,
-                armLength,
+                IntakeConstants.GEAR_RATIO,
+                IntakeConstants.MOMENT_OFiNERTIA,
+                IntakeConstants.ARM_LENGTH,
                 Math.toRadians(0),
                 Math.toRadians(90),
                 true,
@@ -72,7 +68,8 @@ public class Intake extends SubsystemBase {
                 DriverStation.reportError("LaserCan configuration error", true);
             }
         }
-        setAngle(90);
+        stowPID.setTolerance(positionTolerance);
+        setAngle(45);
     }
 
     /**
@@ -96,7 +93,7 @@ public class Intake extends SubsystemBase {
         stowMotor.set(power);
         if(laserCan != null){
             Measurement measurement = laserCan.getMeasurement();
-            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT && measurement.distance_mm <= 1000*detectDist;
+            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT && measurement.distance_mm <= 1000*IntakeConstants.DETECT_CORAL_DIST;
         }
     }
 
@@ -125,7 +122,7 @@ public class Intake extends SubsystemBase {
     public double getStowPosition() {
         // For some reason, TalonFXSimState isn't working, so this is the next best way of getting the position
         if(RobotBase.isReal()){
-            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/gearRatio;
+            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/IntakeConstants.GEAR_RATIO;
         }else{
             return Units.radiansToDegrees(stowArmSim.getAngleRads());
         }
