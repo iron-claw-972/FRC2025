@@ -21,13 +21,16 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.trajectory.ExponentialProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -48,11 +51,13 @@ public class Elevator extends SubsystemBase {
   private MechanismLigament2d ligament;
   private double voltage;
 
-  private final TrapezoidProfile m_profile = new TrapezoidProfile(
-      new TrapezoidProfile.Constraints(
-          Units.feetToMeters(9.0),
-          Units.feetToMeters(11.0))); // Max elevator speed and acceleration.
-  private State m_lastProfiledReference = new State();
+  
+  // private final TrapezoidProfile m_profile = new TrapezoidProfile(
+  //     new TrapezoidProfile.Constraints(
+  //         4.879,
+  //         Units.feetToMeters(9.0))); // Max elevator speed and acceleration.
+ 
+  // private State m_lastProfiledReference = new State();
 
   private final LinearSystem<N2, N1, N2> m_elevatorPlant = LinearSystemId.createElevatorSystem(
       ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS,
@@ -78,7 +83,7 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(2.0), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -91,9 +96,11 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      12.0,
+      2.0,
       Constants.LOOP_TIME);
 
+  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(11, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
+  ExponentialProfile.State m_lastProfiledReference;
   /** Creates a new Elevator. */
   public Elevator() {
     // Left motor follows right motor in the opposite direction
@@ -118,8 +125,8 @@ public class Elevator extends SubsystemBase {
     }
     Timer.delay(1.0);
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
-    m_lastProfiledReference = new State(getPosition(), 0);
-
+    //m_lastProfiledReference = new State(getPosition(), 0);
+    m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
 
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -129,17 +136,21 @@ public class Elevator extends SubsystemBase {
     LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
+    SmartDashboard.putNumber("setpoint", 0);
+    SmartDashboard.putData(mechanism);
 
   }
 
   @Override
   public void periodic() {
+    setSetpoint(SmartDashboard.getNumber("setpoint", 0));
     // The final state that the elevator is trying to get to
-    State goal = new State(setpoint, 0.0);
+    ExponentialProfile.State goal = new ExponentialProfile.State(setpoint, 0.0);
 
     double currentPosition = getPosition();
-
-    m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
+    
+    //m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
+    m_lastProfiledReference = profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
@@ -153,7 +164,11 @@ public class Elevator extends SubsystemBase {
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
-
+    SmartDashboard.putNumber("voltage", voltage);
+    SmartDashboard.putNumber("position", getPosition());
+    SmartDashboard.putNumber("rightmotor", rightMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("leftmotor", leftMotor.getPosition().getValueAsDouble());
+    
     set(nextVoltage);
   }
 
@@ -161,7 +176,7 @@ public class Elevator extends SubsystemBase {
   public void simulationPeriodic() {
     sim.setInputVoltage(voltage);
     sim.update(Constants.LOOP_TIME);
-    ligament.setLength(getPosition());
+    ligament.setLength(sim.getPositionMeters());
     rightMotor.getSimState().setRawRotorPosition(
         sim.getPositionMeters() / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
   }
