@@ -165,9 +165,10 @@ public class Elevator extends SubsystemBase {
     StatusSignal.waitForAll(0.012, velocity, position);
     
     setSetpoint(SmartDashboard.getNumber("setpoint", 0));
+    ExponentialProfile.State goal;
     synchronized(this){
       // The final state that the elevator is trying to get to
-      ExponentialProfile.State goal = new ExponentialProfile.State(setpoint, 0.0);
+       goal = new ExponentialProfile.State(setpoint, 0.0);
     }
 
     double currentPosition = getPosition();
