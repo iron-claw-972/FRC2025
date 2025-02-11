@@ -165,8 +165,10 @@ public class Elevator extends SubsystemBase {
     StatusSignal.waitForAll(0.012, velocity, position);
     
     setSetpoint(SmartDashboard.getNumber("setpoint", 0));
-    // The final state that the elevator is trying to get to
-    ExponentialProfile.State goal = new ExponentialProfile.State(setpoint, 0.0);
+    synchronized(this){
+      // The final state that the elevator is trying to get to
+      ExponentialProfile.State goal = new ExponentialProfile.State(setpoint, 0.0);
+    }
 
     double currentPosition = getPosition();
     
@@ -239,7 +241,7 @@ public class Elevator extends SubsystemBase {
    * Method to set the setpoint of the elevator. Clamped between min and max height.
    * @param setpoint The setpoint in meters.
   */
-  public void setSetpoint(double setpoint) {
+  public synchronized void setSetpoint(double setpoint) {
     this.setpoint = MathUtil.clamp(setpoint, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT);
   }
 
