@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -26,6 +28,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -71,11 +76,11 @@ public class Elevator extends SubsystemBase {
       // think our model is, in meters and meters/second.
       VecBuilder.fill(0.001,0.001), // How accurate we think our encoder position
       // data is. In this case we very highly trust our encoder position reading.
-      Constants.LOOP_TIME);
+      0.01);
   
   private final LinearQuadraticRegulator<N2, N1, N2> m_controller = new LinearQuadraticRegulator<>(
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
-      VecBuilder.fill(Units.inchesToMeters(1.0), Units.inchesToMeters(20.0)), // qelms. Position
+      VecBuilder.fill(Units.inchesToMeters(1), Units.inchesToMeters(20.0)), // qelms. Position
       // and velocity error tolerances, in meters and meters per second. Decrease this
       // to more
       // heavily penalize state excursion, or make the controller behave more
@@ -83,12 +88,12 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(11.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(6), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
       // battery.
-      Constants.LOOP_TIME); // Nominal time between loops. 0.020 for TimedRobot, but can be changed
+      0.01); // Nominal time between loops. 0.020 for TimedRobot, but can be changed
 
   // The state-space loop combines a controller, observer, feedforward and plant
   // for easy control.
@@ -96,11 +101,15 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      11.0,
-      Constants.LOOP_TIME);
+      10.0,
+      0.01);
 
-  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(11, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
+  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(10, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
   ExponentialProfile.State m_lastProfiledReference;
+
+  StatusSignal<AngularVelocity> velocity;
+  StatusSignal<Angle> position;
+
   /** Creates a new Elevator. */
   public Elevator() {
     // Left motor follows right motor in the opposite direction
@@ -131,7 +140,11 @@ public class Elevator extends SubsystemBase {
 
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
+    velocity = rightMotor.getVelocity();
+    position = rightMotor.getPosition();
 
+    ParentDevice.optimizeBusUtilizationForAll(leftMotor, rightMotor);
+    StatusSignal.setUpdateFrequencyForAll(100, velocity, position);
     SmartDashboard.putData("elevator", mechanism);
 
     //Logging
@@ -142,10 +155,15 @@ public class Elevator extends SubsystemBase {
 
     
   }
-
   @Override
-  public void periodic() {
+  public void periodic(){
+
+  }
+
   
+  public void periodic2() {
+    StatusSignal.waitForAll(0.012, velocity, position);
+    
     setSetpoint(SmartDashboard.getNumber("setpoint", 0));
     // The final state that the elevator is trying to get to
     ExponentialProfile.State goal = new ExponentialProfile.State(setpoint, 0.0);
@@ -179,7 +197,7 @@ public class Elevator extends SubsystemBase {
   public void simulationPeriodic() {
     sim.setInputVoltage(voltage);
     sim.update(Constants.LOOP_TIME);
-    ligament.setLength(sim.getPositionMeters());
+    ligament.setLength(getPosition());
     rightMotor.getSimState().setRawRotorPosition(
         sim.getPositionMeters() / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
   }

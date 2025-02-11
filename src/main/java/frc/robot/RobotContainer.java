@@ -1,8 +1,12 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.hal.NotifierJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.simulation.NotifierSim;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
@@ -48,6 +52,7 @@ public class RobotContainer {
   private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;
+  private Thread elevatorThread = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -59,6 +64,7 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
+        
         break;
 
       case TestBed2:
@@ -114,6 +120,15 @@ public class RobotContainer {
         }
       });
       odometryThread.start();
+    }
+    
+    if(elevator != null){
+      elevatorThread = new Thread(()->{
+        while(!odometryThread.isInterrupted()){
+          elevator.periodic2();
+        }
+      });
+      elevatorThread.start();
     }
   }
 
