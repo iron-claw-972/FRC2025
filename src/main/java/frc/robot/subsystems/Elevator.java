@@ -128,6 +128,8 @@ public class Elevator extends SubsystemBase {
         "elevator", ElevatorConstants.START_HEIGHT, 90 - Units.radiansToDegrees(Math.abs(ElevatorConstants.ANGLE))));
 
       bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
+      bottomLimitSwitchSim.setValue(Math.abs(ElevatorConstants.START_HEIGHT
+        - ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE););
     }
     Timer.delay(1.0);
     m_loop.reset(VecBuilder.fill(getPosition(), 0));

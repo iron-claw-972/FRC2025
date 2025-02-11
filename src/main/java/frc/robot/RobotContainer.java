@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.Constants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
@@ -64,7 +66,9 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
-    // Our normal switch statement doesn't work because each case continues to the next one, possibly creating duplicate sim subsystems
+    // Update constants
+    DriveConstants.update(robotId);
+    ElevatorConstants.update(robotId);
 
     // 2 robots have an elevator, outtake, and vision
     if(robotId == RobotId.Phil || robotId == RobotId.SwerveCompetition){

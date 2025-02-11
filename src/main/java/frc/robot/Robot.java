@@ -12,9 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.util.LogManager;
 
 /**
@@ -41,10 +39,6 @@ public class Robot extends TimedRobot {
 
         // obtain this robot's identity
         RobotId robotId = RobotId.getRobotId();
-
-        // Update constants
-        DriveConstants.update(robotId);
-        ElevatorConstants.update(robotId);
 
         // Lower brownout voltage to prevent brownouts
         RobotController.setBrownoutVoltage(6);
