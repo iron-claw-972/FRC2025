@@ -9,6 +9,7 @@ import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
 import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
 import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -30,33 +31,35 @@ public class Intake extends SubsystemBase {
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
-    private PIDController stowPIDController;
 
     private final double positionTolerance = 1;
-    // TODO: tune
-    private final PIDController stowPID = new PIDController(0.01, 0, 0.001);
+
+    private final PIDController stowPID = new PIDController(0.02, 0, 0.0005);
     private double power;
 
     private LaserCan laserCan;
     private boolean hasCoral = false;
     private boolean isMoving = false;
     private Timer laserCanSimTimer;
+    private DCMotor motor = DCMotor.getNEO(1);
+    private ArmFeedforward feedforward = new ArmFeedforward(0, 3.0/2*IntakeConstants.MOMENT_OFiNERTIA*Constants.GRAVITY_ACCELERATION/IntakeConstants.ARM_LENGTH/IntakeConstants.PIVOT_GEAR_RATIO*motor.rOhms/motor.KtNMPerAmp/Constants.ROBOT_VOLTAGE, 0);
+    private double startPosition = 90;
 
     public Intake() {
-        stowMotor.setPosition(0.25*IntakeConstants.GEAR_RATIO);
+        stowMotor.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
         if (RobotBase.isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
-            stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5).append(new MechanismLigament2d("Intake", 4, 90));
+            stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5).append(new MechanismLigament2d("Intake", 4, startPosition));
             SmartDashboard.putData("Intake pivot", stowMechanism2d);
             stowArmSim = new SingleJointedArmSim(
-                DCMotor.getKrakenX60(1),
-                IntakeConstants.GEAR_RATIO,
+                motor,
+                IntakeConstants.PIVOT_GEAR_RATIO,
                 IntakeConstants.MOMENT_OFiNERTIA,
                 IntakeConstants.ARM_LENGTH,
                 Math.toRadians(0),
                 Math.toRadians(90),
                 true,
-                Math.PI/2);
+                Units.degreesToRadians(startPosition));
             laserCanSimTimer = new Timer();
         }else{
             laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
@@ -69,7 +72,7 @@ public class Intake extends SubsystemBase {
             }
         }
         stowPID.setTolerance(positionTolerance);
-        setAngle(45);
+        setAngle(startPosition);
     }
 
     /**
@@ -89,7 +92,8 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         publish();
-        power = stowPID.calculate(getStowPosition());
+        double position = getStowPosition();
+        power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         stowMotor.set(power);
         if(laserCan != null){
             Measurement measurement = laserCan.getMeasurement();
@@ -122,14 +126,14 @@ public class Intake extends SubsystemBase {
     public double getStowPosition() {
         // For some reason, TalonFXSimState isn't working, so this is the next best way of getting the position
         if(RobotBase.isReal()){
-            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/IntakeConstants.GEAR_RATIO;
+            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/IntakeConstants.PIVOT_GEAR_RATIO;
         }else{
             return Units.radiansToDegrees(stowArmSim.getAngleRads());
         }
     }
 
     public PIDController getPID() {
-        return stowPIDController;
+        return stowPID;
     }
 
     /**
