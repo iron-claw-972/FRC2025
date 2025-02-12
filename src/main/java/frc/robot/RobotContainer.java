@@ -55,6 +55,7 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+
     // dispatch on the robot
     switch (robotId) {
 
@@ -175,10 +176,9 @@ public class RobotContainer {
     };
   }
 
-  public void interruptOdometryThraed(){
+  public void interruptOdometryThread(){
     odometryThread.interrupt();
   }
 }
-
 
 
