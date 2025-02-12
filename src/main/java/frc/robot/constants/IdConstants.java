@@ -34,6 +34,6 @@ public class IdConstants {
 
     // Intake
     public static final int INTAKE_ROLLER = -1;
-    public static final int INTAKE_PIVOT = -1;
+    public static final int INTAKE_PIVOT = 11;
     public static final int INTAKE_LASER_CAN = 55;
 }

@@ -11,5 +11,5 @@ public class IntakeConstants {
     public static final double CENTER_OF_MASS_DIST = 0.265;
     public static final double MASS = 6.45688739;
     public static final double ARM_LENGTH = CENTER_OF_MASS_DIST*2;
-    public static double DETECT_CORAL_DIST = Units.inchesToMeters(20);
+    public static final double DETECT_CORAL_DIST = Units.inchesToMeters(20);
 }
