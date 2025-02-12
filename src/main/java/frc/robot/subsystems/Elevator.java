@@ -75,7 +75,7 @@ public class Elevator extends SubsystemBase {
   
   private final LinearQuadraticRegulator<N2, N1, N2> m_controller = new LinearQuadraticRegulator<>(
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
-      VecBuilder.fill(Units.inchesToMeters(1.0), Units.inchesToMeters(20.0)), // qelms. Position
+      VecBuilder.fill(Units.inchesToMeters(0.5), Units.inchesToMeters(20.0)), // qelms. Position
       // and velocity error tolerances, in meters and meters per second. Decrease this
       // to more
       // heavily penalize state excursion, or make the controller behave more
@@ -83,7 +83,7 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(2.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(8.0), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -96,10 +96,10 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      2.0,
+      8.0,
       Constants.LOOP_TIME);
 
-  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(11, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
+  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(8, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
   ExponentialProfile.State m_lastProfiledReference;
   /** Creates a new Elevator. */
   public Elevator() {
@@ -137,7 +137,7 @@ public class Elevator extends SubsystemBase {
     LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
     SmartDashboard.putNumber("setpoint", 0);
-    SmartDashboard.putData(mechanism);
+    SmartDashboard.putData(" elevator", mechanism);
 
   }
 
