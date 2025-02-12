@@ -150,14 +150,20 @@ public class VisionConstants {
      */
 
     public static final ArrayList<Pair<String, Transform3d>> APRIL_TAG_CAMERAS = new ArrayList<Pair<String, Transform3d>>(
-            List.of(
-                    new Pair<String, Transform3d>(
-                            "FrontCamera",
-                            new Transform3d(
-                                    new Translation3d(0.27, -0.31, 0.195),
-                                    new Rotation3d(Math.PI/2, 0,
-                                            -Math.PI/2 - Units.degreesToRadians(40))))
-            ));
+        List.of(
+                new Pair<String, Transform3d>(
+                        "FrontCamera",
+                        new Transform3d(
+                                new Translation3d(Units.inchesToMeters(9.990045), Units.inchesToMeters(-9.171), Units.inchesToMeters(7.485525)),
+                                new Rotation3d(0, Units.degreesToRadians(-27.5),
+                                        -Math.PI/2 - Units.degreesToRadians(45)))),
+                new Pair<String, Transform3d>(
+                        "BackCamera",
+                        new Transform3d(
+                                new Translation3d(Units.inchesToMeters(-10.690), Units.inchesToMeters(-8.964), Units.inchesToMeters(7.466717)),
+                                new Rotation3d(0, Units.degreesToRadians(-22.5),
+                                        -Math.PI/2 + Units.degreesToRadians(20))))
+        ));
                     
     /**
      * The transformations from the robot to object detection cameras
