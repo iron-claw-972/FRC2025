@@ -33,4 +33,7 @@ public class IdConstants {
 
     // Climb
     public static final int CLIMB_MOTOR = 20;
+
+    // Outtake
+    public static final int OUTTAKE_MOTOR = -1;
 }
