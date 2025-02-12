@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
@@ -35,7 +34,7 @@ public class Intake extends SubsystemBase {
 
     private final double positionTolerance = 1;
 
-    private final PIDController stowPID = new PIDController(0.02, 0, 0.0005);
+    private final PIDController stowPID = new PIDController(0.02, 0, 0.001);
     private double power;
 
     private LaserCan laserCan;
@@ -43,7 +42,7 @@ public class Intake extends SubsystemBase {
     private boolean isMoving = false;
     private Timer laserCanSimTimer;
     private DCMotor motor = DCMotor.getNEO(1);
-    private ArmFeedforward feedforward = new ArmFeedforward(0, 3.0/2*IntakeConstants.MOMENT_OFiNERTIA*Constants.GRAVITY_ACCELERATION/IntakeConstants.ARM_LENGTH/IntakeConstants.PIVOT_GEAR_RATIO*motor.rOhms/motor.KtNMPerAmp/Constants.ROBOT_VOLTAGE, 0);
+    private ArmFeedforward feedforward = new ArmFeedforward(0, Constants.GRAVITY_ACCELERATION*IntakeConstants.CENTER_OF_MASS_DIST*IntakeConstants.MASS/IntakeConstants.PIVOT_GEAR_RATIO*motor.rOhms/motor.KtNMPerAmp/Constants.ROBOT_VOLTAGE, 0);
     private double startPosition = 90;
 
     public Intake() {
@@ -73,7 +72,7 @@ public class Intake extends SubsystemBase {
             }
         }
         stowPID.setTolerance(positionTolerance);
-        setAngle(startPosition);
+        setAngle(startPosition/3);
     }
 
     /**
