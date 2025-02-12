@@ -102,12 +102,10 @@ public class RobotContainer {
 
     // All robots need controllers
     // Check the controller type to prevent it from breaking
-    double axis = (new Joystick(Constants.DRIVER_JOY)).getRawAxis(3);
-    if(axis < -0.25){
-      driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-    }else{
-      driver = new GameControllerDriverConfig(drive, vision, elevator, outtake);
-    }
+    //double axis = (new Joystick(Constants.DRIVER_JOY)).getRawAxis(3);
+    
+    driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+    
     operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
     // Detected objects need access to the drivetrain
