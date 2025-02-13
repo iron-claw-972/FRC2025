@@ -21,6 +21,7 @@ public class IntakeCoral extends Command {
 		this.intake = intake;
 		this.indexer = indexer;
 		this.elevator = elevator;
+		addRequirements(intake, indexer, elevator);
 	}
 
 	@Override
