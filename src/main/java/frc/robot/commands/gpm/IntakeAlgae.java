@@ -8,7 +8,7 @@ public class IntakeAlgae extends Command {
     private final Intake intake;
     private final Timer timer = new Timer();
 
-    // FIXME: Modify to correct time
+    // FIXME: Modify to not use a timer. We should intake until the driver releases the button and interrrupts the command
     private static final double INTAKE_TIME = 5.0;
 
     public IntakeAlgae(Intake intake) {
