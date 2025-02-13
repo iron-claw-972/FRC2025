@@ -185,18 +185,17 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Moves the intake up and stops it.
+     * Moves the intake up, doesn't stop it.
      */
     public void stow() {
         stowPID.setSetpoint(0);
-        deactivate();
     }
 
     /**
      * Moves the intake down.
      */
     public void unstow() {
-        stowPID.setSetpoint(0);
+        stowPID.setSetpoint(90);
     }
 
     /**
@@ -207,10 +206,9 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Lowers the intake and starts the motor.
+     * Starts the motor.
      */
     public void activate() {
-        stowPID.setSetpoint(90);
         rollerMotor.set(.8);
     }
 }
