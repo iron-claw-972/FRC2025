@@ -15,7 +15,7 @@ public class StartStationIntake extends Command {
 
     @Override
     public void initialize(){
-        intake.setAngle(10);
+        intake.setAngle(10); //TODO change to correct angle
         intake.activate();
     }
 
