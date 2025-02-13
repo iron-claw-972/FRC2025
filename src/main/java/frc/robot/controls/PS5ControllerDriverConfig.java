@@ -78,7 +78,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.RIGHT_JOY).onTrue(startIntake)
                 .onFalse(new ConditionalCommand(
                     new InstantCommand(()->startIntake.cancel()),
-                    new FinishStationIntake(intake, indexer),
+                    new FinishStationIntake(intake, indexer, elevator),
                     startIntake::isScheduled
                 ));
         }
