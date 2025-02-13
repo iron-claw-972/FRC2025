@@ -89,7 +89,7 @@ public class Operator {
             driver.get(Button.RIGHT_JOY).onTrue(startIntake)
                 .onFalse(new ConditionalCommand(
                     new InstantCommand(()->startIntake.cancel()),
-                    new FinishStationIntake(intake, indexer, elevator),
+                    new FinishStationIntake(intake),
                     startIntake::isScheduled
                 ));
         }
