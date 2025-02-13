@@ -16,6 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -70,7 +71,7 @@ public class RobotContainer {
         // Our competition subsystems go here
         intake = new Intake();
         indexer = new Indexer();
-        outtake = new Outtake();
+        outtake = new OuttakeComp();
         elevator = new Elevator();
         climb = new Climb();
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
