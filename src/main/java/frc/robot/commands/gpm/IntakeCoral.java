@@ -12,6 +12,7 @@ import frc.robot.subsystems.Intake;
 public class IntakeCoral extends SequentialCommandGroup {
 	public IntakeCoral(Intake intake, Indexer indexer, Elevator elevator) {
 		addCommands(
+				// TODO: do we want to parallelize the initial intake and moving elevator?
 				new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
 				new IntakeCoralHelper(intake, indexer));
 	}
