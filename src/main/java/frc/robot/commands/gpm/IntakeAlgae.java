@@ -7,6 +7,8 @@ import frc.robot.subsystems.Intake;
 public class IntakeAlgae extends Command {
     private final Intake intake;
     private final Timer timer = new Timer();
+
+    // FIXME: Modify to correct time
     private static final double INTAKE_TIME = 5.0;
 
     public IntakeAlgae(Intake intake) {
