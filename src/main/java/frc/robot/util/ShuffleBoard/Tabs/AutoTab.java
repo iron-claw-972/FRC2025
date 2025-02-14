@@ -12,7 +12,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
 /**
- * Class for storing and updating information on the auto tab in Shuffleboard
+ * Class for storing and updating rmation on the auto tab in Shuffleboard
 */
 public class AutoTab extends ShuffleBoardTabs {
 
