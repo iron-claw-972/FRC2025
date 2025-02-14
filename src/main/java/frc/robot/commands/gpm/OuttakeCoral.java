@@ -5,7 +5,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Outtake;
 
 public class OuttakeCoral extends Command {
-    // TODO: finish
+    // DO NOT FIXME: This is being worked on and will be added in a separate PR
     public OuttakeCoral(Outtake outtake, Elevator elevator){
         addRequirements(outtake, elevator);
     }
