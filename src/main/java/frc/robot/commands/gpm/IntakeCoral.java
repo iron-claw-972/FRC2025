@@ -16,8 +16,8 @@ public class IntakeCoral extends SequentialCommandGroup {
 			// TODO: do we want to parallelize the initial intake and moving elevator?
 			new InstantCommand(() -> intake.unstow()),
 			new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
-			new IntakeCoralHelper(intake, indexer),
-			new InstantCommand(() -> intake.stow()));
+			new IntakeCoralHelper(intake, indexer)
+        );
 	}
 
 

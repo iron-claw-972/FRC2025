@@ -1,12 +1,11 @@
 package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.Intake;
 
 public class StartStationIntake extends Command {
-    // TODO: finish and possibly rename
-
-    Intake intake;
+    private Intake intake;
 
     public StartStationIntake(Intake intake){
         this.intake = intake;
@@ -15,7 +14,7 @@ public class StartStationIntake extends Command {
 
     @Override
     public void initialize(){
-        intake.setAngle(10); //TODO change to correct angle
+        intake.setAngle(IntakeConstants.STATION_SETPOINT);
         intake.activate();
     }
 

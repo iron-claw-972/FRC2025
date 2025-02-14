@@ -188,14 +188,14 @@ public class Intake extends SubsystemBase {
      * Moves the intake up, doesn't stop it.
      */
     public void stow() {
-        stowPID.setSetpoint(0);
+        stowPID.setSetpoint(IntakeConstants.STOW_SETPOINT);
     }
 
     /**
      * Moves the intake down.
      */
     public void unstow() {
-        stowPID.setSetpoint(90);
+        stowPID.setSetpoint(IntakeConstants.INTAKE_SETPOINT);
     }
 
     /**
@@ -209,6 +209,6 @@ public class Intake extends SubsystemBase {
      * Starts the motor.
      */
     public void activate() {
-        rollerMotor.set(.8);
+        rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
     }
 }

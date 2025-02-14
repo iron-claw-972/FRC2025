@@ -27,6 +27,7 @@ public class IntakeCoralHelper extends Command {
 	@Override
 	public void initialize() {
 		intake.activate();
+		intake.unstow();
 		phase = Phase.Acquiring;
 	}
 
@@ -43,6 +44,7 @@ public class IntakeCoralHelper extends Command {
 				if (!indexer.getSensorValue()) {
 					phase = Phase.Indexing;
 					intake.deactivate();
+					intake.stow();
 				}
 				break;
 			case Indexing:
@@ -65,6 +67,7 @@ public class IntakeCoralHelper extends Command {
 	public void end(boolean interrupted) {
 		// in case it's interrupted
 		intake.deactivate();
+		intake.stow();
 		indexer.stop();
 	}
 }
