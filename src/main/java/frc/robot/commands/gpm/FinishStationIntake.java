@@ -30,7 +30,8 @@ public class FinishStationIntake extends Command {
 
     @Override
     public boolean isFinished(){
-        return indexer.getSensorValue(); //TODO Finish when indexer finishes detecting
+        return indexer.getSensorValue(); //TODO Finish when indexer finishes detecting 
+                        //Should we use a timer or what? we can't just do !getSensorValue(), right?
     }
 
     @Override
