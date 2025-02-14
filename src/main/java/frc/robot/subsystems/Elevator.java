@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -36,6 +37,9 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.AngledElevatorSim;
+import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
+
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
@@ -140,6 +144,11 @@ public class Elevator extends SubsystemBase {
     calibrate();
     leftMotor.setNeutralMode(NeutralModeValue.Coast);
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
+
+    //Log elevator position
+
+    LogManager.logSupplier("Elevator/Position", () -> getPosition(), 15, LogLevel.COMP);
+    
 
   }
 
