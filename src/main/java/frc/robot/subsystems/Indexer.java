@@ -43,9 +43,8 @@ public class Indexer extends SubsystemBase {
 		}
 		simCoralPos = IndexerConstants.START_SIM_POS_AT; // initialize it anyway, it's easier
 
-		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
+		LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), LogLevel.DEBUG);
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
-
 	}
 
 	/** Runs the indexer. */
@@ -71,19 +70,25 @@ public class Indexer extends SubsystemBase {
 	}
 
 	/**
-	 * Gets the sensor's state
-	 * true means nothing is there, false means something is there
+	 * Gets the LaserCAN's distance reading.
+	 * If the distance is null, return 314,159
 	 * 
-	 * @return the sensor's state
+	 * @return the distance, in millimeters
 	 */
-	public int getRawSensorValue() {
+	private int getSensorValue() {
 		var measurement = sensor.getMeasurement();
-		int dist = (measurement == null) ? 10000 : measurement.distance_mm;
+		int dist = (measurement == null) ? 314159 : measurement.distance_mm;
 		return dist;
 	}
 
-	public boolean getSensorValue() {
-		return getRawSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
+	/**
+	* Checks whether a coral is in the indexer.
+	* True means nothing is there, false means something is there
+	*
+	* @return the sensor's state
+	*/
+	public boolean isIndexerClear() {
+		return getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
 	}
 
 	@Override
