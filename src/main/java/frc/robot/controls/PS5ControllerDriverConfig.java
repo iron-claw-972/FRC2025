@@ -17,6 +17,7 @@ import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.RemoveAlgae;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
@@ -60,11 +61,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
-        if(elevator != null){
-            driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-            driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+        if(elevator != null && outtake != null){
+            driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT).deadlineWith(new RemoveAlgae(outtake)));
+            driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT).deadlineWith(new RemoveAlgae(outtake)));
+            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT).deadlineWith(new RemoveAlgae(outtake)));
+            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT).deadlineWith(new RemoveAlgae(outtake)));
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
         }
 
