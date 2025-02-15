@@ -4,6 +4,8 @@ package frc.robot.subsystems;
 
 
 
+import com.ctre.phoenix.motion.SetValueMotionProfile;
+
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -75,4 +77,8 @@ public abstract class Outtake extends SubsystemBase {
 
 
     public abstract void reverse();
+
+    public void removeAlgae(){
+        setMotor(-0.2);
+    }
 }
