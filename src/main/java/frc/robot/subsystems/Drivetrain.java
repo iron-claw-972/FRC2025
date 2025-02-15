@@ -685,7 +685,7 @@ public class Drivetrain extends SubsystemBase {
         double linearVelocity = Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
         double radius = linearVelocity / angularVelocity;
 
-        double centripetalAcceleration = Math.pow(angularVelocity, 2) / radius;
+        double centripetalAcceleration = Math.pow(angularVelocity, 2) * radius;
 
         return Math.sqrt(Math.pow(accelX, 2) + Math.pow(accelY, 2) + Math.pow(centripetalAcceleration, 2));
     }
