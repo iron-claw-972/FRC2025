@@ -4,15 +4,54 @@ package frc.robot.subsystems;
 
 
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.IdConstants;
 
 /**
  * Abstract class for the outtake. All commands should use this subsystem
  */
 public abstract class Outtake extends SubsystemBase {
+    private int ticks = 0;
+    /** Coral detected before the rollers */
+    protected DIOSim dioInputLoaded;
+    /** Coral detected after the rollers */
+    protected DIOSim dioInputEjecting;
+
+    protected abstract double getMotorSpeed();
+    
+    public void simulationPeriodic(){
+        // when coral is ejecting, loading is true & ejecting is true. when coral shoots out, loading is false & ejecting is false
+        ticks++;
 
 
+        if (getMotorSpeed() > 0.05) {
+            if (ticks > 250) {
+                ticks = 0;
+            }
+            // motor is outtaking
+            // motor is spinning, ejecting will be true. after 0.14 seconds
+            if (ticks ==7) {
+                dioInputEjecting.setValue(false);
+            }
+            if (ticks == 14){
+                // after 0.14 seconds
+                dioInputLoaded.setValue(true);
+            }
+            if (ticks == 16){
+                // after 0.18 seconds
+                dioInputEjecting.setValue(true);
+            }
+        }
+
+
+        if (ticks == 250) {
+            // make coral appear again (set to true)
+            dioInputLoaded.setValue(false);
+        }
+    }
     /** Set the motor power to move the coral */
     public abstract void setMotor(double power);
 

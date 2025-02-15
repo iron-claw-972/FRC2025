@@ -131,10 +131,7 @@ public class RobotContainer {
     }
   }
 
-  private Sendable OuttakeCoralBasic(Outtake outtake2) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'OuttakeCoralBasic'");
-  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

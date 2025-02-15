@@ -42,6 +42,10 @@ public class OuttakeComp extends Outtake {
         }
     }
 
+    @Override
+    protected double getMotorSpeed() {
+        return motor.get();
+    }
 
     @Override
     public void periodic(){
@@ -49,40 +53,6 @@ public class OuttakeComp extends Outtake {
         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
         SmartDashboard.putBoolean("Coral ejected", coralEjecting());
     }
-
-
-    @Override
-    public void simulationPeriodic(){
-        // when coral is ejecting, loading is true & ejecting is true. when coral shoots out, loading is false & ejecting is false
-        ticks++;
-
-
-        if (motor.get() > 0.05) {
-            if (ticks > 250) {
-                ticks = 0;
-            }
-            // motor is outtaking
-            // motor is spinning, ejecting will be true. after 0.14 seconds
-            if (ticks ==7) {
-                dioInputEjecting.setValue(false);
-            }
-            if (ticks == 14){
-                // after 0.14 seconds
-                dioInputLoaded.setValue(true);
-            }
-            if (ticks == 16){
-                // after 0.18 seconds
-                dioInputEjecting.setValue(true);
-            }
-        }
-
-
-        if (ticks == 250) {
-            // make coral appear again (set to true)
-            dioInputLoaded.setValue(false);
-        }
-    }
-
 
     /** Set the motor power to move the coral */
     public void setMotor(double power){

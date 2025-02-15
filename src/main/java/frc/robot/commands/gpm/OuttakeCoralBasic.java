@@ -16,7 +16,7 @@ public class OuttakeCoralBasic extends Command {
 
 
     // states the outtake may take
-    enum State { EMPTY, LOADED, MOVING, REVERSING, DONE }
+    private enum State {LOADED, MOVING, REVERSING, DONE }
 
 
     private State state;
@@ -63,14 +63,8 @@ public class OuttakeCoralBasic extends Command {
 
 
         switch (state) {
-            case EMPTY:
-            // do not need to do anything
-            break;
-
-
             case LOADED:
             // waiting for ejected to become true
-            // FIXME: is this supposed to be coralLoaded????
             if (outtake.coralEjecting()) {
                 // at this point, ticks represents how long it took to move the coral to the ejecting sensor.
                 SmartDashboard.putNumber("Coral Ejection Time", ticks * 0.020);
