@@ -1,7 +1,7 @@
 package frc.robot.constants;
 
 public class IndexerConstants {
-	public static final double SPEED = 0.5;
+	public static final double SPEED = 0.1;
 
 	public static final double MOMENT_OF_INERTIA = 0.000326;
 	public static final double GEAR_RATIO = 1.0; // TODO: actual value

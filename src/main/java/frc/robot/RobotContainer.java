@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.OutakeMotors;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
+import frc.robot.commands.gpm.RunIntakeAndIndexer;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
@@ -75,8 +76,8 @@ public class RobotContainer {
       default:
       case SwerveCompetition:
         // Our competition subsystems go here
-        //intake = new Intake();
-        //indexer = new Indexer();
+        intake = new Intake();
+        indexer = new Indexer();
         outtake = new OuttakeComp();
         elevator = new Elevator();
         //climb = new Climb();
@@ -90,6 +91,7 @@ public class RobotContainer {
         }
         if (outtake != null) {
           SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
+          SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
         }
       case Vertigo:
         drive = new Drivetrain(vision);
