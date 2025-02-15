@@ -36,4 +36,14 @@ public class IdConstants {
     public static final int INTAKE_ROLLER = -1;
     public static final int INTAKE_PIVOT = 11;
     public static final int INTAKE_LASER_CAN = 55;
+
+    //Outtake
+     /** CAN ID for the Alphabot's outake */
+     public static final int OUTTAKE_MOTOR_ALPHA = 14;
+     /** CAN ID for the competition bot's outtake */
+     public static final int OUTTAKE_MOTOR_COMP = -1; 
+ 
+     // Digital inputs
+     public static final int OUTTAKE_DIO_LOADED = 9;
+     public static final int OUTTAKE_DIO_EJECTING = 8;
 }
