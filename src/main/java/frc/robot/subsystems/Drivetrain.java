@@ -206,7 +206,7 @@ public class Drivetrain extends SubsystemBase {
             };
         }, 50, LogLevel.COMP);
 
-        LogManager.logSupplier("Drivetrain/faults", () -> accelerationFault(), 15, LogLevel.COMP);
+        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.COMP);
     }
 
     public void close() {
@@ -692,7 +692,7 @@ public class Drivetrain extends SubsystemBase {
    
    
    
-    public boolean accelerationFault() {
+    public boolean accelerationOverMax() {
         if (getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL) {
             return true;
         }
