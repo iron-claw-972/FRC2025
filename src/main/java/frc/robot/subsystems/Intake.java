@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.sim.TalonFXSimState;
+
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
@@ -27,8 +27,6 @@ import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-
-    // TODO: This is a Kraken
     private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
@@ -43,22 +41,15 @@ public class Intake extends SubsystemBase {
     private boolean hasCoral = false;
     private boolean isMoving = false;
     private Timer laserCanSimTimer;
-    private DCMotor dcMotor = DCMotor.getNEO(1);
+    private DCMotor dcMotor = DCMotor.getKrakenX60(1);
     private ArmFeedforward feedforward = new ArmFeedforward(0,
             Constants.GRAVITY_ACCELERATION * IntakeConstants.CENTER_OF_MASS_DIST * IntakeConstants.MASS
                     / IntakeConstants.PIVOT_GEAR_RATIO * dcMotor.rOhms / dcMotor.KtNMPerAmp / Constants.ROBOT_VOLTAGE,
             0);
     private double startPosition = 90;
-    private TalonFXSimState encoderSim;
 
     public Intake() {
-        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
-        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         if (RobotBase.isSimulation()) {
-            encoderSim = stowMotor.getSimState();
-            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
-            encoderSim = stowMotor.getSimState();
-            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
             stowMechanism2d = new Mechanism2d(10, 10);
             stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5)
                     .append(new MechanismLigament2d("Intake", 4, startPosition));
@@ -83,8 +74,9 @@ public class Intake extends SubsystemBase {
                 DriverStation.reportError("LaserCan configuration error", true);
             }
         }
+        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowPID.setTolerance(positionTolerance);
-        setAngle(startPosition / 3);
+        setAngle(startPosition);
     }
 
     /**
@@ -120,8 +112,6 @@ public class Intake extends SubsystemBase {
         stowArmSim.setInputVoltage(power * Constants.ROBOT_VOLTAGE);
         stowArmSim.update(Constants.LOOP_TIME);
         stowWheelLigament.setAngle(Units.radiansToDegrees(stowArmSim.getAngleRads()));
-        encoderSim.setRawRotorPosition(
-                Units.radiansToRotations(stowArmSim.getAngleRads()) * IntakeConstants.PIVOT_GEAR_RATIO);
         if (!isMoving) {
             laserCanSimTimer.reset();
             laserCanSimTimer.start();
@@ -140,7 +130,11 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
+        if(RobotBase.isSimulation()) {
+            return Units.radiansToDegrees(stowArmSim.getAngleRads());
+        } else {
+            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
+        }
     }
 
     public PIDController getPID() {
