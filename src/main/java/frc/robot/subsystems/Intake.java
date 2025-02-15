@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IntakeConstants;
+import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
@@ -74,7 +76,9 @@ public class Intake extends SubsystemBase {
         stowPID.setTolerance(positionTolerance);
         setAngle(startPosition);
 
-        
+        //Logging LogLevel.COMP
+        LogManager.logSupplier("Intake/laserCanDistance", () -> laserCanDistance(), 15, LogLevel.COMP);
+        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.COMP);
     }
 
     /**
@@ -211,5 +215,9 @@ public class Intake extends SubsystemBase {
     public void activate() {
         stowPID.setSetpoint(90);
         rollerMotor.set(.8);
+    }
+
+    public int laserCanDistance() {
+        Measurement measurement = laserCan.getMeasurement();            return measurement.distance_mm;
     }
 }
