@@ -1,13 +1,6 @@
 package frc.robot.subsystems;
 
-
-
-
-
-import com.ctre.phoenix.motion.SetValueMotionProfile;
-
 import edu.wpi.first.wpilibj.simulation.DIOSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**

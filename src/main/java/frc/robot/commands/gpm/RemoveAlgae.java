@@ -12,7 +12,7 @@ public class RemoveAlgae extends Command {
 
     @Override
     public void initialize(){
-        outtake.removealgae();
+        outtake.removeAlgae();
     }
 
     @Override
