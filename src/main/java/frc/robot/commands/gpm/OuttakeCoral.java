@@ -6,7 +6,6 @@ import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Outtake;
 
-public class OuttakeCoral extends Command {
 public class OuttakeCoral extends SequentialCommandGroup {
     public OuttakeCoral(Outtake outtake, Elevator elevator){
         addCommands(
