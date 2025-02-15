@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -30,7 +32,12 @@ import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
+<<<<<<< Updated upstream
     public static final DCMotor stowMotor = DCMotor.getKrakenX60(1);
+=======
+    // TODO: This is a Kraken
+    private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
+>>>>>>> Stashed changes
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
@@ -47,13 +54,13 @@ public class Intake extends SubsystemBase {
     private DCMotor dcMotor = DCMotor.getNEO(1);
     private ArmFeedforward feedforward = new ArmFeedforward(0, Constants.GRAVITY_ACCELERATION*IntakeConstants.CENTER_OF_MASS_DIST*IntakeConstants.MASS/IntakeConstants.PIVOT_GEAR_RATIO*dcMotor.rOhms/dcMotor.KtNMPerAmp/Constants.ROBOT_VOLTAGE, 0);
     private double startPosition = 90;
-    private SparkRelativeEncoderSim encoderSim;
+    private TalonFXSimState encoderSim;
 
     public Intake() {
-        stowMotor.getEncoder().setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
+        stowMotor.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
         if (RobotBase.isSimulation()) {
-            encoderSim = new SparkRelativeEncoderSim(stowMotor);
-            encoderSim.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
+            encoderSim = stowMotor.getSimState();
+            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
             stowMechanism2d = new Mechanism2d(10, 10);
             stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5).append(new MechanismLigament2d("Intake", 4, startPosition));
             SmartDashboard.putData("Intake pivot", stowMechanism2d);
@@ -113,7 +120,7 @@ public class Intake extends SubsystemBase {
         stowArmSim.setInputVoltage(power*Constants.ROBOT_VOLTAGE);
         stowArmSim.update(Constants.LOOP_TIME);
         stowWheelLigament.setAngle(Units.radiansToDegrees(stowArmSim.getAngleRads()));
-        encoderSim.setPosition(Units.radiansToRotations(stowArmSim.getAngleRads())*IntakeConstants.PIVOT_GEAR_RATIO);
+        encoderSim.setRawRotorPosition(Units.radiansToRotations(stowArmSim.getAngleRads())*IntakeConstants.PIVOT_GEAR_RATIO);
         if(!isMoving){
             laserCanSimTimer.reset();
             laserCanSimTimer.start();
@@ -132,7 +139,7 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        return Units.rotationsToDegrees(stowMotor.getEncoder().getPosition())/IntakeConstants.PIVOT_GEAR_RATIO;
+        return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/IntakeConstants.PIVOT_GEAR_RATIO;
     }
 
     public PIDController getPID() {
