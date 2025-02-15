@@ -53,6 +53,12 @@ public class Indexer extends SubsystemBase {
 		simCoralPos = IndexerConstants.START_SIM_POS_AT;
 	}
 
+	/** Reverses the indexer. */
+	public void reverse() {
+		motor.set(-IndexerConstants.SPEED);
+		simCoralPos = IndexerConstants.END_SIM_SENSOR_POS_AT;
+	}
+
 	/** Stops the indexer */
 	public void stop() {
 		motor.stopMotor();
