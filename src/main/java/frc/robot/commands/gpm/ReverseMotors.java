@@ -2,16 +2,14 @@ package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 
 public class ReverseMotors extends Command {
-    // TODO: finish
     private Intake intake;
     private Indexer indexer;
-    private Outtake outtake; // TODO do we need an outtake here?
+    private Outtake outtake;
     private final Timer timer = new Timer();
 
     private static final double EJECTION_TIME = 5.0;
@@ -27,7 +25,7 @@ public class ReverseMotors extends Command {
     public void initialize() {
         intake.setSpeed(-.5);
         indexer.reverse();
-        // outtake.setSpeed(-.5);
+        outtake.reverse();
         timer.reset();
         timer.start();
     }
@@ -47,8 +45,7 @@ public class ReverseMotors extends Command {
     @Override
     public void end(boolean interrupted) {
         intake.deactivate();
-        ;
         indexer.stop();
-        // outtake.setSpeed(0);
+        outtake.stop();;
     }
 }
