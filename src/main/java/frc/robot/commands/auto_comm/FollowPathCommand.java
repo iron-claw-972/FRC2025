@@ -19,6 +19,7 @@ import frc.robot.util.PathGroupLoader;
 public class FollowPathCommand extends SequentialCommandGroup {
     Drivetrain drive;
     PathPlannerPath path;
+    
 
     public FollowPathCommand(String name, Drivetrain drive){
         this(name, false, drive);
@@ -38,7 +39,7 @@ public class FollowPathCommand extends SequentialCommandGroup {
     public void resetOdemetry(boolean resetOdemetry){
         if (resetOdemetry){
             if(RobotContainer.getAllianceColorBooleanSupplier().getAsBoolean()){
-                drive.resetOdometry(new Pose2d(path.getAllPathPoints().get(0).flip().position, path.getIdealStartingState().rotation()));
+                drive.resetOdometry(new Pose2d(path.getAllPathPoints().get(0).flip().position, path.getIdealStartingState().flip().rotation()));
             }else{
                 drive.resetOdometry(new Pose2d(path.getAllPathPoints().get(0).position, path.getIdealStartingState().rotation()));
             }
@@ -46,3 +47,4 @@ public class FollowPathCommand extends SequentialCommandGroup {
         }
     }
     }
+

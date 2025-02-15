@@ -59,7 +59,7 @@ public class VisionConstants {
      * Any April tags we always want to ignore. To ignore a tag, put its id in this
      * array.
      */
-    public static final int[] TAGS_TO_IGNORE = {};
+    public static final int[] TAGS_TO_IGNORE = {16};
 
     /**
      * If multiple cameras return different poses, they will be ignored if the
@@ -128,7 +128,7 @@ public class VisionConstants {
      * <p>
      * Only affects calculations using PhotonVision, not manual calculations.
      */
-    public static final double HIGHEST_AMBIGUITY = 0.1;
+    public static final double HIGHEST_AMBIGUITY = 0.02;
 
     /**
      * The camera poses

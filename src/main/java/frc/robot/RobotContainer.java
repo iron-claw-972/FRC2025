@@ -92,6 +92,10 @@ public class RobotContainer {
       indexer = new SimIndexer();
       climb = new SimClimb();
     }
+    
+    // if(robotId == RobotId.Phil){
+    //   driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+    // }
 
     // All of these robots need a drivetrain
     if(robotId == RobotId.SwerveCompetition || robotId == RobotId.Phil || robotId == RobotId.Vertigo || robotId == RobotId.Vivace){
@@ -102,10 +106,7 @@ public class RobotContainer {
 
     // All robots need controllers
     // Check the controller type to prevent it from breaking
-    //double axis = (new Joystick(Constants.DRIVER_JOY)).getRawAxis(3);
-    
     driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-    
     operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
     // Detected objects need access to the drivetrain
@@ -177,8 +178,17 @@ public class RobotContainer {
         drive);
   }
 
+
+  
+
   public void registerCommands() {
+
+
     if(elevator != null && outtake != null){
+
+      NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+
+
       NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
         new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
         new WaitCommand(1),

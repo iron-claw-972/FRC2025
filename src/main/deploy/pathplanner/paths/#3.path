@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.755,
+        "y": 7.175
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.9867904466171586,
+        "y": 7.026521975540033
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9815056818181818,
+        "y": 6.38328125
+      },
+      "prevControl": {
+        "x": 2.7091042127452276,
+        "y": 6.570028200166484
+      },
+      "nextControl": {
+        "x": 3.1877029437452773,
+        "y": 6.241921110024939
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.4,
+        "y": 5.435
+      },
+      "prevControl": {
+        "x": 4.047941812245878,
+        "y": 5.686920798201975
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 29.999999999999996
+  },
+  "reversed": false,
+  "folder": "Sequential Path",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 29.999999999999996
+  },
+  "useDefaultConstraints": false
+}

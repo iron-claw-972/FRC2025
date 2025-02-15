@@ -220,7 +220,7 @@ public class DriveConstants {
             // Falcon Speed
             Constants.MAX_RPM = 6080.0;
         } else if (robotId == RobotId.Phil) {
-            ROBOT_MASS = 30;
+            ROBOT_MASS = 20;
             WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
             STEER_OFFSET_FRONT_LEFT = 121.463+180;

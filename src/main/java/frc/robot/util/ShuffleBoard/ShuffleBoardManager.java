@@ -22,24 +22,24 @@ public class ShuffleBoardManager {
     
     private Field feild;
 
-    private SwerveTab swerveTab;
+    //private SwerveTab swerveTab;
     private AutoTab autoTab;
     private VisionTab visionTab;
     private ElevatorTab elevatorTab;
 
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake){
         
-        swerveTab = new SwerveTab(drive);
+        // swerveTab = new SwerveTab(drive);
         autoTab = new AutoTab(drive, elevator, outtake);
-        visionTab = new VisionTab(drive, vision);
-        elevatorTab = new ElevatorTab(elevator);
-        tabs.add(swerveTab);
+        // visionTab = new VisionTab(drive, vision);
+        // elevatorTab = new ElevatorTab(elevator);
+        // tabs.add(swerveTab);
         tabs.add(autoTab);
-        tabs.add(visionTab);
-        tabs.add(elevatorTab);
+        // tabs.add(visionTab);
+        // tabs.add(elevatorTab);
 
         for (ShuffleBoardTabs tab : tabs){
-            tab.createEntries();
+            tab.createEntries();        
         }
         
         feild = new Field(drive, vision);

@@ -42,7 +42,8 @@ import frc.robot.util.LogManager.LogLevel;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
-  
+  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR, Constants.CANIVORE_CAN);
+
   private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
   private DIOSim bottomLimitSwitchSim;
   private boolean limitSwitchPressed = false;
@@ -176,8 +177,8 @@ public class Elevator extends SubsystemBase {
     // } else {
     //   limitSwitchPressed = false;
     // }
-    SmartDashboard.putNumber("position", getPosition());
-    SmartDashboard.putNumber("velocity", getVelocity());
+    // SmartDashboard.putNumber("position", getPosition());
+    // SmartDashboard.putNumber("velocity", getVelocity());
     // // The final state that the elevator is trying to get to
      State goal = new State(setpoint, 0.0);
 
@@ -210,9 +211,9 @@ public class Elevator extends SubsystemBase {
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
-    // Voltage.setDouble(voltage);
-    // height.setDouble(currentPosition);
-    // leftMotorEncoder.setDouble(leftMotor.getPosition().getValue());
+    SmartDashboard.putNumber("voltage", voltage);
+    SmartDashboard.putNumber("position",currentPosition);
+    SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
     // rightMotorEncoder.setDouble(rightMotor.getPosition().getValue());
     // bottomSensor.setBoolean(getBottomLimitSwitch());
     // topSensor.setBoolean(getTopLimitSwitch());
