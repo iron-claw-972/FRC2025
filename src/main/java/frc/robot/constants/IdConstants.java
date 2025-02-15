@@ -38,7 +38,7 @@ public class IdConstants {
     /** CAN ID for the Alphabot's outake */
     public static final int OUTTAKE_MOTOR_ALPHA = 14;
     /** CAN ID for the competition bot's outtake */
-    public static final int OUTTAKE_MOTOR_COMP = -1; 
+    public static final int OUTTAKE_MOTOR_COMP = 30; 
 
     // Digital inputs
     public static final int OUTTAKE_DIO_LOADED = 9;
