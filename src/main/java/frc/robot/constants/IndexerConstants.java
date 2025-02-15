@@ -5,6 +5,7 @@ public class IndexerConstants {
 
 	public static final double MOMENT_OF_INERTIA = 0.000326;
 	public static final double GEAR_RATIO = 1.0; // TODO: actual value
+	public static final int MEASUREMENT_THRESHOLD = 100; // in millimeters
 
 	// this stuff is for sim, all in meters
 	public static final double WHEEL_CIRCUMFERENCE = Math.PI * 0.1;
