@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -32,12 +34,9 @@ import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-<<<<<<< Updated upstream
-    public static final DCMotor stowMotor = DCMotor.getKrakenX60(1);
-=======
+    
     // TODO: This is a Kraken
     private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
->>>>>>> Stashed changes
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
@@ -58,7 +57,10 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         stowMotor.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
+        stowMotor.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
         if (RobotBase.isSimulation()) {
+            encoderSim = stowMotor.getSimState();
+            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
             encoderSim = stowMotor.getSimState();
             encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
             stowMechanism2d = new Mechanism2d(10, 10);
