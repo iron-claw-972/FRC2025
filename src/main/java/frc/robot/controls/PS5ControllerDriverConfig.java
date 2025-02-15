@@ -83,7 +83,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 ));
         }
         if(outtake != null && elevator != null){
-            driver.get(PS5Button.PS).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
         }
         if(intake != null){
             driver.get(PS5Button.CROSS).and(menu).whileTrue(new IntakeAlgae(intake));
@@ -104,7 +104,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         driver.get(PS5Button.RB).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 1));
         driver.get(PS5Button.TRIANGLE).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 2));
         driver.get(PS5Button.SQUARE).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 3));
-        driver.get(DPad.DOWN).onTrue(new InstantCommand(()->alignmentDirection = 4));
+        //driver.get(DPad.DOWN).onTrue(new InstantCommand(()->alignmentDirection = 4));
         driver.get(DPad.UP).onTrue(new InstantCommand(()->alignmentDirection = 5));
         driver.get(DPad.LEFT).onTrue(new InstantCommand(()->setAlignmentPose(true)));
         driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->setAlignmentPose(false)));

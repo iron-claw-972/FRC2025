@@ -57,7 +57,7 @@ public class Elevator extends SubsystemBase {
   //         4.879,
   //         Units.feetToMeters(9.0))); // Max elevator speed and acceleration.
  
-  // private State m_lastProfiledReference = new State();
+  //private State m_lastProfiledReference = new State();
 
   private final LinearSystem<N2, N1, N2> m_elevatorPlant = LinearSystemId.createElevatorSystem(
       ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS,
@@ -75,7 +75,7 @@ public class Elevator extends SubsystemBase {
   
   private final LinearQuadraticRegulator<N2, N1, N2> m_controller = new LinearQuadraticRegulator<>(
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
-      VecBuilder.fill(Units.inchesToMeters(0.5), Units.inchesToMeters(20.0)), // qelms. Position
+      VecBuilder.fill(Units.inchesToMeters(1), Units.inchesToMeters(20.0)), // qelms. Position
       // and velocity error tolerances, in meters and meters per second. Decrease this
       // to more
       // heavily penalize state excursion, or make the controller behave more
@@ -83,7 +83,7 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(8.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(2.0), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -96,10 +96,10 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      8.0,
+      2.0,
       Constants.LOOP_TIME);
 
-  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(8, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
+  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(2, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
   ExponentialProfile.State m_lastProfiledReference;
   /** Creates a new Elevator. */
   public Elevator() {
@@ -129,15 +129,14 @@ public class Elevator extends SubsystemBase {
     m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
 
-    leftMotor.setNeutralMode(NeutralModeValue.Coast);
-    rightMotor.setNeutralMode(NeutralModeValue.Coast);
+    leftMotor.setNeutralMode(NeutralModeValue.Brake);
+    rightMotor.setNeutralMode(NeutralModeValue.Brake);
 
     //Logging
     LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
     SmartDashboard.putNumber("setpoint", 0);
-    SmartDashboard.putData(" elevator", mechanism);
 
   }
 

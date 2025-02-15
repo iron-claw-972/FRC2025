@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.gpm.OutakeMotors;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
@@ -74,11 +75,11 @@ public class RobotContainer {
       default:
       case SwerveCompetition:
         // Our competition subsystems go here
-        intake = new Intake();
-        indexer = new Indexer();
+        //intake = new Intake();
+        //indexer = new Indexer();
         outtake = new OuttakeComp();
         elevator = new Elevator();
-        climb = new Climb();
+        //climb = new Climb();
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
 
@@ -88,7 +89,7 @@ public class RobotContainer {
           outtake = new OuttakeAlpha();
         }
         if (outtake != null) {
-          SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
+          SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
         }
       case Vertigo:
         drive = new Drivetrain(vision);
@@ -107,7 +108,7 @@ public class RobotContainer {
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
  
-        shuffleboardManager = new ShuffleBoardManager(drive, vision);
+        //shuffleboardManager = new ShuffleBoardManager(drive, vision);
       
         break;
       }

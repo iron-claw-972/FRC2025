@@ -38,6 +38,7 @@ public class OuttakeComp extends Outtake {
             // we are not ejecting
             dioInputEjecting.setValue(true);
         }
+        SmartDashboard.putNumber("wheel speed",0);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class OuttakeComp extends Outtake {
     public void outtake(){
         // assumes the coral is present
         // if the coral is not present, we should not bother to spin the rollers
-        setMotor(SmartDashboard.getNumber("wheel speed", 0));
+        setMotor(SmartDashboard.getNumber("wheel speed", 0.2));
         // this starts the motor... what needs to be done later?
     }
 
