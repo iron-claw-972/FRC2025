@@ -197,6 +197,7 @@ public class Drivetrain extends SubsystemBase {
         LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.DEBUG);
         LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.DEBUG);
     
+        //LogLevel.COMP
         LogManager.logSupplier("Drivetrain/Pose2d", () -> {
             Pose2d pose = getPose();
             return new Double[]{
@@ -205,6 +206,8 @@ public class Drivetrain extends SubsystemBase {
                 pose.getRotation().getRadians()
             };
         }, 50, LogLevel.COMP);
+
+        LogManager.logSupplier("Drivetrain/faults", () -> accelerationFault(), 15, LogLevel.COMP);
     }
 
     public void close() {
@@ -691,6 +694,11 @@ public class Drivetrain extends SubsystemBase {
    
    
     public boolean accelerationFault() {
-        return false;
+        if (getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL) {
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
