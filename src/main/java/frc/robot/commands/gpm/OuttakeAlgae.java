@@ -17,6 +17,11 @@ public class OuttakeAlgae extends Command {
     }
 
     @Override
+    public void initialize() {
+        intake.activate();
+    }
+
+    @Override
     public void execute() {
         if (timer.hasElapsed(EJECTION_TIME)) {
             intake.deactivate();
