@@ -6,7 +6,8 @@ import frc.robot.subsystems.Intake;
 
 /**
  * All the intake code except the elevator stuff.
- * Don't call this directly; use {@link frc.robot.commands.gpm.IntakeCoral} instead.
+ * Don't call this directly; use {@link frc.robot.commands.gpm.IntakeCoral}
+ * instead.
  */
 public class IntakeCoralHelper extends Command {
 	private Intake intake;
@@ -71,4 +72,3 @@ public class IntakeCoralHelper extends Command {
 		indexer.stop();
 	}
 }
-
