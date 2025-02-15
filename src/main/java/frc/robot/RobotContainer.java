@@ -191,6 +191,7 @@ public class RobotContainer {
 
       NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
 
+      NamedCommands.registerCommand("Wait for 5 seconds", new WaitCommand(5));
 
       NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
         new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
