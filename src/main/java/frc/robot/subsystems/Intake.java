@@ -27,7 +27,7 @@ import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-    
+
     // TODO: This is a Kraken
     private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
     private SingleJointedArmSim stowArmSim;
@@ -44,32 +44,36 @@ public class Intake extends SubsystemBase {
     private boolean isMoving = false;
     private Timer laserCanSimTimer;
     private DCMotor dcMotor = DCMotor.getNEO(1);
-    private ArmFeedforward feedforward = new ArmFeedforward(0, Constants.GRAVITY_ACCELERATION*IntakeConstants.CENTER_OF_MASS_DIST*IntakeConstants.MASS/IntakeConstants.PIVOT_GEAR_RATIO*dcMotor.rOhms/dcMotor.KtNMPerAmp/Constants.ROBOT_VOLTAGE, 0);
+    private ArmFeedforward feedforward = new ArmFeedforward(0,
+            Constants.GRAVITY_ACCELERATION * IntakeConstants.CENTER_OF_MASS_DIST * IntakeConstants.MASS
+                    / IntakeConstants.PIVOT_GEAR_RATIO * dcMotor.rOhms / dcMotor.KtNMPerAmp / Constants.ROBOT_VOLTAGE,
+            0);
     private double startPosition = 90;
     private TalonFXSimState encoderSim;
 
     public Intake() {
-        stowMotor.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
-        stowMotor.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
+        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
+        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         if (RobotBase.isSimulation()) {
             encoderSim = stowMotor.getSimState();
-            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
+            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
             encoderSim = stowMotor.getSimState();
-            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
+            encoderSim.setRawRotorPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
             stowMechanism2d = new Mechanism2d(10, 10);
-            stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5).append(new MechanismLigament2d("Intake", 4, startPosition));
+            stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5)
+                    .append(new MechanismLigament2d("Intake", 4, startPosition));
             SmartDashboard.putData("Intake pivot", stowMechanism2d);
             stowArmSim = new SingleJointedArmSim(
-                dcMotor,
-                IntakeConstants.PIVOT_GEAR_RATIO,
-                IntakeConstants.MOMENT_OFiNERTIA,
-                IntakeConstants.ARM_LENGTH,
-                Math.toRadians(0),
-                Math.toRadians(90),
-                true,
-                Units.degreesToRadians(startPosition));
+                    dcMotor,
+                    IntakeConstants.PIVOT_GEAR_RATIO,
+                    IntakeConstants.MOMENT_OFiNERTIA,
+                    IntakeConstants.ARM_LENGTH,
+                    Math.toRadians(0),
+                    Math.toRadians(90),
+                    true,
+                    Units.degreesToRadians(startPosition));
             laserCanSimTimer = new Timer();
-        }else{
+        } else {
             laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
             try {
                 laserCan.setRangingMode(RangingMode.SHORT);
@@ -80,7 +84,7 @@ public class Intake extends SubsystemBase {
             }
         }
         stowPID.setTolerance(positionTolerance);
-        setAngle(startPosition/3);
+        setAngle(startPosition / 3);
     }
 
     /**
@@ -104,24 +108,26 @@ public class Intake extends SubsystemBase {
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.2, 0.2);
         stowMotor.set(power);
-        if(laserCan != null){
+        if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
-            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT && measurement.distance_mm <= 1000*IntakeConstants.DETECT_CORAL_DIST;
+            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+                    && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
         }
     }
 
     @Override
-    public void simulationPeriodic(){
-        stowArmSim.setInputVoltage(power*Constants.ROBOT_VOLTAGE);
+    public void simulationPeriodic() {
+        stowArmSim.setInputVoltage(power * Constants.ROBOT_VOLTAGE);
         stowArmSim.update(Constants.LOOP_TIME);
         stowWheelLigament.setAngle(Units.radiansToDegrees(stowArmSim.getAngleRads()));
-        encoderSim.setRawRotorPosition(Units.radiansToRotations(stowArmSim.getAngleRads())*IntakeConstants.PIVOT_GEAR_RATIO);
-        if(!isMoving){
+        encoderSim.setRawRotorPosition(
+                Units.radiansToRotations(stowArmSim.getAngleRads()) * IntakeConstants.PIVOT_GEAR_RATIO);
+        if (!isMoving) {
             laserCanSimTimer.reset();
             laserCanSimTimer.start();
             hasCoral = false;
-        }else{
-            if(isAtSetpoint()){
+        } else {
+            if (isAtSetpoint()) {
                 laserCanSimTimer.start();
             }
             hasCoral = laserCanSimTimer.hasElapsed(0.5) && !laserCanSimTimer.hasElapsed(1);
@@ -134,7 +140,7 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/IntakeConstants.PIVOT_GEAR_RATIO;
+        return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
     }
 
     public PIDController getPID() {
@@ -161,9 +167,10 @@ public class Intake extends SubsystemBase {
 
     /**
      * Returns whether or not the intake is at its setpoint
+     * 
      * @return True if it is at the setpoint, false otherwise
      */
-    public boolean isAtSetpoint(){
+    public boolean isAtSetpoint() {
         return stowPID.atSetpoint();
     }
 
