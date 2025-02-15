@@ -203,7 +203,7 @@ public class Drivetrain extends SubsystemBase {
                 pose.getY(),
                 pose.getRotation().getRadians()
             };
-        }, 15, LogLevel.COMP);
+        }, 50, LogLevel.COMP);
     }
 
     public void close() {
