@@ -15,10 +15,7 @@ public abstract class Outtake extends SubsystemBase {
 
     protected abstract double getMotorSpeed();
 
-    // Constructor: Initialize DIOSim objects
     public Outtake() {
-        // Example: Assuming DIO port 0 for dioInputLoaded and DIO port 1 for dioInputEjecting.
-        // Adjust these port numbers to match your hardware setup.
         dioInputLoaded = new DIOSim(0);  // Initialize with the correct DIO port for loaded detection
         dioInputEjecting = new DIOSim(1);  // Initialize with the correct DIO port for ejecting detection
     }
