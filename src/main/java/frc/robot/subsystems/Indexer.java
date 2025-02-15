@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
@@ -9,6 +10,7 @@ import au.grapplerobotics.simulation.MockLaserCan;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -18,9 +20,10 @@ import frc.robot.util.LogManager;
 import frc.robot.util.LogManager.LogLevel;
 
 public class Indexer extends SubsystemBase {
-	private SparkMax motor;
+	private SparkFlex motor;
 	private MockLaserCan simSensor;
 	private LaserCanInterface sensor;
+	private boolean isOn = false;
 
 	private FlywheelSim flywheelSim;
 
@@ -29,7 +32,7 @@ public class Indexer extends SubsystemBase {
 	private double simCoralPos;
 
 	public Indexer() {
-		motor = new SparkMax(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
+		motor = new SparkFlex(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
 
 		if (Robot.isSimulation()) {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
@@ -45,6 +48,7 @@ public class Indexer extends SubsystemBase {
 
 		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
+
 	}
 
 	/** Runs the indexer. */
@@ -75,12 +79,26 @@ public class Indexer extends SubsystemBase {
 	 * 
 	 * @return the sensor's state
 	 */
+	public int getRawSensorValue() {
+		var measurement = sensor.getMeasurement();
+		int dist = (measurement == null) ? 10000 : measurement.distance_mm;
+		return dist;
+	}
+
 	public boolean getSensorValue() {
-		return sensor.getMeasurement().distance_mm > IndexerConstants.MEASUREMENT_THRESHOLD;
+		return getRawSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
 	}
 
 	@Override
 	public void periodic() {
+		SmartDashboard.putBoolean("sennsorrr", getSensorValue());
+		SmartDashboard.putNumber("sennsorrrnum", getRawSensorValue());
+		SmartDashboard.putBoolean("indexeron", isOn);
+
+		// if (isOn)
+		run();
+		// else
+		// stop();
 	}
 
 	@Override
@@ -98,7 +116,6 @@ public class Indexer extends SubsystemBase {
 						|| simCoralPos > IndexerConstants.END_SIM_SENSOR_POS_AT)
 								? IndexerConstants.MEASUREMENT_THRESHOLD * 2
 								: 0,
-				4 // IDK what ambient is; 4 is a good number
-		);
+				1000);
 	}
 }
