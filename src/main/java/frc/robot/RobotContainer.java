@@ -1,11 +1,15 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
@@ -17,6 +21,8 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.OuttakeAlpha;
+import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.LogManager;
 import frc.robot.util.PathGroupLoader;
@@ -74,13 +80,20 @@ public class RobotContainer {
         // Our competition subsystems go here
         intake = new Intake();
         indexer = new Indexer();
-        outtake = new Outtake();
+        outtake = new OuttakeComp();
         elevator = new Elevator();
         climb = new Climb();
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+        // fall-through
 
       case Vivace:
       case Phil:
+        if (robotId == RobotId.Phil) {
+          outtake = new OuttakeAlpha();
+        }
+        if (outtake != null) {
+          SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
+        }
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
@@ -123,6 +136,8 @@ public class RobotContainer {
 
     LogManager.logSupplier("Brownout", () -> brownout(), 15, LogLevel.COMP);
   }
+
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
