@@ -23,8 +23,6 @@ public class OuttakeComp extends Outtake {
     /** Coral detected after the rollers */
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
     private DIOSim dioInputEjecting;
-    private int ticks = 0;
-
 
     public OuttakeComp(){
         // TODO: configure Kraken

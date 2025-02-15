@@ -9,22 +9,17 @@ import frc.robot.subsystems.Outtake;
 /**
  * Command to eject coral.
  * Wants coral to be present.
- * This should generally be accompanied by a time out!!!
  */
 public class OuttakeCoralBasic extends Command {
     private Outtake outtake;
 
-
     // states the outtake may take
     private enum State {LOADED, MOVING, REVERSING, DONE }
 
-
     private State state;
-
 
     // counter to measure time in ticks (every 20 milliseconds);
     private int ticks;
-
 
     public OuttakeCoralBasic(Outtake outtake){
         this.outtake = outtake;
