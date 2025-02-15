@@ -106,38 +106,35 @@ public class AutoTab extends ShuffleBoardTabs {
         .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         .andThen(new OuttakeCoral(outtake, elevator)));
 
-        
+        autoCommand.addOption("#1 and #2 Wait Trial", new FollowPathCommand("#1 and #2", true, drive));
+
         WaitCommand trial = new WaitCommand(5);
 
         autoCommand.addOption("Wait Command Trial Inital", new FollowPathCommand("#1", true, drive)
         .andThen(new WaitCommand(5))
         .andThen(new FollowPathCommand("#2", true, drive))
-        .andThen(new FollowPathCommand("#3", true, drive))
-        .andThen(new FollowPathCommand("#4", true, drive))
-        .andThen(new FollowPathCommand("#5", true, drive)));
+        .andThen(new WaitCommand(5))
+        .andThen(new FollowPathCommand("#3", true, drive)));
 
-        autoCommand.addOption("Wait Command Trail 1", new FollowPathCommand("#1", true, drive)
-        .andThen(new WaitCommand(10)) // Wait for 2 seconds after the first path
-        .andThen(new ParallelCommandGroup(
-                new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT), // Move elevator while waiting
-                new OuttakeCoral(outtake, elevator) // Parallel action for outtake
-            ))
-        .andThen(new FollowPathCommand("#2", true, drive)));
+        // autoCommand.addOption("Wait Command Trail 1", new FollowPathCommand("#1", true, drive)
+        // .andThen(new WaitCommand(10)) // Wait for 2 seconds after the first path
+        // .andThen(new ParallelCommandGroup(
+        //         new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT), // Move elevator while waiting
+        //         new OuttakeCoral(outtake, elevator) // Parallel action for outtake
+        //     ))
+        // .andThen(new FollowPathCommand("#2", true, drive)));
 
 
         // Sequential path with multiple commands, including wait
         autoCommand.addOption("Wait Command Trail 2", new SequentialCommandGroup(
             new FollowPathCommand("#1", true, drive),
             new WaitCommand(10), // Wait for 1.5 seconds after following the first path
-            new ParallelCommandGroup(
+            new SequentialCommandGroup(
                 new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT), // Move the elevator in parallel
                 new OuttakeCoral(outtake, elevator)),
             new FollowPathCommand("#2", true, drive)));
 
 
-        autoCommand.addOption("Wait Command Trail 3", new FollowPathCommand("#1", true, drive)
-        .andThen(new WaitCommand(10)) // Wait for 2 seconds after path
-        .andThen(new FollowPathCommand("#2", true, drive)));
 
         
         autoCommand.addOption("Total Square Path", 
