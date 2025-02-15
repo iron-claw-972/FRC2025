@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-
+import org.ejml.generic.GenericMatrixOps_F32;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -10,6 +10,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -21,13 +23,13 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.ClimbArmSim;
 import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 
 public class Climb extends SubsystemBase {
     
     private double startingPosition = 0;
 
     //Motors
-    // TODO: tune better once design is finalized
     private final PIDController pid = new PIDController(0.4, 4, 0.04);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
@@ -52,7 +54,6 @@ public class Climb extends SubsystemBase {
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
-            encoderSim.setRawRotorPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
 
             climbSim = new ClimbArmSim(
                 climbGearBox, 
@@ -64,18 +65,20 @@ public class Climb extends SubsystemBase {
                 true, 
                 Units.degreesToRadians(startingPosition),
                 60
-            );
+                );
 
-            climbSim.setIsClimbing(true);
+                climbSim.setIsClimbing(true);
         }
 
         pid.setIZone(1);
-        pid.setSetpoint(Units.degreesToRadians(startingPosition));
-
-        motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
 
         SmartDashboard.putData("PID", pid);
-        SmartDashboard.putData("Climb Display", simulationMechanism);
+        SmartDashboard.putData("Climb Display", simulationMechanism);       
+
+        motor.setPosition(Units.degreesToRotations(startingPosition));
+
+        LogManager.logSupplier("Climb/position", () -> getAngle(), 100, LogLevel.COMP);
+        LogManager.logSupplier("Climb/faultPosition", () -> notInInterval(), 100, LogLevel.COMP);
     }
 
     @Override
@@ -88,15 +91,19 @@ public class Climb extends SubsystemBase {
 
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
+        SmartDashboard.putNumber("Climb VIN Voltage", RoboRioSim.getVInVoltage());
         SmartDashboard.putNumber("Climb Position", getAngle());
 
         SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
 
         //Log faults
-        if (getAngle() > 80 || getAngle() < startingPosition) {
-            LogManager.logFault( "Angle is out of range");
-        }
+     //   if (getAngle() > 80 || getAngle() < startingPosition) {
+      //      LogManager.logFault( "Angle is out of range");
+      //  }
+        
+
+
     }
 
     @Override
@@ -106,6 +113,10 @@ public class Climb extends SubsystemBase {
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+
+        // RoboRioSim.setVInVoltage(
+        //     BatterySim.calculateDefaultBatteryLoadedVoltage(climbSim.getCurrentDrawAmps())
+        // );
     }
 
     /**
@@ -119,7 +130,7 @@ public class Climb extends SubsystemBase {
 
     /**
      * Gets the current position of the motor in degrees
-     * @return The angle in degrees
+     * @return
      */
     public double getAngle() {
         return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
@@ -138,5 +149,14 @@ public class Climb extends SubsystemBase {
      */
     public void climb(){
         setAngle(startingPosition);
+    }
+
+    public boolean notInInterval() {
+        if (getAngle() > 90 || getAngle() < startingPosition){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

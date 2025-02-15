@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -671,5 +672,25 @@ public class Drivetrain extends SubsystemBase {
 
     public SwerveModulePose getSwerveModulePose(){
         return modulePoses;
+    }
+
+    public double getAcceleration() {
+        double accelX = pigeon.getAccelerationX().getValueAsDouble();
+        double accelY = pigeon.getAccelerationY().getValueAsDouble();
+
+        double angularVelocity = pigeon.getAngularVelocityXDevice().getValueAsDouble();
+        double linearVelocity = Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
+        double radius = linearVelocity / angularVelocity;
+
+        double centripetalAcceleration = Math.pow(angularVelocity, 2) / radius;
+
+        return Math.sqrt(Math.pow(accelX, 2) + Math.pow(accelY, 2) + Math.pow(centripetalAcceleration, 2));
+    }
+   
+   
+   
+   
+    public boolean accelerationFault() {
+        return false;
     }
 }

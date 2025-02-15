@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
         //   Uncomment the next line, set the desired RobotId, deploy, and then comment the line out
         //RobotId.setRobotId(RobotId.SwerveCompetition);
         DriveConstants.update(RobotId.getRobotId());
-        RobotController.setBrownoutVoltage(6);
+        RobotController.setBrownoutVoltage(6.0);
         // obtain this robot's identity
         RobotId robotId = RobotId.getRobotId();
 
