@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
 
-    private final double positionTolerance = 1;
+    private final double positionTolerance = 5;
 
     private final PIDController stowPID = new PIDController(0.02, 0, 0.001);
     private double power;
