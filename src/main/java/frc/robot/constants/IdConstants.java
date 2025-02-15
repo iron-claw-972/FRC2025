@@ -15,7 +15,7 @@ public class IdConstants {
     public static final int STEER_BACK_RIGHT_ID = 5;
     public static final int ENCODER_BACK_RIGHT_ID = 6;
     public static final int PIGEON = 13;
-    
+
     // LEDs
     public static final int CANDLE_ID = 1;
 
@@ -40,7 +40,9 @@ public class IdConstants {
     /** CAN ID for the competition bot's outtake */
     public static final int OUTTAKE_MOTOR_COMP = 30; 
 
-    // Digital inputs
-    public static final int OUTTAKE_DIO_LOADED = 9;
-    public static final int OUTTAKE_DIO_EJECTING = 8;
+
+ 
+     // Digital inputs
+     public static final int OUTTAKE_DIO_LOADED = 9;
+     public static final int OUTTAKE_DIO_EJECTING = 8;
 }
