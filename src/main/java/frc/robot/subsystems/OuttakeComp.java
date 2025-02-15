@@ -42,7 +42,7 @@ public class OuttakeComp extends Outtake {
 
     @Override
     protected double getMotorSpeed() {
-        return motor.get();
+        return power;
     }
 
     @Override
@@ -56,13 +56,6 @@ public class OuttakeComp extends Outtake {
     public void setMotor(double power){
         this.power = power;
     }
-
-
-    /** stop the coral motor */
-    public void stop(){
-        setMotor(0);
-    }
-
 
     /** start spinning the rollers to eject the coral */
     public void outtake(){

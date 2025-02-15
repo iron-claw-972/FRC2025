@@ -61,10 +61,7 @@ public abstract class Outtake extends SubsystemBase {
 
 
     /** start spinning the rollers to eject the coral */
-    public void outtake(){
-        // assumes the coral is present
-        setMotor(SmartDashboard.getNumber("wheel speed", 0.2));
-    }
+    public abstract void outtake();
 
 
     public abstract boolean coralLoaded();
@@ -77,7 +74,5 @@ public abstract class Outtake extends SubsystemBase {
     public abstract boolean coralEjecting();
 
 
-    public void reverse(){
-        setMotor(-0.2);
-    }
+    public abstract void reverse();
 }

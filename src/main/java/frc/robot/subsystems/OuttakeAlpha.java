@@ -71,12 +71,6 @@ public class OuttakeAlpha extends Outtake {
     }
 
 
-    /** stop the coral motor */
-    public void stop(){
-        setMotor(0);
-    }
-
-
     /** start spinning the rollers to eject the coral */
     public void outtake(){
         // assumes the coral is present
