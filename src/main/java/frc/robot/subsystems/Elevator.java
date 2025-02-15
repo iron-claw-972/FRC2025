@@ -41,8 +41,8 @@ import frc.robot.util.LogManager;
 import frc.robot.util.LogManager.LogLevel;
 
 public class Elevator extends SubsystemBase {
-  private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
-  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
+  private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
+  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR, Constants.CANIVORE_CAN);
 
   private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
   private DIOSim bottomLimitSwitchSim;
@@ -99,7 +99,7 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(2.0), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -112,7 +112,7 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      12.0,
+      2.0,
       Constants.LOOP_TIME);
 
   /** Creates a new Elevator. */
@@ -209,9 +209,9 @@ public class Elevator extends SubsystemBase {
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
-    // Voltage.setDouble(voltage);
-    // height.setDouble(currentPosition);
-    // leftMotorEncoder.setDouble(leftMotor.getPosition().getValue());
+    SmartDashboard.putNumber("voltage", voltage);
+    SmartDashboard.putNumber("position",currentPosition);
+    SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
     // rightMotorEncoder.setDouble(rightMotor.getPosition().getValue());
     // bottomSensor.setBoolean(getBottomLimitSwitch());
     // topSensor.setBoolean(getTopLimitSwitch());

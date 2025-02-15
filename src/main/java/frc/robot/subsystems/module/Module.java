@@ -133,7 +133,7 @@ public class Module extends SubsystemBase {
         steerAngle = angleMotor.getPosition();
         CANangle = CANcoder.getAbsolutePosition();
 
-        StatusSignal.setUpdateFrequencyForAll(100, drivePosition, driveVelocity, steerAngle);
+        StatusSignal.setUpdateFrequencyForAll(500, drivePosition, driveVelocity, steerAngle);
         StatusSignal.setUpdateFrequencyForAll(5, CANangle);
 
 

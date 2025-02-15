@@ -22,7 +22,7 @@ public class ShuffleBoardManager {
     
     private Field feild;
 
-    private SwerveTab swerveTab;
+    //private SwerveTab swerveTab;
     private AutoTab autoTab;
     private VisionTab visionTab;
     private ElevatorTab elevatorTab;

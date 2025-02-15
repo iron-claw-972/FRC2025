@@ -28,12 +28,15 @@ public class Outtake extends SubsystemBase {
     private int ticks = 0;
 
     public Outtake(){
+       
+
         motor.configure(new SparkFlexConfig()
             .inverted(true)
             .idleMode(IdleMode.kBrake),
             ResetMode.kResetSafeParameters,
             PersistMode.kNoPersistParameters
         );
+       
         if (RobotBase.isSimulation()){
             // object that will control the loaded sensor 
             dioInputLoaded = new DIOSim(digitalInputLoaded);
@@ -97,7 +100,7 @@ public class Outtake extends SubsystemBase {
     public void outtake(){
         // assumes the coral is present
         // if the coral is not present, we should not bother to spin the rollers
-        setMotor(SmartDashboard.getNumber("wheel speed", 0));
+        setMotor(SmartDashboard.getNumber("wheel speed", 0.2));
         // this starts the motor... what needs to be done later?
     }
 
