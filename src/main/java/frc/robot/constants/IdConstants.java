@@ -28,8 +28,8 @@ public class IdConstants {
     // Add other subsystems here
 
 	// Indexer
-	public static final int INDEXER_MOTOR = 0;
-	public static final int INDEXER_SENSOR = 0;
+	public static final int INDEXER_MOTOR = 11;
+	public static final int INDEXER_SENSOR = 21;
 
     // Climb
     public static final int CLIMB_MOTOR = 20;

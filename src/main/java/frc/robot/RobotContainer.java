@@ -63,6 +63,7 @@ public class RobotContainer {
         break;
 
       case TestBed2:
+        indexer = new Indexer();
         break;
 
       default:
