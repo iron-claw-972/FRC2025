@@ -4,14 +4,8 @@
 
 package frc.robot.util.ShuffleBoard.Tabs;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.commands.DoNothing;
-import frc.robot.commands.auto_comm.FollowPathCommand;
-import frc.robot.commands.gpm.MoveElevator;
-import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.constants.ElevatorConstants;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Outtake;
@@ -69,6 +63,13 @@ public class AutoTab extends ShuffleBoardTabs {
         .andThen(new FollowPathCommand("#4", true, drive))
         .andThen(new FollowPathCommand("#5", true, drive)));
 
+        autoCommand.addOption("Copy of #1", new FollowPathCommand("Copy of #1", true, drive)
+        .andThen(new FollowPathCommand("Copy of #2", true, drive))
+        .andThen(new FollowPathCommand("Copy of #3", true, drive))
+        .andThen(new FollowPathCommand("Copy of #4", true, drive))
+        .andThen(new FollowPathCommand("Copy of #5", true, drive)));
+        
+
         // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake,elevator))
@@ -80,6 +81,7 @@ public class AutoTab extends ShuffleBoardTabs {
         // .andThen(new FollowPathCommand("#5", true, drive))
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake, elevator)));
+
 
 
         autoCommand.addOption("Copy #1", new FollowPathCommand("Copy #1", true, drive)
@@ -94,6 +96,17 @@ public class AutoTab extends ShuffleBoardTabs {
         .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         .andThen(new OuttakeCoral(outtake, elevator)));
         
+
+
+        autoCommand.addOption("Path with Wait and Parallel Commands",
+            new FollowPathCommand("Path1", true, drive)
+            .andThen(new WaitCommand(2.0)) // Wait for 2 seconds after the first path
+            .andThen(new ParallelCommandGroup(
+                new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT), // Move elevator while waiting
+                new OuttakeCoral(outtake, elevator) // Parallel action for outtake
+            ))
+            .andThen(new FollowPathCommand("Path2", true, drive)) // Continue following paths
+    );
 
 
 
