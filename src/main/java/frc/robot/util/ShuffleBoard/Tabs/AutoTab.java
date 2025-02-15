@@ -142,8 +142,11 @@ public class AutoTab extends ShuffleBoardTabs {
         
         autoCommand.addOption("Total Square Path", 
             new FollowPathCommand("Square Path 1", true, drive)
+            .andThen(new WaitCommand(3))
             .andThen(new FollowPathCommand("Square Path 2", true, drive))
+            .andThen(new WaitCommand(3))
             .andThen(new FollowPathCommand("Square Path 3", true, drive))
+            .andThen(new WaitCommand(3))
             .andThen(new FollowPathCommand("Square Path 4", true, drive))); 
         
  
