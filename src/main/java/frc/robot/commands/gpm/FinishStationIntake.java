@@ -1,5 +1,6 @@
 package frc.robot.commands.gpm;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
@@ -11,28 +12,31 @@ public class FinishStationIntake extends Command {
     // normal intake
     // Maybe use the IntakeCoralHelper command
 
-    private Intake intake;
-    private Indexer indexer;
-    private Elevator elevator;
+    private final Intake intake;
+    private final Indexer indexer;
+    private final Elevator elevator;
+    private final Timer timer = new Timer();
+    // TODO: Adjust TIMEOUT as needed
+    private final double TIMEOUT = 2.0;
 
     public FinishStationIntake(Intake intake, Indexer indexer, Elevator elevator) {
         this.intake = intake;
         this.indexer = indexer;
         this.elevator = elevator;
         addRequirements(intake, indexer, elevator);
-        new IntakeCoralHelper(intake, indexer);
     }
 
     @Override
     public void initialize() {
         intake.unstow();
         elevator.setSetpoint(ElevatorConstants.INTAKE_SETPOINT);
+        timer.reset();
+        timer.start();
     }
 
     @Override
     public boolean isFinished() {
-        return indexer.getSensorValue(); // TODO Finish when indexer finishes detecting
-        // Should we use a timer or what? we can't just do !getSensorValue(), right?
+        return !indexer.getSensorValue() || timer.hasElapsed(TIMEOUT);
     }
 
     @Override
@@ -40,5 +44,6 @@ public class FinishStationIntake extends Command {
         intake.stow();
         intake.deactivate();
         indexer.stop();
+        timer.stop();
     }
 }
