@@ -30,8 +30,7 @@ import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-    // TODO: This is a Kraken
-    private final SparkMax stowMotor = new SparkMax(IdConstants.INTAKE_PIVOT, MotorType.kBrushed);
+    public static final DCMotor stowMotor = DCMotor.getKrakenX60(1);
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
