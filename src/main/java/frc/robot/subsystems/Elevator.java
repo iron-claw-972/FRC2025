@@ -47,7 +47,6 @@ public class Elevator extends SubsystemBase {
   private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
   private DIOSim bottomLimitSwitchSim;
   private boolean limitSwitchPressed = false;
-  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR, Constants.CANIVORE_CAN);
 
   // private ShuffleboardTab tab = Shuffleboard.getTab("Elevator");
   // private GenericEntry Voltage = tab.add("Voltage", 0).getEntry();
