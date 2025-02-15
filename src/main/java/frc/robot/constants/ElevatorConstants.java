@@ -9,8 +9,7 @@ import edu.wpi.first.math.util.Units;
 
 /** Stores constants for the elevator. */
 public class ElevatorConstants {
-    // TODO: update for comp robot
-    public static final double ANGLE = 0; // radians, from vertical
+    public static final double ANGLE = Units.degreesToRadians(3.5); // radians, from vertical
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(2);
     public static final int NUMBER_OF_STAGES = 3;
     public static final double GEARING = 5.2380955/NUMBER_OF_STAGES;
