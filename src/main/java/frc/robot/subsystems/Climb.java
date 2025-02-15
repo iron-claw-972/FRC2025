@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.ClimbArmSim;
+import frc.robot.util.LogManager;
 
 public class Climb extends SubsystemBase {
     
@@ -89,6 +92,11 @@ public class Climb extends SubsystemBase {
 
         SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
+
+        //Log faults
+        if (getAngle() > 80 || getAngle() < startingPosition) {
+            LogManager.logFault( "Angle is out of range");
+        }
     }
 
     @Override
