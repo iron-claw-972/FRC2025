@@ -197,7 +197,6 @@ public class Drivetrain extends SubsystemBase {
         LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.DEBUG);
         LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.DEBUG);
     
-        //LogLevel.COMP
         LogManager.logSupplier("Drivetrain/Pose2d", () -> {
             Pose2d pose = getPose();
             return new Double[]{
