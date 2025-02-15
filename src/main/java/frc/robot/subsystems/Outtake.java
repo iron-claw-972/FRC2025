@@ -1,67 +1,28 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkFlexConfig;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IdConstants;
 
-public class Outtake extends SubsystemBase {
-
-    private SparkFlex  motor = new SparkFlex(IdConstants.OUTTAKE_MOTOR, MotorType.kBrushless);
-    private double power;
-
-    /** Coral detected before the rollers */
-    private DigitalInput digitalInputLoaded = new DigitalInput(9);
-    private DIOSim dioInputLoaded;
-    /** Coral detected after the rollers */
-    private DigitalInput digitalInputEjecting = new DigitalInput(8);
-    private DIOSim dioInputEjecting;
+/**
+ * Abstract class for the outtake. All commands should use this subsystem
+ */
+public abstract class Outtake extends SubsystemBase {
     private int ticks = 0;
+    /** Coral detected before the rollers */
+    protected DIOSim dioInputLoaded;
+    /** Coral detected after the rollers */
+    protected DIOSim dioInputEjecting;
 
-    public Outtake(){
-       
-
-        motor.configure(new SparkFlexConfig()
-            .inverted(true)
-            .idleMode(IdleMode.kBrake),
-            ResetMode.kResetSafeParameters,
-            PersistMode.kNoPersistParameters
-        );
-       
-        if (RobotBase.isSimulation()){
-            // object that will control the loaded sensor 
-            dioInputLoaded = new DIOSim(digitalInputLoaded);
-            // object that will control the ejecting sensor
-            dioInputEjecting = new DIOSim(digitalInputEjecting);
-            // assume coral is loaded
-            dioInputLoaded.setValue(false);
-            // we are not ejecting
-            dioInputEjecting.setValue(true);
-        }
-    }
-
-    @Override
-    public void periodic(){
-        motor.set(power);
-        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
-    }
-
-    @Override
+    protected abstract double getMotorSpeed();
+    
     public void simulationPeriodic(){
         // when coral is ejecting, loading is true & ejecting is true. when coral shoots out, loading is false & ejecting is false
         ticks++;
 
-        if (motor.get() > 0.05) {
+        if (getMotorSpeed() > 0.05) {
             if (ticks > 250) {
                 ticks = 0;
             }
@@ -85,40 +46,28 @@ public class Outtake extends SubsystemBase {
             dioInputLoaded.setValue(false);
         }
     }
-
     /** Set the motor power to move the coral */
-    public void setMotor(double power){
-        this.power = power;
-    }
+    public abstract void setMotor(double power);
 
     /** stop the coral motor */
     public void stop(){
         setMotor(0);
     }
 
-    /** start spinning the rollers to eject the coral */
-    public void outtake(){
-        // assumes the coral is present
-        // if the coral is not present, we should not bother to spin the rollers
-        setMotor(SmartDashboard.getNumber("wheel speed", 0.2));
-        // this starts the motor... what needs to be done later?
-    }
 
-    public boolean coralLoaded(){
-       return !digitalInputLoaded.get();
-    }
+    /** start spinning the rollers to eject the coral */
+    public abstract void outtake();
+
+    public abstract boolean coralLoaded();
 
     /**
      *  Coral is at the ejecting beam break sensor.
      * @return coral is interrupting the beam breaker.
-     */ 
-    public boolean coralEjecting() {
-        return !digitalInputEjecting.get();
-    }
+     */
+    public abstract boolean coralEjecting();
 
-    public void reverse(){
-        setMotor(-0.1);
-    }
+
+    public abstract void reverse();
 
     public boolean isSimulation(){
         return RobotBase.isSimulation();

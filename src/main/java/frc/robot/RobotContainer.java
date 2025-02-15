@@ -3,13 +3,16 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -30,6 +33,8 @@ import frc.robot.subsystems.sim.SimElevator;
 import frc.robot.subsystems.sim.SimIndexer;
 import frc.robot.subsystems.sim.SimIntake;
 import frc.robot.subsystems.sim.SimOuttake;
+import frc.robot.subsystems.OuttakeAlpha;
+import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -74,7 +79,7 @@ public class RobotContainer {
     // 2 robots have an elevator, outtake, and vision
     if(robotId == RobotId.Phil || robotId == RobotId.SwerveCompetition){
       elevator = new Elevator();
-      outtake = new Outtake();
+      outtake = robotId == RobotId.Phil ? new OuttakeAlpha() : new OuttakeComp();
       vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
     }else{
       elevator = new SimElevator();
@@ -93,10 +98,6 @@ public class RobotContainer {
       climb = new SimClimb();
     }
     
-    // if(robotId == RobotId.Phil){
-    //   driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-    // }
-
     // All of these robots need a drivetrain
     if(robotId == RobotId.SwerveCompetition || robotId == RobotId.Phil || robotId == RobotId.Vertigo || robotId == RobotId.Vivace){
       drive = new Drivetrain(vision);
@@ -139,6 +140,8 @@ public class RobotContainer {
     });
     odometryThread.start();
   }
+
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
