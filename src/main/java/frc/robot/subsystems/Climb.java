@@ -77,8 +77,8 @@ public class Climb extends SubsystemBase {
 
         motor.setPosition(Units.degreesToRotations(startingPosition));
 
-        LogManager.logSupplier("Climb/position", () -> getAngle(), 100, LogLevel.COMP);
-        LogManager.logSupplier("Climb/faultPosition", () -> notInInterval(), 100, LogLevel.COMP);
+       // LogManager.logSupplier("Climb/position", () -> getAngle(), 100, LogLevel.COMP);
+       // LogManager.logSupplier("Climb/faultPosition", () -> notInInterval(), 100, LogLevel.COMP);
     }
 
     @Override
