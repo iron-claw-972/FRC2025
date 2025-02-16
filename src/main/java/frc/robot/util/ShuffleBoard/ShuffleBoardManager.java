@@ -12,7 +12,6 @@ import frc.robot.subsystems.Outtake;
 import frc.robot.util.Vision;
 import frc.robot.util.ShuffleBoard.Tabs.AutoTab;
 import frc.robot.util.ShuffleBoard.Tabs.ElevatorTab;
-import frc.robot.util.ShuffleBoard.Tabs.SwerveTab;
 import frc.robot.util.ShuffleBoard.Tabs.VisionTab;
 
 /** Add your docs here. */

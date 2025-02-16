@@ -159,6 +159,7 @@ public class Elevator extends SubsystemBase {
   // 16.901 inches 
   @Override
   public void periodic() {
+    //System.out.println(leftMotor.getDeviceID());
     // If it hits the limit switch, reset the encoder 
     // if (getBottomLimitSwitch() && (calibrated || !movingUp)) {
     //   if (false) {
