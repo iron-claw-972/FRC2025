@@ -3,14 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.util.ShuffleBoard.Tabs;
-
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DoNothing;
@@ -107,8 +102,6 @@ public class AutoTab extends ShuffleBoardTabs {
         .andThen(new OuttakeCoral(outtake, elevator)));
 
         autoCommand.addOption("#1 and #2 Wait Trial", new FollowPathCommand("#1 and #2", true, drive));
-
-        WaitCommand trial = new WaitCommand(5);
 
         autoCommand.addOption("Wait Command Trial Inital", new FollowPathCommand("#1", true, drive)
         .andThen(new WaitCommand(5))

@@ -100,7 +100,7 @@ public class Outtake extends SubsystemBase {
     public void outtake(){
         // assumes the coral is present
         // if the coral is not present, we should not bother to spin the rollers
-        setMotor(SmartDashboard.getNumber("wheel speed", 0.2));
+        setMotor(SmartDashboard.getNumber("wheel speed", -0.2));
         // this starts the motor... what needs to be done later?
     }
 
@@ -117,7 +117,7 @@ public class Outtake extends SubsystemBase {
     }
 
     public void reverse(){
-        setMotor(-0.1);
+        setMotor(0.1);
     }
 
     public boolean isSimulation(){
