@@ -4,6 +4,14 @@
 
 package frc.robot.util.ShuffleBoard.Tabs;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.json.simple.parser.ParseException;
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,10 +21,12 @@ import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Outtake;
+import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
 /**
@@ -44,11 +54,20 @@ public class AutoTab extends ShuffleBoardTabs {
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
         // .andThen(new OuttakeCoral(outtake, elevator)));
 
+
+        autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
+        .andThen(new OuttakeCoralBasic(outtake))
+        .andThen(new WaitCommand(3))
+        .andThen(new FollowPathCommand("Next Tester", true, drive))
+        );
+
+
+
         autoCommand.addOption("test", new FollowPathCommand("test", true, drive));
         autoCommand.addOption("Trial 2", new FollowPathCommand("Trial 2", true, drive));
         
         autoCommand.addOption("Trial", new FollowPathCommand("Trial", true, drive));
-        autoCommand.addOption("Tester", new FollowPathCommand("Tester", true, drive));
+        
         autoCommand.addOption("Position Checker", new FollowPathCommand("Position Checker", true, drive));
         autoCommand.addOption("test_2", new FollowPathCommand("test_2", true, drive));
         
@@ -76,6 +95,16 @@ public class AutoTab extends ShuffleBoardTabs {
         .andThen(new FollowPathCommand("Copy of #3", true, drive))
         .andThen(new FollowPathCommand("Copy of #4", true, drive))
         .andThen(new FollowPathCommand("Copy of #5", true, drive)));
+        
+        // Use the PathPlannerAuto class to get a path group from an auto
+        
+        
+        try {
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Wait Test");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        
         
         // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
