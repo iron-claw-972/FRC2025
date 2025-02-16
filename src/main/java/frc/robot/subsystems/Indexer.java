@@ -85,7 +85,7 @@ public class Indexer extends SubsystemBase {
 	 */
 	private int getSensorValue() {
 		var measurement = sensor.getMeasurement();
-		int dist = (measurement == null) ? 314159 : measurement.distance_mm;
+		int dist = (measurement == null || measurement.status > 0) ? 314159 : measurement.distance_mm;
 		return dist;
 	}
 
