@@ -1,18 +1,18 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
-import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
@@ -21,6 +21,8 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.OuttakeAlpha;
+import frc.robot.subsystems.OuttakeComp;
 import frc.robot.subsystems.sim.SimClimb;
 import frc.robot.subsystems.sim.SimDrivetrain;
 import frc.robot.subsystems.sim.SimElevator;
@@ -29,9 +31,8 @@ import frc.robot.subsystems.sim.SimIntake;
 import frc.robot.subsystems.sim.SimOuttake;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
-import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
-import java.util.function.BooleanSupplier;
+import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -73,7 +74,7 @@ public class RobotContainer {
     // 2 robots have an elevator, outtake, and vision
     if(robotId == RobotId.Phil || robotId == RobotId.SwerveCompetition){
       elevator = new Elevator();
-      outtake = new Outtake();
+      outtake = robotId == RobotId.Phil ? new OuttakeAlpha() : new OuttakeComp();
       vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
     }else{
       elevator = new SimElevator();
@@ -99,14 +100,7 @@ public class RobotContainer {
       drive = new SimDrivetrain(vision);
     }
 
-    // All robots need controllers
-    // Check the controller type to prevent it from breaking
-    double axis = (new Joystick(Constants.DRIVER_JOY)).getRawAxis(3);
-    if(axis < -0.25){
-      driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-    }else{
-      driver = new GameControllerDriverConfig(drive, vision);
-    }
+    driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
     operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
     // Detected objects need access to the drivetrain
@@ -139,6 +133,8 @@ public class RobotContainer {
     });
     odometryThread.start();
   }
+
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
