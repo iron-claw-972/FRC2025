@@ -76,6 +76,7 @@ public class Intake extends SubsystemBase {
         }
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowPID.setTolerance(positionTolerance);
+        SmartDashboard.putNumber("roller speed", 0);
         setAngle(startPosition);
     }
 
@@ -212,6 +213,6 @@ public class Intake extends SubsystemBase {
      * Starts the motor.
      */
     public void activate() {
-        rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
+        rollerMotor.set(SmartDashboard.getNumber("roller speed", 0.05));
     }
 }

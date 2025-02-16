@@ -8,6 +8,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
@@ -40,11 +41,12 @@ public class Indexer extends SubsystemBase {
 
 		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
+		SmartDashboard.putNumber("indexer speed", 0);
 	}
 
 	/** Runs the indexer. */
 	public void run() {
-		motor.set(IndexerConstants.SPEED);
+		motor.set(SmartDashboard.getNumber("indexer speed", 0.05));
 		simCoralPos = IndexerConstants.START_SIM_POS_AT;
 	}
 

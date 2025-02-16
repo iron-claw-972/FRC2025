@@ -77,7 +77,7 @@ public class RobotContainer {
         // Our competition subsystems go here
         intake = new Intake();
         indexer = new Indexer();
-        outtake = new OuttakeComp();
+        // outtake = new OuttakeComp();
         elevator = new Elevator();
         //climb = new Climb();
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
