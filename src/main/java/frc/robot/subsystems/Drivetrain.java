@@ -696,8 +696,7 @@ public class Drivetrain extends SubsystemBase {
         if (getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL) {
             return true;
         }
-        else{
+      
             return false;
-        }
     }
 }

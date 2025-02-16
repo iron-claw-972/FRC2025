@@ -218,6 +218,7 @@ public class Intake extends SubsystemBase {
     }
 
     public int laserCanDistance() {
-        Measurement measurement = laserCan.getMeasurement();            return measurement.distance_mm;
+        Measurement measurement = laserCan.getMeasurement();        
+        return measurement.distance_mm;
     }
 }
