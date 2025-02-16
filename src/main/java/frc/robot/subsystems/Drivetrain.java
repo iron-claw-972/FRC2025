@@ -369,6 +369,12 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
+    public void runModuleLQR(){
+        for(Module module : modules){
+            module.runLQR();
+        }
+    }
+
     /**
      * Sets the chassis speeds of the robot.
      *

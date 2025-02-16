@@ -2,7 +2,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -54,6 +53,7 @@ public class RobotContainer {
   private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;
+  private Thread moduleLQRThread = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -127,7 +127,17 @@ public class RobotContainer {
           drive.updateOdometry();
         }
       });
+      moduleLQRThread = new Thread(()->{
+        long nextUpdate = System.currentTimeMillis();
+        while(!moduleLQRThread.isInterrupted()){
+          if(System.currentTimeMillis() >= nextUpdate){
+            drive.runModuleLQR();
+            nextUpdate += 20;
+          }
+        }
+      });
       odometryThread.start();
+      moduleLQRThread.start();
     }
   }
 
@@ -191,8 +201,9 @@ public class RobotContainer {
     };
   }
 
-  public void interruptOdometryThread(){
+  public void interruptThreads(){
     odometryThread.interrupt();
+    moduleLQRThread.interrupt();
   }
 }
 
