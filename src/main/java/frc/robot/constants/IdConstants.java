@@ -28,7 +28,7 @@ public class IdConstants {
     // Add other subsystems here
 
 	// Indexer
-	public static final int INDEXER_MOTOR = 25;
+	public static final int INDEXER_MOTOR = 11;
 	public static final int INDEXER_SENSOR = 24;
 
     // Climb
@@ -40,11 +40,12 @@ public class IdConstants {
     /** CAN ID for the competition bot's outtake */
     public static final int OUTTAKE_MOTOR_COMP = 30; 
 
-    public static final int INTAKE_ROLLER = 0;
+    public static final int INTAKE_ROLLER = 51;
 
     public static final int INTAKE_PIVOT = 0;
-
     public static final int INTAKE_LASER_CAN = 0;
+
+    //public static final int INTAKE_LASER_CAN = 0;
      // Digital inputs
      public static final int OUTTAKE_DIO_LOADED = 9;
      public static final int OUTTAKE_DIO_EJECTING = 8;
