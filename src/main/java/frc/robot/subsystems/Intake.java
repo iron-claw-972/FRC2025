@@ -65,14 +65,14 @@ public class Intake extends SubsystemBase {
                     Units.degreesToRadians(startPosition));
             laserCanSimTimer = new Timer();
         } else {
-            laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
-            try {
-                laserCan.setRangingMode(RangingMode.SHORT);
-                laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
-                laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
-            } catch (ConfigurationFailedException e) {
-                DriverStation.reportError("LaserCan configuration error", true);
-            }
+        
+            // try {
+            //     laserCan.setRangingMode(RangingMode.SHORT);
+            //     laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+            //     laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
+            // } catch (ConfigurationFailedException e) {
+            //     DriverStation.reportError("LaserCan configuration error", true);
+            // }
         }
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowPID.setTolerance(positionTolerance);

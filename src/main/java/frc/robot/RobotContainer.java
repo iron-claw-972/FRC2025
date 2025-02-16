@@ -78,10 +78,11 @@ public class RobotContainer {
         intake = new Intake();
         indexer = new Indexer();
         // outtake = new OuttakeComp();
-        elevator = new Elevator();
+        //elevator = new Elevator();
         //climb = new Climb();
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
+        SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
 
       case Vivace:
       case Phil:
@@ -89,8 +90,8 @@ public class RobotContainer {
           outtake = new OuttakeAlpha();
         }
         if (outtake != null) {
-          SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
-          SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
+          //SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
+          
         }
       case Vertigo:
         drive = new Drivetrain(vision);
