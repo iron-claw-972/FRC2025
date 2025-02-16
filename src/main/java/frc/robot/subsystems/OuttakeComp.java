@@ -5,7 +5,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.IdConstants;
@@ -16,13 +15,10 @@ public class OuttakeComp extends Outtake {
     private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP );
     private double power;
 
-
     /** Coral detected before the rollers */
     private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
-    private DIOSim dioInputLoaded;
     /** Coral detected after the rollers */
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
-    private DIOSim dioInputEjecting;
 
     public OuttakeComp(){
         // TODO: configure Kraken
@@ -82,10 +78,5 @@ public class OuttakeComp extends Outtake {
 
     public void reverse(){
         setMotor(-0.2);
-    }
-
-
-    public boolean isSimulation(){
-        return RobotBase.isSimulation();
     }
 }

@@ -10,7 +10,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.IdConstants;
@@ -26,7 +25,6 @@ public class OuttakeAlpha extends Outtake {
     private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
     /** Coral detected after the rollers */
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
-
 
 
     public OuttakeAlpha(){

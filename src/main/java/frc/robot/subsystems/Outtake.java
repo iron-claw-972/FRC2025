@@ -69,7 +69,6 @@ public abstract class Outtake extends SubsystemBase {
      */
     public abstract boolean coralEjecting();
 
-
     public abstract void reverse();
 
     public boolean isSimulation(){
