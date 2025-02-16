@@ -131,7 +131,7 @@ public class AutoTab extends ShuffleBoardTabs {
 
         autoCommand.addOption("#1 and #2 Wait Trial", new FollowPathCommand("#1 and #2", true, drive));
 
-        WaitCommand trial = new WaitCommand(5);
+		autoCommand.addOption("potato", new PathPlannerAuto("Wait Test.auto"));
 
         autoCommand.addOption("Wait Command Trial Inital", new FollowPathCommand("#1", true, drive)
                 .andThen(new WaitCommand(5))
