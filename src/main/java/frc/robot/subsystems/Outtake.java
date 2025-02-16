@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -15,9 +14,13 @@ public abstract class Outtake extends SubsystemBase {
     protected DIOSim dioInputEjecting;
 
     protected abstract double getMotorSpeed();
-    
-    public void simulationPeriodic(){
-        // when coral is ejecting, loading is true & ejecting is true. when coral shoots out, loading is false & ejecting is false
+
+    public Outtake() {
+        dioInputLoaded = new DIOSim(0);  // Initialize with the correct DIO port for loaded detection
+        dioInputEjecting = new DIOSim(1);  // Initialize with the correct DIO port for ejecting detection
+    }
+
+    public void simulationPeriodic() {
         ticks++;
 
         if (getMotorSpeed() > 0.05) {
@@ -26,14 +29,14 @@ public abstract class Outtake extends SubsystemBase {
             }
             // motor is outtaking
             // motor is spinning, ejecting will be true. after 0.14 seconds
-            if (ticks ==7) {
+            if (ticks == 7) {
                 dioInputEjecting.setValue(false);
             }
-            if (ticks == 14){
+            if (ticks == 14) {
                 // after 0.14 seconds
                 dioInputLoaded.setValue(true);
             }
-            if (ticks == 16){
+            if (ticks == 16) {
                 // after 0.18 seconds
                 dioInputEjecting.setValue(true);
             }
@@ -44,14 +47,14 @@ public abstract class Outtake extends SubsystemBase {
             dioInputLoaded.setValue(false);
         }
     }
+
     /** Set the motor power to move the coral */
     public abstract void setMotor(double power);
 
     /** stop the coral motor */
-    public void stop(){
+    public void stop() {
         setMotor(0);
     }
-
 
     /** start spinning the rollers to eject the coral */
     public abstract void outtake();
@@ -64,10 +67,5 @@ public abstract class Outtake extends SubsystemBase {
      */
     public abstract boolean coralEjecting();
 
-
     public abstract void reverse();
-
-    public boolean isSimulation(){
-        return RobotBase.isSimulation();
-    }
 }
