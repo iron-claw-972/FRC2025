@@ -2,9 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.IdConstants;
 
 /**
  * Abstract class for the outtake. All commands should use this subsystem
