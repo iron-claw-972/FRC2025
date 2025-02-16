@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.141202044416732,
-        "y": 2.6876380617469486
+        "y": 2.687638061746948
       },
       "nextControl": null,
       "isLocked": false,
@@ -68,7 +68,7 @@
     "rotation": 36.95391432392091
   },
   "reversed": false,
-  "folder": "Sequential Path RSide",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
