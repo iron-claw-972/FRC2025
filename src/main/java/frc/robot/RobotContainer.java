@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -184,6 +185,7 @@ public class RobotContainer {
     if(elevator != null && outtake != null){
 
       NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+      NamedCommands.registerCommand("OuttakeCoralBasic", new OuttakeCoralBasic(outtake).withTimeout(1.5)); 
 
       NamedCommands.registerCommand("Wait for 5 seconds", new WaitCommand(5));
 
