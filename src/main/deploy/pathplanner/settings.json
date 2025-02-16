@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "Bad",
-    "Copy of Sequential Path [Secondary]",
     "Comp Calibration",
+    "Copy of Sequential Path [Secondary]",
+    "RSide Sequential Path",
     "Path from first cage",
     "Sequential Path",
     "Trials"

@@ -45,7 +45,7 @@
     "rotation": 34.101
   },
   "reversed": false,
-  "folder": null,
+  "folder": "RSide Sequential Path",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
