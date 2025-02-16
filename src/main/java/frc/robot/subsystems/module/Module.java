@@ -107,6 +107,7 @@ public class Module extends SubsystemBase {
       12,
       Constants.LOOP_TIME);
 
+    private boolean isOpenLoop;
 
     public Module(ModuleConstants moduleConstants) {
         this.moduleConstants = moduleConstants;
@@ -171,11 +172,11 @@ public class Module extends SubsystemBase {
         }else{
             desiredState = wantedState;
         }
-        setAngle(desiredState);
-        setSpeed(desiredState, isOpenLoop);
+        setAngle();
+        this.isOpenLoop = isOpenLoop;
     }
 
-    private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
+    public void runLQR() {
         if(desiredState == null){
             return;
         }
@@ -200,7 +201,7 @@ public class Module extends SubsystemBase {
         
     }
 
-    private void setAngle(SwerveModuleState desiredState) {
+    private void setAngle() {
         if(!DriveConstants.DISABLE_DEADBAND_AND_OPTIMIZATION){
             // Prevent rotating module if desired speed < 1%. Prevents jittering and unnecessary movement.
             if (stateDeadband && (Math.abs(desiredState.speedMetersPerSecond) <= (DriveConstants.MAX_SPEED * 0.01))) {
