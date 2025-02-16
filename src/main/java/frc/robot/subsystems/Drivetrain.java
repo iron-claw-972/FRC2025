@@ -10,6 +10,10 @@ import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -23,9 +27,12 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
@@ -36,10 +43,9 @@ import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
-import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
-import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -203,6 +209,30 @@ public class Drivetrain extends SubsystemBase {
                 pose.getRotation().getRadians()
             };
         }, 15, LogLevel.COMP);
+
+		// Pathplanner config
+		
+		RobotConfig autoConf;
+		try {
+			autoConf = RobotConfig.fromGUISettings();
+		} catch (Exception e) {
+			// should print stacktrace
+			DriverStation.reportError("Failed to get Pathplanner config.", true);
+		}
+		
+		AutoBuilder.configure(
+			this::getPose,
+			this::resetOdometry,
+			this::getChassisSpeeds,
+			(speeds, feedforwards) -> setChassisSpeeds(speeds, false /* TODO: should this be false? */),
+			new PPHolonomicDriveController(
+				new PIDConstants(1, 1, 1),
+				new PIDConstants(1, 1, 1)
+			),
+			autoConf,
+			() -> {return Robot.getAlliance() == Alliance.Red;}, // when to mirror path
+			this
+		);
     }
 
     public void close() {
