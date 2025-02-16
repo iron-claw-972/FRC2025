@@ -28,7 +28,7 @@ public class OuttakeComp extends Outtake {
         // TODO: configure Kraken
 
         // build simulation
-        if (RobotBase.isSimulation()){
+        if (isSimulation()){
             // object that will control the loaded sensor
             dioInputLoaded = new DIOSim(digitalInputLoaded);
             // object that will control the ejecting sensor

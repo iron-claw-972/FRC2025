@@ -36,7 +36,7 @@ public class OuttakeAlpha extends Outtake {
             ResetMode.kResetSafeParameters,
             PersistMode.kNoPersistParameters
         );
-        if (RobotBase.isSimulation()){
+        if (isSimulation()){
             // object that will control the loaded sensor
             dioInputLoaded = new DIOSim(digitalInputLoaded);
             // object that will control the ejecting sensor
@@ -96,10 +96,5 @@ public class OuttakeAlpha extends Outtake {
 
     public void reverse(){
         setMotor(-0.2);
-    }
-
-
-    public boolean isSimulation(){
-        return RobotBase.isSimulation();
     }
 }
