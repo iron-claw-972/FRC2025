@@ -43,6 +43,7 @@ import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
+import frc.robot.util.LogManager;
 import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
@@ -218,6 +219,7 @@ public class Drivetrain extends SubsystemBase {
 		} catch (Exception e) {
 			// should print stacktrace
 			DriverStation.reportError("Failed to get Pathplanner config.", true);
+			return;
 		}
 		
 		AutoBuilder.configure(
