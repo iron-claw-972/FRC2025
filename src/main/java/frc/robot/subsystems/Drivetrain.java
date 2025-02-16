@@ -226,9 +226,8 @@ public class Drivetrain extends SubsystemBase {
 			this::getChassisSpeeds,
 			(speeds, feedforwards) -> setChassisSpeeds(speeds, false /* TODO: should this be false? */),
 			new PPHolonomicDriveController(
-				// FIXME: actual PIDs
-				new PIDConstants(1, 1, 1),
-				new PIDConstants(1, 1, 1)
+				new PIDConstants(DriveConstants.TRANSLATIONAL_P, 0, DriveConstants.TRANSLATIONAL_D),
+				new PIDConstants(DriveConstants.HEADING_P, 0, DriveConstants.HEADING_D)
 			),
 			autoConf,
 			() -> {return Robot.getAlliance() == Alliance.Red;}, // when to mirror path
