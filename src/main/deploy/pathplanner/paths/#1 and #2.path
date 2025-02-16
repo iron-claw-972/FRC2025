@@ -40,8 +40,8 @@
         "y": 5.515752840909091
       },
       "nextControl": {
-        "x": 3.8986802883034617,
-        "y": 5.079899647014388
+        "x": 3.898680288303461,
+        "y": 5.079899647014387
       },
       "isLocked": false,
       "linkedName": null
@@ -94,14 +94,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "Wait",
-      "waypointRelativePos": 0.8583690987124712,
+      "waypointRelativePos": 0.5836909871244569,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -112,7 +106,7 @@
     },
     {
       "name": "Outtake",
-      "waypointRelativePos": 1.3733905579398962,
+      "waypointRelativePos": 1.1811158798283277,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -120,10 +114,34 @@
           "name": "OuttakeCoral"
         }
       }
+    },
+    {
+      "name": "Wait",
+      "waypointRelativePos": 1.5381974248927046,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 5.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "OuttakeCoral"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.2,
+    "maxVelocity": 0.5,
     "maxAcceleration": 0.2,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
