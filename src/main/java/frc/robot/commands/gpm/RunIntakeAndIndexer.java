@@ -21,7 +21,7 @@ public class RunIntakeAndIndexer extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> intake.activate()),
       new InstantCommand(() -> indexer.run()),
-      new WaitCommand(0.5),
+      new WaitCommand(3),
       new InstantCommand(() -> intake.deactivate()),
       new InstantCommand(() -> indexer.stop())
     );

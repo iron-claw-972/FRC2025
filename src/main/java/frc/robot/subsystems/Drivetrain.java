@@ -188,7 +188,7 @@ public class Drivetrain extends SubsystemBase {
                 statusSignals[i*signals.length+j+1] = signals[j];
             }
         }
-        StatusSignal.setUpdateFrequencyForAll(500, statusSignals[0]);
+        StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
         LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
         LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
@@ -278,7 +278,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void updateOdometry() {
         // Wait for all modules to update
-        BaseStatusSignal.waitForAll(0.012, statusSignals);
+        BaseStatusSignal.waitForAll(0.022, statusSignals);
         
         // Adding synchronized to a method does the same thing as synchronized(this), so this section won't run with other synchronized methods
         synchronized(this){

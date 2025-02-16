@@ -96,7 +96,7 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        publish();
+        //publish();
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.2, 0.2);

@@ -23,6 +23,8 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.ExponentialProfile;
 import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -42,7 +44,7 @@ public class Elevator extends SubsystemBase {
   private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
-
+  private double maxVoltage = 6;
   // Sim variables
   private AngledElevatorSim sim;
   private Mechanism2d mechanism;
@@ -50,12 +52,12 @@ public class Elevator extends SubsystemBase {
   private double voltage;
 
   
-  // private final TrapezoidProfile m_profile = new TrapezoidProfile(
-  //     new TrapezoidProfile.Constraints(
-  //         4.879,
-  //         Units.feetToMeters(9.0))); // Max elevator speed and acceleration.
+  private final TrapezoidProfile m_profile = new TrapezoidProfile(
+      new TrapezoidProfile.Constraints(
+          3.0,
+          Units.feetToMeters(9.0))); // Max elevator speed and acceleration.
  
-  //private State m_lastProfiledReference = new State();
+  private State m_lastProfiledReference = new State();
 
   private final LinearSystem<N2, N1, N2> m_elevatorPlant = LinearSystemId.createElevatorSystem(
       ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS,
@@ -81,7 +83,7 @@ public class Elevator extends SubsystemBase {
       // this example we weight position much more highly than velocity, but this can
       // be
       // tuned to balance the two.
-      VecBuilder.fill(2.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+      VecBuilder.fill(maxVoltage), // relms. Control effort (voltage) tolerance. Decrease this to more
       // heavily penalize control effort, or make the controller less aggressive. 12
       // is a good
       // starting point because that is the (approximate) maximum voltage of a
@@ -94,11 +96,11 @@ public class Elevator extends SubsystemBase {
       (LinearSystem<N2, N1, N2>) m_elevatorPlant,
       m_controller,
       m_observer,
-      2.0,
+      maxVoltage,
       Constants.LOOP_TIME);
 
-  ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(2, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
-  ExponentialProfile.State m_lastProfiledReference;
+ // ExponentialProfile profile = new ExponentialProfile(Constraints.fromStateSpace(maxVoltage, m_elevatorPlant.getA(1, 1), m_elevatorPlant.getB().get(1,0)));
+  //ExponentialProfile.State m_lastProfiledReference;
   /** Creates a new Elevator. */
   public Elevator() {
     // Left motor follows right motor in the opposite direction
@@ -120,11 +122,12 @@ public class Elevator extends SubsystemBase {
       mechanism = new Mechanism2d(size, size);
       ligament = mechanism.getRoot("base", size / 2 - width / 2, size / 2 - height / 2).append(new MechanismLigament2d(
         "elevator", ElevatorConstants.START_HEIGHT, 90 - Units.radiansToDegrees(Math.abs(ElevatorConstants.ANGLE))));
+      SmartDashboard.putData("elevator", mechanism);
     }
     Timer.delay(1.0);
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
-    //m_lastProfiledReference = new State(getPosition(), 0);
-    m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
+    m_lastProfiledReference = new State(getPosition(), 0);
+    //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
 
     leftMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -142,12 +145,12 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     setSetpoint(SmartDashboard.getNumber("setpoint", 0));
     // The final state that the elevator is trying to get to
-    ExponentialProfile.State goal = new ExponentialProfile.State(setpoint, 0.0);
+    State goal = new State(setpoint, 0.0);
 
     double currentPosition = getPosition();
     
+    m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     //m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
-    m_lastProfiledReference = profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
     m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
 
     // Correct our Kalman filter's state vector estimate with encoder data.
@@ -161,10 +164,14 @@ public class Elevator extends SubsystemBase {
     // voltage = duty cycle * battery voltage, so
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
+    double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
     SmartDashboard.putNumber("voltage", voltage);
     SmartDashboard.putNumber("position", getPosition());
     SmartDashboard.putNumber("rightmotor", rightMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("leftmotor", leftMotor.getPosition().getValueAsDouble());
+    if(nextVoltage<0){
+      nextVoltage+=uff;
+    }
     
     set(nextVoltage);
   }
