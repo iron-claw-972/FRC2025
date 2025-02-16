@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.141202044416732,
-        "y": 2.687638061746948
+        "y": 2.6876380617469477
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,30 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "OuttakeCoral",
-      "waypointRelativePos": 0.3,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "OuttakeCoral"
-        }
-      }
-    },
-    {
-      "name": "MoveElevator",
-      "waypointRelativePos": 0.8,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "MoveElevator"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -65,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 36.95391432392091
+    "rotation": 34.101
   },
   "reversed": false,
   "folder": null,
