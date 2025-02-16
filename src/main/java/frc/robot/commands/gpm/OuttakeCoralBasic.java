@@ -4,6 +4,8 @@ package frc.robot.commands.gpm;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Outtake;
+import frc.robot.util.GamePeiceState;
+import frc.robot.util.GamePeiceState.STATE;
 
 
 /**
@@ -79,6 +81,7 @@ public class OuttakeCoralBasic extends Command {
                 // coral has gone all the way through.
                 SmartDashboard.putNumber("Coral Transit Time", ticks * 0.020);
                 state = State.DONE;
+                GamePeiceState.setGamePeiceState(STATE.NONE);
             }
             // waiting for a timeout; 13 ticks is 0.26 seconds. It only takes 0.18 seconds to eject a coral.
             if (ticks > 13) {

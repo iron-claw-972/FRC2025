@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IntakeConstants;
+import frc.robot.util.GamePeiceState;
+import frc.robot.util.GamePeiceState.STATE;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
@@ -105,7 +107,11 @@ public class Intake extends SubsystemBase {
             Measurement measurement = laserCan.getMeasurement();
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
+            if (hasCoral){
+                GamePeiceState.setGamePeiceState(STATE.INTAKE);
+            }
         }
+        
     }
 
     @Override

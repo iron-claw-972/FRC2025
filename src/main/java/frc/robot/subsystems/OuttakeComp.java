@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.IdConstants;
+import frc.robot.util.GamePeiceState;
+import frc.robot.util.GamePeiceState.STATE;
 
 
 public class OuttakeComp extends Outtake {
@@ -49,6 +51,9 @@ public class OuttakeComp extends Outtake {
     @Override
     public void periodic(){
         motor.set(power);
+        if(coralLoaded()){
+            GamePeiceState.setGamePeiceState(STATE.OUTAKE);
+        }
         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
         SmartDashboard.putBoolean("Coral ejected", coralEjecting());
     }

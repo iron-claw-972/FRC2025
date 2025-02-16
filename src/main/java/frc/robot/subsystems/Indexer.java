@@ -15,7 +15,9 @@ import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IndexerConstants;
+import frc.robot.util.GamePeiceState;
 import frc.robot.util.LogManager;
+import frc.robot.util.GamePeiceState.STATE;
 import frc.robot.util.LogManager.LogLevel;
 
 public class Indexer extends SubsystemBase {
@@ -101,6 +103,9 @@ public class Indexer extends SubsystemBase {
 
 	@Override
 	public void periodic() {
+		if(!isIndexerClear()){
+			GamePeiceState.setGamePeiceState(STATE.INDEXER);
+		}
 	}
 
 	@Override
