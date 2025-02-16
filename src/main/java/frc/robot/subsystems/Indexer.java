@@ -111,7 +111,7 @@ public class Indexer extends SubsystemBase {
 				* IndexerConstants.WHEEL_CIRCUMFERENCE;
 
 		// toggle the sensor (values are backwards because that's how the sensor works)
-		simSensor.setMeasurementPartialSim(0, // IDK what status is; 0 == good???
+		simSensor.setMeasurementPartialSim(0, // 0 == valid measurement
 				(simCoralPos < IndexerConstants.START_SIM_SENSOR_POS_AT
 						|| simCoralPos > IndexerConstants.END_SIM_SENSOR_POS_AT)
 								? IndexerConstants.MEASUREMENT_THRESHOLD * 2
