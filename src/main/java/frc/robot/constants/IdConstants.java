@@ -25,8 +25,13 @@ public class IdConstants {
     // LEDs
     public static final int CANDLE_ID = 1;
 
-    // Outtake
-    public static final int OUTTAKE_MOTOR = 14;
+    // Elevator
+    public static final int ELEVATOR_LEFT_MOTOR = -1;
+    public static final int ELEVATOR_RIGHT_MOTOR = -1;
+    public static final int ELEVATOR_BOTTOM_LIMIT_SWITCH = 29;
+    public static final int ELEVATOR_TOP_LIMIT_SWITCH = 30;
+
+    // Add other subsystems here
 
 	// Indexer
 	public static final int INDEXER_MOTOR = 0;
