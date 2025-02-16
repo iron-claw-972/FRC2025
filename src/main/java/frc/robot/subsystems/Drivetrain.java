@@ -680,12 +680,12 @@ public class Drivetrain extends SubsystemBase {
         double accelX = pigeon.getAccelerationX().getValueAsDouble();
         double accelY = pigeon.getAccelerationY().getValueAsDouble();
 
-        double angularVelocity = pigeon.getAngularVelocityXDevice().getValueAsDouble();
-        double linearVelocity = Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
-        double radius = linearVelocity / angularVelocity;
+        double angularVelocity = pigeon.getAngularVelocityZWorld().getValueAsDouble();
+        double radius = 0.05; // TODO: replace with actual radius
 
         double centripetalAcceleration = Math.pow(angularVelocity, 2) * radius;
 
+        // TODO: add or subract centripetal acceleration from x or y, depending on which direction it would be in
         return Math.sqrt(Math.pow(accelX, 2) + Math.pow(accelY, 2) + Math.pow(centripetalAcceleration, 2));
     }
    
