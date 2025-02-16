@@ -7,13 +7,12 @@ import frc.robot.subsystems.Outtake;
 /**
  * Command to eject coral.
  * Wants coral to be present.
- * This should generally be accompanied by a time out!!!
  */
 public class OuttakeCoralBasic extends Command {
     private Outtake outtake;
 
     // states the outtake may take
-    enum State { EMPTY, LOADED, MOVING, REVERSING, DONE }
+    private enum State {LOADED, MOVING, REVERSING, DONE }
 
     private State state;
 
@@ -52,18 +51,13 @@ public class OuttakeCoralBasic extends Command {
         }
 
         switch (state) {
-            case EMPTY:
-            // do not need to do anything
-            break;
-
             case LOADED:
             // waiting for ejected to become true
-            // FIXME: is this supposed to be coralLoaded????
             if (outtake.coralEjecting()) {
                 // at this point, ticks represents how long it took to move the coral to the ejecting sensor.
                 SmartDashboard.putNumber("Coral Ejection Time", ticks * 0.020);
 
-                // reset the timer 
+                // reset the timer
                 ticks = 0;
                 // we know the coral is moving
                 state = State.MOVING;
@@ -83,7 +77,6 @@ public class OuttakeCoralBasic extends Command {
                 outtake.setMotor(-0.125);
 
                 SmartDashboard.putNumber("Coral Transit Time", ticks * 0.020);
-
                 state = State.REVERSING;
             }
             break;
@@ -102,7 +95,7 @@ public class OuttakeCoralBasic extends Command {
     }
 
     public boolean isFinished(){
-        return state == State.DONE; 
+        return state == State.DONE;
     }
 
     public void end(boolean interrupted){

@@ -1,17 +1,51 @@
 package frc.robot.commands.gpm;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 
-public class ReverseMotors extends SequentialCommandGroup {
-    public ReverseMotors(Intake intake, Outtake outtake){
-        addCommands(
-            new InstantCommand(()->outtake.reverse(), outtake),
-            new WaitCommand(0.5),
-            new InstantCommand(()->outtake.stop(), outtake)
-        );
+public class ReverseMotors extends Command {
+    private Intake intake;
+    private Indexer indexer;
+    private Outtake outtake; // TODO do we need an outtake here?
+    private final Timer timer = new Timer();
+
+    private static final double EJECTION_TIME = 5.0;
+
+    public ReverseMotors(Intake intake, Indexer indexer, Outtake outtake) {
+        this.intake = intake;
+        this.indexer = indexer;
+        this.outtake = outtake;
+        addRequirements(intake, indexer, outtake);
+    }
+
+    @Override
+    public void initialize() {
+        intake.setSpeed(-.5);
+        indexer.reverse();
+        outtake.reverse();
+        timer.reset();
+        timer.start();
+    }
+
+    @Override
+    public void execute() {
+        if (timer.hasElapsed(EJECTION_TIME)) {
+            intake.deactivate();
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return timer.hasElapsed(EJECTION_TIME);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        intake.deactivate();
+        indexer.stop();
+        outtake.stop();
     }
 }

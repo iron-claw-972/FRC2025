@@ -1,6 +1,5 @@
 package frc.robot.subsystems.sim;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Indexer;
 
 public class SimIndexer extends Indexer {

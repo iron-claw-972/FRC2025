@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -24,13 +23,11 @@ import lib.controllers.GameController.Button;
 public class GameControllerDriverConfig extends BaseDriverConfig {
   private final GameController kDriver = new GameController(Constants.DRIVER_JOY);
 
-  private final Vision vision;
   private final Elevator elevator;
   private final Outtake outtake;
 
   public GameControllerDriverConfig(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake) {
     super(drive);
-    this.vision = vision;
     this.elevator = elevator;
     this.outtake = outtake;
   }
@@ -42,9 +39,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
     if (elevator!=null && outtake!=null){
-    
-    kDriver.get(Button.B).onTrue(new ReverseMotors(null, outtake));
-    
+        
 
     // Resets the modules to absolute if they are having the unresolved zeroing
     // error
