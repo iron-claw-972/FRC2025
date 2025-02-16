@@ -42,14 +42,14 @@ public class IntakeCoralHelper extends Command {
 				}
 				break;
 			case Intaking:
-				if (!indexer.isIndexerClear()) {
+				if (!indexer.getSensorValue()) {
 					phase = Phase.Indexing;
 					intake.deactivate();
 					intake.stow();
 				}
 				break;
 			case Indexing:
-				if (indexer.isIndexerClear()) { // TODO: do we want to run for some extra time?
+				if (indexer.getSensorValue()) { // TODO: do we want to run for some extra time?
 					phase = Phase.Done;
 					indexer.stop();
 				}
