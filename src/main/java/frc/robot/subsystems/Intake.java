@@ -102,7 +102,7 @@ public class Intake extends SubsystemBase {
         stowMotor.set(power);
         if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
-            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+            hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
         }
     }
