@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
     private double startPosition = 90;
 
     public Intake() {
-        if (RobotBase.isSimulation()) {
+        if (isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
             stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5)
                     .append(new MechanismLigament2d("Intake", 4, startPosition));
@@ -130,7 +130,7 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        if(RobotBase.isSimulation()) {
+        if(isSimulation()) {
             return Units.radiansToDegrees(stowArmSim.getAngleRads());
         } else {
             return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
