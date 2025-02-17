@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
 
     private final double positionTolerance = 5;
 
-    private final PIDController stowPID = new PIDController(0.02, 0, 0.001);
+    private final PIDController stowPID = new PIDController(0.01, 0, 0);
     private double power;
 
     private LaserCan laserCan;
@@ -65,19 +65,20 @@ public class Intake extends SubsystemBase {
                     Units.degreesToRadians(startPosition));
             laserCanSimTimer = new Timer();
         } else {
-        
-            // try {
-            //     laserCan.setRangingMode(RangingMode.SHORT);
-            //     laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
-            //     laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
-            // } catch (ConfigurationFailedException e) {
-            //     DriverStation.reportError("LaserCan configuration error", true);
-            // }
+            laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
+            try {
+                laserCan.setRangingMode(RangingMode.SHORT);
+                laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+                laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
+            } catch (ConfigurationFailedException e) {
+                DriverStation.reportError("LaserCan configuration error", true);
+            }
         }
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowPID.setTolerance(positionTolerance);
         SmartDashboard.putNumber("roller speed", 0);
         setAngle(startPosition);
+        SmartDashboard.putData("intake PID", stowPID);
     }
 
     /**
@@ -86,7 +87,7 @@ public class Intake extends SubsystemBase {
     private void publish() {
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
-        SmartDashboard.putNumber("Roller Motor Power", rollerMotor.get());
+        SmartDashboard.putNumber("Roller Motor Power", power);
 
         SmartDashboard.putBoolean("Has Coral", hasCoral());
         SmartDashboard.putBoolean("Stow Arm Sim - Is Stowed", isAtSetpoint(90));
@@ -96,10 +97,10 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //publish();
+        publish();
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
-        power = MathUtil.clamp(power, -0.2, 0.2);
+        power = MathUtil.clamp(power, -0.5, 0.5);
         stowMotor.set(power);
         if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();

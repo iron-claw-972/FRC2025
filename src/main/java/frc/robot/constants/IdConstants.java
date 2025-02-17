@@ -42,7 +42,7 @@ public class IdConstants {
 
     public static final int INTAKE_ROLLER = 51;
 
-    public static final int INTAKE_PIVOT = 0; //55
+    public static final int INTAKE_PIVOT = 55; //55
     public static final int INTAKE_LASER_CAN = 25;
 
     //public static final int INTAKE_LASER_CAN = 0;
