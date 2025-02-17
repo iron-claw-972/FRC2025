@@ -87,7 +87,7 @@ public class Operator {
         driver.get(Button.RIGHT_JOY).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
         driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
         driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
-        driver.get(Button.B).and(menu.negate()).onTrue(new ReverseMotors(intake, outtake));
+        driver.get(Button.B).and(menu.negate()).onTrue(new ReverseMotors(intake, indexer, outtake));
 
         // Climb
         driver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))

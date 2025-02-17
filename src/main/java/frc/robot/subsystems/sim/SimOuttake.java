@@ -1,9 +1,9 @@
 package frc.robot.subsystems.sim;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.OuttakeComp;
 
-public class SimOuttake extends Outtake {
+public class SimOuttake extends OuttakeComp {
     @Override
     public boolean isSimulation(){
         return true;

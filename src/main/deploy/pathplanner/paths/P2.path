@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 1.1780566456398953,
-        "y": 0.6746746300686842
+        "y": 0.6746746300686843
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,13 +65,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -126.12558942881007
+    "rotation": -34.8710655934559
   },
   "reversed": false,
-  "folder": "Sequential Path RSide",
+  "folder": "RSide Sequential Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -60.27036266122732
+    "rotation": 34.101
   },
   "useDefaultConstraints": true
 }

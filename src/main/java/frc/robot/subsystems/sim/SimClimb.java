@@ -1,6 +1,5 @@
 package frc.robot.subsystems.sim;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.Climb;
 
 public class SimClimb extends Climb {

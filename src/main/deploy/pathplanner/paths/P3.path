@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.727982954545454,
-        "y": 0.8390767045454538
+        "x": 1.406,
+        "y": 0.839
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.652094019643441,
-        "y": 1.2733933067084775
+        "x": 3.7792329545516052,
+        "y": 1.0385085227338948
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.09779,
-        "y": 2.93384
+        "x": 4.81183,
+        "y": 2.76874
       },
       "prevControl": {
-        "x": 5.141202044416732,
-        "y": 2.6876380617469477
+        "x": 4.583886645639895,
+        "y": 2.6044146300686846
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,30 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 0.15,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "OuttakeCoral"
+        }
+      }
+    },
+    {
+      "name": "MoveElevator",
+      "waypointRelativePos": 0.6,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "MoveElevator"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +65,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 34.101
+    "rotation": 30.86680945113708
   },
   "reversed": false,
   "folder": "RSide Sequential Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -36.60707481260764
   },
   "useDefaultConstraints": true
 }
