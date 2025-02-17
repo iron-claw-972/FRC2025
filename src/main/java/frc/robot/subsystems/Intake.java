@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
@@ -75,6 +76,7 @@ public class Intake extends SubsystemBase {
             }
         }
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
+        stowMotor.setNeutralMode(NeutralModeValue.Brake);
         stowPID.setTolerance(positionTolerance);
         SmartDashboard.putNumber("roller speed", 0);
         setAngle(startPosition);
@@ -97,6 +99,9 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if(stowPID.atSetpoint()){
+            return;
+        }
         publish();
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
