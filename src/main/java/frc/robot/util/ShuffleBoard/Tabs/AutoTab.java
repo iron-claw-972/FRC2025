@@ -104,7 +104,9 @@ public class AutoTab extends ShuffleBoardTabs {
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+        autoCommand.addOption("potato", new PathPlannerAuto("Wait Test.auto"));
 
+        
         // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake,elevator))
@@ -131,7 +133,7 @@ public class AutoTab extends ShuffleBoardTabs {
 
         autoCommand.addOption("#1 and #2 Wait Trial", new FollowPathCommand("#1 and #2", true, drive));
 
-		autoCommand.addOption("potato", new PathPlannerAuto("Wait Test.auto"));
+	
 
         autoCommand.addOption("Wait Command Trial Inital", new FollowPathCommand("#1", true, drive)
                 .andThen(new WaitCommand(5))
