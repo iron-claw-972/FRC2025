@@ -107,8 +107,6 @@ public class Module extends SubsystemBase {
       12,
       Constants.LOOP_TIME);
 
-    private boolean isOpenLoop;
-
     public Module(ModuleConstants moduleConstants) {
         this.moduleConstants = moduleConstants;
         
@@ -173,10 +171,10 @@ public class Module extends SubsystemBase {
             desiredState = wantedState;
         }
         setAngle();
-        this.isOpenLoop = isOpenLoop;
+        setSpeed(isOpenLoop);
     }
 
-    public void runLQR() {
+    public void setSpeed(boolean isOpenLoop) {
         if(desiredState == null){
             return;
         }
