@@ -107,7 +107,7 @@ public class RobotContainer {
     // All robots need controllers
     // Check the controller type to prevent it from breaking
     
-      driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+    driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
     
 
     operator = new Operator(drive, elevator, intake, indexer, outtake, climb);

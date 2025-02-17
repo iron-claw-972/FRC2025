@@ -130,18 +130,26 @@ public class AutoTab extends ShuffleBoardTabs {
 
 
         
-        autoCommand.addOption("Total Square Path", 
-            new FollowPathCommand("Square Path 1", true, drive)
-            .andThen(new WaitCommand(3))
-            .andThen(new FollowPathCommand("Square Path 2", true, drive))
-            .andThen(new WaitCommand(3))
-            .andThen(new FollowPathCommand("Square Path 3", true, drive))
-            .andThen(new WaitCommand(3))
-            .andThen(new FollowPathCommand("Square Path 4", true, drive))); 
-        
+        autoCommand.addOption("Total Square Path: Counter Clockwise", 
+            new FollowPathCommand("Square Path 1CC", true, drive)
+            .andThen(new WaitCommand(1))
+            .andThen(new FollowPathCommand("Square Path 2CC", true, drive))
+            .andThen(new WaitCommand(1))
+            .andThen(new FollowPathCommand("Square Path 3CC", true, drive))
+            .andThen(new WaitCommand(1))
+            .andThen(new FollowPathCommand("Square Path 4CC", true, drive))); 
+
+        autoCommand.addOption("Total Square Path: Clockwise", 
+            new FollowPathCommand("Square Path 1C", true, drive)
+            .andThen(new WaitCommand(1))
+            .andThen(new FollowPathCommand("Square Path 2C", true, drive))
+            .andThen(new WaitCommand(1))
+            .andThen(new FollowPathCommand("Square Path 3C", true, drive))
+            .andThen(new WaitCommand(1))
+            .andThen(new FollowPathCommand("Square Path 4C", true, drive))); 
+
+        autoCommand.addOption("Mornay Straight Line Path", new FollowPathCommand("Straight Line", true, drive));
  
-        new FollowPathCommand("Straight Line", true, drive);
-        
 
                         
     //     autoCommand.addOption("Sequential_1",
