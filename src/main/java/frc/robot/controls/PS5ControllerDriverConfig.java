@@ -24,6 +24,7 @@ import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
@@ -101,6 +102,9 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(climb != null){
             driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
                 .onFalse(new InstantCommand(()->climb.climb(), climb));
+            if(intake != null){
+                driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(IntakeConstants.ALGAE_SETPOINT), intake));
+            }
             driver.get(PS5Button.PS).and(menu).whileTrue(new ResetClimb(climb));
         }
 
