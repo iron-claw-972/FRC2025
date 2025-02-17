@@ -38,6 +38,6 @@ public class MoveElevator extends Command {
      */
     @Override
     public boolean isFinished() {
-        return Math.abs(elevator.getPosition() - setpoint) < 0.025;
+        return elevator.atSetpoint();
     }
 }

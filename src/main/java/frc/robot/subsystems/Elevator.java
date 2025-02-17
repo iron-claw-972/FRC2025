@@ -44,6 +44,7 @@ public class Elevator extends SubsystemBase {
   private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
+  private double prevSetpoint = ElevatorConstants.START_HEIGHT;
   private double maxVoltage = 6;
   // Sim variables
   private AngledElevatorSim sim;
@@ -144,6 +145,10 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     setSetpoint(SmartDashboard.getNumber("setpoint", 0));
+
+    if(atSetpoint()){
+      return;
+    }
     // The final state that the elevator is trying to get to
     State goal = new State(setpoint, 0.0);
 
@@ -235,6 +240,10 @@ public class Elevator extends SubsystemBase {
 
   public Mechanism2d getMechanism2d() {
     return mechanism;
+  }
+
+  public boolean atSetpoint(){
+    return Math.abs(getPosition() - setpoint) < 0.025;
   }
 
   /**
