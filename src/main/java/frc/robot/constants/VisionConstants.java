@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -151,19 +152,12 @@ public class VisionConstants {
     public static final ArrayList<Pair<String, Transform3d>> APRIL_TAG_CAMERAS = new ArrayList<Pair<String, Transform3d>>(
             List.of(
                     new Pair<String, Transform3d>(
-                            "CameraPort",
+                            "Camera",
                             new Transform3d(
-                                    new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(6.2),
-                                            Units.inchesToMeters(18.67+4.7)),
-                                    new Rotation3d(Math.PI, Units.degreesToRadians(20),
-                                            Math.PI + Units.degreesToRadians(15)))),
-                    new Pair<String, Transform3d>(
-                            "CameraStarboard",
-                            new Transform3d(
-                                    new Translation3d(Units.inchesToMeters(-11.917), Units.inchesToMeters(-6.2),
-                                            Units.inchesToMeters(18.67+4.7)),
-                                    new Rotation3d(Math.PI, Units.degreesToRadians(20),
-                                            Math.PI - Units.degreesToRadians(15))))));
+                                    new Translation3d(Units.inchesToMeters(2), Units.inchesToMeters(6.2),
+                                            Units.inchesToMeters(7.7)),
+                                    new Rotation3d(0, Units.degreesToRadians(-20),
+                                            -Math.PI)))));
 
     /**
      * The transformations from the robot to object detection cameras
@@ -317,7 +311,7 @@ public class VisionConstants {
             Pose3d branchPose3d = basePose3d.plus(transform);
 
             // Convert the calculated branch Pose3d to Pose2d
-            return branchPose3d.toPose2d();
+            return branchPose3d.toPose2d().transformBy(new Transform2d(0, 0, new Rotation2d(Math.PI/2)));
         }
 
         /**
