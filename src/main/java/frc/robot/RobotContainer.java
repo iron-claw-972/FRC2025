@@ -55,7 +55,7 @@ public class RobotContainer {
   private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;
-  private Thread moduleLQRThread = null;
+  private Thread drivetrainThread = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -132,17 +132,17 @@ public class RobotContainer {
           drive.updateOdometry();
         }
       });
-      moduleLQRThread = new Thread(()->{
+      drivetrainThread = new Thread(()->{
         long nextUpdate = System.currentTimeMillis();
-        while(!moduleLQRThread.isInterrupted()){
+        while(!drivetrainThread.isInterrupted()){
           if(System.currentTimeMillis() >= nextUpdate){
-            drive.runModuleLQR();
+            drive.drive(driver);
             nextUpdate += 20;
           }
         }
       });
       odometryThread.start();
-      moduleLQRThread.start();
+      drivetrainThread.start();
     }
   }
 
@@ -208,7 +208,7 @@ public class RobotContainer {
 
   public void interruptThreads(){
     odometryThread.interrupt();
-    moduleLQRThread.interrupt();
+    drivetrainThread.interrupt();
   }
 }
 

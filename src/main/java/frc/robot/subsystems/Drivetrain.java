@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,8 +34,10 @@ import frc.robot.constants.IdConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
+import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
+import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
 import frc.robot.util.SwerveModulePose;
@@ -113,8 +116,9 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean slipped = false;
 
-
     private BaseStatusSignal[] statusSignals = null;
+
+    private boolean controlsEnabled = false;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -369,10 +373,55 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public void runModuleLQR(){
-        for(Module module : modules){
-            module.runLQR();
+    /**
+     * Drives the robot
+     * @param driver The driver config to get the controls from
+     */
+    public void drive(BaseDriverConfig driver){
+        // Return and do nothing if controls are disabled
+        if(!controlsEnabled) {
+            return;
         }
+
+        // If controls are enabled, run the controller code that was in DefaultDriveCommand in 2024
+
+        double forwardTranslation = driver.getForwardTranslation();
+        double sideTranslation = driver.getSideTranslation();
+        double rotation = -driver.getRotation();
+
+        double slowFactor = driver.getIsSlowMode() ? DriveConstants.SLOW_DRIVE_FACTOR : 1;
+
+        forwardTranslation *= slowFactor;
+        sideTranslation *= slowFactor;
+        rotation *= driver.getIsSlowMode() ? DriveConstants.SLOW_ROT_FACTOR : 1;
+
+        int allianceReversal = Robot.getAlliance() == Alliance.Red ? 1 : -1;
+        forwardTranslation *= allianceReversal;
+        sideTranslation *= allianceReversal;
+
+        ChassisSpeeds driverInput = new ChassisSpeeds(forwardTranslation, sideTranslation, rotation);
+        ChassisSpeeds corrected = DriverAssist.calculate(this, driverInput, getDesiredPose(), true);
+
+        // If the driver is pressing the align button or a command set the drivetrain to align
+        // Not currently used this year
+        if (driver.getIsAlign() || getIsAlign()) {
+            driveHeading(
+                forwardTranslation,
+                sideTranslation,
+                getAlignAngle(),
+                true);
+        } else {
+            drive(
+                corrected.vxMetersPerSecond,
+                corrected.vyMetersPerSecond,
+                corrected.omegaRadiansPerSecond,
+                true,
+                false);
+        }
+    }
+
+    public void enableDriveControls(boolean enable){
+        controlsEnabled = enable;
     }
 
     /**
