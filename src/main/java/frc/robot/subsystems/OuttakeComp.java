@@ -19,8 +19,10 @@ public class OuttakeComp extends Outtake {
 
     /** Coral detected before the rollers */
     private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
+    private DIOSim dioInputLoaded;
     /** Coral detected after the rollers */
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
+    private DIOSim dioInputEjecting;
 
     public OuttakeComp(){
         // TODO: configure Kraken
@@ -38,7 +40,6 @@ public class OuttakeComp extends Outtake {
         }
     }
 
-    @Override
     protected double getMotorSpeed() {
         return power;
     }

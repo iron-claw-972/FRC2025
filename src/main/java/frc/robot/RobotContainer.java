@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
+import frc.robot.commands.gpm.OuttakeCoralNew;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
@@ -85,10 +86,13 @@ public class RobotContainer {
       case Vivace:
       case Phil:
         if (robotId == RobotId.Phil) {
-          outtake = new OuttakeAlpha();
+          outtake = new Outtake();
+          
         }
         if (outtake != null) {
           SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
+          SmartDashboard.putData("Load coral", new InstantCommand(()->outtake.fakeLoad()));
+          SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
         }
       case Vertigo:
         drive = new Drivetrain(vision);

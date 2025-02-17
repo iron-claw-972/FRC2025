@@ -11,48 +11,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * Abstract class for the outtake. All commands should use this subsystem
  */
-public abstract class Outtake extends SubsystemBase {
+public class Outtake extends SubsystemBase {
     private int ticks = 0;
-    /** Coral detected before the rollers */
-    protected DIOSim dioInputLoaded;
-    /** Coral detected after the rollers */
-    protected DIOSim dioInputEjecting;
+    private boolean coralPresent = true;
+    private double m_power = 0;
 
-    protected abstract double getMotorSpeed();
     
-    public void simulationPeriodic(){
+    public void periodic(){
         // when coral is ejecting, loading is true & ejecting is true. when coral shoots out, loading is false & ejecting is false
         ticks++;
-
-
-        if (getMotorSpeed() > 0.05) {
-            if (ticks > 250) {
-                ticks = 0;
-            }
-            // motor is outtaking
-            // motor is spinning, ejecting will be true. after 0.14 seconds
-            if (ticks ==7) {
-                dioInputEjecting.setValue(false);
-            }
-            if (ticks == 14){
-                // after 0.14 seconds
-                dioInputLoaded.setValue(true);
-            }
-            if (ticks == 16){
-                // after 0.18 seconds
-                dioInputEjecting.setValue(true);
+        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+        if (m_power > 0.05) {
+            // 25 ticks is 500 miliseconds
+            if (ticks == 25) {
+                coralPresent = false;
             }
         }
 
+ }
 
-        if (ticks == 250) {
-            // make coral appear again (set to true)
-            dioInputLoaded.setValue(false);
-        }
-    }
     /** Set the motor power to move the coral */
-    public abstract void setMotor(double power);
-
+    public void setMotor(double power) {
+        m_power = power;
+    }
 
     /** stop the coral motor */
     public void stop(){
@@ -61,18 +43,38 @@ public abstract class Outtake extends SubsystemBase {
 
 
     /** start spinning the rollers to eject the coral */
-    public abstract void outtake();
+    public void outtake() {
+     setMotor(0.2);  
+     // start the counter 
+     ticks = 0;
+    }
 
 
-    public abstract boolean coralLoaded();
+    public boolean coralLoaded() {
+        return coralPresent;
+    }
 
 
     /**
      *  Coral is at the ejecting beam break sensor.
      * @return coral is interrupting the beam breaker.
      */
-    public abstract boolean coralEjecting();
+    public boolean coralEjecting() {
+        // 20 ticks is 400 milliseconds. 30 ticks is 600 milliseconds
+        return ticks > 20 && ticks < 30;
+    }
 
 
-    public abstract void reverse();
+    public void reverse() {
+        setMotor(-0.15);
+    }
+
+    public boolean isFinished() {
+        // 40 ticks is 800 milliseconds
+        return ticks > 40;
+    }
+
+    public void fakeLoad() {
+        coralPresent = true;
+    }
 }
