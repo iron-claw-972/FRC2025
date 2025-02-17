@@ -22,8 +22,8 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-
-    private static final double spoolRotations = 5;
+    private static final double spoolRotations = 3;
+    private static final double climbPosition = -2;
 
     //Motors
     // TODO: tune better once design is finalized
@@ -138,13 +138,14 @@ public class Climb extends SubsystemBase {
      * Turns the motor to 0 degrees (climb position)
      */
     public void climb(){
-        setAngle(startingPosition);
+        setAngle(Units.rotationsToDegrees(climbPosition));
     }
 
     public void reset(boolean resetting){
         this.resetting = resetting;
         if(!resetting){
-            motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
+            motor.setPosition(climbPosition*totalGearRatio);
+            pid.setSetpoint(Units.degreesToRadians(startingPosition));
             pid.reset();
         }
     }
