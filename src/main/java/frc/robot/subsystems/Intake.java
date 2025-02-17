@@ -77,7 +77,7 @@ public class Intake extends SubsystemBase {
         setAngle(startPosition);
 
         //Logging LogLevel.COMP
-        LogManager.logSupplier("Intake/laserCanDistance", () -> laserCanDistance(), 15, LogLevel.COMP);
+        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.COMP);
         LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.COMP);
     }
 
@@ -215,10 +215,5 @@ public class Intake extends SubsystemBase {
     public void activate() {
         stowPID.setSetpoint(90);
         rollerMotor.set(.8);
-    }
-
-    public int laserCanDistance() {
-        Measurement measurement = laserCan.getMeasurement();        
-        return measurement.distance_mm;
     }
 }

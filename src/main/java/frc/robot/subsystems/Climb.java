@@ -30,6 +30,7 @@ public class Climb extends SubsystemBase {
     private double startingPosition = 0;
 
     //Motors
+    // TODO: tune better once design is finalized
     private final PIDController pid = new PIDController(0.4, 4, 0.04);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
@@ -54,6 +55,7 @@ public class Climb extends SubsystemBase {
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
+            encoderSim.setRawRotorPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
 
             climbSim = new ClimbArmSim(
                 climbGearBox, 
@@ -75,11 +77,9 @@ public class Climb extends SubsystemBase {
         SmartDashboard.putData("PID", pid);
         SmartDashboard.putData("Climb Display", simulationMechanism);       
 
-        motor.setPosition(Units.degreesToRotations(startingPosition));
+        pid.setSetpoint(Units.degreesToRadians(startingPosition));
 
-
-       // LogManager.logSupplier("Climb/position", () -> getAngle(), 100, LogLevel.COMP);
-       // LogManager.logSupplier("Climb/faultPosition", () -> notInInterval(), 100, LogLevel.COMP);
+        motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
     }
 
     @Override
@@ -97,14 +97,6 @@ public class Climb extends SubsystemBase {
 
         SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
-
-        //Log faults
-     //   if (getAngle() > 80 || getAngle() < startingPosition) {
-      //      LogManager.logFault( "Angle is out of range");
-      //  }
-        
-
-
     }
 
     @Override

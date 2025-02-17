@@ -244,8 +244,7 @@ public class LogManager extends DogLog {
   }
 
   public enum LogLevel {
-    DEBUG(3),
-   // INFO(2),
+    DEBUG(2),
     COMP(1),
     NONE(0);
 
