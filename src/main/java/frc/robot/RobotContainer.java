@@ -137,6 +137,8 @@ public class RobotContainer {
           }
         }
       });
+      odometryThread.setPriority(3);
+      drivetrainThread.setPriority(4);
       odometryThread.start();
       drivetrainThread.start();
     }
@@ -160,7 +162,7 @@ public class RobotContainer {
   }
 
   /**
-   * Sets whether the drivetrain uses vision to update odometry
+   * Sets whether the drivetrain uses vision toupdate odometry
    */
   public void setVisionEnabled(boolean enabled) {
     if (drive != null)
