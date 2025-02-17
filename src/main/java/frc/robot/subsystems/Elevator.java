@@ -146,7 +146,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     setSetpoint(SmartDashboard.getNumber("setpoint", 0));
 
-    if(getSetpoint()==0){
+    if(getSetpoint()==0 && atSetpoint()){
       return;
     }
     // The final state that the elevator is trying to get to
