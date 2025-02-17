@@ -25,7 +25,7 @@ public class Climb extends SubsystemBase {
 
     //Motors
     // TODO: tune better once design is finalized
-    private final PIDController pid = new PIDController(0.4, 4, 0.04);
+    private final PIDController pid = new PIDController(0.1, 0, 0.04);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
@@ -39,7 +39,7 @@ public class Climb extends SubsystemBase {
     );
 
     private final double versaPlanetaryGearRatio = 1.0;
-    private final double climbGearRatio = 75.0/1.0;
+    private final double climbGearRatio = 25.0/1.0;
     private final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
 
     private ClimbArmSim climbSim;

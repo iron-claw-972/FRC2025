@@ -92,7 +92,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(outtake != null && elevator != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
         }
-        if(intake != null && indexer != null && elevator != null){
+        if(intake != null && indexer != null && outtake != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).onTrue(new ReverseMotors(intake, indexer, outtake));
         }
 
