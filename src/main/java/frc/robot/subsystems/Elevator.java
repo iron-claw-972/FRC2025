@@ -21,8 +21,6 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.trajectory.ExponentialProfile;
-import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
@@ -44,7 +42,6 @@ public class Elevator extends SubsystemBase {
   private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
-  private double prevSetpoint = ElevatorConstants.START_HEIGHT;
   private double maxVoltage = 6;
   // Sim variables
   private AngledElevatorSim sim;
