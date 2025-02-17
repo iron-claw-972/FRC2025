@@ -39,7 +39,7 @@ public class Climb extends SubsystemBase {
     );
 
     private final double versaPlanetaryGearRatio = 1.0;
-    private final double climbGearRatio = 25.0/1.0;
+    private final double climbGearRatio = 75.0/1.0;
     private final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
 
     private ClimbArmSim climbSim;
