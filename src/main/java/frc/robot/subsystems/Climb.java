@@ -48,6 +48,8 @@ public class Climb extends SubsystemBase {
 
     private double power;
 
+    private boolean resetting = false;
+
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
@@ -83,6 +85,11 @@ public class Climb extends SubsystemBase {
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
 
         power = pid.calculate(currentPosition);
+
+        if(resetting){
+            power = -0.01;
+        }
+
         motor.set(MathUtil.clamp(power, -0.1, 0.1));
 
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
@@ -132,5 +139,13 @@ public class Climb extends SubsystemBase {
      */
     public void climb(){
         setAngle(startingPosition);
+    }
+
+    public void reset(boolean resetting){
+        this.resetting = resetting;
+        if(!resetting){
+            motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
+            pid.reset();
+        }
     }
 }

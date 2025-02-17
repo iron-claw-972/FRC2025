@@ -18,6 +18,7 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
+import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
@@ -100,6 +101,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(climb != null){
             driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
                 .onFalse(new InstantCommand(()->climb.climb(), climb));
+            driver.get(PS5Button.PS).and(menu).whileTrue(new ResetClimb(climb));
         }
 
         // Alignment
