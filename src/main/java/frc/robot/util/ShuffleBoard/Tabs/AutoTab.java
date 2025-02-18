@@ -105,8 +105,8 @@ public class AutoTab extends ShuffleBoardTabs {
             e.printStackTrace();
         }
         autoCommand.addOption("potato", new PathPlannerAuto("Wait Test.auto"));
-
-        
+        autoCommand.addOption("RSide Command Grouped [1-3]", new PathPlannerAuto("RSide Command Grouped [1-3]"));
+        autoCommand.addOption("Command Grouped [1-5]", new PathPlannerAuto("Command Grouped [1-5]"));
         // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake,elevator))
