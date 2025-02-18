@@ -11,15 +11,33 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "OuttakeCoralBasic"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "P2"
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "P3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "OuttakeCoralBasic"
           }
         }
       ]
