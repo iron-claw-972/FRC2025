@@ -83,11 +83,11 @@ public class Climb extends SubsystemBase {
     public void periodic() { 
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
-
+        SmartDashboard.putNumber("climb current", motor.getTorqueCurrent().getValueAsDouble());
         power = pid.calculate(currentPosition);
 
         if(resetting){
-            power = -0.01;
+            power = -0.05;
         }
 
         motor.set(MathUtil.clamp(power, -0.1, 0.1));

@@ -135,13 +135,12 @@ public class Elevator extends SubsystemBase {
     LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
-    SmartDashboard.putNumber("setpoint", 0);
 
   }
 
   @Override
   public void periodic() {
-    setSetpoint(SmartDashboard.getNumber("setpoint", 0));
+    setSetpoint(setpoint);
 
     if(getSetpoint()==0 && atSetpoint()){
       return;
@@ -167,10 +166,10 @@ public class Elevator extends SubsystemBase {
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
     double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
-    SmartDashboard.putNumber("voltage", voltage);
-    SmartDashboard.putNumber("position", getPosition());
-    SmartDashboard.putNumber("rightmotor", rightMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("leftmotor", leftMotor.getPosition().getValueAsDouble());
+    //SmartDashboard.putNumber("voltage", voltage);
+    // SmartDashboard.putNumber("position", getPosition());
+    // SmartDashboard.putNumber("rightmotor", rightMotor.getPosition().getValueAsDouble());
+    // SmartDashboard.putNumber("leftmotor", leftMotor.getPosition().getValueAsDouble());
     if(nextVoltage<0){
       nextVoltage+=uff;
     }

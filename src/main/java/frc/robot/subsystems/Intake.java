@@ -78,9 +78,7 @@ public class Intake extends SubsystemBase {
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowMotor.setNeutralMode(NeutralModeValue.Brake);
         stowPID.setTolerance(positionTolerance);
-        SmartDashboard.putNumber("roller speed", 0);
         setAngle(startPosition);
-        SmartDashboard.putData("intake PID", stowPID);
     }
 
     /**
@@ -100,12 +98,13 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         if(stowPID.atSetpoint()){
+            power = 0;
             return;
         }
-        publish();
+        //publish();
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
-        power = MathUtil.clamp(power, -0.5, 0.5);
+        power = MathUtil.clamp(power, -0.3, 0.3);
         stowMotor.set(power);
         if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
@@ -218,7 +217,7 @@ public class Intake extends SubsystemBase {
     /**
      * Starts the motor.
      */
-    public void activate() {
-        rollerMotor.set(SmartDashboard.getNumber("roller speed", 0.05));
+    public void activate(){
+        rollerMotor.set(0.6);
     }
 }

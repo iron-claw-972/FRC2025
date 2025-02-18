@@ -46,12 +46,12 @@ public class Indexer extends SubsystemBase {
 
 		LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), LogLevel.DEBUG);
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
-		SmartDashboard.putNumber("indexer speed", 0);
+		//SmartDashboard.putNumber("indexer speed", 0);
 	}
 
 	/** Runs the indexer. */
 	public void run() {
-		motor.set(SmartDashboard.getNumber("indexer speed", 0.05));
+		motor.set(0.8);
 		simCoralPos = IndexerConstants.START_SIM_POS_AT;
 	}
 

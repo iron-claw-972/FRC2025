@@ -32,7 +32,7 @@ public class IdConstants {
 	public static final int INDEXER_SENSOR = 24;
 
     // Climb
-    public static final int CLIMB_MOTOR = 20;
+    public static final int CLIMB_MOTOR = 31;
 
     // Outtake
     /** CAN ID for the Alphabot's outake */
