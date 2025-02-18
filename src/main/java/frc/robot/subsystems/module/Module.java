@@ -307,8 +307,8 @@ public class Module extends SubsystemBase {
         driveMotor.getConfigurator().apply(new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
         driveMotor.setNeutralMode(DriveConstants.DRIVE_NEUTRAL_MODE);
         driveMotor.getConfigurator().apply(new MotionMagicConfigs().
-        withMotionMagicAcceleration(DriveConstants.MAX_LINEAR_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE).
-        withMotionMagicCruiseVelocity(DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE).
+        withMotionMagicAcceleration(DriveConstants.MAX_LINEAR_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE/DriveConstants.DRIVE_GEAR_RATIO).
+        withMotionMagicCruiseVelocity(DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE/DriveConstants.DRIVE_GEAR_RATIO).
         withMotionMagicJerk(1600).
         withMotionMagicExpo_kA(0).withMotionMagicExpo_kV(0));
 
