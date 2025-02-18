@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -75,6 +76,7 @@ public class Intake extends SubsystemBase {
                 DriverStation.reportError("LaserCan configuration error", true);
             }
         }
+        rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowMotor.setNeutralMode(NeutralModeValue.Brake);
         stowPID.setTolerance(positionTolerance);
@@ -84,6 +86,7 @@ public class Intake extends SubsystemBase {
     /**
      * publishes stuff to smartdashboard
      */
+    @SuppressWarnings("unused")
     private void publish() {
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
@@ -218,6 +221,6 @@ public class Intake extends SubsystemBase {
      * Starts the motor.
      */
     public void activate(){
-        rollerMotor.set(0.6);
+        rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
     }
 }
