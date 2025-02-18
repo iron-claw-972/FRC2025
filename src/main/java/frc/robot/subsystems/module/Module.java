@@ -307,7 +307,8 @@ public class Module extends SubsystemBase {
         driveMotor.getConfigurator().apply(new MotionMagicConfigs().
         withMotionMagicAcceleration(DriveConstants.MAX_LINEAR_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE).
         withMotionMagicCruiseVelocity(DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE).
-        withMotionMagicJerk(1600));
+        withMotionMagicJerk(1600).
+        withMotionMagicExpo_kA(0).withMotionMagicExpo_kV(0));
 
     }
 
