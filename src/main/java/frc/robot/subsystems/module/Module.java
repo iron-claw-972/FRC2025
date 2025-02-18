@@ -196,7 +196,7 @@ public class Module extends SubsystemBase {
             // duty cycle = voltage / battery voltage
             double nextVoltage = m_loop.getU(0);
             
-            driveMotor.setControl(velocityRequest.withVelocity(desiredState.speedMetersPerSecond/DriveConstants.WHEEL_CIRCUMFERENCE).withFeedForward(nextVoltage));
+            driveMotor.setControl(velocityRequest.withVelocity(desiredState.speedMetersPerSecond/DriveConstants.WHEEL_CIRCUMFERENCE/DriveConstants.DRIVE_GEAR_RATIO).withFeedForward(nextVoltage));
         }     
     }
 
