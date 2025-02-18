@@ -141,6 +141,13 @@ public class Climb extends SubsystemBase {
         setAngle(Units.rotationsToDegrees(climbPosition));
     }
 
+    /**
+     * Turns the motor to 0 degrees (climb position)
+     */
+    public void stow(){
+        setAngle(startingPosition);
+    }
+
     public void reset(boolean resetting){
         this.resetting = resetting;
         if(!resetting){

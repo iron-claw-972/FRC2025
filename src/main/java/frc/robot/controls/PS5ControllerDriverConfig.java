@@ -141,6 +141,9 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             if(indexer != null){
                 indexer.stop();
             }
+            if(climb != null){
+                climb.stow();
+            }
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
