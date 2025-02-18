@@ -6,10 +6,12 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -30,6 +32,9 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -66,6 +71,7 @@ public class Module extends SubsystemBase {
     private StatusSignal<Angle> CANangle;
 
     private ModuleConstants moduleConstants;
+    MotionMagicVelocityVoltage velocityRequest = new MotionMagicVelocityVoltage(0);
 
     private final LinearSystem<N1, N1, N1> m_driveMotor = LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60(1), DriveConstants.WHEEL_MOI, DriveConstants.DRIVE_GEAR_RATIO );
     
@@ -190,7 +196,7 @@ public class Module extends SubsystemBase {
             // duty cycle = voltage / battery voltage
             double nextVoltage = m_loop.getU(0);
             
-            driveMotor.setControl(new VoltageOut(nextVoltage));
+            driveMotor.setControl(velocityRequest.withVelocity(desiredState.speedMetersPerSecond/DriveConstants.WHEEL_CIRCUMFERENCE).withFeedForward(nextVoltage));
         }     
     }
 
@@ -298,7 +304,11 @@ public class Module extends SubsystemBase {
         driveMotor.getConfigurator().apply(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
         driveMotor.getConfigurator().apply(new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
         driveMotor.setNeutralMode(DriveConstants.DRIVE_NEUTRAL_MODE);
-        
+        driveMotor.getConfigurator().apply(new MotionMagicConfigs().
+        withMotionMagicAcceleration(DriveConstants.MAX_LINEAR_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE).
+        withMotionMagicCruiseVelocity(DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE).
+        withMotionMagicJerk(1600));
+
     }
 
     public SwerveModuleState getState() {
