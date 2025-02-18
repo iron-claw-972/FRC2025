@@ -76,7 +76,7 @@ public class RobotContainer {
         indexer = new Indexer();
         //outtake = new OuttakeComp();
         elevator = new Elevator();
-        //climb = new Climb();
+        climb = new Climb();
         //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
          SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
