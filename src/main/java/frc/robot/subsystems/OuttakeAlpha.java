@@ -20,6 +20,7 @@ public class OuttakeAlpha extends Outtake {
 
     private SparkFlex  motor = new SparkFlex(IdConstants.OUTTAKE_MOTOR_ALPHA, MotorType.kBrushless);
     private double power;
+    private int ticks = 0;
 
 
     /** Coral detected before the rollers */
@@ -29,8 +30,6 @@ public class OuttakeAlpha extends Outtake {
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
     private DIOSim dioInputEjecting;
 
-
-
     public OuttakeAlpha(){
         motor.configure(new SparkFlexConfig()
             .inverted(true)
@@ -38,6 +37,7 @@ public class OuttakeAlpha extends Outtake {
             ResetMode.kResetSafeParameters,
             PersistMode.kNoPersistParameters
         );
+
         if (RobotBase.isSimulation()){
             // object that will control the loaded sensor
             dioInputLoaded = new DIOSim(digitalInputLoaded);
@@ -49,7 +49,6 @@ public class OuttakeAlpha extends Outtake {
             dioInputEjecting.setValue(true);
         }
     }
-
 
     protected double getMotorSpeed(){
         return motor.get();
@@ -63,15 +62,33 @@ public class OuttakeAlpha extends Outtake {
 
     }
 
-
-    
-
-
+    @Override
+    public void simulationPeriodic() {
+        ticks++;
+        if (getMotorSpeed() > 0.05) {
+            if (ticks > 250) {
+                ticks = 0;
+            }
+            // motor is outtaking
+            // motor is spinning, ejecting will be true. after 0.14 seconds
+            if (ticks ==7) {
+                dioInputEjecting.setValue(false);
+            }
+            if (ticks == 14){
+                // after 0.14 seconds
+                dioInputLoaded.setValue(true);
+            }
+            if (ticks == 16){
+                // after 0.18 seconds
+                dioInputEjecting.setValue(true);
+            }   
+        }
+    }
+            
     /** Set the motor power to move the coral */
     public void setMotor(double power){
         this.power = power;
     }
-
 
     /** start spinning the rollers to eject the coral */
     public void outtake(){
@@ -81,11 +98,9 @@ public class OuttakeAlpha extends Outtake {
         // this starts the motor... what needs to be done later?
     }
 
-
     public boolean coralLoaded(){
        return !digitalInputLoaded.get();
     }
-
 
     /**
      *  Coral is at the ejecting beam break sensor.
@@ -95,13 +110,11 @@ public class OuttakeAlpha extends Outtake {
         return !digitalInputEjecting.get();
     }
 
-
     public void reverse(){
         setMotor(-0.2);
     }
 
-
-    public boolean isSimulation(){
-        return RobotBase.isSimulation();
+    public void fakeLoad() {
+        dioInputLoaded.setValue(false);
     }
 }
