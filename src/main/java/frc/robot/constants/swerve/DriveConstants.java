@@ -24,8 +24,7 @@ public class DriveConstants {
      */
     public static final double ROBOT_WIDTH_WITH_BUMPERS = Units.inchesToMeters(26.5 + 3.25 * 2);
 
-    //TODO update to actual values for each robot
-    public static double ROBOT_MASS = 23.36;
+    public static double ROBOT_MASS = 58;
 
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
@@ -99,7 +98,7 @@ public class DriveConstants {
     public static final double HEADING_TOLERANCE = Units.degreesToRadians(1.5);
 
     // Translational PID
-    // TODO: Tune this better
+    // TODO: Tune this better (low priority since we aren't using it in 2025)
     public static final double TRANSLATIONAL_P = 1;
     public static final double TRANSLATIONAL_D = 0.001;
 

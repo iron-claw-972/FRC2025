@@ -18,10 +18,12 @@ import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.RemoveAlgae;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
@@ -58,67 +60,81 @@ public class Operator {
     }
 
     public void configureControls() {
-        driver.get(Button.BACK).onTrue(new InstantCommand(()->{
-            if(elevator != null){
-                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
-            }
-            if(climb != null){
-                climb.climb();
-            }
-            CommandScheduler.getInstance().cancelAll();
-        }));
-
         Trigger menu = driver.get(Button.LEFT_JOY);
 
         // Elevator setpoints
-        if(elevator != null){
-            driver.get(Button.START).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-            driver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-            driver.get(Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-            getLeftTrigger().onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+        if(elevator != null && outtake != null) {
+            driver.get(Button.BACK).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
+            driver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
+            driver.get(Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
+            driver.get(driver.LEFT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
             driver.get(Button.Y).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
         }
 
         // Intake/outtake
+        Trigger r3 = driver.get(Button.RIGHT_JOY);
         if(intake != null && indexer != null && elevator != null){
-            driver.get(Button.A).and(menu.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
-            // TODO: temporary button
+            driver.get(Button.A).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
-            driver.get(Button.RIGHT_JOY).onTrue(startIntake)
+            driver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
                 .onFalse(new ConditionalCommand(
                     new InstantCommand(()->startIntake.cancel()),
                     new FinishStationIntake(intake, indexer, elevator),
                     startIntake::isScheduled
                 ));
         }
-        if(outtake != null && elevator != null){
-            driver.get(Button.RIGHT_JOY).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
-        }
         if(intake != null){
             driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
-            driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
+            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
         }
-        if(intake != null && outtake != null){
-            driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
+        if(outtake != null && elevator != null){
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+        }
+        if(intake != null && indexer != null && outtake != null){
+            driver.get(Button.B).and(menu.negate()).onTrue(new ReverseMotors(intake, indexer, outtake));
         }
 
         // Climb
         if(climb != null){
             driver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
                 .onFalse(new InstantCommand(()->climb.climb(), climb));
+            if(intake != null){
+                driver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(IntakeConstants.ALGAE_SETPOINT), intake));
+            }
         }
 
         // Alignment
         driver.get(Button.B).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 0));
-        driver.get(Button.RB).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 1));
         driver.get(Button.Y).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 2));
         driver.get(Button.X).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 3));
-        driver.get(DPad.DOWN).onTrue(new InstantCommand(()->alignmentDirection = 4));
+        driver.get(Button.RB).onTrue(new InstantCommand(()->alignmentDirection = 4));
         driver.get(DPad.UP).onTrue(new InstantCommand(()->alignmentDirection = 5));
         driver.get(DPad.LEFT).onTrue(new InstantCommand(()->setAlignmentPose(true)));
         driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->setAlignmentPose(false)));
+
+        // Cancel commands
+        driver.get(Button.START).onTrue(new InstantCommand(()->{
+            if(elevator != null){
+                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+            }
+            if(outtake != null){
+                outtake.stop();
+            }
+            if(intake != null){
+                intake.stow();
+                intake.deactivate();
+            }
+            if(indexer != null){
+                indexer.stop();
+            }
+            if(climb != null){
+                climb.stow();
+            }
+            drive.setDesiredPose(()->null);
+            CommandScheduler.getInstance().cancelAll();
+        }));
     }
 
     /**

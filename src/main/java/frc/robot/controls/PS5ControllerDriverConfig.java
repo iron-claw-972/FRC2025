@@ -126,8 +126,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI)
         )));
 
-        // Set the wheels to X
-        driver.get(PS5Button.TOUCHPAD).whileTrue(new InstantCommand(()->{
+        // Cancel commands
+        driver.get(PS5Button.TOUCHPAD).onTrue(new InstantCommand(()->{
             if(elevator != null){
                 elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
             }

@@ -26,7 +26,7 @@ public class Climb extends SubsystemBase {
     private static final double climbPosition = -2;
 
     //Motors
-    // TODO: tune better once design is finalized
+    // TODO: tune better on real robot
     private final PIDController pid = new PIDController(0.1, 0, 0.04);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
