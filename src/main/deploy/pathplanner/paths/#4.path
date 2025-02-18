@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.27,
-        "y": 5.385
+        "x": 4.0073368,
+        "y": 5.1909832
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.003680869841744,
-        "y": 5.563384035709858
+        "x": 3.741017669841744,
+        "y": 5.369367235709858
       },
       "isLocked": false,
       "linkedName": null
@@ -31,10 +31,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Wait",
+      "waypointRelativePos": 0.6859027205276177,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 127.66020142826963
   },
   "reversed": false,
   "folder": "Sequential Path",

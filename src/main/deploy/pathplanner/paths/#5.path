@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 3.2,
-        "y": 4.46
+        "x": 3.2385,
+        "y": 4.191
       },
       "prevControl": {
-        "x": 2.7940612415907378,
-        "y": 4.829448599221876
+        "x": 2.8325612415907377,
+        "y": 4.560448599221876
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,10 +47,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "OuttakeCoralBasic",
+      "waypointRelativePos": 1.6059356966199525,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -64,7 +71,7 @@
   "folder": "Sequential Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 127.79517871694718
   },
   "useDefaultConstraints": false
 }
