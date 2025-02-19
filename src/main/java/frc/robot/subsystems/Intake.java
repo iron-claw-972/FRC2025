@@ -1,5 +1,10 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -14,6 +19,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -48,6 +54,11 @@ public class Intake extends SubsystemBase {
                     / IntakeConstants.PIVOT_GEAR_RATIO * dcMotor.rOhms / dcMotor.KtNMPerAmp / Constants.ROBOT_VOLTAGE,
             0);
     private double startPosition = 90;
+    MotionMagicVoltage Velocity = new MotionMagicVoltage(90);
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+
+    private double setpoint = 90;
+
 
     public Intake() {
         if (RobotBase.isSimulation()) {
@@ -75,6 +86,30 @@ public class Intake extends SubsystemBase {
                 DriverStation.reportError("LaserCan configuration error", true);
             }
         }
+
+        
+        rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
+        var configs = stowMotor.getConfigurator();;
+        
+        var talonFXConfigs = new TalonFXConfiguration();
+
+        // set slot 0 gains
+        var slot0Configs = talonFXConfigs.Slot0;
+        slot0Configs.kS = 0; 
+        slot0Configs.kV = 0;
+        slot0Configs.kA = 0; 
+        slot0Configs.kP = 0.01; 
+        slot0Configs.kI = 0; 
+        slot0Configs.kD = 0; 
+
+        // set Motion Magic Velocity settings
+        var motionMagicConfigs = talonFXConfigs.MotionMagic;
+        motionMagicConfigs.MotionMagicAcceleration = 3200; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
+
+        stowMotor.getConfigurator().apply(talonFXConfigs);
+
+
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowMotor.setNeutralMode(NeutralModeValue.Brake);
         stowPID.setTolerance(positionTolerance);
@@ -105,7 +140,7 @@ public class Intake extends SubsystemBase {
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.3, 0.3);
-        stowMotor.set(power);
+        stowMotor.setControl(m_request.withPosition(setpoint).withFeedForward(feedforward.calculate(Units.degreesToRadians(position), 0)));
         if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
@@ -180,6 +215,7 @@ public class Intake extends SubsystemBase {
      * @param angle desired angle of the intake in degrees
      */
     public void setAngle(double angle) {
+        setpoint = angle;
         stowPID.setSetpoint(angle);
     }
 
