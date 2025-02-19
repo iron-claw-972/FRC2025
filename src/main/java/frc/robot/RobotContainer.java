@@ -71,6 +71,7 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
+      case BetaBot:
         // Our competition subsystems go here
         intake = new Intake();
         indexer = new Indexer();
