@@ -22,6 +22,6 @@ public class ResetClimb extends Command {
 
     @Override
     public boolean isFinished(){
-        return Math.abs(climb.getCurrent()) > 3.3;
+        return Math.abs(climb.getCurrent()) > 3.52;
     }
 }

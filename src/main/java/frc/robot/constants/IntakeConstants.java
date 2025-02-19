@@ -17,7 +17,7 @@ public class IntakeConstants {
     public static final double STOW_SETPOINT = 90;
     public static final double STATION_SETPOINT = 90;
 
-    public static final double ALGAE_SETPOINT = 30;
+    public static final double ALGAE_SETPOINT = 35;
     public static final double ALGAE_INTAKE_POWER = -0.5;
     public static final double ALGAE_OUTTAKE_POWER = 0.5;
 }

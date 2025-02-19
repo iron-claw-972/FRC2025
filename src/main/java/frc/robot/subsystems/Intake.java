@@ -78,7 +78,7 @@ public class Intake extends SubsystemBase {
         }
         rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
-        stowMotor.setNeutralMode(NeutralModeValue.Brake);
+        stowMotor.setNeutralMode(NeutralModeValue.Coast);
         stowPID.setTolerance(positionTolerance);
         setAngle(startPosition);
     }
@@ -100,20 +100,20 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(stowPID.atSetpoint()){
-            power = 0;
-            return;
-        }
+        // if(stowPID.atSetpoint()){
+        //     power = 0;
+        //     return;
+        // }
         //publish();
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.3, 0.3);
         stowMotor.set(power);
-        if (laserCan != null) {
-            Measurement measurement = laserCan.getMeasurement();
-            hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
-                    && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
-        }
+        // if (laserCan != null) {
+        //     Measurement measurement = laserCan.getMeasurement();
+        //     hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+        //             && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
+        // }
     }
 
     @Override

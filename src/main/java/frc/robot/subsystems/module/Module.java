@@ -128,7 +128,7 @@ public class Module extends SubsystemBase {
         steerAngle = angleMotor.getPosition();
         CANangle = CANcoder.getAbsolutePosition();
 
-        StatusSignal.setUpdateFrequencyForAll(500, drivePosition, driveVelocity, steerAngle);
+        StatusSignal.setUpdateFrequencyForAll(250, drivePosition, driveVelocity, steerAngle);
         StatusSignal.setUpdateFrequencyForAll(5, CANangle);
         
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));

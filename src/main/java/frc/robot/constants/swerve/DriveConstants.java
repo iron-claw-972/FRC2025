@@ -24,7 +24,7 @@ public class DriveConstants {
      */
     public static final double ROBOT_WIDTH_WITH_BUMPERS = Units.inchesToMeters(26.5 + 3.25 * 2);
 
-    public static double ROBOT_MASS = 58;
+    public static double ROBOT_MASS = 30;
 
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);

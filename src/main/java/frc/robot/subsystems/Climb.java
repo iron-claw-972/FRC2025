@@ -22,8 +22,8 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-    private static final double extendPosition = 1;
-    private static final double climbPosition = -1;
+    private static final double extendPosition = 1.6;
+    private static final double climbPosition = -0.5;
 
     //Motors
     // TODO: tune better on real robot
@@ -83,7 +83,7 @@ public class Climb extends SubsystemBase {
     public void periodic() { 
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
-        SmartDashboard.putNumber("climb current", motor.getTorqueCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("climb current", motor.getStatorCurrent().getValueAsDouble());
         power = pid.calculate(currentPosition);
 
         if(resetting){

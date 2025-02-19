@@ -9,7 +9,7 @@ public class OuttakeAlgae extends Command {
     private Intake intake;
 
     private final Timer timer = new Timer();
-    private final double EJECTION_TIME = 1.0;
+    private final double EJECTION_TIME = 1.5;
 
     public OuttakeAlgae(Intake intake) {
         this.intake = intake;
@@ -19,6 +19,7 @@ public class OuttakeAlgae extends Command {
     @Override
     public void initialize() {
         intake.setSpeed(IntakeConstants.ALGAE_OUTTAKE_POWER);
+        intake.setAngle(50);
         timer.restart();
     }
 
