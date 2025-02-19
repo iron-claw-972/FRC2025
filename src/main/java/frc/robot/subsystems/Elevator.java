@@ -42,7 +42,7 @@ public class Elevator extends SubsystemBase {
   private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
   private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
-  private DIOSim bottomLimitSwitchSim;
+  protected DIOSim bottomLimitSwitchSim;
   // TODO: Use or delete
   private boolean limitSwitchPressed = false;
 
@@ -55,10 +55,10 @@ public class Elevator extends SubsystemBase {
   private double setpoint = ElevatorConstants.START_HEIGHT;
 
   // Sim variables
-  private AngledElevatorSim sim;
+  protected AngledElevatorSim sim;
   private Mechanism2d mechanism;
   private MechanismLigament2d ligament;
-  private double voltage;
+  protected double voltage;
 
   private final TrapezoidProfile m_profile = new TrapezoidProfile(
       new TrapezoidProfile.Constraints(
@@ -165,8 +165,8 @@ public class Elevator extends SubsystemBase {
     double nextVoltage = m_loop.getU(0);
     SmartDashboard.putBoolean("bottom Sensor", getBottomLimitSwitch());
     SmartDashboard.putNumber("next voltage", nextVoltage);
-    SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("right motor encoder", rightMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("left motor encoder", getLeftEncoder());
+    SmartDashboard.putNumber("right motor encoder", getRightEncoder());
     SmartDashboard.putNumber("height", getPosition());
     set(nextVoltage);
   }
@@ -178,13 +178,24 @@ public class Elevator extends SubsystemBase {
     ligament.setLength(getPosition());
     bottomLimitSwitchSim.setValue(Math.abs(getPosition()
         - ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
-    rightMotor.getSimState().setRawRotorPosition(
+    setSimMotorPosition(
         sim.getPositionMeters() / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
   }
 
-  private void set(double volts) {
+  protected void setSimMotorPosition(double rotations){
+    rightMotor.getSimState().setRawRotorPosition(rotations);
+  }
+
+  protected void set(double volts) {
     rightMotor.setVoltage(volts);
     voltage = volts;
+  }
+
+  protected double getLeftEncoder(){
+    return leftMotor.getPosition().getValueAsDouble();
+  }
+  protected double getRightEncoder(){
+    return rightMotor.getPosition().getValueAsDouble();
   }
 
   public void resetEncoder(double height) {
@@ -196,7 +207,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getPosition() {
-    return rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
+    return getRightEncoder() / ElevatorConstants.GEARING
         * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
   }
 
@@ -251,5 +262,15 @@ public class Elevator extends SubsystemBase {
 
   public boolean isSimulation(){
     return RobotBase.isSimulation();
+  }
+
+  /**
+   * Closes the motors and sets them to null
+   */
+  public void deleteMotors(){
+    leftMotor.close();
+    rightMotor.close();
+    leftMotor = null;
+    rightMotor = null;
   }
 }

@@ -40,9 +40,9 @@ public class Climb extends SubsystemBase {
 
     private final double versaPlanetaryGearRatio = 1.0;
     private final double climbGearRatio = 75.0/1.0;
-    private final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
+    protected final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
 
-    private ClimbArmSim climbSim;
+    protected ClimbArmSim climbSim;
 
     private double power;
 
@@ -77,18 +77,17 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void periodic() { 
-        double motorPosition = motor.getPosition().getValueAsDouble();
+        double motorPosition = getMotorPosition();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
 
         power = pid.calculate(currentPosition);
-        motor.set(MathUtil.clamp(power, -1, 1));
+        setMotor(MathUtil.clamp(power, -1, 1));
 
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
         SmartDashboard.putNumber("Climb Position", getAngle());
 
-        SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Encoder Position", getMotorPosition());
     }
 
     @Override
@@ -98,6 +97,13 @@ public class Climb extends SubsystemBase {
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+    }
+
+    protected double getMotorPosition(){
+        return motor.getPosition().getValueAsDouble();
+    }
+    protected void setMotor(double power){
+        motor.set(power);
     }
 
     /**
@@ -114,7 +120,7 @@ public class Climb extends SubsystemBase {
      * @return The angle in degrees
      */
     public double getAngle() {
-        return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
+        return Units.rotationsToDegrees(getMotorPosition() / totalGearRatio);
     }
 
     /**
@@ -130,6 +136,14 @@ public class Climb extends SubsystemBase {
      */
     public void climb(){
         setAngle(startingPosition);
+    }
+
+    /**
+     * Closes the motor and sets it to null
+     */
+    protected void deleteMotor(){
+        motor.close();
+        motor = null;
     }
 
     public boolean isSimulation(){

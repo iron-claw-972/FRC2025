@@ -52,9 +52,9 @@ public class Module extends SubsystemBase {
     // Degrees
     private final double angleOffset;
 
-    private final TalonFX angleMotor;
-    private final TalonFX driveMotor;
-    private final CANcoder CANcoder;
+    private TalonFX angleMotor;
+    private TalonFX driveMotor;
+    private CANcoder CANcoder;
     private SwerveModuleState desiredState;
 
     protected boolean stateDeadband = true;
@@ -371,5 +371,22 @@ public class Module extends SubsystemBase {
             driveVelocity,
             steerAngle,
         };
+      }
+
+      /**
+       * Closes the motors and CANcoder and sets them to null
+       * Also deletes all status signals
+       */
+      protected void deleteMotors(){
+          drivePosition = null;
+          driveVelocity = null;
+          steerAngle = null;
+          CANangle = null;
+        driveMotor.close();
+        angleMotor.close();
+        CANcoder.close();
+        driveMotor = null;
+        angleMotor = null;
+        CANcoder = null;
       }
 }

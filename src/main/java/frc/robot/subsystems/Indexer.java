@@ -8,6 +8,7 @@ import au.grapplerobotics.interfaces.LaserCanInterface;
 import au.grapplerobotics.simulation.MockLaserCan;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
@@ -46,21 +47,25 @@ public class Indexer extends SubsystemBase {
 		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
 	}
 
+	protected void setMotor(double power){
+		motor.set(power);
+	}
+
 	/** Runs the indexer. */
 	public void run() {
-		motor.set(IndexerConstants.SPEED);
+		setMotor(IndexerConstants.SPEED);
 		simCoralPos = IndexerConstants.START_SIM_POS_AT;
 	}
 
 	/** Reverses the indexer. */
 	public void reverse() {
-		motor.set(-IndexerConstants.SPEED);
+		setMotor(-IndexerConstants.SPEED);
 		simCoralPos = IndexerConstants.END_SIM_SENSOR_POS_AT;
 	}
 
 	/** Stops the indexer */
 	public void stop() {
-		motor.stopMotor();
+		setMotor(0);
 	}
 
 	/**
@@ -96,13 +101,17 @@ public class Indexer extends SubsystemBase {
 		return getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
 	}
 
+	protected double getMotorSetpoint(){
+		return motor.get();
+	}
+
 	@Override
 	public void periodic() {
 	}
 
 	@Override
 	public void simulationPeriodic() {
-		flywheelSim.setInput(motor.get() * Constants.ROBOT_VOLTAGE);
+		flywheelSim.setInput(getMotorSetpoint() * Constants.ROBOT_VOLTAGE);
 		flywheelSim.update(Constants.LOOP_TIME);
 
 		// pretend we have a fake coral
@@ -117,6 +126,14 @@ public class Indexer extends SubsystemBase {
 								: 0,
 				1000 // IDK what this is exactly, but 1000 seems good
 		);
+	}
+
+	/**
+	 * Closes the motor and sets it to null
+	 */
+	protected void deleteMotor(){
+		motor.close();
+		motor = null;
 	}
 
 	public boolean isSimulation(){

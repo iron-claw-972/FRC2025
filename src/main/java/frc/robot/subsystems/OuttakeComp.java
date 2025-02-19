@@ -43,9 +43,13 @@ public class OuttakeComp extends Outtake {
 
     @Override
     public void periodic(){
-        motor.set(power);
+        setMotorPrivate(power);
         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
         SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+    }
+
+    protected void setMotorPrivate(double power){
+        motor.set(power);
     }
 
     /** Set the motor power to move the coral */
@@ -78,5 +82,13 @@ public class OuttakeComp extends Outtake {
 
     public void reverse(){
         setMotor(-0.2);
+    }
+
+    /**
+     * Closes the motor and sets it to null
+     */
+    protected void deleteMotor(){
+        motor.close();
+        motor = null;
     }
 }
