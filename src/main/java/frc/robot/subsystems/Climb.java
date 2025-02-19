@@ -22,7 +22,7 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-    private static final double spoolRotations = 1;
+    private static final double extendPosition = 1;
     private static final double climbPosition = -1;
 
     //Motors
@@ -130,7 +130,7 @@ public class Climb extends SubsystemBase {
      * Turns the motor to 90 degrees (extended positiion)
      */
     public void extend(){
-        double extendAngle = Units.rotationsToDegrees(spoolRotations);
+        double extendAngle = Units.rotationsToDegrees(extendPosition);
         setAngle(extendAngle);
     }
 
