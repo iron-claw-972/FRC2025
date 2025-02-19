@@ -22,8 +22,8 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-    private static final double spoolRotations = 3;
-    private static final double climbPosition = -2;
+    private static final double spoolRotations = 1;
+    private static final double climbPosition = -1;
 
     //Motors
     // TODO: tune better on real robot
@@ -87,7 +87,7 @@ public class Climb extends SubsystemBase {
         power = pid.calculate(currentPosition);
 
         if(resetting){
-            power = -0.05;
+            power = -0.1;
         }
 
         motor.set(MathUtil.clamp(power, -0.1, 0.1));
