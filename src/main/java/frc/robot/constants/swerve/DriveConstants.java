@@ -86,10 +86,10 @@ public class DriveConstants {
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-    public static double STEER_OFFSET_FRONT_LEFT = 193.884-180;
-    public static double STEER_OFFSET_FRONT_RIGHT = 110.914;
-    public static double STEER_OFFSET_BACK_LEFT = 128.054+180;
-    public static double STEER_OFFSET_BACK_RIGHT = 316.648-180;
+    public static double STEER_OFFSET_FRONT_LEFT = 0;
+    public static double STEER_OFFSET_FRONT_RIGHT = 0;
+    public static double STEER_OFFSET_BACK_LEFT = 0;
+    public static double STEER_OFFSET_BACK_RIGHT = 0;
 
     // Heading PID.
     public static final double HEADING_P = 5.5;
@@ -195,7 +195,12 @@ public class DriveConstants {
      * Updates the constants if the RobotId is not the competition robot.
      */
     public static void update(RobotId robotId) {
-        if (robotId == RobotId.Vivace) {
+        if(robotId == RobotId.BetaBot) {
+            STEER_OFFSET_FRONT_LEFT = 193.884-180;
+            STEER_OFFSET_FRONT_RIGHT = 110.914;
+            STEER_OFFSET_BACK_LEFT = 128.054+180;
+            STEER_OFFSET_BACK_RIGHT = 316.648-180;
+        } else if (robotId == RobotId.Vivace) {
             STEER_OFFSET_FRONT_LEFT = 100.184+180;
             STEER_OFFSET_FRONT_RIGHT = 224.293;
             STEER_OFFSET_BACK_LEFT = 304.795-180;
