@@ -156,4 +156,8 @@ public class Climb extends SubsystemBase {
             pid.reset();
         }
     }
+
+    public double getCurrent(){
+        return motor.getStatorCurrent().getValueAsDouble();
+    }
 }
