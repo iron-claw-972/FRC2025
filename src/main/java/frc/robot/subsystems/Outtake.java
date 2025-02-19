@@ -1,10 +1,5 @@
 package frc.robot.subsystems;
 
-
-
-
-
-import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,12 +11,11 @@ public class Outtake extends SubsystemBase {
     private boolean coralPresent = true;
     private double m_power = 0;
 
-    
     public void periodic(){
         // when coral is ejecting, loading is true & ejecting is true. when coral shoots out, loading is false & ejecting is false
         ticks++;
-        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+        //SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        //SmartDashboard.putBoolean("Coral ejected", coralEjecting());
         if (m_power > 0.05) {
             // 25 ticks is 500 miliseconds
             if (ticks == 25) {
@@ -29,7 +23,7 @@ public class Outtake extends SubsystemBase {
             }
         }
 
- }
+    }
 
     /** Set the motor power to move the coral */
     public void setMotor(double power) {
@@ -47,13 +41,14 @@ public class Outtake extends SubsystemBase {
      setMotor(0.2);  
      // start the counter 
      ticks = 0;
+     if (!coralPresent) {
+        ticks = 31;
+     }
     }
-
 
     public boolean coralLoaded() {
         return coralPresent;
     }
-
 
     /**
      *  Coral is at the ejecting beam break sensor.
@@ -76,5 +71,9 @@ public class Outtake extends SubsystemBase {
 
     public void fakeLoad() {
         coralPresent = true;
+    }
+
+    public void close() {
+
     }
 }

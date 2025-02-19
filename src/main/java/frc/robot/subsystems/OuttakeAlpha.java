@@ -19,7 +19,6 @@ import frc.robot.constants.IdConstants;
 public class OuttakeAlpha extends Outtake {
 
     private SparkFlex  motor = new SparkFlex(IdConstants.OUTTAKE_MOTOR_ALPHA, MotorType.kBrushless);
-    private double power;
     private int ticks = 0;
 
 
@@ -56,7 +55,6 @@ public class OuttakeAlpha extends Outtake {
 
     @Override
     public void periodic(){
-        motor.set(power);
         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
         SmartDashboard.putBoolean("Coral ejected", coralEjecting());
 
@@ -87,7 +85,7 @@ public class OuttakeAlpha extends Outtake {
             
     /** Set the motor power to move the coral */
     public void setMotor(double power){
-        this.power = power;
+        motor.set(power);
     }
 
     /** start spinning the rollers to eject the coral */
@@ -110,11 +108,13 @@ public class OuttakeAlpha extends Outtake {
         return !digitalInputEjecting.get();
     }
 
-    public void reverse(){
-        setMotor(-0.2);
-    }
-
     public void fakeLoad() {
         dioInputLoaded.setValue(false);
+    }
+
+    public void close() {
+        motor.close();
+        digitalInputLoaded.close();
+        digitalInputEjecting.close();
     }
 }
