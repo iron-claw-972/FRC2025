@@ -68,12 +68,12 @@ public class RobotContainer {
       case TestBed1:
         outtake = new OuttakeComp();
         SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
+        break;
 
 
       case TestBed2:
         outtake = new OuttakeComp();
         SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
-        
         break;
 
       default:
@@ -90,13 +90,15 @@ public class RobotContainer {
       case Vivace:
       case Phil:
         if (robotId == RobotId.Phil) {
-          outtake = new OuttakeComp();
+          outtake = new OuttakeAlpha();
         }
         if (outtake != null) {
           SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
           SmartDashboard.putData("Load coral", new InstantCommand(()->outtake.fakeLoad(), outtake));
           SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
         }
+        // fall-through
+        
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);

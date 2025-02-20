@@ -40,7 +40,6 @@ public class OuttakeComp extends Outtake {
             dioInputEjecting = new DIOSim(digitalInputEjecting);
             // assume coral is loaded
             dioInputLoaded.setValue(false);
-            System.out.println("setValue(true)");
             // we are not ejecting
             dioInputEjecting.setValue(true);
         }
@@ -78,7 +77,6 @@ public class OuttakeComp extends Outtake {
         setMotor(0.2);
         // this starts the motor... what needs to be done later?
         ticks = 0;
-        System.out.println("power " + motor.get());
     }
 
     @Override

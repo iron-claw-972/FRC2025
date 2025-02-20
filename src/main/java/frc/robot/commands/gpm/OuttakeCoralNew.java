@@ -6,6 +6,7 @@ import frc.robot.subsystems.Outtake;
 public class OuttakeCoralNew extends Command {
     private Outtake outtake;
     public OuttakeCoralNew(Outtake outtake) {
+        addRequirements(outtake);
         this.outtake = outtake;
     }
 
