@@ -50,6 +50,8 @@ public class Intake extends SubsystemBase {
             0);
     private double startPosition = 90;
 
+    private boolean laserCanEnabled = false;
+
     public Intake() {
         if (RobotBase.isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
@@ -100,20 +102,16 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // if(stowPID.atSetpoint()){
-        //     power = 0;
-        //     return;
-        // }
         //publish();
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.3, 0.3);
         stowMotor.set(power);
-        // if (laserCan != null) {
-        //     Measurement measurement = laserCan.getMeasurement();
-        //     hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
-        //             && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
-        // }
+        if (laserCanEnabled && laserCan != null) {
+            Measurement measurement = laserCan.getMeasurement();
+            hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+                    && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
+        }
     }
 
     @Override
@@ -222,5 +220,9 @@ public class Intake extends SubsystemBase {
      */
     public void activate(){
         rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
+    }
+
+    public void enableLaserCan(boolean enabled){
+        laserCanEnabled = enabled;
     }
 }

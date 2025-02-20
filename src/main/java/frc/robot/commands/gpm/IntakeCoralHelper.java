@@ -30,6 +30,7 @@ public class IntakeCoralHelper extends Command {
 		intake.activate();
 		intake.unstow();
 		phase = Phase.Acquiring;
+		intake.enableLaserCan(true);
 	}
 
 	@Override
@@ -70,5 +71,6 @@ public class IntakeCoralHelper extends Command {
 		intake.deactivate();
 		intake.stow();
 		indexer.stop();
+		intake.enableLaserCan(false);
 	}
 }

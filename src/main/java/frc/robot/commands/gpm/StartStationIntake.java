@@ -15,7 +15,8 @@ public class StartStationIntake extends Command {
     @Override
     public void initialize() {
         intake.setAngle(IntakeConstants.STATION_SETPOINT);
-        intake.activate();
+        intake.setSpeed(0.1);
+        intake.enableLaserCan(true);
     }
 
     @Override
@@ -27,5 +28,6 @@ public class StartStationIntake extends Command {
     public void end(boolean interrupted) {
         intake.deactivate();
         intake.stow();
+        intake.enableLaserCan(false);
     }
 }
