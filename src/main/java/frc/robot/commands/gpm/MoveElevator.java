@@ -26,7 +26,7 @@ public class MoveElevator extends Command {
     /**
      * Sets the elevator setpoint
      */
-    @Override
+    // @Override
     public void initialize2() {
         elevator.setSetpoint(setpoint);
     }
