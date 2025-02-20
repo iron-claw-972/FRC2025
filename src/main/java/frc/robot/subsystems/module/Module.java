@@ -378,13 +378,11 @@ public class Module extends SubsystemBase {
        * Also deletes all status signals
        */
       protected void deleteMotors(){
-          drivePosition = null;
-          driveVelocity = null;
-          steerAngle = null;
-          CANangle = null;
-        driveMotor.close();
-        angleMotor.close();
-        CANcoder.close();
+        drivePosition = null;
+        driveVelocity = null;
+        steerAngle = null;
+        CANangle = null;
+        close();
         driveMotor = null;
         angleMotor = null;
         CANcoder = null;

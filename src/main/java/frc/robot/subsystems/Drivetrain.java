@@ -70,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
     // Vision
     private final Vision vision;
 
-    private final Pigeon2 pigeon;
+    private Pigeon2 pigeon;
 
     // PID Controllers for chassis movement
     private final PIDController xController;
@@ -156,7 +156,7 @@ public class Drivetrain extends SubsystemBase {
         pigeon.setYaw(DriveConstants.STARTING_HEADING.getDegrees());
         poseEstimator = new SwerveDrivePoseEstimator(
                 DriveConstants.KINEMATICS,
-                Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
+                Rotation2d.fromDegrees(getPigeonYaw()),
                 updateModulePositions(),
                 new Pose2d(),
                 // Defaults, except trust pigeon more
@@ -212,6 +212,11 @@ public class Drivetrain extends SubsystemBase {
         for (int i = 0; i < modules.length; i++) {
             modules[i].close();
         }
+    }
+
+    protected void deletePigeon(){
+        pigeon.close();
+        pigeon = null;
     }
 
     @Override
@@ -283,7 +288,7 @@ public class Drivetrain extends SubsystemBase {
         synchronized(this){
             // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
             // Also stores the current pose in the buffer
-            poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), updateModulePositions()));
+            poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(Rotation2d.fromDegrees(getPigeonYaw()), updateModulePositions()));
         }
     }
 
@@ -339,10 +344,16 @@ public class Drivetrain extends SubsystemBase {
         }
 
         if (isSimulation()) {
-            pigeon.getSimState().addYaw(
-                    +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
+            addSimYaw(Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
         }
     }
+
+    protected double getPigeonYaw(){
+        return pigeon.getYaw().getValueAsDouble();
+    }
+    protected void addSimYaw(double yaw){
+        pigeon.getSimState().addYaw(yaw);
+}
 
     /**
      * Stops all swerve modules.
@@ -524,7 +535,7 @@ public class Drivetrain extends SubsystemBase {
     public synchronized void resetOdometry(Pose2d pose) {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
-        poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
+        poseEstimator.resetPosition(Rotation2d.fromDegrees(getPigeonYaw()), getModulePositions(), pose);
         modulePoses.reset();
     }
 
