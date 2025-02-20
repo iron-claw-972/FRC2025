@@ -66,9 +66,14 @@ public class RobotContainer {
     switch (robotId) {
 
       case TestBed1:
-        break;
+        outtake = new OuttakeComp();
+        SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
+
 
       case TestBed2:
+        outtake = new OuttakeComp();
+        SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
+        
         break;
 
       default:
@@ -89,7 +94,7 @@ public class RobotContainer {
         }
         if (outtake != null) {
           SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
-          SmartDashboard.putData("Load coral", new InstantCommand(()->outtake.fakeLoad()));
+          SmartDashboard.putData("Load coral", new InstantCommand(()->outtake.fakeLoad(), outtake));
           SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
         }
       case Vertigo:

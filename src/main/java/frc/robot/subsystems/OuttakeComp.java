@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -11,7 +15,7 @@ import frc.robot.constants.IdConstants;
 public class OuttakeComp extends Outtake {
 
     private int ticks = 0;
-    private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP);
+    private TalonFX motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP);
 
     /** Coral detected before the rollers */
     private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
@@ -22,6 +26,11 @@ public class OuttakeComp extends Outtake {
 
     public OuttakeComp(){
         // TODO: configure Kraken
+        var talonFXConfigurator = motor.getConfigurator();
+        var motorConfigs = new MotorOutputConfigs();
+        // set invert to CW+ and apply config change
+        motorConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        talonFXConfigurator.apply(motorConfigs);   
 
         // build simulation
         if (RobotBase.isSimulation()){
@@ -30,7 +39,7 @@ public class OuttakeComp extends Outtake {
             // object that will control the ejecting sensor
             dioInputEjecting = new DIOSim(digitalInputEjecting);
             // assume coral is loaded
-            dioInputLoaded.setValue(true);
+            dioInputLoaded.setValue(false);
             System.out.println("setValue(true)");
             // we are not ejecting
             dioInputEjecting.setValue(true);
@@ -39,8 +48,8 @@ public class OuttakeComp extends Outtake {
 
     @Override
     public void periodic(){
-        SmartDashboard.putBoolean("XCoral loaded", coralLoaded());
-        SmartDashboard.putBoolean("XCoral ejected", coralEjecting());
+        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
 
         if (motor.get() > 0.05) {
             ticks++;
@@ -50,7 +59,7 @@ public class OuttakeComp extends Outtake {
     @Override
     public void simulationPeriodic() {
         // after 600 milliseconds, no longer loaded
-        if (ticks >= 30) {
+        if (ticks == 30) {
             // coral is no longer seen by the loaded sensor
             dioInputLoaded.setValue(true);
         }
@@ -87,6 +96,13 @@ public class OuttakeComp extends Outtake {
 
     public boolean isFinished() {
         return ticks > 50;
+    }
+
+    public void fakeLoad() {
+        if (RobotBase.isSimulation()) {
+            // loads the coral
+            dioInputLoaded.setValue(false);
+        }
     }
 
     public void close() {

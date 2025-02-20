@@ -14,15 +14,14 @@ public class Outtake extends SubsystemBase {
     public void periodic(){
         // when coral is ejecting, loading is true & ejecting is true. when coral shoots out, loading is false & ejecting is false
         ticks++;
-        //SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-        //SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
         if (m_power > 0.05) {
             // 25 ticks is 500 miliseconds
             if (ticks == 25) {
                 coralPresent = false;
             }
         }
-
     }
 
     /** Set the motor power to move the coral */
