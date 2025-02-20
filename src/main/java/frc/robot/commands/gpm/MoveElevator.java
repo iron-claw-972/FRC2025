@@ -6,6 +6,7 @@ import frc.robot.subsystems.Elevator;
 /**
  * Moves the elevator to a position
  */
+//TODO: This won't work right now
 public class MoveElevator extends Command {
     private Elevator elevator;
     private double setpoint;
@@ -19,14 +20,14 @@ public class MoveElevator extends Command {
     public MoveElevator(Elevator elevator, double setpoint) {
         this.elevator = elevator;
         this.setpoint = setpoint;
-        addRequirements(elevator);
+        // addRequirements(elevator);
     }
 
     /**
      * Sets the elevator setpoint
      */
     @Override
-    public void initialize() {
+    public void initialize2() {
         elevator.setSetpoint(setpoint);
     }
 
@@ -38,6 +39,7 @@ public class MoveElevator extends Command {
      */
     @Override
     public boolean isFinished() {
-        return elevator.atSetpoint();
+        return true;
+        // return elevator.atSetpoint();
     }
 }
