@@ -28,6 +28,9 @@ public class ModuleSim extends Module {
 
     public ModuleSim(ModuleConstants ignored) {
         super(ignored);
+        
+        // Prevent CAN errors
+        deleteMotors();
     }
 
     /**

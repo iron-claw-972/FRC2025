@@ -26,8 +26,8 @@ import frc.robot.constants.IdConstants;
 import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
-    private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-    private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
+    private TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
+    private TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
 
     private LaserCan laserCan;
     private boolean hasCoral = false;
-    private boolean isMoving = false;
+    protected boolean isMoving = false;
     private Timer laserCanSimTimer;
     private DCMotor dcMotor = DCMotor.getKrakenX60(1);
     private ArmFeedforward feedforward = new ArmFeedforward(0,
@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
     private double startPosition = 90;
 
     public Intake() {
-        if (RobotBase.isSimulation()) {
+        if (isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
             stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5)
                     .append(new MechanismLigament2d("Intake", 4, startPosition));
@@ -83,14 +83,17 @@ public class Intake extends SubsystemBase {
      * publishes stuff to smartdashboard
      */
     private void publish() {
+        if(!isSimulation()){
+            // This value doesn't work and doesn't matter on sim
+            SmartDashboard.putNumber("Roller Motor Power", rollerMotor.get());
+        }
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
-        SmartDashboard.putNumber("Roller Motor Power", rollerMotor.get());
 
         SmartDashboard.putBoolean("Has Coral", hasCoral());
         SmartDashboard.putBoolean("Stow Arm Sim - Is Stowed", isAtSetpoint(90));
         SmartDashboard.putBoolean("Stow Arm Sim - Is Unstowed", isAtSetpoint(0));
-        SmartDashboard.putBoolean("Is Roller Active", rollerMotor.get() > 0);
+        SmartDashboard.putBoolean("Is Roller Active", isMoving);
     }
 
     @Override
@@ -99,7 +102,7 @@ public class Intake extends SubsystemBase {
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.2, 0.2);
-        stowMotor.set(power);
+        setStowMotor(power);
         if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
             hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
@@ -124,13 +127,17 @@ public class Intake extends SubsystemBase {
         }
     }
 
+    protected void setStowMotor(double power){
+        stowMotor.set(power);
+    }
+
     /**
      * Gets the rotation of the intake.
      * 
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        if(RobotBase.isSimulation()) {
+        if(isSimulation()) {
             return Units.radiansToDegrees(stowArmSim.getAngleRads());
         } else {
             return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
@@ -184,7 +191,7 @@ public class Intake extends SubsystemBase {
      */
     public void setSpeed(double power) {
         rollerMotor.set(power);
-        isMoving = Math.abs(power) < 0.01;
+        isMoving = Math.abs(power) > 0.01;
     }
 
     /**
@@ -205,13 +212,27 @@ public class Intake extends SubsystemBase {
      * Stops the motor.
      */
     public void deactivate() {
-        rollerMotor.set(0);
+        setSpeed(0);
     }
 
     /**
      * Starts the motor.
      */
     public void activate() {
-        rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
+        setSpeed(IntakeConstants.INTAKE_MOTOR_POWER);
+    }
+
+    /**
+     * Closes the motors and sets them to null
+     */
+    protected void deleteMotors(){
+        stowMotor.close();
+        rollerMotor.close();
+        stowMotor = null;
+        rollerMotor = null;
+    }
+
+    public boolean isSimulation(){
+        return RobotBase.isSimulation();
     }
 }

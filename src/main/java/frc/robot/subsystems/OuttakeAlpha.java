@@ -10,7 +10,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.IdConstants;
@@ -28,7 +27,6 @@ public class OuttakeAlpha extends Outtake {
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
 
 
-
     public OuttakeAlpha(){
         motor.configure(new SparkFlexConfig()
             .inverted(true)
@@ -36,7 +34,7 @@ public class OuttakeAlpha extends Outtake {
             ResetMode.kResetSafeParameters,
             PersistMode.kNoPersistParameters
         );
-        if (RobotBase.isSimulation()){
+        if (isSimulation()){
             // object that will control the loaded sensor
             dioInputLoaded = new DIOSim(digitalInputLoaded);
             // object that will control the ejecting sensor
@@ -96,10 +94,5 @@ public class OuttakeAlpha extends Outtake {
 
     public void reverse(){
         setMotor(-0.2);
-    }
-
-
-    public boolean isSimulation(){
-        return RobotBase.isSimulation();
     }
 }

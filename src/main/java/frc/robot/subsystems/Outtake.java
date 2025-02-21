@@ -1,11 +1,7 @@
 package frc.robot.subsystems;
 
-
-
-
-
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -73,6 +69,9 @@ public abstract class Outtake extends SubsystemBase {
      */
     public abstract boolean coralEjecting();
 
-
     public abstract void reverse();
+
+    public boolean isSimulation(){
+        return RobotBase.isSimulation();
+    }
 }

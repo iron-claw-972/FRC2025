@@ -5,7 +5,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.IdConstants;
@@ -16,7 +15,6 @@ public class OuttakeComp extends Outtake {
     private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP );
     private double power;
 
-
     /** Coral detected before the rollers */
     private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
     /** Coral detected after the rollers */
@@ -26,7 +24,7 @@ public class OuttakeComp extends Outtake {
         // TODO: configure Kraken
 
         // build simulation
-        if (RobotBase.isSimulation()){
+        if (isSimulation()){
             // object that will control the loaded sensor
             dioInputLoaded = new DIOSim(digitalInputLoaded);
             // object that will control the ejecting sensor
@@ -45,9 +43,13 @@ public class OuttakeComp extends Outtake {
 
     @Override
     public void periodic(){
-        motor.set(power);
+        setMotorPrivate(power);
         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
         SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+    }
+
+    protected void setMotorPrivate(double power){
+        motor.set(power);
     }
 
     /** Set the motor power to move the coral */
@@ -82,8 +84,11 @@ public class OuttakeComp extends Outtake {
         setMotor(-0.2);
     }
 
-
-    public boolean isSimulation(){
-        return RobotBase.isSimulation();
+    /**
+     * Closes the motor and sets it to null
+     */
+    protected void deleteMotor(){
+        motor.close();
+        motor = null;
     }
 }

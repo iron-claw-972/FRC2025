@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.VisionConstants;
-import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.util.LogManager;
 
 /**
@@ -42,10 +41,12 @@ public class Robot extends TimedRobot {
         //     changes networktables.json, networktables.json.bck (both Untracked)
         //   Uncomment the next line, set the desired RobotId, deploy, and then comment the line out
         //RobotId.setRobotId(RobotId.SwerveCompetition);
-        DriveConstants.update(RobotId.getRobotId());
-        RobotController.setBrownoutVoltage(6);
+
         // obtain this robot's identity
         RobotId robotId = RobotId.getRobotId();
+
+        // Lower brownout voltage to prevent brownouts
+        RobotController.setBrownoutVoltage(6);
 
         // build the RobotContainer with the robot id from preferences
         robotContainer = new RobotContainer(robotId);

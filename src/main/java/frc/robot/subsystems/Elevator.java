@@ -41,10 +41,8 @@ public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
   private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
-  private DigitalInput topLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_TOP_LIMIT_SWITCH);
   private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
-  private DIOSim topLimitSwitchSim;
-  private DIOSim bottomLimitSwitchSim;
+  protected DIOSim bottomLimitSwitchSim;
   // TODO: Use or delete
   private boolean limitSwitchPressed = false;
 
@@ -57,10 +55,10 @@ public class Elevator extends SubsystemBase {
   private double setpoint = ElevatorConstants.START_HEIGHT;
 
   // Sim variables
-  private AngledElevatorSim sim;
+  protected AngledElevatorSim sim;
   private Mechanism2d mechanism;
   private MechanismLigament2d ligament;
-  private double voltage;
+  protected double voltage;
 
   private final TrapezoidProfile m_profile = new TrapezoidProfile(
       new TrapezoidProfile.Constraints(
@@ -110,7 +108,7 @@ public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   public Elevator() {
     // Left motor follows right motor in the opposite direction
-    if (!RobotBase.isSimulation()){
+    if (!isSimulation()){
       leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
       rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     }
@@ -118,7 +116,7 @@ public class Elevator extends SubsystemBase {
 
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
-    if (RobotBase.isSimulation()) {
+    if (isSimulation()) {
       sim = new AngledElevatorSim(ElevatorConstants.MOTOR, ElevatorConstants.GEARING, ElevatorConstants.CARRIAGE_MASS,
         ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true,
         ElevatorConstants.START_HEIGHT, ElevatorConstants.ANGLE, ElevatorConstants.SPRING_FORCE);
@@ -129,8 +127,9 @@ public class Elevator extends SubsystemBase {
       ligament = mechanism.getRoot("base", size / 2 - width / 2, size / 2 - height / 2).append(new MechanismLigament2d(
         "elevator", ElevatorConstants.START_HEIGHT, 90 - Units.radiansToDegrees(Math.abs(ElevatorConstants.ANGLE))));
 
-      topLimitSwitchSim = new DIOSim(topLimitSwitch);
       bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
+      bottomLimitSwitchSim.setValue(Math.abs(ElevatorConstants.START_HEIGHT
+        - ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
     }
     Timer.delay(1.0);
     m_loop.reset(VecBuilder.fill(getPosition(), 0));
@@ -165,10 +164,9 @@ public class Elevator extends SubsystemBase {
     // duty cycle = voltage / battery voltage
     double nextVoltage = m_loop.getU(0);
     SmartDashboard.putBoolean("bottom Sensor", getBottomLimitSwitch());
-    SmartDashboard.putBoolean("top sensor", getTopLimitSwitch());
     SmartDashboard.putNumber("next voltage", nextVoltage);
-    SmartDashboard.putNumber("left motor encoder", leftMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("right motor encoder", rightMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("left motor encoder", getLeftEncoder());
+    SmartDashboard.putNumber("right motor encoder", getRightEncoder());
     SmartDashboard.putNumber("height", getPosition());
     set(nextVoltage);
   }
@@ -178,29 +176,38 @@ public class Elevator extends SubsystemBase {
     sim.setInputVoltage(voltage);
     sim.update(Constants.LOOP_TIME);
     ligament.setLength(getPosition());
-    topLimitSwitchSim.setValue(Math.abs(getPosition()
-        - ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
     bottomLimitSwitchSim.setValue(Math.abs(getPosition()
         - ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
-    rightMotor.getSimState().setRawRotorPosition(
+    setSimMotorPosition(
         sim.getPositionMeters() / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
   }
 
-  private void set(double volts) {
+  protected void setSimMotorPosition(double rotations){
+    rightMotor.getSimState().setRawRotorPosition(rotations);
+  }
+
+  protected void set(double volts) {
     rightMotor.setVoltage(volts);
     voltage = volts;
+  }
+
+  protected double getLeftEncoder(){
+    return leftMotor.getPosition().getValueAsDouble();
+  }
+  protected double getRightEncoder(){
+    return rightMotor.getPosition().getValueAsDouble();
   }
 
   public void resetEncoder(double height) {
     // Without the if statement, this causes loop overruns in simulation, and this
     // code does nothing anyway on sim (it sets the position to itself)
-    if (RobotBase.isReal()) {
+    if (!isSimulation()) {
       rightMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
     }
   }
 
   public double getPosition() {
-    return rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
+    return getRightEncoder() / ElevatorConstants.GEARING
         * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
   }
 
@@ -219,10 +226,6 @@ public class Elevator extends SubsystemBase {
     return !bottomLimitSwitch.get();
   }
 
-  public boolean getTopLimitSwitch() {
-    return !topLimitSwitch.get();
-  }
-
   public void setSetpoint(double setpoint) {
     this.setpoint = MathUtil.clamp(setpoint, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT);
   }
@@ -237,9 +240,6 @@ public class Elevator extends SubsystemBase {
 
   /**
    * Starts the elevator calibration.
-   * <p>
-   * Note: The elevator will probably break if the code is deployed and enabled
-   * when the elvator is above the top limit switch
    * @deprecated Currently not supported
    */
   @Deprecated
@@ -247,7 +247,7 @@ public class Elevator extends SubsystemBase {
     calibrated = false;
     start = getPosition();
     // This prevents it from breaking on a second calibration
-    movingUp = start <= ElevatorConstants.TOP_LIMIT_SWITCH_HEIGHT;
+    movingUp = true;
     // If it is already at the limit switch, it can reset the encoder
     limitSwitchPressed = false;
   }
@@ -258,5 +258,19 @@ public class Elevator extends SubsystemBase {
 
   public double getCenterOfMassHeight(){
     return (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
+  }
+
+  public boolean isSimulation(){
+    return RobotBase.isSimulation();
+  }
+
+  /**
+   * Closes the motors and sets them to null
+   */
+  public void deleteMotors(){
+    leftMotor.close();
+    rightMotor.close();
+    leftMotor = null;
+    rightMotor = null;
   }
 }
