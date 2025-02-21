@@ -20,15 +20,19 @@ public class MoveElevator extends Command {
     public MoveElevator(Elevator elevator, double setpoint) {
         this.elevator = elevator;
         this.setpoint = setpoint;
-        // addRequirements(elevator);
+        if(elevator != null){
+            addRequirements(elevator);
+        }
     }
 
     /**
      * Sets the elevator setpoint
      */
-    // @Override
-    public void initialize2() {
-        elevator.setSetpoint(setpoint);
+    @Override
+    public void initialize() {
+        if(elevator != null){
+            elevator.setSetpoint(setpoint);
+        }
     }
 
     /**
@@ -39,7 +43,6 @@ public class MoveElevator extends Command {
      */
     @Override
     public boolean isFinished() {
-        return true;
-        // return elevator.atSetpoint();
+        return elevator == null || elevator.atSetpoint();
     }
 }

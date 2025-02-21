@@ -74,14 +74,14 @@ public class Operator {
         // Intake/outtake
         Trigger r3 = driver.get(Button.RIGHT_JOY);
         if(intake != null && indexer != null){// && elevator != null){
-            driver.get(Button.A).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator));
+            driver.get(Button.A).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator, outtake));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
             driver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
                 .onFalse(new ConditionalCommand(
                     new InstantCommand(()->startIntake.cancel()),
-                    new FinishStationIntake(intake, indexer, elevator),
+                    new FinishStationIntake(intake, indexer, elevator, outtake),
                     startIntake::isScheduled
                 ));
         }

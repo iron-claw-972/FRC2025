@@ -7,14 +7,15 @@ import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Outtake;
 
 public class FinishStationIntake extends SequentialCommandGroup {
-    public FinishStationIntake(Intake intake, Indexer indexer, Elevator elevator) {
+    public FinishStationIntake(Intake intake, Indexer indexer, Elevator elevator, Outtake outtake) {
         addCommands(
             new InstantCommand(()-> intake.unstow(), intake),
             new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
             new WaitUntilCommand(() -> intake.isAtSetpoint()),
-            new IntakeCoralHelper(intake, indexer)
+            new IntakeCoralHelper(intake, indexer, outtake)
         );
     }
 }
