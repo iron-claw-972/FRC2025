@@ -93,7 +93,6 @@ public class OuttakeCoralBasic extends Command {
             }
             break;
 
-
             case REVERSING:
             // waiting for ejected to be false
             if (!outtake.coralEjecting()){

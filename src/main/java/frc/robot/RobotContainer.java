@@ -21,6 +21,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
+import frc.robot.subsystems.OuttakeAlphaNew;
 import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
@@ -91,7 +92,7 @@ public class RobotContainer {
       case Vivace:
       case Phil:
         if (robotId == RobotId.Phil) {
-          outtake = new OuttakeComp();
+          outtake = new OuttakeAlphaNew();
         }
         if (outtake != null) {
           SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
