@@ -15,7 +15,7 @@ public class IntakeConstants {
     public static final double INTAKE_MOTOR_POWER = 0.6;
     public static final double INTAKE_SETPOINT = -30;
     public static final double STOW_SETPOINT = 90;
-    public static final double STATION_SETPOINT = 90;
+    public static final double STATION_SETPOINT = 75;
 
     public static final double ALGAE_SETPOINT = 30;
     public static final double ALGAE_INTAKE_POWER = -0.5;
