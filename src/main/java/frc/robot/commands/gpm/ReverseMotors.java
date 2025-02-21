@@ -18,23 +18,20 @@ public class ReverseMotors extends Command {
         this.intake = intake;
         this.indexer = indexer;
         this.outtake = outtake;
-        addRequirements(intake, indexer, outtake);
+        addRequirements(intake, indexer);
+        if(outtake != null){
+            addRequirements(outtake);
+        }
     }
 
     @Override
     public void initialize() {
         intake.setSpeed(-.5);
         indexer.reverse();
-        outtake.reverse();
-        timer.reset();
-        timer.start();
-    }
-
-    @Override
-    public void execute() {
-        if (timer.hasElapsed(EJECTION_TIME)) {
-            intake.deactivate();
+        if(outtake != null){
+            outtake.reverse();
         }
+        timer.restart();
     }
 
     @Override
@@ -46,6 +43,8 @@ public class ReverseMotors extends Command {
     public void end(boolean interrupted) {
         intake.deactivate();
         indexer.stop();
-        outtake.stop();;
+        if(outtake != null){
+            outtake.stop();;
+        }
     }
 }

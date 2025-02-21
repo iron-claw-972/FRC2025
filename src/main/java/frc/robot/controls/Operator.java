@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
@@ -78,12 +77,15 @@ public class Operator {
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
+            Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
             driver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
-                .onFalse(new ConditionalCommand(
-                    new InstantCommand(()->startIntake.cancel()),
-                    new FinishStationIntake(intake, indexer, elevator, outtake),
-                    startIntake::isScheduled
-                ));
+                .onFalse(new InstantCommand(()->{
+                    if(!startIntake.isScheduled()){
+                        finishIntake.schedule();
+                    }else{
+                        startIntake.cancel();
+                    }
+            }));
         }
         if(intake != null){
             driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
@@ -92,7 +94,7 @@ public class Operator {
         if(outtake != null && elevator != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
         }
-        if(intake != null && indexer != null && outtake != null){
+        if(intake != null && indexer != null){
             driver.get(Button.B).and(menu.negate()).onTrue(new ReverseMotors(intake, indexer, outtake));
         }
 
