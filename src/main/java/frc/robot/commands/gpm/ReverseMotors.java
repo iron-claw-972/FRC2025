@@ -10,9 +10,6 @@ public class ReverseMotors extends Command {
     private Intake intake;
     private Indexer indexer;
     private Outtake outtake;
-    private final Timer timer = new Timer();
-
-    private static final double EJECTION_TIME = 5.0;
 
     public ReverseMotors(Intake intake, Indexer indexer, Outtake outtake) {
         this.intake = intake;
@@ -31,12 +28,11 @@ public class ReverseMotors extends Command {
         if(outtake != null){
             outtake.reverse();
         }
-        timer.restart();
     }
 
     @Override
     public boolean isFinished() {
-        return timer.hasElapsed(EJECTION_TIME);
+        return false;
     }
 
     @Override
