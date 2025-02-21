@@ -58,7 +58,6 @@ public class Outtake extends SubsystemBase {
         return ticks > 20 && ticks < 30;
     }
 
-
     public void reverse() {
         setMotor(-0.15);
     }

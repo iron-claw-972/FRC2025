@@ -69,11 +69,11 @@ public class OuttakeAlpha extends Outtake {
             }
             // motor is outtaking
             // motor is spinning, ejecting will be true. after 0.14 seconds
-            if (ticks ==7) {
+            if (ticks == 7) {
                 dioInputEjecting.setValue(false);
             }
             if (ticks == 14){
-                // after 0.14 seconds
+                // after 0.14 second
                 dioInputLoaded.setValue(true);
             }
             if (ticks == 16){
@@ -110,6 +110,10 @@ public class OuttakeAlpha extends Outtake {
 
     public void fakeLoad() {
         dioInputLoaded.setValue(false);
+    }
+
+    public boolean isFinished() {
+        return ticks > 50;
     }
 
     public void close() {

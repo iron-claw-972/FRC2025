@@ -61,6 +61,7 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+    SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
 
     // dispatch on the robot
     switch (robotId) {
@@ -90,7 +91,7 @@ public class RobotContainer {
       case Vivace:
       case Phil:
         if (robotId == RobotId.Phil) {
-          outtake = new OuttakeAlpha();
+          outtake = new OuttakeComp();
         }
         if (outtake != null) {
           SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
