@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public enum RobotId {
     Default,
-    SwerveCompetition, Vertigo, Vivace, Phil,
+    SwerveCompetition, Vertigo, Vivace, Phil, BetaBot,
     ClassBot1, ClassBot2, ClassBot3, ClassBot4,
     TestBed1, TestBed2;
 
@@ -35,7 +35,7 @@ public enum RobotId {
      */
     @Deprecated
     public boolean isSwerveBot() {
-        return this == SwerveCompetition || this == Phil || this == Vertigo || this == Vivace;
+        return this == SwerveCompetition || this == Phil || this == Vertigo || this == Vivace || this == BetaBot;
     }
     
     /**

@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -60,6 +58,8 @@ public class Intake extends SubsystemBase {
     private double setpoint = 90;
 
 
+    private boolean laserCanEnabled = false;
+
     public Intake() {
         if (RobotBase.isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
@@ -87,31 +87,10 @@ public class Intake extends SubsystemBase {
             }
         }
 
-        
+
         rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
-        var configs = stowMotor.getConfigurator();;
-        
-        var talonFXConfigs = new TalonFXConfiguration();
-
-        // set slot 0 gains
-        var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = 0; 
-        slot0Configs.kV = 0;
-        slot0Configs.kA = 0; 
-        slot0Configs.kP = 0.01; 
-        slot0Configs.kI = 0; 
-        slot0Configs.kD = 0; 
-
-        // set Motion Magic Velocity settings
-        var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicAcceleration = 3200; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
-
-        stowMotor.getConfigurator().apply(talonFXConfigs);
-
-
         stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
-        stowMotor.setNeutralMode(NeutralModeValue.Brake);
+        stowMotor.setNeutralMode(NeutralModeValue.Coast);
         stowPID.setTolerance(positionTolerance);
         setAngle(startPosition);
     }
@@ -119,6 +98,7 @@ public class Intake extends SubsystemBase {
     /**
      * publishes stuff to smartdashboard
      */
+    @SuppressWarnings("unused")
     private void publish() {
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
@@ -132,16 +112,13 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(stowPID.atSetpoint()){
-            power = 0;
-            return;
-        }
         //publish();
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.3, 0.3);
-        stowMotor.setControl(m_request.withPosition(setpoint).withFeedForward(feedforward.calculate(Units.degreesToRadians(position), 0)));
-        if (laserCan != null) {
+
+        stowMotor.set(power);
+        if (laserCanEnabled && laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
@@ -254,6 +231,10 @@ public class Intake extends SubsystemBase {
      * Starts the motor.
      */
     public void activate(){
-        rollerMotor.set(0.6);
+        rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
+    }
+
+    public void enableLaserCan(boolean enabled){
+        laserCanEnabled = enabled;
     }
 }

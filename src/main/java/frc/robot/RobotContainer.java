@@ -19,6 +19,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
+import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -71,15 +72,15 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-        // Our competition subsystems go here
-        intake = new Intake();
-        indexer = new Indexer();
-        //outtake = new OuttakeComp();
+        outtake = new OuttakeComp();
         elevator = new Elevator();
         climb = new Climb();
+      case BetaBot:
+        indexer = new Indexer();
+        intake = new Intake();
         //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
-         SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
+        //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
         // SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
 
       case Vivace:

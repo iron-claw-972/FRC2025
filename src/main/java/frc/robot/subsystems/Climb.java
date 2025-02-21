@@ -22,11 +22,11 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-    private static final double spoolRotations = 3;
-    private static final double climbPosition = -2;
+    private static final double extendPosition = 1.6;
+    private static final double climbPosition = -0.5;
 
     //Motors
-    // TODO: tune better once design is finalized
+    // TODO: tune better on real robot
     private final PIDController pid = new PIDController(0.1, 0, 0.04);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
@@ -83,11 +83,11 @@ public class Climb extends SubsystemBase {
     public void periodic() { 
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
-        SmartDashboard.putNumber("climb current", motor.getTorqueCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("climb current", motor.getStatorCurrent().getValueAsDouble());
         power = pid.calculate(currentPosition);
 
         if(resetting){
-            power = -0.05;
+            power = -0.1;
         }
 
         motor.set(MathUtil.clamp(power, -0.1, 0.1));
@@ -130,7 +130,7 @@ public class Climb extends SubsystemBase {
      * Turns the motor to 90 degrees (extended positiion)
      */
     public void extend(){
-        double extendAngle = Units.rotationsToDegrees(spoolRotations);
+        double extendAngle = Units.rotationsToDegrees(extendPosition);
         setAngle(extendAngle);
     }
 
@@ -155,5 +155,9 @@ public class Climb extends SubsystemBase {
             pid.setSetpoint(Units.degreesToRadians(startingPosition));
             pid.reset();
         }
+    }
+
+    public double getCurrent(){
+        return motor.getStatorCurrent().getValueAsDouble();
     }
 }
