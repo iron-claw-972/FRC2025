@@ -75,7 +75,7 @@ public class Intake extends SubsystemBase {
                 laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
                 laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
             } catch (ConfigurationFailedException e) {
-                DriverStation.reportError("LaserCan configuration error", true);
+                DriverStation.reportError("Intake LaserCan configuration error", true);
             }
         }
         rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));

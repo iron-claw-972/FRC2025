@@ -3,11 +3,16 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface;
+import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
+import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import au.grapplerobotics.simulation.MockLaserCan;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -40,6 +45,13 @@ public class Indexer extends SubsystemBase {
 			sensor = simSensor;
 		} else {
 			sensor = new LaserCan(IdConstants.INDEXER_SENSOR);
+            try {
+                sensor.setRangingMode(RangingMode.SHORT);
+                sensor.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+                sensor.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
+            } catch (ConfigurationFailedException e) {
+                DriverStation.reportError("Indexer LaserCan configuration error", true);
+            }
 		}
 		simCoralPos = IndexerConstants.START_SIM_POS_AT; // initialize it anyway, it's easier
 
