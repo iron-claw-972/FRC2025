@@ -50,7 +50,7 @@ public class Indexer extends SubsystemBase {
 
 	/** Runs the indexer. */
 	public void run() {
-		motor.set(0.8);
+		motor.set(IndexerConstants.SPEED);
 		simCoralPos = IndexerConstants.START_SIM_POS_AT;
 	}
 
