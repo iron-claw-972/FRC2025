@@ -9,7 +9,7 @@ public class OuttakeAlgae extends Command {
     private Intake intake;
 
     private final Timer timer = new Timer();
-    private final double EJECTION_TIME = 1.5;
+    private final double EJECTION_TIME = 1;
 
     public OuttakeAlgae(Intake intake) {
         this.intake = intake;
