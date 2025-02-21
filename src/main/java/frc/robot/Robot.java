@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.Optional;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -25,6 +26,10 @@ import frc.robot.util.LogManager;
 public class Robot extends TimedRobot {
     private Command autoCommand;
     private RobotContainer robotContainer;
+
+    public Robot(){
+        CanBridge.runTCP();
+    }
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -173,7 +178,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void endCompetition(){
-        robotContainer.interruptOdometryThraed();
+        robotContainer.interruptOdometryThread();
         super.endCompetition();
     }
 }

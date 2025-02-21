@@ -15,7 +15,7 @@ public class IdConstants {
     public static final int STEER_BACK_RIGHT_ID = 5;
     public static final int ENCODER_BACK_RIGHT_ID = 6;
     public static final int PIGEON = 13;
-    
+
     // LEDs
     public static final int CANDLE_ID = 1;
 
@@ -27,7 +27,25 @@ public class IdConstants {
 
     // Add other subsystems here
 
-	// Indexer
-	public static final int INDEXER_MOTOR = -1;
-	public static final int INDEXER_SENSOR = 0;
+    // Indexer
+    public static final int INDEXER_MOTOR = -1;
+    public static final int INDEXER_SENSOR = 0;
+
+    // Climb
+    public static final int CLIMB_MOTOR = 20;
+
+    // Intake
+    public static final int INTAKE_ROLLER = -1;
+    public static final int INTAKE_PIVOT = 11;
+    public static final int INTAKE_LASER_CAN = 55;
+
+    //Outtake
+     /** CAN ID for the Alphabot's outake */
+     public static final int OUTTAKE_MOTOR_ALPHA = 14;
+     /** CAN ID for the competition bot's outtake */
+     public static final int OUTTAKE_MOTOR_COMP = -1; 
+ 
+     // Digital inputs
+     public static final int OUTTAKE_DIO_LOADED = 9;
+     public static final int OUTTAKE_DIO_EJECTING = 8;
 }
