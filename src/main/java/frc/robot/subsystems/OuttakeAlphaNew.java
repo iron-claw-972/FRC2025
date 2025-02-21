@@ -27,12 +27,12 @@ public class OuttakeAlphaNew extends Outtake {
     /** Coral detected before the rollers */
     private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
     private DIOSim dioInputLoaded;
-
     /** Coral detected after the rollers */
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
     private DIOSim dioInputEjecting;
 
     public OuttakeAlphaNew(){
+        // TODO: the configuration doesn't do anything (not inverting)
         motor.configure(new SparkFlexConfig()
             .inverted(false)
             .idleMode(IdleMode.kBrake),
@@ -50,10 +50,6 @@ public class OuttakeAlphaNew extends Outtake {
             // we are not ejecting
             dioInputEjecting.setValue(true);
         }
-    }
-
-    private double getMotorSpeed(){
-        return motor.get();
     }
 
     @Override
@@ -77,15 +73,14 @@ public class OuttakeAlphaNew extends Outtake {
                 // coral has gone all the way through.
                 SmartDashboard.putNumber("Coral Transit Time", ticks * 0.020);
                 state = State.DONE;
+                setMotor(0);
             }
             // waiting for a timeout; 13 ticks is 0.26 seconds. It only takes 0.18 seconds to eject a coral.
             if (ticks > 13) {
                 // reverse the motor, at -0.1: sometimes did not have the power to reverse, at -0.15: ejected all the way back, hit the funnel
                 setMotor(0.125);
 
-
                 SmartDashboard.putNumber("Coral Transit Time", ticks * 0.020);
-
 
                 state = State.REVERSING;
             }
@@ -95,6 +90,7 @@ public class OuttakeAlphaNew extends Outtake {
             // waiting for ejected to be false
             if (!coralEjecting()){
                 // we are done. When command finishes, the motor will be stopped.
+                setMotor(0);
                 state = State.DONE;
             }
             break;
@@ -109,21 +105,23 @@ public class OuttakeAlphaNew extends Outtake {
 
     @Override
     public void simulationPeriodic() {
-        
-        if (getMotorSpeed() > 0.05) {
+        if (state != State.DONE) {
             if (ticks > 250) {
                 ticks = 0;
             }
             // motor is outtaking
             // motor is spinning, ejecting will be true. after 0.14 seconds
             if (ticks == 7) {
+                // simulate that the coral is ejecting
                 dioInputEjecting.setValue(false);
             }
             if (ticks == 14){
+                // simulate that load is false
                 // after 0.14 second
                 dioInputLoaded.setValue(true);
             }
             if (ticks == 16){
+                // simulate that ejecting is false
                 // after 0.18 seconds
                 dioInputEjecting.setValue(true);
             }   
@@ -168,6 +166,7 @@ public class OuttakeAlphaNew extends Outtake {
 
     public void fakeLoad() {
         if (RobotBase.isSimulation()) {
+            // loads the coral in simulation
             dioInputLoaded.setValue(false);
         }
     }

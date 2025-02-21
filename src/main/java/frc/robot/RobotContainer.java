@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.commands.gpm.OuttakeCoralNew;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
@@ -20,7 +19,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
-import frc.robot.subsystems.OuttakeAlpha;
 import frc.robot.subsystems.OuttakeAlphaNew;
 import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
@@ -95,7 +93,6 @@ public class RobotContainer {
           outtake = new OuttakeAlphaNew();
         }
         if (outtake != null) {
-          SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
           SmartDashboard.putData("Load coral", new InstantCommand(()->outtake.fakeLoad(), outtake));
           SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
         }

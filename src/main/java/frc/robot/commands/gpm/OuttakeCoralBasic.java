@@ -9,7 +9,9 @@ import frc.robot.subsystems.Outtake;
 /**
  * Command to eject coral.
  * Wants coral to be present.
+ * @deprecated Use OuttakeCoralNew instead
  */
+@Deprecated 
 public class OuttakeCoralBasic extends Command {
     private Outtake outtake;
 
