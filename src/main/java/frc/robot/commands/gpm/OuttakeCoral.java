@@ -9,7 +9,7 @@ import frc.robot.subsystems.Outtake;
 public class OuttakeCoral extends SequentialCommandGroup {
     public OuttakeCoral(Outtake outtake, Elevator elevator){
         addCommands(
-            new OuttakeCoralBasic(outtake),
+            new OuttakeCoralNew(outtake),
             new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT), elevator)
         );
     }

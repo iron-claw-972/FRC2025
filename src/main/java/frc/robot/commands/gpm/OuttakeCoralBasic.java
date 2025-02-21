@@ -9,7 +9,9 @@ import frc.robot.subsystems.Outtake;
 /**
  * Command to eject coral.
  * Wants coral to be present.
+ * @deprecated Use OuttakeCoralNew instead
  */
+@Deprecated 
 public class OuttakeCoralBasic extends Command {
     private Outtake outtake;
 
@@ -92,7 +94,6 @@ public class OuttakeCoralBasic extends Command {
                 state = State.REVERSING;
             }
             break;
-
 
             case REVERSING:
             // waiting for ejected to be false

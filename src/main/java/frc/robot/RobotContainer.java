@@ -2,13 +2,12 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.gpm.OuttakeCoralBasic;
+import frc.robot.commands.gpm.OuttakeCoralNew;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
@@ -20,7 +19,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
-import frc.robot.subsystems.OuttakeAlpha;
+import frc.robot.subsystems.OuttakeAlphaNew;
 import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
@@ -61,14 +60,20 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+    SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
 
     // dispatch on the robot
     switch (robotId) {
 
       case TestBed1:
+        outtake = new OuttakeComp();
+        SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
         break;
 
+
       case TestBed2:
+        outtake = new OuttakeComp();
+        SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
         break;
 
       default:
@@ -85,11 +90,14 @@ public class RobotContainer {
       case Vivace:
       case Phil:
         if (robotId == RobotId.Phil) {
-          outtake = new OuttakeAlpha();
+          outtake = new OuttakeAlphaNew();
         }
         if (outtake != null) {
-          SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
+          SmartDashboard.putData("Load coral", new InstantCommand(()->outtake.fakeLoad(), outtake));
+          SmartDashboard.putData("OuttakeCoralNew", new OuttakeCoralNew(outtake));
         }
+        // fall-through
+        
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
