@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -190,10 +191,11 @@ public class Drivetrain extends SubsystemBase {
         }
         StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
-        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.INFO);
+        
+        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.DEBUG);
     
         LogManager.logSupplier("Drivetrain/Pose2d", () -> {
             Pose2d pose = getPose();
@@ -202,7 +204,9 @@ public class Drivetrain extends SubsystemBase {
                 pose.getY(),
                 pose.getRotation().getRadians()
             };
-        }, 15, LogLevel.COMP);
+        }, 50, LogLevel.COMP);
+
+        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.COMP);
     }
 
     public void close() {
@@ -670,5 +674,28 @@ public class Drivetrain extends SubsystemBase {
 
     public SwerveModulePose getSwerveModulePose(){
         return modulePoses;
+    }
+
+    public double getAcceleration() {
+        double accelX = pigeon.getAccelerationX().getValueAsDouble();
+        double accelY = pigeon.getAccelerationY().getValueAsDouble();
+
+        double angularVelocity = pigeon.getAngularVelocityZWorld().getValueAsDouble();
+        double radius = 0.05; // TODO: replace with actual radius
+
+        double centripetalAcceleration = Math.pow(angularVelocity, 2) * radius;
+
+        // TODO: add or subract centripetal acceleration from x or y, depending on which direction it would be in
+        return Math.sqrt(Math.pow(accelX, 2) + Math.pow(accelY, 2) + Math.pow(centripetalAcceleration, 2));
+    }
+   
+   
+   
+   
+    public boolean accelerationOverMax() {
+        if (getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL) {
+            return true;
+        }
+            return false;
     }
 }

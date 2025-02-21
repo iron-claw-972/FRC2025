@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -23,9 +24,12 @@ import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
 import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
+import frc.robot.util.LogManager;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
+import frc.robot.util.LogManager.LogLevel;
+
 import java.util.function.BooleanSupplier;
 
 /**
@@ -129,6 +133,8 @@ public class RobotContainer {
       });
       odometryThread.start();
     }
+
+    LogManager.logSupplier("Brownout", () -> brownout(), 15, LogLevel.COMP);
   }
 
 
@@ -155,6 +161,7 @@ public class RobotContainer {
     if (drive != null)
       drive.setVisionEnabled(enabled);
   }
+
 
   public void initializeAutoBuilder() {
     AutoBuilder.configure(
@@ -193,6 +200,15 @@ public class RobotContainer {
 
   public void interruptOdometryThread(){
     odometryThread.interrupt();
+  }
+
+  public boolean brownout() {
+    if(RobotController.getBatteryVoltage() < 6.0) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }
 

@@ -300,7 +300,8 @@ public class Vision {
         for(EstimatedRobotPose pose : cameras.get(i).getEstimatedPose(yawFunction)){
           if(pose != null){
             estimatedPoses.add(pose);
-
+//Actual LogLevel.Comp
+//Not a log Supplier
             LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
               pose.estimatedPose.getX(),
               pose.estimatedPose.getY(),
@@ -314,7 +315,8 @@ public class Vision {
           // April tags that don't exist might return a result that is present but doesn't have a pose
           if (pose.estimatedPose != null) {
             estimatedPoses.add(pose);
-
+//Actual LogLevel.Comp
+//Not a log Supplier
             LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
               pose.estimatedPose.getX(),
               pose.estimatedPose.getY(),
