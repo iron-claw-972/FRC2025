@@ -10,6 +10,10 @@ import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -23,6 +27,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -207,6 +212,31 @@ public class Drivetrain extends SubsystemBase {
                 pose.getRotation().getRadians()
             };
         }, 15, LogLevel.COMP);
+        
+        RobotConfig autoConf;
+        try {
+            autoConf = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+            // should print stacktrace
+            DriverStation.reportError("Failed to get Pathplanner config.", true);
+            return;
+        }
+       
+        AutoBuilder.configure(
+            this::getPose,
+            this::resetOdometry,
+            this::getChassisSpeeds,
+            (speeds, feedforwards) -> setChassisSpeeds(speeds, false /* TODO: should this be false? */),
+            new PPHolonomicDriveController(
+                new PIDConstants(DriveConstants.TRANSLATIONAL_P, 0, DriveConstants.TRANSLATIONAL_D),
+                new PIDConstants(DriveConstants.HEADING_P, 0, DriveConstants.HEADING_D)
+            ),
+            autoConf,
+            () -> {return Robot.getAlliance() == Alliance.Red;}, // when to mirror path
+            this
+        );
+
+
     }
 
     public void close() {

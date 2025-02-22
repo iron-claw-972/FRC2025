@@ -107,7 +107,8 @@ public class RobotContainer {
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
  
-        shuffleboardManager = new ShuffleBoardManager(drive, vision);
+        shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator, outtake);
+        
       
         break;
       }
