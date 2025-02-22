@@ -685,8 +685,21 @@ public class Drivetrain extends SubsystemBase {
 
         double centripetalAcceleration = Math.pow(angularVelocity, 2) * radius;
 
-        // TODO: add or subract centripetal acceleration from x or y, depending on which direction it would be in
-        return Math.sqrt(Math.pow(accelX, 2) + Math.pow(accelY, 2) + Math.pow(centripetalAcceleration, 2));
+        double heading = pigeon.getYaw().getValueAsDouble();
+    
+        double centripetalX, centripetalY;
+        if (angularVelocity >= 0) {
+            centripetalX = -Math.sin(heading) * centripetalAcceleration;
+            centripetalY =  Math.cos(heading) * centripetalAcceleration;
+        } else {
+            centripetalX =  Math.sin(heading) * centripetalAcceleration;
+            centripetalY = -Math.cos(heading) * centripetalAcceleration;
+        }
+
+        double totalX = accelX + centripetalX;
+        double totalY = accelY + centripetalY;
+
+        return Math.sqrt(Math.pow(totalX, 2) + Math.pow(totalY, 2));
     }
    
    
