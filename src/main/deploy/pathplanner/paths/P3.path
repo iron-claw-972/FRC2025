@@ -33,20 +33,9 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "OuttakeCoral",
-      "waypointRelativePos": 0.15,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "OuttakeCoral"
-        }
-      }
-    },
-    {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.6,
-      "endWaypointRelativePos": null,
+      "waypointRelativePos": 0.06074240719910196,
+      "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
         "data": {
@@ -65,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -148.47507460940753
+    "rotation": -148.475
   },
   "reversed": false,
   "folder": "Sequential RSide",
