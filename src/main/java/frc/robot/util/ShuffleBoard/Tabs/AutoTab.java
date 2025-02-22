@@ -64,9 +64,9 @@ public class AutoTab extends ShuffleBoardTabs {
 
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
-        autoCommand.addOption("RSide Command Grouped [1-3]", new PathPlannerAuto("RSide Command Grouped [1-3]"));
-        
-        autoCommand.addOption("Command Grouped [1-5]", new PathPlannerAuto("Command Grouped [1-5]"));
+        autoCommand.addOption("RSide Command Grouped 3 Piece", new PathPlannerAuto("RSide Command Grouped 3 Piece"));
+
+        autoCommand.addOption("Command Grouped 3 Piece", new PathPlannerAuto("Command Grouped 3 Piece"));
 
         autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
         .andThen(new OuttakeCoralBasic(outtake))
