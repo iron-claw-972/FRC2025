@@ -40,8 +40,8 @@
         "y": 5.515752840909091
       },
       "nextControl": {
-        "x": 3.8986802883034617,
-        "y": 5.079899647014388
+        "x": 3.898680288303461,
+        "y": 5.079899647014387
       },
       "isLocked": false,
       "linkedName": null
@@ -135,7 +135,7 @@
     "rotation": 29.999999999999996
   },
   "reversed": false,
-  "folder": "Sequential Path",
+  "folder": "Copy Path Folder",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

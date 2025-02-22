@@ -62,7 +62,7 @@ public class AutoTab extends ShuffleBoardTabs {
                 e.printStackTrace();
             }
 
-        autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test.auto"));
+        autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
         autoCommand.addOption("RSide Command Grouped [1-3]", new PathPlannerAuto("RSide Command Grouped [1-3]"));
         autoCommand.addOption("Command Grouped [1-5]", new PathPlannerAuto("Command Grouped [1-5]"));
 
