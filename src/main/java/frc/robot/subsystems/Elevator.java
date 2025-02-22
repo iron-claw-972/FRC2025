@@ -127,12 +127,13 @@ public class Elevator extends SubsystemBase {
     LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
     LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
+    SmartDashboard.putNumber("setpoint elevator", 0);
 
   }
 
   @Override
   public void periodic() {
-    setSetpoint(setpoint);
+    setSetpoint(SmartDashboard.getNumber("setpoint elevator", 0));
 
     if(getSetpoint()==0 && atSetpoint()){
       return;

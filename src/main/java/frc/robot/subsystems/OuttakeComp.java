@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.IdConstants;
 
 
@@ -50,8 +51,8 @@ public class OuttakeComp extends Outtake {
     @Override
     public void periodic(){
         motor.set(power);
-        // SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-        // SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+         SmartDashboard.putBoolean("Coral ejected", coralEjecting());
     }
 
     /** Set the motor power to move the coral */

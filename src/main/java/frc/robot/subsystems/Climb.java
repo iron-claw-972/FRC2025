@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.MathUtil;
@@ -68,22 +69,23 @@ public class Climb extends SubsystemBase {
             );
 
             climbSim.setIsClimbing(true);
+            SmartDashboard.putData("Climb Display", simulationMechanism);
         }
 
         pid.setIZone(1);
         pid.setSetpoint(Units.degreesToRadians(startingPosition));
 
         motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
+        motor.setNeutralMode(NeutralModeValue.Brake);
 
         SmartDashboard.putData("PID", pid);
-        SmartDashboard.putData("Climb Display", simulationMechanism);
+    
     }
 
     @Override
     public void periodic() { 
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
-        SmartDashboard.putNumber("climb current", motor.getStatorCurrent().getValueAsDouble());
         power = pid.calculate(currentPosition);
 
         if(resetting){
@@ -94,10 +96,6 @@ public class Climb extends SubsystemBase {
 
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
-        SmartDashboard.putNumber("Climb Position", getAngle());
-
-        SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
     }
 
     @Override
