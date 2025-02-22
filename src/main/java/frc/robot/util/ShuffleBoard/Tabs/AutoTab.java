@@ -74,7 +74,13 @@ public class AutoTab extends ShuffleBoardTabs {
         .andThen(new FollowPathCommand("Next Tester", true, drive))
         );
 
-        
+         autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator)));
+
+        autoCommand.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator)));
 
         tab.add(autoCommand);
     }
