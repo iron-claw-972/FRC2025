@@ -69,7 +69,7 @@ public class OuttakeComp extends Outtake {
 
 
     public boolean coralLoaded(){
-       return !digitalInputLoaded.get();
+       return !digitalInputEjecting.get();
     }
 
 

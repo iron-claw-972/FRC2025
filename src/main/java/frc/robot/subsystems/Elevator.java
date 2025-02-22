@@ -39,7 +39,6 @@ import frc.robot.util.LogManager.LogLevel;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
-  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
   private double maxVoltage = 6;
@@ -101,12 +100,6 @@ public class Elevator extends SubsystemBase {
   //ExponentialProfile.State m_lastProfiledReference;
   /** Creates a new Elevator. */
   public Elevator() {
-    // Left motor follows right motor in the opposite direction
-    if (!RobotBase.isSimulation()){
-      leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
-      rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
-    }
-    
 
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
@@ -128,7 +121,6 @@ public class Elevator extends SubsystemBase {
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
 
-    leftMotor.setNeutralMode(NeutralModeValue.Brake);
     rightMotor.setNeutralMode(NeutralModeValue.Brake);
 
     //Logging
