@@ -49,9 +49,9 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "OuttakeCoralBasic",
-      "waypointRelativePos": 1.431162407254736,
-      "endWaypointRelativePos": null,
+      "name": "MoveElevator",
+      "waypointRelativePos": 0.40944881889763707,
+      "endWaypointRelativePos": 2.0,
       "command": null
     }
   ],
@@ -65,7 +65,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -151.37176041045237
+    "rotation": -151.372
   },
   "reversed": false,
   "folder": "Sequential BSide",

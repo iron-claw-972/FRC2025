@@ -49,10 +49,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "OuttakeCoralBasic",
-      "waypointRelativePos": 1.5136026380873866,
-      "endWaypointRelativePos": null,
-      "command": null
+      "name": "MoveElevator",
+      "waypointRelativePos": 0.24746906636669946,
+      "endWaypointRelativePos": 2.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "MoveElevator"
+        }
+      }
     }
   ],
   "globalConstraints": {
