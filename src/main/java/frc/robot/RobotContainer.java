@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.gpm.OutakeMotors;
 import frc.robot.constants.AutoConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
@@ -72,16 +73,16 @@ public class RobotContainer {
       default:
       case SwerveCompetition:
         // outtake = new OuttakeComp();
-        // elevator = new Elevator();
+        elevator = new Elevator();
         // climb = new Climb();
       case BetaBot:
         //indexer = new Indexer();
-        intake = new Intake();
-        SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
+        //intake = new Intake();
+        //SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
         //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
         //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
-        // SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
+         //SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
 
       case Vivace:
       case Phil:
@@ -95,15 +96,15 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-        operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
+        //operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain
-        DetectedObject.setDrive(drive);
+        //DetectedObject.setDrive(drive);
         
         //SignalLogger.start();
 
         driver.configureControls();
-        operator.configureControls();
+        //operator.configureControls();
         initializeAutoBuilder();
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));

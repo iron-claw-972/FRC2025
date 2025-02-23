@@ -23,12 +23,12 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-    private static final double extendPosition = 1.6;
+    private static final double extendPosition = 1.0;
     private static final double climbPosition = -0.5;
 
     //Motors
     // TODO: tune better on real robot
-    private final PIDController pid = new PIDController(0.1, 0, 0.04);
+    private final PIDController pid = new PIDController(0.1, 0, 0.0);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
@@ -42,7 +42,7 @@ public class Climb extends SubsystemBase {
     );
 
     private final double versaPlanetaryGearRatio = 1.0;
-    private final double climbGearRatio = 75.0/1.0;
+    private final double climbGearRatio = 60.0/1.0;
     private final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
 
     private ClimbArmSim climbSim;
@@ -78,7 +78,7 @@ public class Climb extends SubsystemBase {
         motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
         motor.setNeutralMode(NeutralModeValue.Brake);
 
-        SmartDashboard.putData("PID", pid);
+        //SmartDashboard.putData("PID", pid);
     
     }
 
@@ -89,12 +89,13 @@ public class Climb extends SubsystemBase {
         power = pid.calculate(currentPosition);
 
         if(resetting){
-            power = -0.1;
+            power = -0.4;
         }
 
-        motor.set(MathUtil.clamp(power, -0.1, 0.1));
+        motor.set(MathUtil.clamp(power, -0.4, 0.4));
+        SmartDashboard.putNumber("power", power);
 
-        simLigament.setAngle(Units.radiansToDegrees(currentPosition));
+        //simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
     }
 
