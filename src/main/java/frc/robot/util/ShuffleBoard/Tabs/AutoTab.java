@@ -29,6 +29,7 @@ import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
 
@@ -43,12 +44,14 @@ public class AutoTab extends ShuffleBoardTabs {
     private Drivetrain drive;
     private Elevator elevator;
     private Outtake outtake;
+    private Intake intake;
 
 
-    public AutoTab(Drivetrain drive, Elevator elevator, Outtake outtake) {
+    public AutoTab(Drivetrain drive, Elevator elevator, Outtake outtake, Intake intake) {
         this.drive = drive;
         this.elevator = elevator;
         this.outtake = outtake;
+        this.intake = intake;
     }
 
     
@@ -68,19 +71,19 @@ public class AutoTab extends ShuffleBoardTabs {
 
         autoCommand.addOption("Command Grouped 3 Piece", new PathPlannerAuto("Command Grouped 3 Piece"));
 
-        autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-        .andThen(new OuttakeCoralBasic(outtake))
-        .andThen(new WaitCommand(3))
-        .andThen(new FollowPathCommand("Next Tester", true, drive))
-        );
+        // autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
+        // .andThen(new OuttakeCoralBasic(outtake))
+        // .andThen(new WaitCommand(3))
+        // .andThen(new FollowPathCommand("Next Tester", true, drive))
+        // );
 
-         autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
-        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-        .andThen(new OuttakeCoral(outtake, elevator)));
+        //  autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));
 
-        autoCommand.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
-        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-        .andThen(new OuttakeCoral(outtake, elevator)));
+        // autoCommand.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));
 
         tab.add(autoCommand);
     }

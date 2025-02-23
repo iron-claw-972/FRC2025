@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.util.Vision;
 import frc.robot.util.ShuffleBoard.Tabs.AutoTab;
@@ -25,10 +26,10 @@ public class ShuffleBoardManager {
     private AutoTab autoTab;
     private VisionTab visionTab;
 
-    public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake){
+    public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake, Intake intake){
         
          swerveTab = new SwerveTab(drive);
-        autoTab = new AutoTab(drive, elevator, outtake);
+        autoTab = new AutoTab(drive, elevator, outtake, intake);
         visionTab = new VisionTab(drive, vision);
         tabs.add(swerveTab);
         tabs.add(autoTab);
