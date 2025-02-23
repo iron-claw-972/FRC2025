@@ -71,20 +71,21 @@ public class AutoTab extends ShuffleBoardTabs {
 
         autoCommand.addOption("Command Grouped 3 Piece", new PathPlannerAuto("Command Grouped 3 Piece"));
 
-        // autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-        // .andThen(new OuttakeCoralBasic(outtake))
-        // .andThen(new WaitCommand(3))
-        // .andThen(new FollowPathCommand("Next Tester", true, drive))
-        // );
+        if(elevator != null && outtake != null) {
+         autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
+         .andThen(new OuttakeCoralBasic(outtake))
+         .andThen(new WaitCommand(3))
+         .andThen(new FollowPathCommand("Next Tester", true, drive))
+         );
 
-        //  autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator)));
+          autoCommand.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
+         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+         .andThen(new OuttakeCoral(outtake, elevator)));
 
-        // autoCommand.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator)));
-
+         autoCommand.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
+         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+         .andThen(new OuttakeCoral(outtake, elevator)));
+        }
         tab.add(autoCommand);
     }
 
