@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.constants.AutoConstants;
@@ -70,12 +71,13 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-        outtake = new OuttakeComp();
-        elevator = new Elevator();
-        climb = new Climb();
+        // outtake = new OuttakeComp();
+        // elevator = new Elevator();
+        // climb = new Climb();
       case BetaBot:
-        indexer = new Indexer();
+        //indexer = new Indexer();
         intake = new Intake();
+        SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
         //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
         //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));

@@ -103,15 +103,19 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         //publish();
+        SmartDashboard.putNumber("angle", getStowPosition());
+        SmartDashboard.putBoolean("Intake has coral", hasCoral());
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.3, 0.3);
         stowMotor.set(power);
-        if (laserCanEnabled && laserCan != null) {
+        if (laserCanEnabled || laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
+            SmartDashboard.putNumber("Lasecan", measurement.distance_mm/1000);
         }
+        
     }
 
     @Override
