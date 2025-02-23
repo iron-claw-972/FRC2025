@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 5.102499999999999,
-        "y": 1.0106249999999988
+        "y": 1.0106249999999997
       },
       "isLocked": false,
       "linkedName": null
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -130.827
+    "rotation": -37.644000000000005
   },
   "reversed": false,
   "folder": "Sequential RSide",

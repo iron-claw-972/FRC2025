@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.755,
-        "y": 7.175
+        "x": 1.7250852272727275,
+        "y": 7.16106534090909
       },
       "prevControl": {
-        "x": 2.1139801027200695,
-        "y": 6.822034128190328
+        "x": 2.0840653299927987,
+        "y": 6.808099469099418
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 124.97030370419759
+    "rotation": -151.372
   },
   "reversed": false,
   "folder": "Sequential BSide",

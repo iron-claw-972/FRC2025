@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "#1"
+            "pathName": "P1"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "OuttakeCoralBasic"
                 }
               }
             ]
@@ -32,19 +32,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "#2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "Ground P2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#3"
+            "pathName": "Ground P3"
           }
         },
         {
@@ -60,7 +54,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "OuttakeCoralBasic"
                 }
               }
             ]
@@ -69,19 +63,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "#4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "Grond P4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#5"
+            "pathName": "Ground P5"
           }
         },
         {
@@ -97,7 +85,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "OuttakeCoralBasic"
                 }
               }
             ]

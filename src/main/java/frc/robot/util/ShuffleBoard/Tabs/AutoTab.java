@@ -68,7 +68,8 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
         autoCommand.addOption("RSide Command Grouped 3 Piece", new PathPlannerAuto("RSide Command Grouped 3 Piece"));
-
+        autoCommand.addOption("RSide Ground", new PathPlannerAuto("RSide Ground"));
+        autoCommand.addOption("BSide Ground", new PathPlannerAuto("BSide Ground"));
         autoCommand.addOption("Command Grouped 3 Piece", new PathPlannerAuto("Command Grouped 3 Piece"));
 
         if(elevator != null && outtake != null) {

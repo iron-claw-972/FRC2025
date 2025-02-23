@@ -60,7 +60,7 @@
   "folder": "Sequential RSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -130.827
+    "rotation": -37.644000000000005
   },
   "useDefaultConstraints": true
 }
