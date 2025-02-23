@@ -16,27 +16,37 @@
     },
     {
       "anchor": {
-        "x": 1.755,
-        "y": 7.175
+        "x": 1.984,
+        "y": 6.942
       },
       "prevControl": {
-        "x": 2.094034090909091,
-        "y": 6.762201704545455
+        "x": 2.323034090909091,
+        "y": 6.529201704545455
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.39,
+      "rotationDegrees": 133.979
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Wait",
-      "waypointRelativePos": 0.6859027205276177,
-      "endWaypointRelativePos": null,
-      "command": null
+      "name": "Intake",
+      "waypointRelativePos": 0.3779527559055112,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {

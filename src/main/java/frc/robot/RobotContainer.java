@@ -215,7 +215,8 @@ public class RobotContainer {
       return false;
     };
   }
-
+  // 1.984, 6.942
+// 133.979, 0.39
   public void interruptThreads(){
     odometryThread.interrupt();
     drivetrainThread.interrupt();
