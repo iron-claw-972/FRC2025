@@ -685,16 +685,12 @@ public class Drivetrain extends SubsystemBase {
         double pigeonOffsetY = 0.05;
         double radius = Math.hypot(pigeonOffsetX, pigeonOffsetY);
 
-        //check if its negative
         double centripetalAcceleration = Math.pow(angularVelocity, 2) * radius;
-        if(angularVelocity < 0) {
-            centripetalAcceleration *= -1;
-        }
 
         double angle = Math.atan2(pigeonOffsetY, pigeonOffsetX);
 
-        double centripetalX = -centripetalAcceleration * Math.cos(angle);
-        double centripetalY = -centripetalAcceleration * Math.sin(angle);
+        double centripetalX = centripetalAcceleration * Math.cos(angle);
+        double centripetalY = centripetalAcceleration * Math.sin(angle);
 
         double totalX = accelX + centripetalX;
         double totalY = accelY + centripetalY;
