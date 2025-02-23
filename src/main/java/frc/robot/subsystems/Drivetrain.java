@@ -215,20 +215,6 @@ public class Drivetrain extends SubsystemBase {
                 pose.getRotation().getRadians()
             };
         }, 15, LogLevel.COMP);
-        
-        RobotConfig autoConf;
-        try {
-            autoConf =  RobotConfig.fromGUISettings();
-        } catch (Exception e) {
-            // should print stacktrace
-            DriverStation.reportError("Failed to get Pathplanner config.", true);
-            autoConf = new RobotConfig(50, 0.5, new ModuleConfig(DriveConstants.WHEEL_RADIUS, 
-            AutoConstants.MAX_AUTO_SPEED, DriveConstants.COSF, DCMotor.getKrakenX60(1).withReduction(DriveConstants.DRIVE_GEAR_RATIO), 
-            DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT, 1), DriveConstants.MODULE_LOCATIONS);;
-            DriverStation.reportError("Using default RobotConfig due to error.", true);
-        } 
-
-
     }
 
     public void close() {
