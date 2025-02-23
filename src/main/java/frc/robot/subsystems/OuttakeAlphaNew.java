@@ -32,9 +32,15 @@ public class OuttakeAlphaNew extends Outtake {
     private DIOSim dioInputEjecting;
 
     public OuttakeAlphaNew(){
-        // TODO: the configuration doesn't do anything (not inverting)
+        // The configuration was not doing anything.
+        // Firmware was 25.0.0
+        // Updated firmware to SPARK Flex 25.0.4
+        // Saved persistent (hinted for earlier 25.0 firmware)
+        // reset sticky faults
+        // worked with inverted(false) and negative speed
+        // changed inverted(true) and positive speed
         motor.configure(new SparkFlexConfig()
-            .inverted(false)
+            .inverted(true)
             .idleMode(IdleMode.kBrake),
             ResetMode.kResetSafeParameters,
             PersistMode.kNoPersistParameters
@@ -78,7 +84,7 @@ public class OuttakeAlphaNew extends Outtake {
             // waiting for a timeout; 13 ticks is 0.26 seconds. It only takes 0.18 seconds to eject a coral.
             if (ticks > 13) {
                 // reverse the motor, at -0.1: sometimes did not have the power to reverse, at -0.15: ejected all the way back, hit the funnel
-                setMotor(0.125);
+                setMotor(-0.125);
 
                 SmartDashboard.putNumber("Coral Transit Time", ticks * 0.020);
 
@@ -140,7 +146,7 @@ public class OuttakeAlphaNew extends Outtake {
             // coral is present, ejecting makes sense
             state = State.LOADED;
             // wheels start spinning
-            setMotor(-0.2);
+            setMotor(0.2);
         }
         else {
             // no coral present, ejecting does not make sense
