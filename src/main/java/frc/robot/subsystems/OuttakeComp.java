@@ -14,7 +14,7 @@ import frc.robot.constants.IdConstants;
 
 public class OuttakeComp extends Outtake {
 
-    private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP );
+    private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP);
     private double power;
 
 
@@ -25,7 +25,7 @@ public class OuttakeComp extends Outtake {
 
     public OuttakeComp(){
         motor.getConfigurator().apply(new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake)
         );
 
@@ -70,7 +70,7 @@ public class OuttakeComp extends Outtake {
 
 
     public boolean coralLoaded(){
-       return !digitalInputEjecting.get();
+       return !false;//digitalInputEjecting.get();
     }
 
 
@@ -79,7 +79,7 @@ public class OuttakeComp extends Outtake {
      * @return coral is interrupting the beam breaker.
      */
     public boolean coralEjecting() {
-        return !digitalInputEjecting.get();
+        return !false;//digitalInputEjecting.get();
     }
 
 

@@ -46,6 +46,6 @@ public class IdConstants {
 
     //public static final int INTAKE_LASER_CAN = 0;
      // Digital inputs
-     public static final int OUTTAKE_DIO_LOADED = 1;
-     public static final int OUTTAKE_DIO_EJECTING = 2;
+     public static final int OUTTAKE_DIO_LOADED = 3;
+     public static final int OUTTAKE_DIO_EJECTING = 4;
 }

@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.fasterxml.jackson.databind.ser.std.MapProperty;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
@@ -29,7 +31,8 @@ import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-    private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT, Constants.CANIVORE_CAN);
+    private final TalonFX pivotMotor = new TalonFX(IdConstants.INTAKE_PIVOT, Constants.CANIVORE_CAN);
+    
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
@@ -78,10 +81,12 @@ public class Intake extends SubsystemBase {
                 DriverStation.reportError("Intake LaserCan configuration error", true);
             }
         }
-        rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
-        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
-        stowMotor.setNeutralMode(NeutralModeValue.Coast);
+        rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.Clockwise_Positive));
+        pivotMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+        pivotMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
+        pivotMotor.setNeutralMode(NeutralModeValue.Coast);
         stowPID.setTolerance(positionTolerance);
+        
         setAngle(startPosition);
     }
 
@@ -108,12 +113,11 @@ public class Intake extends SubsystemBase {
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.3, 0.3);
-        stowMotor.set(power);
+        pivotMotor.set(power);
         if (laserCanEnabled || laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
-            SmartDashboard.putNumber("Lasecan", measurement.distance_mm/1000);
         }
         
     }
@@ -144,7 +148,7 @@ public class Intake extends SubsystemBase {
         if(RobotBase.isSimulation()) {
             return Units.radiansToDegrees(stowArmSim.getAngleRads());
         } else {
-            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
+            return Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
         }
     }
 
