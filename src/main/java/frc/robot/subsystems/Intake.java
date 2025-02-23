@@ -29,7 +29,7 @@ import frc.robot.constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-    private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
+    private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT, Constants.CANIVORE_CAN);
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;

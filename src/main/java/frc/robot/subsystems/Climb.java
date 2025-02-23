@@ -30,7 +30,7 @@ public class Climb extends SubsystemBase {
     // TODO: tune better on real robot
     private final PIDController pid = new PIDController(0.1, 0, 0.04);
 
-    private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
+    private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
     private TalonFXSimState encoderSim;
 

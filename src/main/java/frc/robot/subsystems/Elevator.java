@@ -38,7 +38,7 @@ import frc.robot.util.LogManager;
 import frc.robot.util.LogManager.LogLevel;
 
 public class Elevator extends SubsystemBase {
-  private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
+  private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
   private double maxVoltage = 6;
