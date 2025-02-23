@@ -24,8 +24,6 @@ public class IdConstants {
     public static final int ELEVATOR_BOTTOM_LIMIT_SWITCH = 29;
     public static final int ELEVATOR_TOP_LIMIT_SWITCH = 30;
 
-    // Add other subsystems here
-
 	// Indexer
 	public static final int INDEXER_MOTOR = 11;
 	public static final int INDEXER_SENSOR = 24;
@@ -33,19 +31,14 @@ public class IdConstants {
     // Climb
     public static final int CLIMB_MOTOR = 31;
 
-    // Outtake
-    /** CAN ID for the Alphabot's outake */
-    public static final int OUTTAKE_MOTOR_ALPHA = 14;
-    /** CAN ID for the competition bot's outtake */
-    public static final int OUTTAKE_MOTOR_COMP = 30; 
-
+    // Intake
     public static final int INTAKE_ROLLER = 51;
-
     public static final int INTAKE_PIVOT = 55; //55
     public static final int INTAKE_LASER_CAN = 25;
 
-    //public static final int INTAKE_LASER_CAN = 0;
-     // Digital inputs
-     public static final int OUTTAKE_DIO_LOADED = 3;
-     public static final int OUTTAKE_DIO_EJECTING = 4;
+    // Outtake
+    public static final int OUTTAKE_MOTOR_ALPHA = 14;
+    public static final int OUTTAKE_MOTOR_COMP = 30; 
+    public static final int OUTTAKE_DIO_LOADED = 3;
+    public static final int OUTTAKE_DIO_EJECTING = 4;
 }

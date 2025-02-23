@@ -75,7 +75,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Intake/outtake
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
         if(intake != null && indexer != null){// && elevator != null){
-            driver.get(PS5Button.CROSS).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator, outtake));
+            driver.get(PS5Button.CROSS).and(menu.negate()).and(r3.negate()).toggleOnTrue(new IntakeCoral(intake, indexer, elevator, outtake));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);

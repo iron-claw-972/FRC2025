@@ -4,7 +4,7 @@ public class IndexerConstants {
 	public static final double SPEED = 0.8;
 
 	public static final double MOMENT_OF_INERTIA = 0.000326;
-	public static final double GEAR_RATIO = 1.0; // TODO: actual value
+	public static final double GEAR_RATIO = 1.0;
 	public static final int MEASUREMENT_THRESHOLD = 60; // in millimeters
 
 	// this stuff is for sim, all in meters

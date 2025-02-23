@@ -64,7 +64,9 @@ public class IntakeCoralHelper extends Command {
 					phase = Phase.InOuttake;
 					intake.stow();
 					intake.deactivate();
-					outtake.setMotor(0.1);
+					if(outtake != null) {
+						outtake.setMotor(0.1);
+					}
 				}
 				break;
 			case InOuttake:

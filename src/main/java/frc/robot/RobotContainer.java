@@ -72,7 +72,7 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-         outtake = new OuttakeComp();
+        //  outtake = new OuttakeComp();
          //elevator = new Elevator();
         // climb = new Climb();
       case BetaBot:
@@ -82,7 +82,6 @@ public class RobotContainer {
         //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
         //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
-         SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
 
       case Vivace:
       case Phil:
@@ -91,7 +90,7 @@ public class RobotContainer {
         }
         if (outtake != null) {
           //SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
-          
+          SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
         }
       case Vertigo:
         drive = new Drivetrain(vision);
