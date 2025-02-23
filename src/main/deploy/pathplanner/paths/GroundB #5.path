@@ -1,0 +1,77 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.755,
+        "y": 7.175
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7849999999999997,
+        "y": 6.667400568181817
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.173806818181818,
+        "y": 5.635411931818182
+      },
+      "prevControl": {
+        "x": 1.9871781025792954,
+        "y": 6.048255509982644
+      },
+      "nextControl": {
+        "x": 2.3527169276782804,
+        "y": 5.239642773059009
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.2385,
+        "y": 4.191
+      },
+      "prevControl": {
+        "x": 2.8325612415907377,
+        "y": 4.560448599221876
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "OuttakeCoralBasic",
+      "waypointRelativePos": 1.6059356966199525,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "Ground BSide",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 127.79517871694718
+  },
+  "useDefaultConstraints": false
+}
