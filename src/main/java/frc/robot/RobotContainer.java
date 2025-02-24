@@ -189,11 +189,13 @@ public class RobotContainer {
   }
 
   public void registerCommands() {
+    if(intake != null && indexer != null && elevator != null){
+      NamedCommands.registerCommand("Intake Coral", new IntakeCoral(intake, indexer, elevator));
+    }
     if(elevator != null && outtake != null){
 
       NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
       NamedCommands.registerCommand("Move Elevator", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
-      NamedCommands.registerCommand("Intake Coral", new IntakeCoral(intake, indexer, elevator));
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
         new OuttakeCoral(outtake, elevator)

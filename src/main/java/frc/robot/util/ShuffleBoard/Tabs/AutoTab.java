@@ -19,7 +19,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.FollowPathCommand;
@@ -60,10 +59,10 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
 
         try {
-                List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Wait Test");
-            } catch (IOException | ParseException e) {
-                e.printStackTrace();
-            }
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Wait Test");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
 
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
