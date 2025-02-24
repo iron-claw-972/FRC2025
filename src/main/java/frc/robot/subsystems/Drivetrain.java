@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -38,9 +37,9 @@ import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
-import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -114,8 +113,9 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean slipped = false;
 
-
     private BaseStatusSignal[] statusSignals = null;
+
+    private double previousAngularVelocity = 0;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -681,34 +681,23 @@ public class Drivetrain extends SubsystemBase {
         double accelY = pigeon.getAccelerationY().getValueAsDouble();
 
         double angularVelocity = pigeon.getAngularVelocityZWorld().getValueAsDouble();
-        double pigeonOffsetX = 0.05; //TODO: replace with actual offsets
+        double angularAccel = (angularVelocity - previousAngularVelocity) / Constants.LOOP_TIME;
+        previousAngularVelocity = angularVelocity;
+        
+        //TODO: replace with actual offsets
+        double pigeonOffsetX = 0.05;
         double pigeonOffsetY = 0.05;
-        double radius = Math.hypot(pigeonOffsetX, pigeonOffsetY);
 
-        //check if its negative
-        double centripetalAcceleration = Math.pow(angularVelocity, 2) * radius;
-        if(angularVelocity < 0) {
-            centripetalAcceleration *= -1;
-        }
+        double totalX = accelX + Math.pow(angularVelocity, 2) * pigeonOffsetX + angularAccel * pigeonOffsetY;
+        double totalY = accelY + Math.pow(angularVelocity, 2) * pigeonOffsetY - angularAccel * pigeonOffsetX;
 
-        double angle = Math.atan2(pigeonOffsetY, pigeonOffsetX);
-
-        double centripetalX = -centripetalAcceleration * Math.cos(angle);
-        double centripetalY = -centripetalAcceleration * Math.sin(angle);
-
-        double totalX = accelX + centripetalX;
-        double totalY = accelY + centripetalY;
-
-        return Math.sqrt(Math.pow(totalX, 2) + Math.pow(totalY, 2));
+        return Math.hypot(totalX, totalY);
     }
    
    
    
    
     public boolean accelerationOverMax() {
-        if (getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL) {
-            return true;
-        }
-            return false;
+        return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;
     }
 }
