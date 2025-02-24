@@ -740,9 +740,8 @@ public class Drivetrain extends SubsystemBase {
         double angularAccel = (angularVelocity - previousAngularVelocity) / Constants.LOOP_TIME;
         previousAngularVelocity = angularVelocity;
         
-        //TODO: replace with actual offsets
-        double pigeonOffsetX = 0.05;
-        double pigeonOffsetY = 0.05;
+        double pigeonOffsetX = 0.082677;
+        double pigeonOffsetY = 0.030603444;
 
         double totalX = accelX + Math.pow(angularVelocity, 2) * pigeonOffsetX + angularAccel * pigeonOffsetY;
         double totalY = accelY + Math.pow(angularVelocity, 2) * pigeonOffsetY - angularAccel * pigeonOffsetX;
