@@ -40,9 +40,9 @@ import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
-import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -117,6 +117,8 @@ public class Drivetrain extends SubsystemBase {
     private boolean slipped = false;
 
     private BaseStatusSignal[] statusSignals = null;
+
+    private double previousAngularVelocity = 0;
 
     private boolean controlsEnabled = false;
 
@@ -194,10 +196,11 @@ public class Drivetrain extends SubsystemBase {
         }
         StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
-        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.INFO);
+        
+        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.DEBUG);
     
         LogManager.logSupplier("Drivetrain/Pose2d", () -> {
             Pose2d pose = getPose();
@@ -206,7 +209,9 @@ public class Drivetrain extends SubsystemBase {
                 pose.getY(),
                 pose.getRotation().getRadians()
             };
-        }, 15, LogLevel.COMP);
+        }, 50, LogLevel.COMP);
+
+        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.COMP);
     }
 
     public void close() {
@@ -725,5 +730,29 @@ public class Drivetrain extends SubsystemBase {
 
     public SwerveModulePose getSwerveModulePose(){
         return modulePoses;
+    }
+
+    public double getAcceleration() {
+        double accelX = pigeon.getAccelerationX().getValueAsDouble();
+        double accelY = pigeon.getAccelerationY().getValueAsDouble();
+
+        double angularVelocity = pigeon.getAngularVelocityZWorld().getValueAsDouble();
+        double angularAccel = (angularVelocity - previousAngularVelocity) / Constants.LOOP_TIME;
+        previousAngularVelocity = angularVelocity;
+        
+        double pigeonOffsetX = 0.082677;
+        double pigeonOffsetY = 0.030603444;
+
+        double totalX = accelX + Math.pow(angularVelocity, 2) * pigeonOffsetX + angularAccel * pigeonOffsetY;
+        double totalY = accelY + Math.pow(angularVelocity, 2) * pigeonOffsetY - angularAccel * pigeonOffsetX;
+
+        return Math.hypot(totalX, totalY);
+    }
+   
+   
+   
+   
+    public boolean accelerationOverMax() {
+        return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;
     }
 }
