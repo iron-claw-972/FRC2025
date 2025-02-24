@@ -8,7 +8,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -65,12 +64,12 @@ public class Climb extends SubsystemBase {
                 );
 
                 climbSim.setIsClimbing(true);
+
+                SmartDashboard.putData("PID", pid);
+                SmartDashboard.putData("Climb Display", simulationMechanism);       
         }
 
         pid.setIZone(1);
-
-        SmartDashboard.putData("PID", pid);
-        SmartDashboard.putData("Climb Display", simulationMechanism);       
 
         pid.setSetpoint(Units.degreesToRadians(startingPosition));
 
@@ -87,7 +86,6 @@ public class Climb extends SubsystemBase {
 
         simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
-        SmartDashboard.putNumber("Climb VIN Voltage", RoboRioSim.getVInVoltage());
         SmartDashboard.putNumber("Climb Position", getAngle());
 
         SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
@@ -101,10 +99,6 @@ public class Climb extends SubsystemBase {
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
-
-        // RoboRioSim.setVInVoltage(
-        //     BatterySim.calculateDefaultBatteryLoadedVoltage(climbSim.getCurrentDrawAmps())
-        // );
     }
 
     /**
@@ -118,7 +112,7 @@ public class Climb extends SubsystemBase {
 
     /**
      * Gets the current position of the motor in degrees
-     * @return
+     * @return The angle in degrees
      */
     public double getAngle() {
         return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
@@ -137,14 +131,5 @@ public class Climb extends SubsystemBase {
      */
     public void climb(){
         setAngle(startingPosition);
-    }
-
-    public boolean notInInterval() {
-        if (getAngle() > 90 || getAngle() < startingPosition){
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 }
