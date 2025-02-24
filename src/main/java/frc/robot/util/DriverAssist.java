@@ -147,7 +147,7 @@ public class DriverAssist {
         Translation2d difference = desiredPose.getTranslation().minus(drivePose.getTranslation());
         double distance = difference.getNorm();
         double velocityAngle = difference.getAngle().getRadians();
-        double targetAngle = keepAngle ? desiredPose.getRotation().getRadians() : velocityAngle;
+        double targetAngle = keepAngle ? desiredPose.getRotation().getRadians() : MathUtil.angleModulus(velocityAngle + Math.PI/2);
         double inputSpeed = Math.hypot(driverInput.vxMetersPerSecond, driverInput.vyMetersPerSecond);
         double driverAngle = Math.atan2(driverInput.vyMetersPerSecond, driverInput.vxMetersPerSecond);
         double velocityAngleError = MathUtil.angleModulus(velocityAngle - driverAngle);
