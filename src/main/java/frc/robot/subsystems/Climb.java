@@ -24,7 +24,7 @@ public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
     private static final double extendPosition = 2.0;
-    private static final double climbPosition = -1;
+    private static final double climbPosition = -0.63;
 
     //Motors
     // TODO: tune better on real robot
@@ -87,7 +87,7 @@ public class Climb extends SubsystemBase {
         power = pid.calculate(currentPosition);
 
         if(resetting){
-            power = -0.4;
+            power = -0.1;
         }
 
         motor.set(MathUtil.clamp(power, -1, 1));
@@ -96,6 +96,7 @@ public class Climb extends SubsystemBase {
         //simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
     }
+
 
     @Override
     public void simulationPeriodic() {

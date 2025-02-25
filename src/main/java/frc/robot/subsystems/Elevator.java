@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
@@ -49,8 +50,8 @@ public class Elevator extends SubsystemBase {
 
   MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
-  private double maxVelocity = 1; // m/s
-  private double maxAcceleration = 1; // m/s
+  private double maxVelocity = 1.5; // m/s
+  private double maxAcceleration = 3; // m/s
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -58,7 +59,8 @@ public class Elevator extends SubsystemBase {
   private MechanismLigament2d ligament;
   private double voltage;
   // gravity feedforward
-  double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
+  double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.
+  CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
 
 
   public Elevator() {
@@ -82,7 +84,7 @@ public class Elevator extends SubsystemBase {
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
 
-    rightMotor.setNeutralMode(NeutralModeValue.Brake);
+    rightMotor.setNeutralMode(NeutralModeValue.Coast);
 
     var talonFXConfigs = new TalonFXConfiguration();
 
@@ -91,7 +93,7 @@ public class Elevator extends SubsystemBase {
     slot0Configs.kS = 0; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 0.1; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kP = 0.4; // A position error of 2.5 rotations results in 12 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // A velocity error of 1 rps results in 0.1 V output
 
@@ -99,8 +101,8 @@ public class Elevator extends SubsystemBase {
     var motionMagicConfigs = talonFXConfigs.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorConstants.GEARING * maxVelocity/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target cruise velocity 
     motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.GEARING * maxAcceleration/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target acceleration 
-
     rightMotor.getConfigurator().apply(talonFXConfigs);
+    rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
 
 
     //Logging
@@ -120,7 +122,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("voltage", rightMotor.getMotorVoltage().getValueAsDouble());
 
     setpoint = ElevatorConstants.GEARING * setpoint / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
-    rightMotor.setControl(voltageRequest.withPosition(setpoint).withFeedForward(uff));
+    rightMotor.setControl(voltageRequest.withPosition(setpoint));
 
   }
 

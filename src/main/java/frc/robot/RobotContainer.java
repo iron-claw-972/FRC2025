@@ -20,12 +20,11 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
+import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
-import frc.robot.util.LogManager;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
-import frc.robot.util.LogManager.LogLevel;
 
 import java.util.function.BooleanSupplier;
 
@@ -80,7 +79,7 @@ public class RobotContainer {
          climb = new Climb();
       case BetaBot:
         indexer = new Indexer();
-        //intake = new Intake();
+        intake = new Intake();
         //SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
         //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
@@ -147,7 +146,6 @@ public class RobotContainer {
       drivetrainThread.start();
     }
 
-    LogManager.logSupplier("Brownout", () -> brownout(), 15, LogLevel.COMP);
   }
 
 

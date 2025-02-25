@@ -64,13 +64,13 @@ public class OuttakeComp extends Outtake {
     public void outtake(){
         // assumes the coral is present
         // if the coral is not present, we should not bother to spin the rollers
-        setMotor(0.2);
+        setMotor(0.3);
         // this starts the motor... what needs to be done later?
     }
 
 
     public boolean coralLoaded(){
-       return !false;//digitalInputEjecting.get();
+       return digitalInputEjecting.get();//digitalInputEjecting.get();
     }
 
 
@@ -79,7 +79,7 @@ public class OuttakeComp extends Outtake {
      * @return coral is interrupting the beam breaker.
      */
     public boolean coralEjecting() {
-        return !false;//digitalInputEjecting.get();
+        return digitalInputEjecting.get();//digitalInputEjecting.get();
     }
 
 

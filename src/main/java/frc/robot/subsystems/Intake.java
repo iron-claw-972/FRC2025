@@ -27,8 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IntakeConstants;
-import frc.robot.util.LogManager;
-import frc.robot.util.LogManager.LogLevel;
+
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
@@ -91,8 +90,7 @@ public class Intake extends SubsystemBase {
         setAngle(startPosition);
 
         //Logging LogLevel.COMP
-        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.COMP);
-        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.COMP);
+       
     }
 
     /**
