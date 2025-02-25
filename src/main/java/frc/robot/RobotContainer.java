@@ -140,6 +140,9 @@ public class RobotContainer {
         long nextUpdate = System.currentTimeMillis();
         while(!drivetrainThread.isInterrupted()){
           if(System.currentTimeMillis() >= nextUpdate){
+            if(elevator != null){
+              drive.setCenterOfMass(elevator.getCenterOfMassHeight());
+            }
             drive.drive(driver);
             nextUpdate += 20;
           }

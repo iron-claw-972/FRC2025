@@ -119,6 +119,8 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean controlsEnabled = false;
 
+    private double centerOfMassHeight = 0;
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -435,13 +437,13 @@ public class Drivetrain extends SubsystemBase {
             SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
             currentSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                0,
+                centerOfMassHeight,
                 currentState, chassisSpeeds,
                 Constants.LOOP_TIME);
         }else{
             currentSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                0,
+                centerOfMassHeight,
                 currentSetpoint, chassisSpeeds,
                 Constants.LOOP_TIME);
         }
@@ -748,5 +750,9 @@ public class Drivetrain extends SubsystemBase {
    
     public boolean accelerationOverMax() {
         return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;
+    }
+
+    public void setCenterOfMass(double height){
+        centerOfMassHeight = height;
     }
 }

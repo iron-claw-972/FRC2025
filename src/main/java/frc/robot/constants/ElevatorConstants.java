@@ -31,8 +31,8 @@ public class ElevatorConstants {
     public static final double L3_SETPOINT = 0.98;
     public static final double L4_SETPOINT = 1.63;
 
-    public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(8.933);
-    public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(16.931);
+    public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
+    public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(14.767);
 
     // The x distance from the center of the robot to the outtake.
     public static final double OUTTAKE_X = Units.inchesToMeters(-7.25);

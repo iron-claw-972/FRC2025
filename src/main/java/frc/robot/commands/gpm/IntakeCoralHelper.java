@@ -65,7 +65,7 @@ public class IntakeCoralHelper extends Command {
 				}
 				break;
 			case Detected:
-				if(indexer.isIndexerClear()){
+				if(outtake == null && indexer.isIndexerClear() || outtake != null && outtake.coralLoaded()){
 					phase = Phase.InOuttake;
 					intake.stow();
 					intake.deactivate();
@@ -73,7 +73,7 @@ public class IntakeCoralHelper extends Command {
 				}
 				break;
 			case InOuttake:
-				if(outtake == null || outtake.coralEjecting()){
+				if(outtake == null || !outtake.coralLoaded()){
 					outtake.stop();
 					phase = Phase.Done;
 				}
@@ -85,7 +85,7 @@ public class IntakeCoralHelper extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return phase == Phase.Done || outtake != null && outtake.coralEjecting();
+		return phase == Phase.Done;
 	}
 
 	@Override
