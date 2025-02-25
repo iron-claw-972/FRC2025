@@ -1,0 +1,144 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.15,
+        "y": 7.55
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.6909375,
+        "y": 7.5100710227272724
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.435,
+        "y": 6.692
+      },
+      "prevControl": {
+        "x": 5.8632954545454545,
+        "y": 7.04140625
+      },
+      "nextControl": {
+        "x": 5.205249914671538,
+        "y": 6.5045683686347
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.055,
+        "y": 5.275
+      },
+      "prevControl": {
+        "x": 4.247897727272727,
+        "y": 5.515752840909091
+      },
+      "nextControl": {
+        "x": 3.898680288303461,
+        "y": 5.079899647014387
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.755,
+        "y": 7.175
+      },
+      "prevControl": {
+        "x": 1.5817006214604605,
+        "y": 6.994813082056966
+      },
+      "nextControl": {
+        "x": 1.9478881455622452,
+        "y": 7.375554212885873
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.4,
+        "y": 5.435
+      },
+      "prevControl": {
+        "x": 4.239920856752501,
+        "y": 5.627027778972591
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.9686162624821644,
+      "rotationDegrees": 29.999999999999996
+    },
+    {
+      "waypointRelativePos": 2.9900142653352315,
+      "rotationDegrees": 29.999999999999996
+    },
+    {
+      "waypointRelativePos": 3.9828815977175522,
+      "rotationDegrees": 29.999999999999996
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Wait",
+      "waypointRelativePos": 0.8583690987124712,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Wait for 5 seconds"
+        }
+      }
+    },
+    {
+      "name": "Outtake",
+      "waypointRelativePos": 1.3733905579398962,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "OuttakeCoral"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 0.2,
+    "maxAcceleration": 0.2,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 29.999999999999996
+  },
+  "reversed": false,
+  "folder": "Copy Path Folder",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": false
+}

@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.7213752,
+        "y": 5.0258832
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2108522727272732,
+        "y": 5.555639204545454
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.984,
+        "y": 6.942
+      },
+      "prevControl": {
+        "x": 2.323034090909091,
+        "y": 6.529201704545455
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.3779527559055112,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCoral"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -151.372
+  },
+  "reversed": false,
+  "folder": "Ground BSide",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -151.372
+  },
+  "useDefaultConstraints": false
+}
