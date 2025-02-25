@@ -134,7 +134,7 @@ public class Module extends SubsystemBase {
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
 
-        String directory_name = "Drivetrain/Module" + type.name();
+        // String directory_name = "Drivetrain/Module" + type.name();
         // LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000, LogLevel.DEBUG);
         // LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000, LogLevel.DEBUG);
         // LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 100, LogLevel.INFO);

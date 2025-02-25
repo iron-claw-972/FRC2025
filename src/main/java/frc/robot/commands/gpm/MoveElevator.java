@@ -6,7 +6,6 @@ import frc.robot.subsystems.Elevator;
 /**
  * Moves the elevator to a position
  */
-//TODO: This won't work right now
 public class MoveElevator extends Command {
     private Elevator elevator;
     private double setpoint;
