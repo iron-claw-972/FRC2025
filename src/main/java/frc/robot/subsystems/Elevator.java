@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -43,7 +44,6 @@ public class Elevator extends SubsystemBase {
   private double setpoint = ElevatorConstants.START_HEIGHT;
   private double maxVoltage = 12
 
-  ;
   // Sim variables
   private AngledElevatorSim sim;
   private Mechanism2d mechanism;
@@ -125,11 +125,10 @@ public class Elevator extends SubsystemBase {
 
     rightMotor.setNeutralMode(NeutralModeValue.Coast);
 
-    //Logging
-    LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
-    LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
-    LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
-    SmartDashboard.putNumber("setpoint elevator", 0);
+    //Log elevator position
+
+    LogManager.logSupplier("Elevator/Position", () -> getPosition(), 15, LogLevel.COMP);
+    
 
   }
 
