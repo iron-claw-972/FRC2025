@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.755,
+        "y": 7.175
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7849999999999997,
+        "y": 6.667400568181817
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.173806818181818,
+        "y": 5.635411931818182
+      },
+      "prevControl": {
+        "x": 1.9871781025792954,
+        "y": 6.048255509982644
+      },
+      "nextControl": {
+        "x": 2.3527169276782804,
+        "y": 5.239642773059009
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.2,
+        "y": 4.46
+      },
+      "prevControl": {
+        "x": 2.7940612415907378,
+        "y": 4.829448599221876
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "Copy Path Folder",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 29.999999999999996
+  },
+  "useDefaultConstraints": false
+}

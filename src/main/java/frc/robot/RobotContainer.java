@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -8,8 +9,12 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.gpm.IntakeCoral;
+import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OutakeMotors;
+import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.constants.AutoConstants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
@@ -191,7 +196,18 @@ public class RobotContainer {
   }
 
   public void registerCommands() {
+    if(intake != null && indexer != null && elevator != null){
+      NamedCommands.registerCommand("Intake Coral", new IntakeCoral(intake, indexer, elevator, outtake));
+    }
+    if(elevator != null && outtake != null){
 
+      NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+      NamedCommands.registerCommand("Move Elevator", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+      NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+    }
   }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {
@@ -208,7 +224,7 @@ public class RobotContainer {
       return false;
     };
   }
-
+  // 1.795 1.108
   public void interruptThreads(){
     odometryThread.interrupt();
     drivetrainThread.interrupt();

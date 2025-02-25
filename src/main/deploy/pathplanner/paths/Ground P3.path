@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.795,
+        "y": 1.108
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.1682329545516055,
+        "y": 1.307508522733895
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.9713,
+        "y": 2.86081
+      },
+      "prevControl": {
+        "x": 4.743356645639896,
+        "y": 2.696484630068684
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "MoveElevator",
+      "waypointRelativePos": 0.06074240719910196,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "MoveElevator"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 29.429
+  },
+  "reversed": false,
+  "folder": "Ground RSide",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -37.644000000000005
+  },
+  "useDefaultConstraints": true
+}
