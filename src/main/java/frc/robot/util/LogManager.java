@@ -41,7 +41,7 @@ public class LogManager extends DogLog {
     else
       return;
   }
-
+ 
     /**
    * Log a supplier and log if it is in the specified range
    * @param <T> Type of item being logged
@@ -244,8 +244,7 @@ public class LogManager extends DogLog {
   }
 
   public enum LogLevel {
-    DEBUG(3),
-    INFO(2),
+    DEBUG(2),
     COMP(1),
     NONE(0);
 
