@@ -73,7 +73,7 @@ public class AutoTab extends ShuffleBoardTabs {
 
         if(elevator != null && outtake != null) {
          autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-         .andThen(new OuttakeCoralBasic(outtake))
+         .andThen(new OuttakeCoralBasic(outtake, ()->true))
          .andThen(new WaitCommand(3))
          .andThen(new FollowPathCommand("Next Tester", true, drive))
          );

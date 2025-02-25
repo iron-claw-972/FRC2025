@@ -73,8 +73,8 @@ public class IntakeCoralHelper extends Command {
 				}
 				break;
 			case InOuttake:
-				if(outtake == null || outtake.coralLoaded()){
-					outtake.setMotor(0);
+				if(outtake == null || outtake.coralEjecting()){
+					outtake.stop();
 					phase = Phase.Done;
 				}
 				break;
@@ -85,7 +85,7 @@ public class IntakeCoralHelper extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return phase == Phase.Done;
+		return phase == Phase.Done || outtake != null && outtake.coralEjecting();
 	}
 
 	@Override

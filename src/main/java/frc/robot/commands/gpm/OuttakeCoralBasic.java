@@ -1,6 +1,8 @@
 package frc.robot.commands.gpm;
 
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Outtake;
@@ -11,6 +13,9 @@ import frc.robot.subsystems.Outtake;
  * Wants coral to be present.
  */
 public class OuttakeCoralBasic extends Command {
+    public static final double L4_SPEED = 0.15;
+    public static final double OUTTAKE_SPEED = 0.4;
+
     private Outtake outtake;
 
     // states the outtake may take
@@ -21,8 +26,11 @@ public class OuttakeCoralBasic extends Command {
     // counter to measure time in ticks (every 20 milliseconds);
     private int ticks;
 
-    public OuttakeCoralBasic(Outtake outtake){
+    private BooleanSupplier l4Supplier;
+
+    public OuttakeCoralBasic(Outtake outtake, BooleanSupplier l4Supplier){
         this.outtake = outtake;
+        this.l4Supplier = l4Supplier;
         addRequirements(outtake);
     }
 
@@ -36,7 +44,7 @@ public class OuttakeCoralBasic extends Command {
             // coral is present, ejecting makes sense
             state = State.LOADED;
             // wheels start spinning
-            outtake.outtake();
+            outtake.setMotor(l4Supplier.getAsBoolean() ? L4_SPEED : OUTTAKE_SPEED);
         }
         else {
             // no coral present, ejecting does not make sense
@@ -82,8 +90,7 @@ public class OuttakeCoralBasic extends Command {
             }
             // waiting for a timeout; 13 ticks is 0.26 seconds. It only takes 0.18 seconds to eject a coral.
             if (ticks > 13) {
-                // reverse the motor, at -0.1: sometimes did not have the power to reverse, at -0.15: ejected all the way back, hit the funnel
-                outtake.setMotor(-0.125);
+                outtake.reverse();
 
 
                 SmartDashboard.putNumber("Coral Transit Time", ticks * 0.020);
