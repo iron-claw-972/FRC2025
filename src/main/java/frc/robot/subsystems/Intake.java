@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.fasterxml.jackson.databind.ser.std.MapProperty;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
@@ -28,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IntakeConstants;
+import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
@@ -88,6 +89,10 @@ public class Intake extends SubsystemBase {
         stowPID.setTolerance(positionTolerance);
         
         setAngle(startPosition);
+
+        //Logging LogLevel.COMP
+        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.COMP);
+        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.COMP);
     }
 
     /**

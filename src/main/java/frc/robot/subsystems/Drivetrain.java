@@ -116,6 +116,8 @@ public class Drivetrain extends SubsystemBase {
 
     private BaseStatusSignal[] statusSignals = null;
 
+    private double previousAngularVelocity = 0;
+
     private boolean controlsEnabled = false;
 
     /**
@@ -723,5 +725,29 @@ public class Drivetrain extends SubsystemBase {
 
     public SwerveModulePose getSwerveModulePose(){
         return modulePoses;
+    }
+
+    public double getAcceleration() {
+        double accelX = pigeon.getAccelerationX().getValueAsDouble();
+        double accelY = pigeon.getAccelerationY().getValueAsDouble();
+
+        double angularVelocity = pigeon.getAngularVelocityZWorld().getValueAsDouble();
+        double angularAccel = (angularVelocity - previousAngularVelocity) / Constants.LOOP_TIME;
+        previousAngularVelocity = angularVelocity;
+        
+        double pigeonOffsetX = 0.082677;
+        double pigeonOffsetY = 0.030603444;
+
+        double totalX = accelX + Math.pow(angularVelocity, 2) * pigeonOffsetX + angularAccel * pigeonOffsetY;
+        double totalY = accelY + Math.pow(angularVelocity, 2) * pigeonOffsetY - angularAccel * pigeonOffsetX;
+
+        return Math.hypot(totalX, totalY);
+    }
+   
+   
+   
+   
+    public boolean accelerationOverMax() {
+        return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;
     }
 }

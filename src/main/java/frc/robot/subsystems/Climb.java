@@ -66,20 +66,18 @@ public class Climb extends SubsystemBase {
                 true, 
                 Units.degreesToRadians(startingPosition),
                 60
-            );
+                );
 
             climbSim.setIsClimbing(true);
             SmartDashboard.putData("Climb Display", simulationMechanism);
         }
 
         pid.setIZone(1);
+
         pid.setSetpoint(Units.degreesToRadians(startingPosition));
 
         motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
         motor.setNeutralMode(NeutralModeValue.Brake);
-
-        //SmartDashboard.putData("PID", pid);
-    
     }
 
     @Override
@@ -106,6 +104,8 @@ public class Climb extends SubsystemBase {
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+
+        simLigament.setAngle(Units.radiansToDegrees(getAngle()));
     }
 
     /**
