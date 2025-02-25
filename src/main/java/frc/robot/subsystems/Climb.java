@@ -104,6 +104,8 @@ public class Climb extends SubsystemBase {
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+
+        simLigament.setAngle(Units.radiansToDegrees(getAngle()));
     }
 
     /**

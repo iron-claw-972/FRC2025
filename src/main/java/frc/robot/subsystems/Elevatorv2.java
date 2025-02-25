@@ -4,27 +4,17 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
-import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -121,9 +111,9 @@ public class Elevatorv2 extends SubsystemBase {
     m_lastProfiledReference = new State(getPosition(), 0);
 
     //Logging
-    LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
-    LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
-    LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
+    LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.DEBUG);
+    LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.DEBUG);
+    LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.DEBUG);
     SmartDashboard.putNumber("setpoint elevator", 0);
 
   }

@@ -5,10 +5,7 @@
 package frc.robot.subsystems;
 
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MatBuilder;
@@ -42,7 +39,7 @@ public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
-  private double maxVoltage = 12
+  private double maxVoltage = 12;
 
   // Sim variables
   private AngledElevatorSim sim;

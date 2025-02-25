@@ -1,7 +1,5 @@
 package frc.robot.constants;
 
-import edu.wpi.first.math.util.Units;
-
 /**
  * Storage class for intake constants
  */

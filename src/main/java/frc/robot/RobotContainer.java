@@ -20,7 +20,6 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
-import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.LogManager;
 import frc.robot.util.PathGroupLoader;

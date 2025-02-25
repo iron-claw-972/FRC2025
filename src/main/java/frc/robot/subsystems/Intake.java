@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.fasterxml.jackson.databind.ser.std.MapProperty;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
