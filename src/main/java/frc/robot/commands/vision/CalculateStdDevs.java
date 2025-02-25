@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.util.LogManager;
+
 import frc.robot.util.MathUtils;
 import frc.robot.util.Vision;
 
@@ -112,10 +112,10 @@ public class CalculateStdDevs extends Command {
     // Print and log values
     System.out.printf("Standard deviation values:\nX: %.5f\nY: %.5f\nRotation: %.5f\nDistance: %.5f\n",
       stdDevX, stdDevY, stdDevRot, distance);
-    LogManager.log("Vision/StdDevTest/StdDevX", stdDevX);
-    LogManager.log("Vision/StdDevTest/StdDevY", stdDevY);
-    LogManager.log("Vision/StdDevTest/StdDevRotation", stdDevRot);
-    LogManager.log("Vision/StdDevTest/TargetDistance", distance);
+    // LogManager.log("Vision/StdDevTest/StdDevX", stdDevX);
+    // LogManager.log("Vision/StdDevTest/StdDevY", stdDevY);
+    // LogManager.log("Vision/StdDevTest/StdDevRotation", stdDevRot);
+    // LogManager.log("Vision/StdDevTest/TargetDistance", distance);
   }
 
   /**

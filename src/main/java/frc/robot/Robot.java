@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
-import frc.robot.util.LogManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -71,7 +70,7 @@ public class Robot extends TimedRobot {
 
         CommandScheduler.getInstance().run();
         
-        LogManager.update();
+        //LogManager.update();
     }
 
     /**

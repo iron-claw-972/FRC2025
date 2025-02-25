@@ -23,12 +23,12 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-    private static final double extendPosition = 1.0;
-    private static final double climbPosition = -0.5;
+    private static final double extendPosition = 2.0;
+    private static final double climbPosition = -1;
 
     //Motors
     // TODO: tune better on real robot
-    private final PIDController pid = new PIDController(0.1, 0, 0.0);
+    private final PIDController pid = new PIDController(0.3, 0, 0.0);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
@@ -92,7 +92,7 @@ public class Climb extends SubsystemBase {
             power = -0.4;
         }
 
-        motor.set(MathUtil.clamp(power, -0.4, 0.4));
+        motor.set(MathUtil.clamp(power, -1, 1));
         SmartDashboard.putNumber("power", power);
 
         //simLigament.setAngle(Units.radiansToDegrees(currentPosition));

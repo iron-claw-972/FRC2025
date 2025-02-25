@@ -105,9 +105,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
                 .onFalse(new InstantCommand(()->climb.climb(), climb));
             if(intake != null){
-                driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(IntakeConstants.ALGAE_SETPOINT), intake));
+                driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
             }
             driver.get(PS5Button.PS).and(menu).whileTrue(new ResetClimb(climb));
+            driver.get(PS5Button.TOUCHPAD).and(menu).onTrue(new InstantCommand(()->climb.stow(), climb));
+
         }
 
         // Alignment
@@ -129,7 +131,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         )));
 
         // Cancel commands
-        driver.get(PS5Button.TOUCHPAD).onTrue(new InstantCommand(()->{
+        driver.get(PS5Button.TOUCHPAD).and(menu.negate()).onTrue(new InstantCommand(()->{
             if(elevator != null){
                 elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
             }

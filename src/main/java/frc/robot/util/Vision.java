@@ -301,11 +301,11 @@ public class Vision {
           if(pose != null){
             estimatedPoses.add(pose);
 
-            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-              pose.estimatedPose.getX(),
-              pose.estimatedPose.getY(),
-              pose.estimatedPose.toPose2d().getRotation().getRadians()
-            });
+            // LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+            //   pose.estimatedPose.getX(),
+            //   pose.estimatedPose.getY(),
+            //   pose.estimatedPose.toPose2d().getRotation().getRadians()
+            // });
           }
         }
       }else{
@@ -315,11 +315,11 @@ public class Vision {
           if (pose.estimatedPose != null) {
             estimatedPoses.add(pose);
 
-            LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-              pose.estimatedPose.getX(),
-              pose.estimatedPose.getY(),
-              pose.estimatedPose.getRotation().getZ()
-            });
+            // LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
+            //   pose.estimatedPose.getX(),
+            //   pose.estimatedPose.getY(),
+            //   pose.estimatedPose.getRotation().getZ()
+            // });
           }
         }
       }

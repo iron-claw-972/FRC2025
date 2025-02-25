@@ -72,12 +72,12 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-        //  outtake = new OuttakeComp();
-         //elevator = new Elevator();
-        // climb = new Climb();
+        outtake = new OuttakeComp();
+         elevator = new Elevator();
+         climb = new Climb();
       case BetaBot:
         indexer = new Indexer();
-        intake = new Intake();
+        //intake = new Intake();
         //SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
         //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through

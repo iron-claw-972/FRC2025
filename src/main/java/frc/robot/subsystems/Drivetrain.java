@@ -39,10 +39,8 @@ import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
-import frc.robot.util.LogManager;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
-import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -194,20 +192,20 @@ public class Drivetrain extends SubsystemBase {
         }
         StatusSignal.setUpdateFrequencyForAll(250, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
-        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
-        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.INFO);
+        // LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
+        // LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
+        // LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
+        // LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.INFO);
     
-        LogManager.logSupplier("Drivetrain/Pose2d", () -> {
-            Pose2d pose = getPose();
-            return new Double[]{
-                pose.getX(),
-                pose.getY(),
-                pose.getRotation().getRadians()
-            };
-        }, 15, LogLevel.COMP);
-    }
+    //     LogManager.logSupplier("Drivetrain/Pose2d", () -> {
+    //         Pose2d pose = getPose();
+    //         return new Double[]{
+    //             pose.getX(),
+    //             pose.getY(),
+    //             pose.getRotation().getRadians()
+    //         };
+    //     }, 15, LogLevel.COMP);
+     }
 
     public void close() {
         // close the gyro

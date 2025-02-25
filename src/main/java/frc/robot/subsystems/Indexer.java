@@ -20,8 +20,8 @@ import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IndexerConstants;
-import frc.robot.util.LogManager;
-import frc.robot.util.LogManager.LogLevel;
+// import frc.robot.util.LogManager;
+// import frc.robot.util.LogManager.LogLevel;
 
 public class Indexer extends SubsystemBase {
 	private SparkFlex motor;
@@ -56,8 +56,8 @@ public class Indexer extends SubsystemBase {
 		}
 		simCoralPos = IndexerConstants.START_SIM_POS_AT; // initialize it anyway, it's easier
 
-		LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), LogLevel.DEBUG);
-		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
+		// LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), LogLevel.DEBUG);
+		// LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
 		//SmartDashboard.putNumber("indexer speed", 0);
 	}
 
