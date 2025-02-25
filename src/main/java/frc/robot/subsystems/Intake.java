@@ -80,9 +80,9 @@ public class Intake extends SubsystemBase {
         stowPID.setTolerance(positionTolerance);
         setAngle(startPosition);
 
-        //Logging LogLevel.COMP
-        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.COMP);
-        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.COMP);
+        //Logging LogLevel.INFO
+        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.INFO);
+        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.INFO);
     }
 
     /**

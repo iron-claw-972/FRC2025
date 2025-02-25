@@ -211,7 +211,7 @@ public class Drivetrain extends SubsystemBase {
             };
         }, 50, LogLevel.COMP);
 
-        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.COMP);
+        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.INFO);
     }
 
     public void close() {

@@ -147,7 +147,7 @@ public class Elevator extends SubsystemBase {
 
     //Log elevator position
 
-    LogManager.logSupplier("Elevator/Position", () -> getPosition(), 15, LogLevel.COMP);
+    LogManager.logSupplier("Elevator/Position", () -> getPosition(), 15, LogLevel.INFO);
     
 
   }

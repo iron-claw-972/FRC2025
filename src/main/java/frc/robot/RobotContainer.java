@@ -144,7 +144,7 @@ public class RobotContainer {
       drivetrainThread.start();
     }
 
-    LogManager.logSupplier("Brownout", () -> brownout(), 15, LogLevel.COMP);
+    LogManager.logSupplier("Brownout", () -> brownout(), 15, LogLevel.INFO);
   }
 
 
