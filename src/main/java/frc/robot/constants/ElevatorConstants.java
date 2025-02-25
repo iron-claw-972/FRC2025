@@ -27,9 +27,9 @@ public class ElevatorConstants {
     public static final double STOW_SETPOINT = 0;
     public static final double INTAKE_SETPOINT = 0;
     public static final double L1_SETPOINT = 0;
-    public static final double L2_SETPOINT = 0.72;
-    public static final double L3_SETPOINT = 1.1;
-    public static final double L4_SETPOINT = 1.66;
+    public static final double L2_SETPOINT = 0.58;
+    public static final double L3_SETPOINT = 0.98;
+    public static final double L4_SETPOINT = 1.63;
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(8.933);
     public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(16.931);
