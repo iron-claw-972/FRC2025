@@ -1,6 +1,7 @@
 package frc.robot.controls;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -114,7 +115,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(outtake != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));
         }
         if(intake != null && indexer != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
@@ -171,6 +172,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
+
+        new Trigger(()->getDrivetrain().atSetpoint()).onTrue(new InstantCommand(()->startRumble())).onFalse(new InstantCommand(()->endRumble()));
     }
 
     private void setAlignmentDirection(){
@@ -237,5 +240,13 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     @Override
     public boolean getIsAlign() {
         return false;
+    }
+
+    private void startRumble(){
+        driver.rumbleOn();
+    }
+
+    private void endRumble(){
+        driver.rumbleOff();
     }
 }
