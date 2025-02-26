@@ -3,29 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.755,
-        "y": 7.175
+        "x": 1.855,
+        "y": 7.011
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9867904466171586,
-        "y": 7.026521975540033
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.8817897727272723,
-        "y": 5.994389204545453
-      },
-      "prevControl": {
-        "x": 2.6532755387804174,
-        "y": 6.232838839968258
-      },
-      "nextControl": {
-        "x": 3.111136363636363,
-        "y": 5.755071022727273
+        "x": 2.086790446617159,
+        "y": 6.862521975540034
       },
       "isLocked": false,
       "linkedName": null
@@ -50,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.24746906636669946,
+      "waypointRelativePos": 0.1,
       "endWaypointRelativePos": 2.0,
       "command": {
         "type": "named",
@@ -76,7 +60,7 @@
   "folder": "Sequential BSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -151.372
+    "rotation": -142.912
   },
   "useDefaultConstraints": false
 }

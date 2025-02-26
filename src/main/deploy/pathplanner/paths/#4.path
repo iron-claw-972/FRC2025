@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.755,
-        "y": 7.175
+        "x": 1.885,
+        "y": 7.011
       },
       "prevControl": {
-        "x": 2.094034090909091,
-        "y": 6.762201704545455
+        "x": 2.2240340909090914,
+        "y": 6.598201704545455
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,10 +33,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Wait",
-      "waypointRelativePos": 0.6859027205276177,
-      "endWaypointRelativePos": null,
-      "command": null
+      "name": "Intake",
+      "waypointRelativePos": 0.24521934758154978,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -49,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -151.372
+    "rotation": -142.912
   },
   "reversed": false,
   "folder": "Sequential BSide",
