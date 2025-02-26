@@ -3,29 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.984,
-        "y": 6.942
+        "x": 1.885,
+        "y": 7.011
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2157904466171585,
-        "y": 6.793521975540034
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.8817897727272723,
-        "y": 5.994389204545453
-      },
-      "prevControl": {
-        "x": 2.6532755387804174,
-        "y": 6.232838839968258
-      },
-      "nextControl": {
-        "x": 3.111136363636363,
-        "y": 5.755071022727273
+        "x": 2.1167904466171583,
+        "y": 6.862521975540034
       },
       "isLocked": false,
       "linkedName": null
@@ -50,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.24746906636669946,
+      "waypointRelativePos": 0.1,
       "endWaypointRelativePos": 2.0,
       "command": {
         "type": "named",
@@ -70,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -147.50913156484611
+    "rotation": -142.912
   },
   "reversed": false,
   "folder": "Ground BSide",
