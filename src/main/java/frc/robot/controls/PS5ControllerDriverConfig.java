@@ -2,11 +2,9 @@ package frc.robot.controls;
 
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
@@ -17,7 +15,6 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
-import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.Constants;
@@ -74,7 +71,30 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Intake/outtake
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
         if(intake != null && indexer != null){// && elevator != null){
-            driver.get(PS5Button.CROSS).and(menu.negate()).and(r3.negate()).toggleOnTrue(new IntakeCoral(intake, indexer, elevator, outtake));
+            boolean toggle = true;
+            Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake);
+            Command intakeAlgae = new IntakeAlgae(intake);
+            driver.get(PS5Button.CROSS).onTrue(new InstantCommand(()->{
+                if(r3.getAsBoolean()) return;
+                if(menu.getAsBoolean()){
+                    intakeAlgae.schedule();
+                }else{
+                    if(toggle){
+                        if(intakeCoral.isScheduled()){
+                            intakeCoral.cancel();
+                        }else{
+                            intakeCoral.schedule();
+                        }
+                    }else{
+                        intakeCoral.schedule();
+                    }
+                }
+            })).onFalse(new InstantCommand(()->{
+                if(!toggle){
+                    intakeCoral.cancel();
+                }
+                intakeAlgae.cancel();
+            }));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
@@ -89,7 +109,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
         }
         if(intake != null){
-            driver.get(PS5Button.CROSS).and(menu).whileTrue(new IntakeAlgae(intake));
             driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(outtake != null && elevator != null){

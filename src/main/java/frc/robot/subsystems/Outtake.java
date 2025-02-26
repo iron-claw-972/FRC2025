@@ -65,6 +65,6 @@ public abstract class Outtake extends SubsystemBase {
     public abstract void reverse();
 
     public void removeAlgae(){
-        setMotor(-0.2);
+        setMotor(-0.6);
     }
 }
