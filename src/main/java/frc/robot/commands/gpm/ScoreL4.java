@@ -16,12 +16,10 @@ import frc.robot.subsystems.Outtake;
 public class ScoreL4 extends SequentialCommandGroup {
   /** Creates a new ScoreL4. */
   public ScoreL4(Elevator elevator, Outtake outake) {
-    // Add your commands in the addCommands() call, e.g.
-    // TODO add move elevaotr stow setpoint later
     addCommands(
-      new ParallelCommandGroup(new OuttakeCoralBasic(outake, ()-> elevator.getSetpoint() > ElevatorConstants.L3_SETPOINT + 0.001),
-      new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT+0.07)),
-      new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT)
+      new ParallelCommandGroup(
+        new OuttakeCoralBasic(outake, ()-> true),
+        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT+0.07))
     );
   }
 }
