@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.commands.gpm.FinishStationIntake;
 import frc.robot.commands.gpm.IntakeAlgae;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
@@ -101,11 +100,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
-            Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
+            // Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
             driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
                 .onFalse(new InstantCommand(()->{
                     if(!startIntake.isScheduled()){
-                        finishIntake.schedule();
+                        // finishIntake.schedule();
                     }else{
                         startIntake.cancel();
                     }
