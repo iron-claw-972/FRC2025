@@ -12,7 +12,7 @@ public class ElevatorConstants {
     public static final double ANGLE = Units.degreesToRadians(3.5); // radians, from vertical
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(1);
     public static final int NUMBER_OF_STAGES = 3;
-    public static final double GEARING = 10.0/NUMBER_OF_STAGES;
+    public static final double GEARING = 8.333/NUMBER_OF_STAGES;
     public static final double MIN_HEIGHT = 0.0; // meters
     public static final double MAX_HEIGHT = Units.inchesToMeters(66);;//Units.inchesToMeters(48); // meters
     public static final double START_HEIGHT = MIN_HEIGHT; // meters
@@ -29,7 +29,7 @@ public class ElevatorConstants {
     public static final double L1_SETPOINT = 0;
     public static final double L2_SETPOINT = 0.58;
     public static final double L3_SETPOINT = 0.98;
-    public static final double L4_SETPOINT = 1.63;
+    public static final double L4_SETPOINT = 1.59;
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
     public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(14.767);

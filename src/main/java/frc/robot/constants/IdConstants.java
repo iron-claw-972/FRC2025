@@ -39,6 +39,6 @@ public class IdConstants {
     // Outtake
     public static final int OUTTAKE_MOTOR_ALPHA = 14;
     public static final int OUTTAKE_MOTOR_COMP = 30; 
-    public static final int OUTTAKE_DIO_LOADED = 3;
-    public static final int OUTTAKE_DIO_EJECTING = 4;
+    public static final int OUTTAKE_DIO_LOADED = 2;
+    public static final int OUTTAKE_DIO_EJECTING = 3;
 }

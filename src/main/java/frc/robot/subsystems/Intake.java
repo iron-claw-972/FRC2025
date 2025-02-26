@@ -57,8 +57,6 @@ public class Intake extends SubsystemBase {
 
     private boolean laserCanEnabled = false;
 
-    private SlewRateLimiter slewRateLimiter = new SlewRateLimiter(3);
-    private double speed = 0;
 
     public Intake() {
         if (RobotBase.isSimulation()) {
@@ -118,13 +116,11 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("angle", getStowPosition());
         SmartDashboard.putBoolean("Intake has coral", hasCoral());
 
-        rollerMotor.set(slewRateLimiter.calculate(speed));
-
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.5, 0.5);
         pivotMotor.set(power);
-        if (laserCanEnabled || laserCan != null) {
+        if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
@@ -208,7 +204,7 @@ public class Intake extends SubsystemBase {
      * @param power The desired speed of the roller, between 0 and 1.
      */
     public void setSpeed(double power) {
-        speed = power;
+        rollerMotor.set(power);
         isMoving = Math.abs(power) < 0.01;
     }
 

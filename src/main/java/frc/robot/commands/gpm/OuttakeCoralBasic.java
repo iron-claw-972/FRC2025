@@ -14,13 +14,13 @@ import frc.robot.subsystems.Outtake;
  * Wants coral to be present.
  */
 public class OuttakeCoralBasic extends Command {
-    public static final double L4_SPEED = 0.15;
+    public static final double L4_SPEED = 0.2;
     public static final double OUTTAKE_SPEED = 0.4;
 
     private Outtake outtake;
 
     // counter to measure time in ticks (every 20 milliseconds);
-    private Timer timer;
+    private Timer timer = new Timer();
 
     private BooleanSupplier l4Supplier;
 

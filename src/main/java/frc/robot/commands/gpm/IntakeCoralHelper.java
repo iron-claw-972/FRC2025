@@ -39,7 +39,7 @@ public class IntakeCoralHelper extends Command {
 		phase = Phase.Acquiring;
 		intake.enableLaserCan(true);
 		if(outtake != null) {
-			outtake.setMotor(0.3);
+			outtake.setMotor(0.07);
 		}
 	}
 

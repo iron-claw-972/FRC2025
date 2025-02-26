@@ -13,6 +13,7 @@ import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OutakeMotors;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.ScoreL4;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.controls.BaseDriverConfig;
@@ -98,6 +99,7 @@ public class RobotContainer {
         if (outtake != null) {
           //SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
           SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
+          SmartDashboard.putData("l4 outake", new ScoreL4(elevator, outtake));
         }
       case Vertigo:
         drive = new Drivetrain(vision);

@@ -19,11 +19,9 @@ public class ScoreL4 extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // TODO add move elevaotr stow setpoint later
     addCommands(
-      new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-      new ParallelCommandGroup(
-        new OuttakeCoralBasic(outake, ()-> elevator.getSetpoint() > ElevatorConstants.L3_SETPOINT + 0.001),
-        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT+0.02))
-      // new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT)
+      new ParallelCommandGroup(new OuttakeCoralBasic(outake, ()-> elevator.getSetpoint() > ElevatorConstants.L3_SETPOINT + 0.001),
+      new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT+0.07)),
+      new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT)
     );
   }
 }
