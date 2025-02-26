@@ -110,9 +110,6 @@ public class RobotContainer {
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
-        if (driver instanceof PS5ControllerDriverConfig) {
-          rumble = ((PS5ControllerDriverConfig) driver).getRumble();
-        }
         
         //SignalLogger.start();
 
@@ -235,13 +232,6 @@ public class RobotContainer {
     };
   }
 
-  public ConditionalCommand wetherToRumble(){
-    return new ConditionalCommand(
-      new InstantCommand(()->{rumble.accept(true);}),
-      new InstantCommand(()->{rumble.accept(false);}),
-      ()->drive.atSetpoint()
-      );
-  }
   // 1.795 1.108
   public void interruptThreads(){
     odometryThread.interrupt();
