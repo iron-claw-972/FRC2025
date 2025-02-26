@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -14,6 +15,7 @@ import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,7 +41,7 @@ public class Intake extends SubsystemBase {
 
     private final double positionTolerance = 5;
 
-    private final PIDController stowPID = new PIDController(0.01, 0, 0);
+    private final PIDController stowPID = new PIDController(0.015, 0, 0);
     private double power;
 
     private LaserCan laserCan;
@@ -54,6 +56,9 @@ public class Intake extends SubsystemBase {
     private double startPosition = 90;
 
     private boolean laserCanEnabled = false;
+
+    private SlewRateLimiter slewRateLimiter = new SlewRateLimiter(3);
+    private double speed = 0;
 
     public Intake() {
         if (RobotBase.isSimulation()) {
@@ -89,8 +94,7 @@ public class Intake extends SubsystemBase {
         
         setAngle(startPosition);
 
-        //Logging LogLevel.COMP
-       
+       rollerMotor.getConfigurator().apply(new CurrentLimitsConfigs().withStatorCurrentLimit(40).withStatorCurrentLimitEnable(true));
     }
 
     /**
@@ -113,9 +117,12 @@ public class Intake extends SubsystemBase {
         //publish();
         SmartDashboard.putNumber("angle", getStowPosition());
         SmartDashboard.putBoolean("Intake has coral", hasCoral());
+
+        rollerMotor.set(slewRateLimiter.calculate(speed));
+
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
-        power = MathUtil.clamp(power, -0.3, 0.3);
+        power = MathUtil.clamp(power, -0.5, 0.5);
         pivotMotor.set(power);
         if (laserCanEnabled || laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
@@ -201,7 +208,7 @@ public class Intake extends SubsystemBase {
      * @param power The desired speed of the roller, between 0 and 1.
      */
     public void setSpeed(double power) {
-        rollerMotor.set(power);
+        speed = power;
         isMoving = Math.abs(power) < 0.01;
     }
 
