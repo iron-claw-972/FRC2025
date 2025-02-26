@@ -90,7 +90,6 @@ public class Climb extends SubsystemBase {
         }
 
         motor.set(MathUtil.clamp(power, -1, 1));
-        SmartDashboard.putNumber("power", power);
 
         //simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 

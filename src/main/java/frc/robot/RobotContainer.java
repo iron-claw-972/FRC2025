@@ -33,6 +33,7 @@ import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -61,6 +62,7 @@ public class RobotContainer {
 
   private Thread odometryThread = null;
   private Thread drivetrainThread = null;
+  private Consumer<Boolean> rumble;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -98,8 +100,8 @@ public class RobotContainer {
         }
         if (outtake != null) {
           //SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
-          SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
-          SmartDashboard.putData("l4 outake", new ScoreL4(elevator, outtake));
+          // SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
+          // SmartDashboard.putData("l4 outake", new ScoreL4(elevator, outtake));
         }
       case Vertigo:
         drive = new Drivetrain(vision);
@@ -229,6 +231,7 @@ public class RobotContainer {
       return false;
     };
   }
+
   // 1.795 1.108
   public void interruptThreads(){
     odometryThread.interrupt();
