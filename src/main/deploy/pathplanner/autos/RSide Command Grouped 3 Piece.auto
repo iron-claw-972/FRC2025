@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoralBasic"
+                  "name": "OuttakeCoral"
                 }
               }
             ]
@@ -60,7 +60,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoralBasic"
+                  "name": "OuttakeCoral"
                 }
               }
             ]
@@ -91,7 +91,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoralBasic"
+                  "name": "OuttakeCoral"
                 }
               },
               {
