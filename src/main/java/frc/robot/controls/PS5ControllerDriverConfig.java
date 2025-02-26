@@ -1,6 +1,7 @@
 package frc.robot.controls;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -47,6 +48,14 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Outtake outtake;
     private final Climb climb;
     private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_TRIGGER);
+    private final Consumer<Boolean> rumblConsumer = (x) -> {
+        if (x){
+            startRumble();
+        }
+        else{
+            endRumble();
+        }
+    };
     private int alignmentDirection = 0;
 
     public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
@@ -238,4 +247,16 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     public boolean getIsAlign() {
         return false;
     }
+
+    private void startRumble(){
+        driver.rumbleOn();
+    }
+
+    private void endRumble(){
+        driver.rumbleOff();
+    }
+    public Consumer<Boolean> getRumble(){
+        return rumblConsumer;
+    }
+
 }

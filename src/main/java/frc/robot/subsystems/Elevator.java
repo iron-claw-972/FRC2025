@@ -98,11 +98,6 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
-    SmartDashboard.putNumber("position", getPosition());
-    SmartDashboard.putNumber("rightmotor", rightMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("voltage", rightMotor.getMotorVoltage().getValueAsDouble());
-
     double setpoint2 = ElevatorConstants.GEARING * setpoint / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpoint2).withFeedForward(0.15));
 
