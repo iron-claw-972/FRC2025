@@ -71,6 +71,20 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.addOption("BSide Ground", new PathPlannerAuto("BSide Ground"));
         autoCommand.addOption("Command Grouped 3 Piece", new PathPlannerAuto("Command Grouped 3 Piece"));
 
+        
+        autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator))
+        .andThen(new FollowPathCommand("#2", true, drive))
+        .andThen(new FollowPathCommand("#3", true, drive))
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator))
+        .andThen(new FollowPathCommand("#4", true, drive))
+        .andThen(new FollowPathCommand("#5", true, drive))
+        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        .andThen(new OuttakeCoral(outtake, elevator)));    
+
+        
         if(elevator != null && outtake != null) {
          autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
          .andThen(new OuttakeCoralBasic(outtake, ()->true))

@@ -206,12 +206,31 @@ public class RobotContainer {
     }
     if(elevator != null && outtake != null){
 
-      NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
-      NamedCommands.registerCommand("Move Elevator", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+      NamedCommands.registerCommand("Outtake", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+      NamedCommands.registerCommand("L4", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+      
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
         new OuttakeCoral(outtake, elevator)
       ));
+
+      
+      NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+
+      NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+      
+      NamedCommands.registerCommand("L3", new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+      NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+      NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+    
+
+
     }
   }
 

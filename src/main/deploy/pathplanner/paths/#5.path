@@ -32,11 +32,11 @@
     },
     {
       "anchor": {
-        "x": 3.2385,
+        "x": 3.239,
         "y": 4.191
       },
       "prevControl": {
-        "x": 2.8325612415907377,
+        "x": 2.8330612415907375,
         "y": 4.560448599221876
       },
       "nextControl": null,
@@ -50,7 +50,7 @@
   "eventMarkers": [
     {
       "name": "OuttakeCoralBasic",
-      "waypointRelativePos": 0.8188976377952761,
+      "waypointRelativePos": 1.9479084451459798,
       "endWaypointRelativePos": null,
       "command": null
     }
