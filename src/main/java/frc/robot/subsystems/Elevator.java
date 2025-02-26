@@ -33,8 +33,9 @@ public class Elevator extends SubsystemBase {
 
   MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
-  private double maxVelocity = 1.5; // m/s
-  private double maxAcceleration = 4; // m/s
+  private double maxVelocity = 3; // m/s
+  private double maxAcceleration = 8
+  ; // m/s
         
   // Sim variables
   private AngledElevatorSim sim;
