@@ -725,9 +725,9 @@ public class Drivetrain extends SubsystemBase {
         return desiredPoSupplier.get();
     }
 
-    public Boolean atSetpoint(){
-        return getDesiredPose()!=null && Math.abs(getDesiredPose().getX()-getPose().getX())<0.0127 && Math.abs(getDesiredPose().getY()-getPose().getY())<0.0127;
-
+    public boolean atSetpoint(){
+        Pose2d pose = getDesiredPose();
+        return pose != null && getPose().getTranslation().getDistance(pose.getTranslation()) < 0.025;
     }
 
     public SwerveModulePose getSwerveModulePose(){

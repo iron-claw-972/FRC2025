@@ -48,14 +48,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Outtake outtake;
     private final Climb climb;
     private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_TRIGGER);
-    private final Consumer<Boolean> rumblConsumer = (x) -> {
-        if (x){
-            startRumble();
-        }
-        else{
-            endRumble();
-        }
-    };
     private int alignmentDirection = 0;
 
     public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
@@ -123,7 +115,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(outtake != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));
         }
         if(intake != null && indexer != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
@@ -180,6 +172,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
+
+        new Trigger(()->getDrivetrain().atSetpoint()).onTrue(new InstantCommand(()->startRumble())).onFalse(new InstantCommand(()->endRumble()));
     }
 
     private void setAlignmentDirection(){
@@ -255,8 +249,4 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private void endRumble(){
         driver.rumbleOff();
     }
-    public Consumer<Boolean> getRumble(){
-        return rumblConsumer;
-    }
-
 }
