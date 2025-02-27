@@ -3,6 +3,7 @@
   "robotLength": 0.8239,
   "holonomicMode": true,
   "pathFolders": [
+    "Copy Path Folder",
     "Ground BSide",
     "Ground RSide",
     "Sequential BSide",
@@ -35,6 +36,6 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": [
-    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":-0.6},\"size\":{\"width\":0.4,\"length\":0.7},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
+    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":-0.55},\"size\":{\"width\":0.241,\"length\":0.5969},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
   ]
 }
