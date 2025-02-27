@@ -6,6 +6,8 @@ package frc.robot.util.ShuffleBoard.Tabs;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Robot;
 import frc.robot.commands.vision.AimAtTag;
 import frc.robot.commands.vision.CalculateStdDevs;
 import frc.robot.commands.vision.ReturnData;
@@ -39,6 +41,21 @@ public class VisionTab extends ShuffleBoardTabs {
             tab.add("Calculate std devs", new CalculateStdDevs(1000, vision, drive));
             tab.add("Return data", new ReturnData(vision));
         }
+		tab.add("Shutdown OrangePi", new InstantCommand(() -> {
+			if (Robot.isSimulation()) {
+				// this will probably break on Windows systems so...
+				System.out.println("What OrangePi? This is simulation!");
+			} else {
+				try {
+					// TODO: test this shell command
+					String[] command = new String[]{"sshpass", "-praspberry", "ssh", "pi@10.9.72.12", "sudo", "shutdown", "now"};
+					Runtime.getRuntime().exec(command);
+				} catch (Exception e) {
+					String message = e.getMessage() == null ? "unknown" : e.getMessage();
+					System.out.println("Failed to shutdown OrangePi. Reason: " + message);
+				}
+			}
+		}));
         tab.add("Aim at tag", new AimAtTag(drive));
     }
 
