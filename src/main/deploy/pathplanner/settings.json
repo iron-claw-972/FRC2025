@@ -3,13 +3,12 @@
   "robotLength": 0.87249,
   "holonomicMode": true,
   "pathFolders": [
-    "Bad",
+    "1 Piece Auto",
+    "2 Piece Auto",
+    "3 Piece Auto",
+    "4 Piece Auto",
     "Comp Calibration",
-    "Copy of Sequential Path [Secondary]",
-    "RSide Sequential Path",
-    "Path from first cage",
-    "Sequential Path",
-    "Trials"
+    "Tester"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
