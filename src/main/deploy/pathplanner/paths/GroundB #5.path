@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.984,
-        "y": 6.942
+        "x": 1.885,
+        "y": 7.011
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.014,
-        "y": 6.434400568181817
+        "x": 1.4793761576631148,
+        "y": 6.704362621798967
       },
       "isLocked": false,
       "linkedName": null
@@ -68,7 +68,7 @@
     "rotation": -89.83541845130789
   },
   "reversed": false,
-  "folder": "Path Group #1.5 Ground BSide",
+  "folder": "Ground BSide",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -151.372
