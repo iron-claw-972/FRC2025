@@ -41,6 +41,7 @@ public class VisionTab extends ShuffleBoardTabs {
             tab.add("Calculate std devs", new CalculateStdDevs(1000, vision, drive));
             tab.add("Return data", new ReturnData(vision));
         }
+
 		tab.add("Shutdown OrangePi", new InstantCommand(() -> {
 			if (Robot.isSimulation()) {
 				// this will probably break on Windows systems so...
@@ -48,14 +49,16 @@ public class VisionTab extends ShuffleBoardTabs {
 			} else {
 				try {
 					// TODO: test this shell command
-					String[] command = new String[]{"sshpass", "-praspberry", "ssh", "pi@10.9.72.12", "sudo", "shutdown", "now"};
+					String[] command = new String[]{"sshpass", "-praspberry",
+						"ssh", "pi@10.9.72.12", "sudo", "shutdown", "now"};
 					Runtime.getRuntime().exec(command);
 				} catch (Exception e) {
 					String message = e.getMessage() == null ? "unknown" : e.getMessage();
 					System.out.println("Failed to shutdown OrangePi. Reason: " + message);
 				}
 			}
-		}));
+			}).ignoringDisable(true)
+		);
         tab.add("Aim at tag", new AimAtTag(drive));
     }
 
