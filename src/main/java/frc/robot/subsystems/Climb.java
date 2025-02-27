@@ -24,7 +24,7 @@ public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
     private static final double extendPosition = 2.0;
-    private static final double climbPosition = -0.63;
+    private static final double climbPosition = -0.83;
 
     //Motors
     private final PIDController pid = new PIDController(0.3, 0, 0.0);

@@ -223,7 +223,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //updateOdometryVision();
+        updateOdometryVision();
     }
 
     // DRIVE

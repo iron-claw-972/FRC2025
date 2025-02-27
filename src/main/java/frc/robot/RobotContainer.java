@@ -16,6 +16,7 @@ import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ScoreL4;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
@@ -89,7 +90,7 @@ public class RobotContainer {
         indexer = new Indexer();
         intake = new Intake();
         //SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
-        //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
         //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
 
@@ -132,6 +133,7 @@ public class RobotContainer {
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
     LiveWindow.setEnabled(false);
+    
     
     // Start a new thread to update the odometry
     if(drive != null){

@@ -30,7 +30,7 @@ public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
-
+  
   MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
   private double maxVelocity = 3; // m/s
@@ -68,7 +68,7 @@ public class Elevator extends SubsystemBase {
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
 
-    rightMotor.setNeutralMode(NeutralModeValue.Coast);
+    rightMotor.setNeutralMode(NeutralModeValue.Brake);
 
     var talonFXConfigs = new TalonFXConfiguration();
 
