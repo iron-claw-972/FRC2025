@@ -141,12 +141,12 @@ public class Module extends SubsystemBase {
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
 
         String directory_name = "Drivetrain/Module" + type.name();
-        LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 100, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000, LogLevel.DEBUG);
+        LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1003, LogLevel.DEBUG);
+        LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1007, LogLevel.DEBUG);
+        LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 123, LogLevel.DEBUG);
+        LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 127, LogLevel.DEBUG);
+        LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1001, LogLevel.DEBUG);
+        LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1009, LogLevel.DEBUG);
     }
 
     public void close() {
