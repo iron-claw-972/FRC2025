@@ -48,9 +48,8 @@ public class VisionTab extends ShuffleBoardTabs {
 				System.out.println("What OrangePi? This is simulation!");
 			} else {
 				try {
-					// TODO: test this shell command
 					String[] command = new String[]{"sshpass", "-praspberry",
-						"ssh", "pi@10.9.72.12", "sudo", "shutdown", "now"};
+						"ssh", "-o", "StrictHostKeyChecking no", "pi@10.9.72.12", "sudo", "shutdown", "now"};
 					Runtime.getRuntime().exec(command);
 				} catch (Exception e) {
 					String message = e.getMessage() == null ? "unknown" : e.getMessage();
