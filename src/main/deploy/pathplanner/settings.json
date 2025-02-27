@@ -3,7 +3,6 @@
   "robotLength": 0.8239,
   "holonomicMode": true,
   "pathFolders": [
-    "Copy Path Folder",
     "Ground BSide",
     "Ground RSide",
     "Sequential BSide",
