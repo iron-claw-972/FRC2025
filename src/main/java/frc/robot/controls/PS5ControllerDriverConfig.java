@@ -1,7 +1,6 @@
 package frc.robot.controls;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;

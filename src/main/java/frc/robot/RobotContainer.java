@@ -6,14 +6,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
-import frc.robot.commands.gpm.OutakeMotors;
 import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.commands.gpm.ScoreL4;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -34,7 +31,6 @@ import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -63,7 +59,6 @@ public class RobotContainer {
 
   private Thread odometryThread = null;
   private Thread drivetrainThread = null;
-  private Consumer<Boolean> rumble;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
