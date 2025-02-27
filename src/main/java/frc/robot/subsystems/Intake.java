@@ -81,8 +81,8 @@ public class Intake extends SubsystemBase {
         setAngle(startPosition);
 
         //Logging LogLevel.INFO
-        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.INFO);
-        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.INFO);
+        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 127, LogLevel.INFO);
+        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 31, LogLevel.INFO);
     }
 
     /**

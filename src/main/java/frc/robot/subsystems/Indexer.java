@@ -43,8 +43,8 @@ public class Indexer extends SubsystemBase {
 		}
 		simCoralPos = IndexerConstants.START_SIM_POS_AT; // initialize it anyway, it's easier
 
-		LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), LogLevel.DEBUG);
-		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
+		LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), 513, LogLevel.DEBUG);
+		LogManager.logSupplier("Indexer motor", () -> getMotor(), 517, LogLevel.DEBUG);
 	}
 
 	/** Runs the indexer. */

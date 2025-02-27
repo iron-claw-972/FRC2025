@@ -197,10 +197,10 @@ public class Drivetrain extends SubsystemBase {
         StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
         
-        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 101, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 103, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 107, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 109, LogLevel.DEBUG);
     
         LogManager.logSupplier("Drivetrain/Pose2d", () -> {
             Pose2d pose = getPose();
@@ -209,9 +209,9 @@ public class Drivetrain extends SubsystemBase {
                 pose.getY(),
                 pose.getRotation().getRadians()
             };
-        }, 50, LogLevel.COMP);
+        }, 53, LogLevel.COMP);
 
-        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.INFO);
+        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 37, LogLevel.INFO);
     }
 
     public void close() {

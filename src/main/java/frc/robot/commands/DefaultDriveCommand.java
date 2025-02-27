@@ -16,9 +16,9 @@ public class DefaultDriveCommand extends Command {
             Drivetrain swerve,
             BaseDriverConfig driver) {
         this.swerve = swerve;
-        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation(), 500, LogLevel.DEBUG);
-        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation(), 500, LogLevel.DEBUG);
-        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation(), 500, LogLevel.DEBUG);
+        LogManager.logSupplier("DriveControls/ForwardTranslation", () -> driver.getForwardTranslation(), 501, LogLevel.DEBUG);
+        LogManager.logSupplier("DriveControls/SideTranslation", () -> driver.getSideTranslation(), 503, LogLevel.DEBUG);
+        LogManager.logSupplier("DriveControls/Rotation", () -> driver.getRotation(), 509, LogLevel.DEBUG);
         addRequirements(swerve);
     }
 
