@@ -60,7 +60,7 @@
   "folder": "Sequential BSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -151.372
+    "rotation": -150.0
   },
   "useDefaultConstraints": false
 }
