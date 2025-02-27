@@ -7,49 +7,49 @@
         {
           "type": "path",
           "data": {
-            "pathName": "#1"
+            "pathName": "Copy #1"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.75
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#2"
+            "pathName": "Copy #2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#3"
+            "pathName": "Copy #3"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.75
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#4"
+            "pathName": "Copy #4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#5"
+            "pathName": "Copy #5"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.75
           }
         }
       ]
