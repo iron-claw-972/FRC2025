@@ -65,12 +65,6 @@ public class IntakeCoralHelper extends Command {
 				}
 				break;
 			case Detected:
-				if(outtake == null && indexer.isIndexerClear() || outtake != null && outtake.coralLoaded()){
-					phase = Phase.InOuttake;
-					intake.stow();
-					intake.deactivate();
-					
-				}
 				break;
 			case InOuttake:
 				if(outtake == null || !outtake.coralLoaded()){
@@ -80,6 +74,11 @@ public class IntakeCoralHelper extends Command {
 				break;
 			case Done:
 				break;
+		}
+		if(outtake == null && indexer.isIndexerClear() && phase == Phase.Detected || outtake != null && outtake.coralLoaded()){
+			phase = Phase.InOuttake;
+			intake.stow();
+			intake.deactivate();
 		}
 	}
 
