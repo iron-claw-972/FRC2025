@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 4.9713,
-        "y": 2.86081
+        "x": 3.721,
+        "y": 3.02599168
       },
       "prevControl": {
-        "x": 4.743356645639896,
-        "y": 2.696484630068684
+        "x": 3.4930566456398955,
+        "y": 2.8616663100686845
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": -29.999999999999996
   },
   "reversed": false,
   "folder": "Ground RSide",
