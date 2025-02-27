@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -142.912
+    "rotation": -144.0
   },
   "reversed": false,
   "folder": "Sequential BSide",
