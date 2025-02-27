@@ -47,14 +47,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 0.5,
     "maxAcceleration": 0.5,
@@ -68,7 +61,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Trials",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

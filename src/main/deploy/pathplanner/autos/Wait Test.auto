@@ -17,12 +17,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "OuttakeCoralBasic"
-          }
-        },
-        {
           "type": "wait",
           "data": {
             "waitTime": 2.0

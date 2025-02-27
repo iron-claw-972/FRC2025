@@ -127,7 +127,7 @@ public class RobotContainer {
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-    // 1.885 7.011 -142.912
+   
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
@@ -204,11 +204,11 @@ public class RobotContainer {
 
   public void registerCommands() {
     if(intake != null && indexer != null && elevator != null){
-      NamedCommands.registerCommand("Intake Coral", new IntakeCoral(intake, indexer, elevator, outtake));
+      NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake));
     }
     if(elevator != null && outtake != null){
 
-      NamedCommands.registerCommand("Outtake", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+      NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
       NamedCommands.registerCommand("L4", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(

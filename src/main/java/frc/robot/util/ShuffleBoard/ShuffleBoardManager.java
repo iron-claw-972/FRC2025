@@ -25,6 +25,8 @@ public class ShuffleBoardManager {
     private SwerveTab swerveTab;
     private AutoTab autoTab;
     private VisionTab visionTab;
+    private Outtake outtake;
+    private Intake intake;
 
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake, Intake intake){
         
