@@ -48,7 +48,7 @@
   "folder": "Ground RSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -37.644000000000005
+    "rotation": -36.0
   },
   "useDefaultConstraints": true
 }
