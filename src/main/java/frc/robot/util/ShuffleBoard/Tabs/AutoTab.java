@@ -59,11 +59,10 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
 
         try {
-            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Wait Test");
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Command Grouped 3 Piece");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
         autoCommand.addOption("RSide Command Grouped 3 Piece", new PathPlannerAuto("RSide Command Grouped 3 Piece"));
@@ -72,17 +71,17 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.addOption("Command Grouped 3 Piece", new PathPlannerAuto("Command Grouped 3 Piece"));
 
         // 1.795 1.108
-        autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
-        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        .andThen(new OuttakeCoral(outtake, elevator))
-        .andThen(new FollowPathCommand("#2", true, drive))
-        .andThen(new FollowPathCommand("#3", true, drive))
-        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        .andThen(new OuttakeCoral(outtake, elevator))
-        .andThen(new FollowPathCommand("#4", true, drive))
-        .andThen(new FollowPathCommand("#5", true, drive))
-        .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        .andThen(new OuttakeCoral(outtake, elevator)));    
+        // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new FollowPathCommand("#2", true, drive))
+        // .andThen(new FollowPathCommand("#3", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new FollowPathCommand("#4", true, drive))
+        // .andThen(new FollowPathCommand("#5", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));    
 
         
         if(elevator != null && outtake != null) {
