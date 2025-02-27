@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Trials",
+  "folder": "Extra",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

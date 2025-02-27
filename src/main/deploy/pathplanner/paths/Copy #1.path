@@ -8,36 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.680965909090909,
-        "y": 7.37046875
+        "x": 6.182386363636364,
+        "y": 7.4402698863636365
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.454460227272728,
-        "y": 6.542826704545455
+        "x": 5.075539772727272,
+        "y": 6.851946022727272
       },
       "prevControl": {
-        "x": 5.729263575691316,
-        "y": 6.728983811538692
+        "x": 6.092642045454545,
+        "y": 7.5100710227272724
       },
       "nextControl": {
-        "x": 5.145340909090908,
-        "y": 6.333423295454545
+        "x": 4.3045110088616685,
+        "y": 6.353045057873058
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.4,
-        "y": 5.435
+        "x": 4.0073368,
+        "y": 5.1909832
       },
       "prevControl": {
-        "x": 4.53783512352306,
-        "y": 5.6435700810839915
+        "x": 4.145171923523059,
+        "y": 5.399553281083992
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,10 +47,22 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Outtake ",
+      "waypointRelativePos": 2.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Score L3"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 3.25,
+    "maxAcceleration": 3.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -58,13 +70,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": -151.372
   },
   "reversed": false,
-  "folder": "Copy Path Folder",
+  "folder": "Code Sequential Group",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -179.01044530763917
   },
   "useDefaultConstraints": false
 }

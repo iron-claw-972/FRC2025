@@ -16,28 +16,28 @@
     },
     {
       "anchor": {
-        "x": 3.0413352272727274,
-        "y": 6.064190340909091
+        "x": 2.8817897727272723,
+        "y": 5.994389204545453
       },
       "prevControl": {
-        "x": 2.821960227272727,
-        "y": 6.243678977272728
+        "x": 2.6532755387804174,
+        "y": 6.232838839968258
       },
       "nextControl": {
-        "x": 3.2348245520735577,
-        "y": 5.905880893344776
+        "x": 3.111136363636363,
+        "y": 5.755071022727273
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.055,
-        "y": 5.275
+        "x": 3.7213752,
+        "y": 5.0258832
       },
       "prevControl": {
-        "x": 3.7592897727272727,
-        "y": 5.515752840909091
+        "x": 3.3903409090909093,
+        "y": 5.4260085227272725
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,10 +47,22 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Outtake",
+      "waypointRelativePos": 2.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Score L3"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 3.25,
+    "maxAcceleration": 3.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -58,13 +70,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": -147.50913156484611
   },
   "reversed": false,
-  "folder": "Copy Path Folder",
+  "folder": "Code Sequential Group",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": -151.372
   },
   "useDefaultConstraints": false
 }

@@ -3,12 +3,13 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Copy Path Folder",
-    "Ground BSide",
-    "Ground RSide",
-    "Sequential BSide",
-    "Sequential RSide",
-    "Square"
+    "Extra",
+    "Path Group #1.5 Ground BSide",
+    "Path Group #2.5 Ground RSide",
+    "Code Sequential Group",
+    "Path Group #1 BSide ",
+    "Path Group #2 Sequential RSide",
+    "Square Path Group"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

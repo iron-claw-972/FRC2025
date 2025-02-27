@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -61,7 +61,7 @@
     "rotation": -151.372
   },
   "reversed": false,
-  "folder": "Sequential BSide",
+  "folder": "Path Group #1 BSide ",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -179.01044530763917

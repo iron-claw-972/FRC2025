@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.055,
-        "y": 5.275
+        "x": 3.7213752,
+        "y": 5.0258832
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.788680869841744,
-        "y": 5.453384035709859
+        "x": 3.2108522727272732,
+        "y": 5.555639204545454
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 7.175
       },
       "prevControl": {
-        "x": 2.13700875549597,
-        "y": 6.917216884607338
+        "x": 2.094034090909091,
+        "y": 6.762201704545455
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Wait",
+      "waypointRelativePos": 0.6859027205276177,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 3.25,
+    "maxAcceleration": 3.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": -151.372
   },
   "reversed": false,
-  "folder": "Copy Path Folder",
+  "folder": "Code Sequential Group",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": -147.3076940522392
   },
   "useDefaultConstraints": false
 }

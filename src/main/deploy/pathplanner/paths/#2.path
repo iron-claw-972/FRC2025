@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.007,
+        "x": 4.0073368,
         "y": 5.1909832
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6411477272727275,
+        "x": 3.641484527272728,
         "y": 5.481451949999999
       },
       "isLocked": false,
@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.885,
-        "y": 7.011
+        "x": 1.7250852272727275,
+        "y": 7.16106534090909
       },
       "prevControl": {
-        "x": 2.243980102720071,
-        "y": 6.658034128190328
+        "x": 2.0840653299927987,
+        "y": 6.808099469099418
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,20 +33,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0.31271091113610544,
-      "endWaypointRelativePos": 1.0,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeCoral"
-        }
-      }
+      "name": "Wait",
+      "waypointRelativePos": 0.6463314097279476,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,10 +49,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -142.912
+    "rotation": -151.372
   },
   "reversed": false,
-  "folder": "Sequential BSide",
+  "folder": "Path Group #1 BSide ",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -151.372
