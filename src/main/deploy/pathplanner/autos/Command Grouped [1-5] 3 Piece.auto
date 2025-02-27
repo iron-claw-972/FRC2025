@@ -7,49 +7,88 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Copy #1"
+            "pathName": "#1"
           }
         },
         {
-          "type": "wait",
+          "type": "sequential",
           "data": {
-            "waitTime": 1.75
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Copy #2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Copy #3"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.75
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy #4"
+            "pathName": "#2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy #5"
+            "pathName": "#3"
           }
         },
         {
-          "type": "wait",
+          "type": "sequential",
           "data": {
-            "waitTime": 1.75
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "#4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "#5"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              }
+            ]
           }
         }
       ]
