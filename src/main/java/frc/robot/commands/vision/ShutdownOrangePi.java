@@ -27,7 +27,7 @@ public class ShutdownOrangePi extends Command {
 			System.out.println("What OrangePi? This is simulation!");
 		} else {
 			try {
-				String[] commandString = new String[] { "sshpass", "-praspberry", "ssh",
+				String[] commandString = new String[] { "ssh",
 						"-o", "UserKnownHostsFile /dev/null",
 						"-o", "StrictHostKeyChecking no",
 						VisionConstants.ORANGEPI_USERNAME + "@" + VisionConstants.ORANGEPI_IP,
