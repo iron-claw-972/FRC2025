@@ -59,7 +59,7 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
 
         try {
-            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Command Grouped 3 Piece");
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
