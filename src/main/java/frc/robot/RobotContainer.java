@@ -207,6 +207,8 @@ public class RobotContainer {
 
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
       NamedCommands.registerCommand("L4", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+
+      NamedCommands.registerCommand("Lower Elevator", new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT)));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),

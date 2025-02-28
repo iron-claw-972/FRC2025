@@ -34,12 +34,12 @@
   "eventMarkers": [
     {
       "name": "Elevator",
-      "waypointRelativePos": 0.12823397075365728,
-      "endWaypointRelativePos": 1.0,
+      "waypointRelativePos": 0.16647919010123857,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "MoveElevator"
+          "name": "L4"
         }
       }
     }

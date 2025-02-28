@@ -11,19 +11,19 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "OuttakeCoral"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Lower Elevator"
                 }
               }
             ]
@@ -42,19 +42,19 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "OuttakeCoral"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Lower Elevator"
                 }
               }
             ]
@@ -73,19 +73,19 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "OuttakeCoral"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Lower Elevator"
                 }
               }
             ]
