@@ -10,9 +10,11 @@ import frc.robot.constants.VisionConstants;
 
 public class ShutdownOrangePi extends Command {
 	private Process process;
-	private boolean passwordTyped = false;
+	private boolean passwordTyped;
+	private Pattern promptMatcher;
 
 	public ShutdownOrangePi() {
+		promptMatcher = Pattern.compile("password: ?$");
 	}
 
 	@Override
@@ -22,6 +24,7 @@ public class ShutdownOrangePi extends Command {
 
 	@Override
 	public void initialize() {
+		passwordTyped = false;
 		if (Robot.isSimulation()) {
 			// this will probably break on Windows systems so...
 			System.out.println("What OrangePi? This is simulation!");
@@ -43,8 +46,7 @@ public class ShutdownOrangePi extends Command {
 	@Override
 	public void execute() {
 		if (this.process == null) return; // command creation failed for some reason
-
-		if (passwordTyped) return; // don't try typing the password if we've already done it
+		if (this.passwordTyped) return; // don't try typing the password if we've already done it
 
 		try {
 			// read as much as possible
@@ -53,11 +55,11 @@ public class ShutdownOrangePi extends Command {
 			this.process.getInputStream().read(buffer, 0, availibleBytes);
 			String asStr = new String(buffer);
 
-			Pattern prompt = Pattern.compile("password: ?$");
-			Matcher matches = prompt.matcher(asStr);
-			if (matches.hasMatch()) { // if we're at the prompt...
+			Matcher matches = promptMatcher.matcher(asStr);
+			if (matches.find()) { // if we're at the prompt...
 				this.process.getOutputStream().write((VisionConstants.ORANGEPI_PASSWORD + "\n").
-					getBytes()); // ... type the password
+					getBytes()); // ...type the password
+				this.process.getOutputStream().flush();
 				this.passwordTyped = true;
 			}
 		} catch (IOException e) {
