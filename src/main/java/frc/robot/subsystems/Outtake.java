@@ -63,4 +63,8 @@ public abstract class Outtake extends SubsystemBase {
     public abstract boolean coralEjecting();
 
     public abstract void reverse();
+
+    public void removeAlgae(){
+        setMotor(-0.6);
+    }
 }

@@ -47,17 +47,10 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "MoveElevator",
-      "waypointRelativePos": 0.40944881889763707,
-      "endWaypointRelativePos": 2.0,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 0.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -65,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -151.372
+    "rotation": -150.0
   },
   "reversed": false,
   "folder": "Sequential BSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -179.01044530763917
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }

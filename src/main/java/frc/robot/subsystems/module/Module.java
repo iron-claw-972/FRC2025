@@ -11,7 +11,6 @@ import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -41,8 +40,7 @@ import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
 import frc.robot.util.ConversionUtils;
-import frc.robot.util.LogManager;
-import frc.robot.util.LogManager.LogLevel;
+
 import lib.CTREModuleState;
 
 
@@ -58,8 +56,6 @@ public class Module extends SubsystemBase {
     private SwerveModuleState desiredState;
 
     protected boolean stateDeadband = true;
-
-    final VelocityVoltage m_VelocityVoltage = new VelocityVoltage(0);
     
     private boolean optimizeStates = true;
 
@@ -68,10 +64,9 @@ public class Module extends SubsystemBase {
     private StatusSignal<Angle> steerAngle;
     private StatusSignal<Angle> CANangle;
 
-
     private ModuleConstants moduleConstants;
 
-    private final LinearSystem<N1, N1, N1> m_driveMotor = LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60Foc(1), DriveConstants.WHEEL_MOI, DriveConstants.DRIVE_GEAR_RATIO );
+    private final LinearSystem<N1, N1, N1> m_driveMotor = LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60(1), DriveConstants.WHEEL_MOI, DriveConstants.DRIVE_GEAR_RATIO );
     
   private final KalmanFilter<N1, N1, N1> m_observer = new KalmanFilter<>(
       Nat.N1(),
@@ -126,27 +121,26 @@ public class Module extends SubsystemBase {
         configDriveMotor();
 
         ParentDevice.optimizeBusUtilizationForAll(angleMotor, driveMotor, CANcoder);
-
+        
         drivePosition = driveMotor.getPosition();
         driveVelocity = driveMotor.getVelocity();
         steerAngle = angleMotor.getPosition();
         CANangle = CANcoder.getAbsolutePosition();
 
-        StatusSignal.setUpdateFrequencyForAll(100, drivePosition, driveVelocity, steerAngle);
+        StatusSignal.setUpdateFrequencyForAll(250, drivePosition, driveVelocity, steerAngle);
         StatusSignal.setUpdateFrequencyForAll(5, CANangle);
-
-
+        
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
 
-        String directory_name = "Drivetrain/Module" + type.name();
-        LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 100, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000, LogLevel.DEBUG);
-        LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000, LogLevel.DEBUG);
+        // String directory_name = "Drivetrain/Module" + type.name();
+        // LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000, LogLevel.DEBUG);
+        // LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000, LogLevel.DEBUG);
+        // LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 100, LogLevel.INFO);
+        // LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 100, LogLevel.INFO);
+        // LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000, LogLevel.DEBUG);
+        // LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000, LogLevel.DEBUG);
     }
 
     public void close() {
@@ -194,9 +188,9 @@ public class Module extends SubsystemBase {
             // voltage = duty cycle * battery voltage, so
             // duty cycle = voltage / battery voltage
             double nextVoltage = m_loop.getU(0);
+            
             driveMotor.setControl(new VoltageOut(nextVoltage));
-        }
-        
+        }     
     }
 
     private void setAngle() {
@@ -229,7 +223,6 @@ public class Module extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
-        
         return Rotation2d.fromRotations(
             steerAngle.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
@@ -269,7 +262,6 @@ public class Module extends SubsystemBase {
         angleMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(DriveConstants.INVERT_STEER_MOTOR));
         angleMotor.setNeutralMode(DriveConstants.STEER_NEUTRAL_MODE);
         angleMotor.setPosition(0);
-        m_VelocityVoltage.Slot = 0;
         
         resetToAbsolute();
     }

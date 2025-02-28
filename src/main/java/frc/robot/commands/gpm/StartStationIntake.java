@@ -15,11 +15,13 @@ public class StartStationIntake extends Command {
     @Override
     public void initialize() {
         intake.setAngle(IntakeConstants.STATION_SETPOINT);
-        intake.activate();
+        intake.setSpeed(0.3);
+        intake.enableLaserCan(true);
     }
 
     @Override
     public boolean isFinished() {
+        
         return intake.hasCoral();
     }
 
@@ -27,5 +29,6 @@ public class StartStationIntake extends Command {
     public void end(boolean interrupted) {
         intake.deactivate();
         intake.stow();
+        intake.enableLaserCan(false);
     }
 }

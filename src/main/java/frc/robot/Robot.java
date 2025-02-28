@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
-import frc.robot.util.LogManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -41,7 +40,7 @@ public class Robot extends TimedRobot {
         //   SimGUI: Persistent Values, Preferences, RobotId, then restart Simulation
         //     changes networktables.json, networktables.json.bck (both Untracked)
         //   Uncomment the next line, set the desired RobotId, deploy, and then comment the line out
-        //RobotId.setRobotId(RobotId.SwerveCompetition);
+         RobotId.setRobotId(RobotId.SwerveCompetition);
         DriveConstants.update(RobotId.getRobotId());
         RobotController.setBrownoutVoltage(6.0);
         // obtain this robot's identity
@@ -70,7 +69,7 @@ public class Robot extends TimedRobot {
 
         CommandScheduler.getInstance().run();
         
-        LogManager.update();
+        //LogManager.update();
     }
 
     /**

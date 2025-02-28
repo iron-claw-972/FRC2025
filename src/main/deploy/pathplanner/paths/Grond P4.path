@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.9713,
-        "y": 2.86081
+        "x": 3.721,
+        "y": 3.0259168
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9934131736526943,
-        "y": 1.1950812660393504
+        "x": 2.743113173652694,
+        "y": 1.3601880660393506
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.795,
-        "y": 1.108
+        "x": 1.96,
+        "y": 0.8
       },
       "prevControl": {
-        "x": 1.5670566456398953,
-        "y": 0.9436746300686845
+        "x": 1.7320566456398954,
+        "y": 0.6356746300686844
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,7 +35,7 @@
     {
       "name": "Intake",
       "waypointRelativePos": 0.19856459330143417,
-      "endWaypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -37.644000000000005
+    "rotation": -36.0
   },
   "reversed": false,
   "folder": "Ground RSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 29.429
+    "rotation": -29.999999999999996
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -2,13 +2,14 @@ package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.Intake;
 
 public class OuttakeAlgae extends Command {
     private Intake intake;
 
     private final Timer timer = new Timer();
-    private final double EJECTION_TIME = 1.0;
+    private final double EJECTION_TIME = 1;
 
     public OuttakeAlgae(Intake intake) {
         this.intake = intake;
@@ -17,7 +18,8 @@ public class OuttakeAlgae extends Command {
 
     @Override
     public void initialize() {
-        intake.activate();
+        intake.setSpeed(IntakeConstants.ALGAE_OUTTAKE_POWER);
+        intake.setAngle(50);
         timer.restart();
     }
 

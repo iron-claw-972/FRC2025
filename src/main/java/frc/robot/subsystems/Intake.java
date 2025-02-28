@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
@@ -24,19 +28,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IntakeConstants;
-import frc.robot.util.LogManager;
-import frc.robot.util.LogManager.LogLevel;
+
 
 public class Intake extends SubsystemBase {
     private final TalonFX rollerMotor = new TalonFX(IdConstants.INTAKE_ROLLER);
-    private final TalonFX stowMotor = new TalonFX(IdConstants.INTAKE_PIVOT);
+    private final TalonFX pivotMotor = new TalonFX(IdConstants.INTAKE_PIVOT, Constants.CANIVORE_CAN);
+    
     private SingleJointedArmSim stowArmSim;
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
 
     private final double positionTolerance = 5;
 
-    private final PIDController stowPID = new PIDController(0.02, 0, 0.001);
+    private final PIDController stowPID = new PIDController(0.015, 0, 0);
     private double power;
 
     private LaserCan laserCan;
@@ -49,6 +53,9 @@ public class Intake extends SubsystemBase {
                     / IntakeConstants.PIVOT_GEAR_RATIO * dcMotor.rOhms / dcMotor.KtNMPerAmp / Constants.ROBOT_VOLTAGE,
             0);
     private double startPosition = 90;
+
+    private boolean laserCanEnabled = false;
+
 
     public Intake() {
         if (RobotBase.isSimulation()) {
@@ -73,25 +80,28 @@ public class Intake extends SubsystemBase {
                 laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
                 laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
             } catch (ConfigurationFailedException e) {
-                DriverStation.reportError("LaserCan configuration error", true);
+                DriverStation.reportError("Intake LaserCan configuration error", true);
             }
         }
-        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
+        rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.Clockwise_Positive));
+        pivotMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+        pivotMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
+        pivotMotor.setNeutralMode(NeutralModeValue.Coast);
         stowPID.setTolerance(positionTolerance);
+        
         setAngle(startPosition);
 
-        //Logging LogLevel.COMP
-        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.COMP);
-        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.COMP);
+       rollerMotor.getConfigurator().apply(new CurrentLimitsConfigs().withStatorCurrentLimit(40).withStatorCurrentLimitEnable(true));
     }
 
     /**
      * publishes stuff to smartdashboard
      */
+    @SuppressWarnings("unused")
     private void publish() {
         SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
-        SmartDashboard.putNumber("Roller Motor Power", rollerMotor.get());
+        SmartDashboard.putNumber("Roller Motor Power", power);
 
         SmartDashboard.putBoolean("Has Coral", hasCoral());
         SmartDashboard.putBoolean("Stow Arm Sim - Is Stowed", isAtSetpoint(90));
@@ -101,16 +111,20 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        publish();
+        //publish();
+        // SmartDashboard.putNumber("angle", getStowPosition());
+        // SmartDashboard.putBoolean("Intake has coral", hasCoral());
+
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
-        power = MathUtil.clamp(power, -0.2, 0.2);
-        stowMotor.set(power);
+        power = MathUtil.clamp(power, -0.5, 0.5);
+        pivotMotor.set(power);
         if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
-            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+            hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
         }
+        
     }
 
     @Override
@@ -139,7 +153,7 @@ public class Intake extends SubsystemBase {
         if(RobotBase.isSimulation()) {
             return Units.radiansToDegrees(stowArmSim.getAngleRads());
         } else {
-            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
+            return Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
         }
     }
 
@@ -217,7 +231,11 @@ public class Intake extends SubsystemBase {
     /**
      * Starts the motor.
      */
-    public void activate() {
+    public void activate(){
         rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
+    }
+
+    public void enableLaserCan(boolean enabled){
+        laserCanEnabled = enabled;
     }
 }

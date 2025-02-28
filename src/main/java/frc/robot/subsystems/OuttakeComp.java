@@ -1,8 +1,9 @@
 package frc.robot.subsystems;
 
-
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -13,7 +14,7 @@ import frc.robot.constants.IdConstants;
 
 public class OuttakeComp extends Outtake {
 
-    private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP );
+    private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP);
     private double power;
 
 
@@ -23,7 +24,10 @@ public class OuttakeComp extends Outtake {
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
 
     public OuttakeComp(){
-        // TODO: configure Kraken
+        motor.getConfigurator().apply(new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake)
+        );
 
         // build simulation
         if (RobotBase.isSimulation()){
@@ -36,6 +40,7 @@ public class OuttakeComp extends Outtake {
             // we are not ejecting
             dioInputEjecting.setValue(true);
         }
+        //SmartDashboard.putNumber("wheel speed",0);
     }
 
     @Override
@@ -46,8 +51,8 @@ public class OuttakeComp extends Outtake {
     @Override
     public void periodic(){
         motor.set(power);
-        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+        //  SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        //  SmartDashboard.putBoolean("Coral ejected", coralEjecting());
     }
 
     /** Set the motor power to move the coral */
@@ -59,13 +64,13 @@ public class OuttakeComp extends Outtake {
     public void outtake(){
         // assumes the coral is present
         // if the coral is not present, we should not bother to spin the rollers
-        setMotor(SmartDashboard.getNumber("wheel speed", 0));
+        setMotor(0.3);
         // this starts the motor... what needs to be done later?
     }
 
 
     public boolean coralLoaded(){
-       return !digitalInputLoaded.get();
+       return !digitalInputLoaded.get();//digitalInputEjecting.get();
     }
 
 
@@ -74,7 +79,7 @@ public class OuttakeComp extends Outtake {
      * @return coral is interrupting the beam breaker.
      */
     public boolean coralEjecting() {
-        return !digitalInputEjecting.get();
+        return !digitalInputEjecting.get();//digitalInputEjecting.get();
     }
 
 

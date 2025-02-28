@@ -1,6 +1,6 @@
 package frc.robot.constants;
 
-import frc.robot.util.LogManager.LogLevel;
+
 
 public class Constants {
 
@@ -15,7 +15,6 @@ public class Constants {
     public static final String RIO_CAN = "rio";
 
     // Logging 
-    public static final LogLevel LOG_LEVEL = LogLevel.DEBUG;
     public static final boolean USE_TELEMETRY = true;
 
     // Kraken Speed

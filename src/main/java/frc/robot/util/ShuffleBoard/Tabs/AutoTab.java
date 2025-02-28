@@ -59,21 +59,33 @@ public class AutoTab extends ShuffleBoardTabs {
         autoCommand.setDefaultOption("Do nothing", new DoNothing());
 
         try {
-            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Wait Test");
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
-        autoCommand.addOption("RSide Command Grouped 3 Piece", new PathPlannerAuto("RSide Command Grouped 3 Piece"));
-        autoCommand.addOption("RSide Ground", new PathPlannerAuto("RSide Ground"));
-        autoCommand.addOption("BSide Ground", new PathPlannerAuto("BSide Ground"));
-        autoCommand.addOption("Command Grouped 3 Piece", new PathPlannerAuto("Command Grouped 3 Piece"));
+        autoCommand.addOption("Right Side", new PathPlannerAuto("Right Side"));
+        autoCommand.addOption("Left Side", new PathPlannerAuto("Left Side"));
+        autoCommand.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
+       
+        // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new FollowPathCommand("#2", true, drive))
+        // .andThen(new FollowPathCommand("#3", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new FollowPathCommand("#4", true, drive))
+        // .andThen(new FollowPathCommand("#5", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));    
+
+        
         if(elevator != null && outtake != null) {
          autoCommand.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-         .andThen(new OuttakeCoralBasic(outtake))
+         .andThen(new OuttakeCoralBasic(outtake, ()->true))
          .andThen(new WaitCommand(3))
          .andThen(new FollowPathCommand("Next Tester", true, drive))
          );

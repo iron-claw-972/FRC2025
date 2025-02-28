@@ -38,8 +38,6 @@ import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
-import frc.robot.util.LogManager;
-import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
@@ -121,6 +119,8 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean controlsEnabled = false;
 
+    private double centerOfMassHeight = 0;
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -193,25 +193,22 @@ public class Drivetrain extends SubsystemBase {
                 statusSignals[i*signals.length+j+1] = signals[j];
             }
         }
-        StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
+        StatusSignal.setUpdateFrequencyForAll(250, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
-        
-        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.DEBUG);
+        // LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
+        // LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
+        // LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
+        // LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.INFO);
     
-        LogManager.logSupplier("Drivetrain/Pose2d", () -> {
-            Pose2d pose = getPose();
-            return new Double[]{
-                pose.getX(),
-                pose.getY(),
-                pose.getRotation().getRadians()
-            };
-        }, 50, LogLevel.COMP);
-
-        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.COMP);
-    }
+    //     LogManager.logSupplier("Drivetrain/Pose2d", () -> {
+    //         Pose2d pose = getPose();
+    //         return new Double[]{
+    //             pose.getX(),
+    //             pose.getY(),
+    //             pose.getRotation().getRadians()
+    //         };
+    //     }, 15, LogLevel.COMP);
+     }
 
     public void close() {
         // close the gyro
@@ -286,7 +283,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void updateOdometry() {
         // Wait for all modules to update
-        BaseStatusSignal.waitForAll(0.012, statusSignals);
+        BaseStatusSignal.waitForAll(0.022, statusSignals);
         
         // Adding synchronized to a method does the same thing as synchronized(this), so this section won't run with other synchronized methods
         synchronized(this){
@@ -440,13 +437,13 @@ public class Drivetrain extends SubsystemBase {
             SwerveSetpoint currentState = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
             currentSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                0,
+                centerOfMassHeight,
                 currentState, chassisSpeeds,
                 Constants.LOOP_TIME);
         }else{
             currentSetpoint = setpointGenerator.generateSetpoint(
                 DriveConstants.MODULE_LIMITS,
-                0,
+                centerOfMassHeight,
                 currentSetpoint, chassisSpeeds,
                 Constants.LOOP_TIME);
         }
@@ -727,6 +724,11 @@ public class Drivetrain extends SubsystemBase {
         return desiredPoSupplier.get();
     }
 
+    public boolean atSetpoint(){
+        Pose2d pose = getDesiredPose();
+        return pose != null && getPose().getTranslation().getDistance(pose.getTranslation()) < 0.025;
+    }
+
     public SwerveModulePose getSwerveModulePose(){
         return modulePoses;
     }
@@ -753,5 +755,9 @@ public class Drivetrain extends SubsystemBase {
    
     public boolean accelerationOverMax() {
         return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;
+    }
+
+    public void setCenterOfMass(double height){
+        centerOfMassHeight = height;
     }
 }

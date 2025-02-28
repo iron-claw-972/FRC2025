@@ -7,23 +7,23 @@
         {
           "type": "path",
           "data": {
-            "pathName": "#1"
+            "pathName": "Copy of P1"
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "OuttakeCoral"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Lower Elevator"
                 }
               }
             ]
@@ -32,35 +32,29 @@
         {
           "type": "path",
           "data": {
-            "pathName": "#2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "Copy of Ground P2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#3"
+            "pathName": "Copy of Ground P3"
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "OuttakeCoral"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Lower Elevator"
                 }
               }
             ]
@@ -69,35 +63,29 @@
         {
           "type": "path",
           "data": {
-            "pathName": "#4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "Copy of Grond P4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "#5"
+            "pathName": "Copy of Ground P5"
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "OuttakeCoral"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Lower Elevator"
                 }
               }
             ]

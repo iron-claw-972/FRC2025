@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.755,
-        "y": 7.175
+        "x": 1.885,
+        "y": 7.011
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7849999999999997,
-        "y": 6.667400568181817
+        "x": 1.9149999999999998,
+        "y": 6.503400568181817
       },
       "isLocked": false,
       "linkedName": null
@@ -32,11 +32,11 @@
     },
     {
       "anchor": {
-        "x": 3.2385,
+        "x": 3.239,
         "y": 4.191
       },
       "prevControl": {
-        "x": 2.8325612415907377,
+        "x": 2.8330612415907375,
         "y": 4.560448599221876
       },
       "nextControl": null,
@@ -50,14 +50,14 @@
   "eventMarkers": [
     {
       "name": "OuttakeCoralBasic",
-      "waypointRelativePos": 0.8188976377952761,
+      "waypointRelativePos": 1.9479084451459798,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 0.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -71,7 +71,7 @@
   "folder": "Sequential BSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -151.372
+    "rotation": -142.912
   },
   "useDefaultConstraints": false
 }

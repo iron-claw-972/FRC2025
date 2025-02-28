@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.MathUtil;
@@ -21,13 +22,14 @@ import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
     
-    private double startingPosition = 0;
+    private static final double startingPosition = 0;
+    private static final double extendPosition = 2.0;
+    private static final double climbPosition = -0.83;
 
     //Motors
-    // TODO: tune better once design is finalized
-    private final PIDController pid = new PIDController(0.4, 4, 0.04);
+    private final PIDController pid = new PIDController(0.3, 0, 0.0);
 
-    private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
+    private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
     private TalonFXSimState encoderSim;
 
@@ -39,12 +41,14 @@ public class Climb extends SubsystemBase {
     );
 
     private final double versaPlanetaryGearRatio = 1.0;
-    private final double climbGearRatio = 75.0/1.0;
+    private final double climbGearRatio = 60.0/1.0;
     private final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
 
     private ClimbArmSim climbSim;
 
     private double power;
+
+    private boolean resetting = false;
 
     public Climb() {
         if (RobotBase.isSimulation()) {
@@ -63,10 +67,8 @@ public class Climb extends SubsystemBase {
                 60
                 );
 
-                climbSim.setIsClimbing(true);
-
-                SmartDashboard.putData("PID", pid);
-                SmartDashboard.putData("Climb Display", simulationMechanism);       
+            climbSim.setIsClimbing(true);
+            SmartDashboard.putData("Climb Display", simulationMechanism);
         }
 
         pid.setIZone(1);
@@ -74,23 +76,25 @@ public class Climb extends SubsystemBase {
         pid.setSetpoint(Units.degreesToRadians(startingPosition));
 
         motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
+        motor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     @Override
     public void periodic() { 
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
-
         power = pid.calculate(currentPosition);
+
+        if(resetting){
+            power = -0.1;
+        }
+
         motor.set(MathUtil.clamp(power, -1, 1));
 
-        simLigament.setAngle(Units.radiansToDegrees(currentPosition));
+        //simLigament.setAngle(Units.radiansToDegrees(currentPosition));
 
-        SmartDashboard.putNumber("Climb Position", getAngle());
-
-        SmartDashboard.putNumber("Encoder Position", motor.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("Motor Velocity", motor.getVelocity().getValueAsDouble());
     }
+
 
     @Override
     public void simulationPeriodic() {
@@ -99,6 +103,8 @@ public class Climb extends SubsystemBase {
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
         encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+
+        simLigament.setAngle(Units.radiansToDegrees(getAngle()));
     }
 
     /**
@@ -122,7 +128,7 @@ public class Climb extends SubsystemBase {
      * Turns the motor to 90 degrees (extended positiion)
      */
     public void extend(){
-        double extendAngle = 90;
+        double extendAngle = Units.rotationsToDegrees(extendPosition);
         setAngle(extendAngle);
     }
 
@@ -130,6 +136,26 @@ public class Climb extends SubsystemBase {
      * Turns the motor to 0 degrees (climb position)
      */
     public void climb(){
+        setAngle(Units.rotationsToDegrees(climbPosition));
+    }
+
+    /**
+     * Turns the motor to 0 degrees (climb position)
+     */
+    public void stow(){
         setAngle(startingPosition);
+    }
+
+    public void reset(boolean resetting){
+        this.resetting = resetting;
+        if(!resetting){
+            motor.setPosition(climbPosition*totalGearRatio);
+            pid.setSetpoint(Units.degreesToRadians(startingPosition));
+            pid.reset();
+        }
+    }
+
+    public double getCurrent(){
+        return motor.getStatorCurrent().getValueAsDouble();
     }
 }

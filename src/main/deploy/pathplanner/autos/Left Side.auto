@@ -7,23 +7,23 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P1"
+            "pathName": "#1"
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
               {
                 "type": "wait",
                 "data": {
                   "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoralBasic"
                 }
               }
             ]
@@ -32,35 +32,29 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "#2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P3"
+            "pathName": "#3"
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
               {
                 "type": "wait",
                 "data": {
                   "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoralBasic"
                 }
               }
             ]
@@ -69,29 +63,23 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "pathName": "#4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P5"
+            "pathName": "#5"
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoralBasic"
+                  "name": "OuttakeCoral"
                 }
               },
               {

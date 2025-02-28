@@ -6,13 +6,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -28,11 +26,9 @@ import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
 import frc.robot.subsystems.OuttakeComp;
 import frc.robot.util.DetectedObject;
-import frc.robot.util.LogManager;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
-import frc.robot.util.LogManager.LogLevel;
 
 import java.util.function.BooleanSupplier;
 
@@ -82,14 +78,16 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-        // Our competition subsystems go here
-        intake = new Intake();
-        indexer = new Indexer();
         outtake = new OuttakeComp();
-        elevator = new Elevator();
-        climb = new Climb();
+         elevator = new Elevator();
+         climb = new Climb();
+      case BetaBot:
+        indexer = new Indexer();
+        intake = new Intake();
+        //SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
+        //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
 
       case Vivace:
       case Phil:
@@ -97,7 +95,9 @@ public class RobotContainer {
           outtake = new OuttakeAlpha();
         }
         if (outtake != null) {
-          SmartDashboard.putData("OuttakeCoralBasic", new OuttakeCoralBasic(outtake));
+          //SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
+          // SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
+          // SmartDashboard.putData("l4 outake", new ScoreL4(elevator, outtake));
         }
       case Vertigo:
         drive = new Drivetrain(vision);
@@ -117,18 +117,18 @@ public class RobotContainer {
         PathGroupLoader.loadPathGroups();
  
         shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator, outtake, intake);
-        
       
         break;
       }
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-
+   
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
     LiveWindow.setEnabled(false);
+    
     
     // Start a new thread to update the odometry
     if(drive != null){
@@ -141,16 +141,20 @@ public class RobotContainer {
         long nextUpdate = System.currentTimeMillis();
         while(!drivetrainThread.isInterrupted()){
           if(System.currentTimeMillis() >= nextUpdate){
+            if(elevator != null){
+              drive.setCenterOfMass(elevator.getCenterOfMassHeight());
+            }
             drive.drive(driver);
             nextUpdate += 20;
           }
         }
       });
+      odometryThread.setPriority(3);
+      drivetrainThread.setPriority(4);
       odometryThread.start();
       drivetrainThread.start();
     }
 
-    LogManager.logSupplier("Brownout", () -> brownout(), 15, LogLevel.COMP);
   }
 
 
@@ -171,7 +175,7 @@ public class RobotContainer {
   }
 
   /**
-   * Sets whether the drivetrain uses vision to update odometry
+   * Sets whether the drivetrain uses vision toupdate odometry
    */
   public void setVisionEnabled(boolean enabled) {
     if (drive != null)
@@ -197,16 +201,37 @@ public class RobotContainer {
 
   public void registerCommands() {
     if(intake != null && indexer != null && elevator != null){
-      NamedCommands.registerCommand("Intake Coral", new IntakeCoral(intake, indexer, elevator));
+      NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake));
     }
     if(elevator != null && outtake != null){
 
-      NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
-      NamedCommands.registerCommand("Move Elevator", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+      NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+      NamedCommands.registerCommand("L4", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+
+      NamedCommands.registerCommand("Lower Elevator", new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT)));
+      
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
         new OuttakeCoral(outtake, elevator)
       ));
+
+      
+      NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+
+      NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+      
+      NamedCommands.registerCommand("L3", new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+      NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+      NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+    
+
+
     }
   }
 
@@ -224,6 +249,7 @@ public class RobotContainer {
       return false;
     };
   }
+
   // 1.795 1.108
   public void interruptThreads(){
     odometryThread.interrupt();

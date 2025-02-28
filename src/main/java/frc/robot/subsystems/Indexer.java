@@ -3,19 +3,25 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface;
+import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
+import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import au.grapplerobotics.simulation.MockLaserCan;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IndexerConstants;
-import frc.robot.util.LogManager;
-import frc.robot.util.LogManager.LogLevel;
+// import frc.robot.util.LogManager;
+// import frc.robot.util.LogManager.LogLevel;
 
 public class Indexer extends SubsystemBase {
 	private SparkFlex motor;
@@ -40,11 +46,19 @@ public class Indexer extends SubsystemBase {
 			sensor = simSensor;
 		} else {
 			sensor = new LaserCan(IdConstants.INDEXER_SENSOR);
+            try {
+                sensor.setRangingMode(RangingMode.SHORT);
+                sensor.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+                sensor.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
+            } catch (ConfigurationFailedException e) {
+                DriverStation.reportError("Indexer LaserCan configuration error", true);
+            }
 		}
 		simCoralPos = IndexerConstants.START_SIM_POS_AT; // initialize it anyway, it's easier
 
-		LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), LogLevel.DEBUG);
-		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
+		// LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), LogLevel.DEBUG);
+		// LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
+		//SmartDashboard.putNumber("indexer speed", 0);
 	}
 
 	/** Runs the indexer. */
@@ -83,7 +97,7 @@ public class Indexer extends SubsystemBase {
 	 */
 	private int getSensorValue() {
 		var measurement = sensor.getMeasurement();
-		int dist = (measurement == null) ? 314159 : measurement.distance_mm;
+		int dist = (measurement == null || measurement.status > 0) ? 314159 : measurement.distance_mm;
 		return dist;
 	}
 
@@ -99,6 +113,7 @@ public class Indexer extends SubsystemBase {
 
 	@Override
 	public void periodic() {
+		//SmartDashboard.putBoolean("Indexer has coral ", isIndexerClear());
 	}
 
 	@Override
