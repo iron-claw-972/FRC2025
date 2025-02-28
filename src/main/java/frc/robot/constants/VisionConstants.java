@@ -59,7 +59,8 @@ public class VisionConstants {
      * Any April tags we always want to ignore. To ignore a tag, put its id in this
      * array.
      */
-    public static final int[] TAGS_TO_IGNORE = {};
+    //TODO add for the red side
+    public static final int[] TAGS_TO_IGNORE = {13,12,17};
 
     /**
      * If multiple cameras return different poses, they will be ignored if the
