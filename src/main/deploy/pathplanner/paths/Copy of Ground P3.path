@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 3.721,
-        "y": 5.077
+        "y": 5.025
       },
       "prevControl": {
         "x": 3.4959470582208185,
-        "y": 4.968136905259237
+        "y": 4.916136905259237
       },
       "nextControl": null,
       "isLocked": false,
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -145.0
+    "rotation": -150.0
   },
   "reversed": false,
   "folder": "Ground RSide mirrored",
