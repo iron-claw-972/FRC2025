@@ -26,7 +26,7 @@ public class ElevatorConstants {
 
     public static final double STOW_SETPOINT = 0;
     public static final double INTAKE_SETPOINT = 0;
-    public static final double L1_SETPOINT = 0;
+    public static final double L1_SETPOINT = 0.3;
     public static final double L2_SETPOINT = 0.58;
     public static final double L3_SETPOINT = 0.98;
     public static final double L4_SETPOINT = 1.59;

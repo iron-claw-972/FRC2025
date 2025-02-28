@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.721,
-        "y": 3.0259168
+        "x": 5.257,
+        "y": 5.077
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.743113173652694,
-        "y": 1.3601880660393506
+        "x": 4.747131147544804,
+        "y": 7.075870901642059
       },
       "isLocked": false,
       "linkedName": null
@@ -17,24 +17,29 @@
     {
       "anchor": {
         "x": 1.96,
-        "y": 0.8
+        "y": 7.303
       },
       "prevControl": {
-        "x": 1.7320566456398954,
-        "y": 0.6356746300686844
+        "x": 3.4884221311513617,
+        "y": 5.277715163937142
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6204690831556442,
+      "rotationDegrees": -145.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.19856459330143417,
+      "waypointRelativePos": 0.2789651293588275,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -54,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -36.0
+    "rotation": -145.0
   },
   "reversed": false,
-  "folder": "Ground RSide",
+  "folder": "Ground RSide mirrored",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": 150.0
   },
   "useDefaultConstraints": false
 }

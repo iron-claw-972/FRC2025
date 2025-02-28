@@ -51,8 +51,8 @@ public class OuttakeComp extends Outtake {
     @Override
     public void periodic(){
         motor.set(power);
-         SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-         SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+        //  SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        //  SmartDashboard.putBoolean("Coral ejected", coralEjecting());
     }
 
     /** Set the motor power to move the coral */

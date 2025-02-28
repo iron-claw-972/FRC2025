@@ -112,8 +112,8 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         //publish();
-        SmartDashboard.putNumber("angle", getStowPosition());
-        SmartDashboard.putBoolean("Intake has coral", hasCoral());
+        // SmartDashboard.putNumber("angle", getStowPosition());
+        // SmartDashboard.putBoolean("Intake has coral", hasCoral());
 
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);

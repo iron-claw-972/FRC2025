@@ -73,7 +73,7 @@ public enum RobotId {
         }
 
         // report the RobotId to the SmartDashboard.
-        SmartDashboard.putString("RobotID", robotId.name());
+        //SmartDashboard.putString("RobotID", robotId.name());
 
         // return the robot identity
         return robotId;

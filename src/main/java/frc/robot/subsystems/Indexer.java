@@ -113,7 +113,7 @@ public class Indexer extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putBoolean("Indexer has coral ", isIndexerClear());
+		//SmartDashboard.putBoolean("Indexer has coral ", isIndexerClear());
 	}
 
 	@Override
