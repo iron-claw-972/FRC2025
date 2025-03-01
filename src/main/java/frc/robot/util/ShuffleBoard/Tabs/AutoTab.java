@@ -61,13 +61,18 @@ public class AutoTab extends ShuffleBoardTabs {
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+        try {
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
         autoCommand.setDefaultOption("Right Side", new PathPlannerAuto("Right Side"));
 
         
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
         autoCommand.addOption("Right Side", new PathPlannerAuto("Right Side"));
-        autoCommand.addOption("Left Side", new PathPlannerAuto("Left Side"));
+        autoCommand.addOption("Left Side", new PathPlannerAuto("Right Side Mirrored"));
         autoCommand.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
        
