@@ -1,6 +1,5 @@
 package frc.robot.commands.gpm;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -17,12 +16,10 @@ public class IntakeCoralHelper extends Command {
 	private Outtake outtake;
 
 	private enum Phase {
-		Acquiring, Intaking, Indexing, Detected, InOuttake, Waiting, Done
+		Acquiring, Intaking, Indexing, Detected, InOuttake, Done
 	};
 
 	private Phase phase;
-
-	private Timer waitTimer = new Timer();
 
 	public IntakeCoralHelper(Intake intake, Indexer indexer, Outtake outtake) {
 		this.intake = intake;
@@ -44,12 +41,11 @@ public class IntakeCoralHelper extends Command {
 		if(outtake != null) {
 			outtake.setMotor(0.25);
 		}
-		waitTimer.reset();
-		waitTimer.stop();
 	}
 
 	@Override
 	public void execute() {
+
 		switch (phase) {
 			case Acquiring:
 				if (intake.hasCoral()) {
@@ -69,31 +65,26 @@ public class IntakeCoralHelper extends Command {
 				}
 				break;
 			case Detected:
-				if(outtake.coralLoaded()){
-					phase = Phase.InOuttake;
-					intake.stow();
-					intake.deactivate();
-				}
 				break;
 			case InOuttake:
-				break;
-			case Waiting:
-				if(waitTimer.hasElapsed(0.1)){
+				if(outtake == null || outtake.coralEjecting()){
+					outtake.stop();
 					phase = Phase.Done;
 				}
 				break;
 			case Done:
 				break;
 		}
-		if(outtake == null && phase == Phase.InOuttake || outtake != null && outtake.coralEjecting()){
-			phase = Phase.Waiting;
-			waitTimer.start();
+		if(outtake.coralLoaded() && phase == Phase.Detected){
+			phase = Phase.InOuttake;
+			intake.stow();
+			intake.deactivate();
 		}
 	}
 
 	@Override
 	public boolean isFinished() {
-		return phase == Phase.Done;
+		return phase == Phase.Done || outtake.coralEjecting();
 	}
 
 	@Override
@@ -104,7 +95,5 @@ public class IntakeCoralHelper extends Command {
 		indexer.stop();
 		outtake.stop();
 		intake.enableLaserCan(false);
-		waitTimer.stop();
-		waitTimer.reset();
 	}
 }
