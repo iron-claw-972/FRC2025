@@ -56,13 +56,14 @@ public class AutoTab extends ShuffleBoardTabs {
     
     public void createEntries(){         
         tab = Shuffleboard.getTab("Auto");
-        autoCommand.setDefaultOption("Do nothing", new DoNothing());
-
         try {
             List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+        autoCommand.setDefaultOption("Right Side", new PathPlannerAuto("Right Side"));
+
+        
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
         autoCommand.addOption("Right Side", new PathPlannerAuto("Right Side"));

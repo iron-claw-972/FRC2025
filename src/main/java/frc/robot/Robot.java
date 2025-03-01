@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.Optional;
 
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -28,6 +29,8 @@ public class Robot extends TimedRobot {
 
     public Robot(){
         CanBridge.runTCP();
+        PortForwarder.add(5800,"10.9.72.12",5800);
+        PortForwarder.add(1182,"10.9.72.12",1182);
     }
 
     /**

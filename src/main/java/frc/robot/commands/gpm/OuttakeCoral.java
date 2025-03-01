@@ -16,8 +16,8 @@ public class OuttakeCoral extends SequentialCommandGroup {
             new ConditionalCommand(
                 new ScoreL4(elevator, outtake),
                 new OuttakeCoralBasic(outtake, l4Supplier),
-                l4Supplier),
-            new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT), elevator)
+                l4Supplier)
+            //new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT), elevator)
         );
     }
 }
