@@ -60,7 +60,7 @@ public class VisionConstants {
      * array.
      */
     //TODO add for the red side
-    public static final int[] TAGS_TO_IGNORE = {13,12,17};
+    public static final int[] TAGS_TO_IGNORE = {13,12,16,1,2,3};
 
     /**
      * If multiple cameras return different poses, they will be ignored if the

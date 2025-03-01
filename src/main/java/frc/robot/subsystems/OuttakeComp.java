@@ -25,7 +25,7 @@ public class OuttakeComp extends Outtake {
 
     public OuttakeComp(){
         motor.getConfigurator().apply(new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake)
         );
 

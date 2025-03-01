@@ -39,7 +39,7 @@ public class IntakeCoralHelper extends Command {
 		phase = Phase.Acquiring;
 		intake.enableLaserCan(true);
 		if(outtake != null) {
-			outtake.setMotor(0.07);
+			outtake.setMotor(0.25);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class IntakeCoralHelper extends Command {
 			case Detected:
 				break;
 			case InOuttake:
-				if(outtake == null || !outtake.coralLoaded()){
+				if(outtake == null || outtake.coralEjecting()){
 					outtake.stop();
 					phase = Phase.Done;
 				}
@@ -75,7 +75,7 @@ public class IntakeCoralHelper extends Command {
 			case Done:
 				break;
 		}
-		if(outtake == null && indexer.isIndexerClear() && phase == Phase.Detected || outtake != null && outtake.coralLoaded()){
+		if(outtake.coralLoaded() && phase == Phase.Detected){
 			phase = Phase.InOuttake;
 			intake.stow();
 			intake.deactivate();
@@ -84,7 +84,7 @@ public class IntakeCoralHelper extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return phase == Phase.Done;
+		return phase == Phase.Done || outtake.coralEjecting();
 	}
 
 	@Override
