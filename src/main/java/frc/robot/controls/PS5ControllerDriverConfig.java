@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.gpm.IntakeAlgae;
@@ -122,8 +123,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Climb
         if(climb != null){
-            driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
-                .onFalse(new InstantCommand(()->climb.climb(), climb));
+            driver.get(PS5Button.SQUARE).and(menu.negate()).toggleOnTrue(new StartEndCommand(()->climb.extend(), ()->climb.climb(), climb));
             if(intake != null){
                 driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
             }
