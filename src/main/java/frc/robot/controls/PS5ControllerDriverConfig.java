@@ -64,11 +64,13 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Elevator setpoints
         if(elevator != null && outtake != null) {
-            driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
+            driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+            driver.get(PS5Button.LB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
+            driver.get(PS5Button.LB).and(menu).onTrue(new MoveElevator(elevator, 0.3).andThen(new RemoveAlgae(outtake)))
+            driver.get(PS5Button.RB).and(menu).onTrue(new MoveElevator(elevator, 0.7).andThen(new RemoveAlgae(outtake)))
         }
 
         // Intake/outtake
