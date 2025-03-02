@@ -26,7 +26,7 @@ public class DriverAssist {
     // The amount to correct the driver's inpus by
     // 0 = return unchanged driver inputs, 1 = return a value much closer to the calculated speed, sometimes equal to it
     // This can be greater than 1 to fully correct more of the time, like from farther away
-    private static final double CORRECTION_FACTOR = 0.5;
+    private static final double CORRECTION_FACTOR = 1;
 
     
     // Variables used for first method

@@ -69,8 +69,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
             driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
-            driver.get(PS5Button.LB).and(menu).onTrue(new MoveElevator(elevator, 0.3).andThen(new RemoveAlgae(outtake)))
-            driver.get(PS5Button.RB).and(menu).onTrue(new MoveElevator(elevator, 0.7).andThen(new RemoveAlgae(outtake)))
+            driver.get(PS5Button.LB).and(menu).onTrue(new MoveElevator(elevator, 0.35).andThen(new RemoveAlgae(outtake)));
+            driver.get(PS5Button.RB).and(menu).onTrue(new MoveElevator(elevator, 0.72).andThen(new RemoveAlgae(outtake)));
         }
 
         // Intake/outtake
