@@ -51,6 +51,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Climb climb;
     private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_TRIGGER);
     private int alignmentDirection = 0;
+    private Pose2d alignPose = null;
 
     public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
         super(drive);
@@ -62,11 +63,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
-        if(true){
-            driver.get(PS5Button.CROSS).toggleOnTrue(new GoToPose2(()->new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, new Rotation2d()), getDrivetrain()));
-            return;
-        }
-
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
@@ -148,17 +144,19 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         driver.get(PS5Button.RB).onTrue(new InstantCommand(()->alignmentDirection = 4));
         driver.get(DPad.UP).onTrue(new InstantCommand(()->alignmentDirection = 5));
         if(singleAlignmentButton){
-            driver.get(DPad.LEFT).onTrue(new InstantCommand(()->{
+            driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(()->{
                 setAlignmentDirection();
                 setAlignmentPose(true);
-            }));
-            driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->{
+            }).andThen(new GoToPose2(()->alignPose, getDrivetrain())));
+            driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(()->{
                 setAlignmentDirection();
                 setAlignmentPose(false);
-            }));
+            }).andThen(new GoToPose2(()->alignPose, getDrivetrain())));
         }else{
-            driver.get(DPad.LEFT).onTrue(new InstantCommand(()->setAlignmentPose(true)));
-            driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->setAlignmentPose(false)));
+            driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(()->setAlignmentPose(true))
+                .andThen(new GoToPose2(()->alignPose, getDrivetrain())));
+            driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(()->setAlignmentPose(false))
+                .andThen(new GoToPose2(()->alignPose, getDrivetrain())));
         }
 
         // Reset the yaw. Mainly useful for testing/driver practice
@@ -185,6 +183,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             if(climb != null){
                 climb.stow();
             }
+            alignPose = null;
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
@@ -220,7 +219,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             Robot.getAlliance() == Alliance.Blue ? alignmentDirection + 17
             : (8-alignmentDirection) % 6 + 6,
         isLeft);
-        getDrivetrain().setDesiredPose(branch.pose);
+        alignPose = branch.pose;
     }
 
     @Override
