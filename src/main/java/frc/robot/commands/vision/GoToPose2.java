@@ -2,6 +2,7 @@ package frc.robot.commands.vision;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,6 +18,7 @@ public class GoToPose2 extends Command {
     private double vx;
     private double vy;
     private Pose2d error;
+    private PIDController pid = new PIDController(7, 0, 0.5);
 
     public GoToPose2(Supplier<Pose2d> poseSupplier, Drivetrain drive){
         this.poseSupplier = poseSupplier;
@@ -31,6 +33,8 @@ public class GoToPose2 extends Command {
         vx = v.vxMetersPerSecond;
         vy = v.vyMetersPerSecond;
         error = null;
+        pid.reset();
+        pid.setSetpoint(0);
     }
 
     @Override
@@ -40,15 +44,11 @@ public class GoToPose2 extends Command {
         }
         Pose2d drivePose = drive.getPose();
         error = drivePose.relativeTo(pose);
-        double ax = calcAccel(vx, error.getX());
         double ay = calcAccel(vy, error.getY());
-        if(Math.abs(ax) < MIN_ACCEL && Math.abs(error.getX()) > 0.01){
-            ax = -Math.signum(error.getX())*MIN_ACCEL;
-        }
         if(Math.abs(ay) < MIN_ACCEL && Math.abs(error.getY()) > 0.01){
             ay = -Math.signum(error.getY())*MIN_ACCEL;
         }
-        vx += ax*Constants.LOOP_TIME;
+        vx = pid.calculate(error.getX());
         vy += ay*Constants.LOOP_TIME;
         Translation2d v = new Translation2d(vx, vy).rotateBy(pose.getRotation());
         drive.driveHeading(v.getX(), v.getY(), pose.getRotation().getRadians(), true);
