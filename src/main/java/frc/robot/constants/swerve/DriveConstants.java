@@ -22,7 +22,7 @@ public class DriveConstants {
      * <p>
      * The frame width is 26.5 inches, and each bumper is 3.25 inches.
      */
-    public static final double ROBOT_WIDTH_WITH_BUMPERS = Units.inchesToMeters(26.5 + 3.25 * 2);
+    public static final double ROBOT_WIDTH_WITH_BUMPERS = 0.832;
 
     public static double ROBOT_MASS = 30;
 
