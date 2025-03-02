@@ -255,7 +255,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void driveHeading(double xSpeed, double ySpeed, double heading, boolean fieldRelative) {
         double rot = rotationController.calculate(getYaw().getRadians(), heading);
-        ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
+        ChassisSpeeds speeds = ChassisSpeeds.discretize(xSpeed, ySpeed, rot, Constants.LOOP_TIME);
         if(fieldRelative){
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
         }

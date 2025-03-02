@@ -15,7 +15,6 @@ import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
@@ -54,7 +53,7 @@ public class RobotContainer {
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
-  private Operator operator = null;
+  // private Operator operator = null;
   private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;

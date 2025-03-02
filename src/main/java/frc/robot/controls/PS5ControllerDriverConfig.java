@@ -2,6 +2,7 @@ package frc.robot.controls;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -20,6 +21,7 @@ import frc.robot.commands.gpm.RemoveAlgae;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
+import frc.robot.commands.vision.GoToPose2;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
@@ -60,6 +62,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
+        if(true){
+            driver.get(PS5Button.CROSS).toggleOnTrue(new GoToPose2(()->new Pose2d(FieldConstants.FIELD_LENGTH/2, FieldConstants.FIELD_WIDTH/2, new Rotation2d()), getDrivetrain()));
+            return;
+        }
+
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints

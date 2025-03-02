@@ -20,13 +20,11 @@ public class ShuffleBoardManager {
 
     private ArrayList<ShuffleBoardTabs> tabs = new ArrayList<>();
     
-    //private Field feild;
+    private Field feild;
 
     private SwerveTab swerveTab;
     private AutoTab autoTab;
     private VisionTab visionTab;
-    private Outtake outtake;
-    private Intake intake;
 
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake, Intake intake){
         
@@ -41,14 +39,14 @@ public class ShuffleBoardManager {
             tab.createEntries();
         }
         
-        //feild = new Field(drive, vision);
+        feild = new Field(drive, vision);
     }
 
     public void update(){
         for (ShuffleBoardTabs tab : tabs){
             tab.update();
         }
-        //feild.updateFeild();
+        feild.updateFeild();
     }
 
     public Command getSelectedCommand(){
