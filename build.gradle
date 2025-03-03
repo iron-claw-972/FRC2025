@@ -106,9 +106,9 @@ jar {
 }
 
 gversion {
-    srcDir = file("src/main/java/frc/robot")
-    classPackage = "frc.robot"
-    className = "GVersion" // This will generate GVersion.java
+    srcDir = file("src/main/java")
+    classPackage = "frc.robot.util"
+    className = "BuildData" // This will generate GVersion.java
 }
 
 // Configure jar and deploy tasks
