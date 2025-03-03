@@ -18,13 +18,15 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
 import frc.robot.subsystems.OuttakeComp;
+import frc.robot.subsystems.Drive.Drivetrain;
+import frc.robot.subsystems.Drive.GyroIO;
+import frc.robot.subsystems.Drive.GyroIOPigeon2;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
@@ -100,7 +102,7 @@ public class RobotContainer {
           // SmartDashboard.putData("l4 outake", new ScoreL4(elevator, outtake));
         }
       case Vertigo:
-        drive = new Drivetrain(vision);
+        drive = new Drivetrain(vision, new GyroIOPigeon2());
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
         operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
@@ -129,31 +131,6 @@ public class RobotContainer {
     LiveWindow.disableAllTelemetry();
     LiveWindow.setEnabled(false);
     
-    
-    // Start a new thread to update the odometry
-    if(drive != null){
-      odometryThread = new Thread(()->{
-        while(!odometryThread.isInterrupted()){
-          drive.updateOdometry();
-        }
-      });
-      drivetrainThread = new Thread(()->{
-        long nextUpdate = System.currentTimeMillis();
-        while(!drivetrainThread.isInterrupted()){
-          if(System.currentTimeMillis() >= nextUpdate){
-            if(elevator != null){
-              drive.setCenterOfMass(elevator.getCenterOfMassHeight());
-            }
-            drive.drive(driver);
-            nextUpdate += 20;
-          }
-        }
-      });
-      odometryThread.setPriority(3);
-      drivetrainThread.setPriority(4);
-      odometryThread.start();
-      drivetrainThread.start();
-    }
 
   }
 

@@ -1,8 +1,10 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Drive;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -34,8 +36,6 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.subsystems.module.Module;
-import frc.robot.subsystems.module.ModuleSim;
 import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.SwerveModulePose;
@@ -55,6 +55,9 @@ import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 public class Drivetrain extends SubsystemBase {
 
     protected final Module[] modules;
+
+    private final GyroIO gyroIO;
+    private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
     private SwerveSetpoint currentSetpoint =
     new SwerveSetpoint(
@@ -124,11 +127,11 @@ public class Drivetrain extends SubsystemBase {
     /**
      * Creates a new Swerve Style Drivetrain.
      */
-    public Drivetrain(Vision vision) {
+    public Drivetrain(Vision vision, GyroIO gyroIO) {
         this.vision = vision;
 
         modules = new Module[4];
-
+        this.gyroIO = gyroIO;
         ModuleConstants[] constants = Arrays.copyOfRange(ModuleConstants.values(), 0, 4);
 
         if(RobotBase.isReal()){
@@ -222,6 +225,8 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        gyroIO.updateInputs(gyroInputs);
+        Logger.processInputs("Drive/Gyro", gyroInputs);
         updateOdometryVision();
     }
 

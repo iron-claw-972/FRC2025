@@ -4,7 +4,7 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DoNothing;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive.Drivetrain;
 
 public class ChoreoPathCommand extends SequentialCommandGroup {
     private static AutoFactory factory;
