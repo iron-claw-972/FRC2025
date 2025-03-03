@@ -1,6 +1,8 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.3.1"
+    id "com.peterabeles.gversion" version "1.10.3"
+
 }
 
 java {
@@ -80,6 +82,8 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+ 
 }
 
 test {
@@ -101,6 +105,12 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+gversion {
+    srcDir = file("src/main/java/frc/robot")
+    classPackage = "frc.robot"
+    className = "GVersion" // This will generate GVersion.java
+}
+
 // Configure jar and deploy tasks
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
@@ -109,4 +119,9 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
+}
+
+task(replayWatch, type: JavaExec) {
+    mainClass = "org.littletonrobotics.junction.ReplayWatch"
+    classpath = sourceSets.main.runtimeClasspath
 }
