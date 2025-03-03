@@ -13,8 +13,8 @@ import frc.robot.subsystems.Outtake;
  * Wants coral to be present.
  */
 public class OuttakeCoralBasic extends Command {
-    public static final double L4_SPEED = 0.4;
-    public static final double OUTTAKE_SPEED = 0.4;
+    public static final double L4_SPEED = 0.7;
+    public static final double OUTTAKE_SPEED = 0.2;
 
     private Outtake outtake;
 

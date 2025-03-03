@@ -25,7 +25,7 @@ public class OuttakeComp extends Outtake {
 
     public OuttakeComp(){
         motor.getConfigurator().apply(new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake)
         );
 
@@ -79,7 +79,7 @@ public class OuttakeComp extends Outtake {
      * @return coral is interrupting the beam breaker.
      */
     public boolean coralEjecting() {
-        return !digitalInputEjecting.get();//digitalInputEjecting.get();
+        return !digitalInputEjecting.get(); //digitalInputEjecting.get();
     }
 
 

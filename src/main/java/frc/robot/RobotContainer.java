@@ -102,7 +102,7 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision);
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-        operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
+        //operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
@@ -110,7 +110,7 @@ public class RobotContainer {
         //SignalLogger.start();
 
         driver.configureControls();
-        operator.configureControls();
+        //operator.configureControls();
         initializeAutoBuilder();
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));

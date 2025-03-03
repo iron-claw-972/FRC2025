@@ -288,6 +288,8 @@ public class Module extends SubsystemBase {
         config.SupplyCurrentLimit = DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT;
         config.SupplyCurrentLowerLimit = DriveConstants.DRIVE_PEAK_CURRENT_LIMIT;
         config.SupplyCurrentLowerTime = DriveConstants.DRIVE_PEAK_CURRENT_DURATION;
+        config.StatorCurrentLimit = DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT;
+        config.StatorCurrentLimitEnable = DriveConstants.DRIVE_ENABLE_CURRENT_LIMIT;
         driveMotor.getConfigurator().apply(config);
         driveMotor.getConfigurator().apply(new Slot0Configs()
             .withKP(moduleConstants.getDriveP())
