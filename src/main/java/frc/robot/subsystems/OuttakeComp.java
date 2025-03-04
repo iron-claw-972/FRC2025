@@ -78,7 +78,7 @@ public class OuttakeComp extends Outtake {
      * @return coral is interrupting the beam breaker.
      */
     public boolean coralEjecting() {
-        return !digitalInputEjecting.get(); //digitalInputEjecting.get();
+        return !digitalInputEjecting.get();
     }
 
 
