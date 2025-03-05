@@ -27,13 +27,13 @@ import frc.robot.util.GeomUtil;
 public class DriveToPose extends Command {
   private static final boolean updateTarget = false;
   private static final double drivekP = 3.0;
-  private static final double drivekD = 0;
+  private static final double drivekD = 0.0;
   private static final double thetakP = 4.0;
-  private static final double thetakD = 1.0;
+  private static final double thetakD = 0.0;
   private static final double driveMaxVelocity = DriveConstants.MAX_SPEED;
   private static final double driveMaxAcceleration = 4.0;
-  private static final double thetaMaxVelocity = DriveConstants.MAX_ANGULAR_SPEED/2;
-  private static final double thetaMaxAcceleration = DriveConstants.MAX_ANGULAR_ACCEL*driveMaxAcceleration/DriveConstants.MAX_LINEAR_ACCEL;
+  private static final double thetaMaxVelocity = 5.0;
+  private static final double thetaMaxAcceleration = 8.0;
   private static final double driveTolerance = 0.01;
   private static final double thetaTolerance = Units.degreesToRadians(1.0);
   private static final double ffMinRadius = 0.05;
