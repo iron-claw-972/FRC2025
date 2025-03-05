@@ -59,7 +59,6 @@ public class VisionConstants {
      * Any April tags we always want to ignore. To ignore a tag, put its id in this
      * array.
      */
-    //TODO add for the red side
     public static final int[] TAGS_TO_IGNORE = {13,12,16,1,2,3};
 
     /**

@@ -54,9 +54,6 @@ public class Intake extends SubsystemBase {
             0);
     private double startPosition = 90;
 
-    private boolean laserCanEnabled = false;
-
-
     public Intake() {
         if (RobotBase.isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
@@ -233,9 +230,5 @@ public class Intake extends SubsystemBase {
      */
     public void activate(){
         rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
-    }
-
-    public void enableLaserCan(boolean enabled){
-        laserCanEnabled = enabled;
     }
 }

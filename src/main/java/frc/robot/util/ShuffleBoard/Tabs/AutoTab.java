@@ -36,7 +36,8 @@ import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
  * Class for storing and updating information on the auto tab in Shuffleboard
 */
 public class AutoTab extends ShuffleBoardTabs {
-
+    // TODO: Remove warnings
+    
     private final SendableChooser<Command> autoCommand = new SendableChooser<>();
 
     private Drivetrain drive;
@@ -56,6 +57,11 @@ public class AutoTab extends ShuffleBoardTabs {
     public void createEntries(){         
         tab = Shuffleboard.getTab("Auto");
         try {
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Blue Right Side");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        try {
             List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
@@ -72,7 +78,7 @@ public class AutoTab extends ShuffleBoardTabs {
 
         autoCommand.addOption("Right Side", new PathPlannerAuto("Right Side"));
         autoCommand.addOption("Left Side", new PathPlannerAuto("Right Side Mirrored"));
-        autoCommand.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
+        autoCommand.addOption("Left Side Ground", new PathPlannerAuto("Blue Right Side"));
 
        
         // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
