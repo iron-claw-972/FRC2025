@@ -1,4 +1,8 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.climb;
+
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -34,6 +38,7 @@ public class Climb extends SubsystemBase {
     private TalonFXSimState encoderSim;
 
     //Mechism2d display
+    @AutoLogOutput
     private final Mechanism2d simulationMechanism = new Mechanism2d(3, 3);
     private final MechanismRoot2d mechanismRoot = simulationMechanism.getRoot("Climb", 1.5, 1.5);
     private final MechanismLigament2d simLigament = mechanismRoot.append(
@@ -49,6 +54,8 @@ public class Climb extends SubsystemBase {
     private double power;
 
     private boolean resetting = false;
+
+    private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
 
     public Climb() {
         if (RobotBase.isSimulation()) {
@@ -81,6 +88,12 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void periodic() { 
+
+        inputs.positionDeg = getAngle();
+        inputs.appliedVolts = motor.getMotorVoltage().getValueAsDouble();
+        inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
+        Logger.processInputs("Climb", inputs);
+
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
         power = pid.calculate(currentPosition);
@@ -88,6 +101,8 @@ public class Climb extends SubsystemBase {
         if(resetting){
             power = -0.1;
         }
+
+        Logger.recordOutput("Climb/Motor Power", power);
 
         motor.set(MathUtil.clamp(power, -1, 1));
 
