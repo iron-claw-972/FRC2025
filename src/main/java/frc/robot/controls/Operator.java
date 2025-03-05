@@ -101,7 +101,7 @@ public class Operator {
             driver.get(Button.RIGHT_JOY).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(intake != null && outtake != null){
-            driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
+            driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
         }
 
         // Climb

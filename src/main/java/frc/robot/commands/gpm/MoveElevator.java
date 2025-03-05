@@ -12,11 +12,10 @@ public class MoveElevator extends Command {
 
     /**
      * Creates a command to move the elevator to a position
-     * 
      * @param elevator The elevator subsystem
      * @param setpoint The setpoint to move to
      */
-    public MoveElevator(Elevator elevator, double setpoint) {
+    public MoveElevator(Elevator elevator, double setpoint){
         this.elevator = elevator;
         this.setpoint = setpoint;
         addRequirements(elevator);
@@ -26,18 +25,16 @@ public class MoveElevator extends Command {
      * Sets the elevator setpoint
      */
     @Override
-    public void initialize() {
+    public void initialize(){
         elevator.setSetpoint(setpoint);
     }
 
     /**
      * Returns whether the elevator is at the setpoint
-     * 
-     * @return True if the elevator is within about 1 inch of the setpoint, false
-     *         otherwise
+     * @return True if the elevator is within about 1 inch of the setpoint, false otherwise
      */
     @Override
-    public boolean isFinished() {
-        return Math.abs(elevator.getPosition() - setpoint) < 0.025;
+    public boolean isFinished(){
+        return Math.abs(elevator.getPosition()-setpoint) < 0.025;  
     }
 }

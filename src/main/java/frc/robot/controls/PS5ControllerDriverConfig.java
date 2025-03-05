@@ -90,7 +90,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.PS).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(intake != null && outtake != null){
-            driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
+            driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, outtake));
         }
 
         // Climb
