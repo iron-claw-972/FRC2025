@@ -1,12 +1,13 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface;
+import au.grapplerobotics.simulation.MockLaserCan;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -17,35 +18,45 @@ import frc.robot.util.LogManager;
 import frc.robot.util.LogManager.LogLevel;
 
 public class Indexer extends SubsystemBase {
-	private SparkMax motor;
-	private DigitalInput sensor;
+	private SparkFlex motor;
+	private MockLaserCan simSensor;
+	private LaserCanInterface sensor;
 
 	private FlywheelSim flywheelSim;
-	private DIOSim sensorSim;
 
 	// where the coral is for simulation
 	// in meters
 	private double simCoralPos;
 
 	public Indexer() {
-		motor = new SparkMax(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
-		sensor = new DigitalInput(IdConstants.INDEXER_SENSOR);
+		motor = new SparkFlex(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
 
 		if (Robot.isSimulation()) {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
 					IndexerConstants.MOMENT_OF_INERTIA, IndexerConstants.GEAR_RATIO), DCMotor.getNEO(1));
-			sensorSim = new DIOSim(sensor);
+
+			// have both interfaces availible
+			simSensor = new MockLaserCan();
+			sensor = simSensor;
+		} else {
+			sensor = new LaserCan(IdConstants.INDEXER_SENSOR);
 		}
 		simCoralPos = IndexerConstants.START_SIM_POS_AT; // initialize it anyway, it's easier
 
-		LogManager.logSupplier("Indexer sensor", () -> getSensorValue(), LogLevel.DEBUG);
-		LogManager.logSupplier("Indexer motor", () -> getMotor(), LogLevel.DEBUG);
+		LogManager.logSupplier("Indexer sensor", () -> isIndexerClear(), 513, LogLevel.DEBUG);
+		LogManager.logSupplier("Indexer motor", () -> getMotor(), 517, LogLevel.DEBUG);
 	}
 
 	/** Runs the indexer. */
 	public void run() {
 		motor.set(IndexerConstants.SPEED);
 		simCoralPos = IndexerConstants.START_SIM_POS_AT;
+	}
+
+	/** Reverses the indexer. */
+	public void reverse() {
+		motor.set(-IndexerConstants.SPEED);
+		simCoralPos = IndexerConstants.END_SIM_SENSOR_POS_AT;
 	}
 
 	/** Stops the indexer */
@@ -65,13 +76,25 @@ public class Indexer extends SubsystemBase {
 	}
 
 	/**
-	 * Gets the sensor's state
-	 * true means nothing is there, false means something is there
+	 * Gets the LaserCAN's distance reading.
+	 * If the distance is null, return 314,159
 	 * 
-	 * @return the sensor's state
+	 * @return the distance, in millimeters
 	 */
-	public boolean getSensorValue() {
-		return sensor.get();
+	private int getSensorValue() {
+		var measurement = sensor.getMeasurement();
+		int dist = (measurement == null) ? 314159 : measurement.distance_mm;
+		return dist;
+	}
+
+	/**
+	* Checks whether a coral is in the indexer.
+	* True means nothing is there, false means something is there
+	*
+	* @return the sensor's state
+	*/
+	public boolean isIndexerClear() {
+		return getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
 	}
 
 	@Override
@@ -88,7 +111,12 @@ public class Indexer extends SubsystemBase {
 				* IndexerConstants.WHEEL_CIRCUMFERENCE;
 
 		// toggle the sensor (values are backwards because that's how the sensor works)
-		sensorSim.setValue(simCoralPos < IndexerConstants.START_SIM_SENSOR_POS_AT
-				|| simCoralPos > IndexerConstants.END_SIM_SENSOR_POS_AT);
+		simSensor.setMeasurementPartialSim(0, // 0 == valid measurement
+				(simCoralPos < IndexerConstants.START_SIM_SENSOR_POS_AT
+						|| simCoralPos > IndexerConstants.END_SIM_SENSOR_POS_AT)
+								? IndexerConstants.MEASUREMENT_THRESHOLD * 2
+								: 0,
+				1000 // IDK what this is exactly, but 1000 seems good
+		);
 	}
 }

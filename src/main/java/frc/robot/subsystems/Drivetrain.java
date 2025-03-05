@@ -21,9 +21,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,13 +34,15 @@ import frc.robot.constants.IdConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
+import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.module.Module;
 import frc.robot.subsystems.module.ModuleSim;
+import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.LogManager;
+import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.Vision;
-import frc.robot.util.LogManager.LogLevel;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 
@@ -114,8 +116,11 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean slipped = false;
 
-
     private BaseStatusSignal[] statusSignals = null;
+
+    private double previousAngularVelocity = 0;
+
+    private boolean controlsEnabled = false;
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -192,10 +197,10 @@ public class Drivetrain extends SubsystemBase {
         StatusSignal.setUpdateFrequencyForAll(100, statusSignals[0]);
         ParentDevice.optimizeBusUtilizationForAll(pigeon);
         
-        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.DEBUG);
-        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 101, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 103, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 107, LogLevel.DEBUG);
+        LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 109, LogLevel.DEBUG);
     
         LogManager.logSupplier("Drivetrain/Pose2d", () -> {
             Pose2d pose = getPose();
@@ -204,9 +209,9 @@ public class Drivetrain extends SubsystemBase {
                 pose.getY(),
                 pose.getRotation().getRadians()
             };
-        }, 50, LogLevel.COMP);
+        }, 53, LogLevel.COMP);
 
-        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 15, LogLevel.COMP);
+        LogManager.logSupplier("Drivetrain/faults", () -> accelerationOverMax(), 37, LogLevel.INFO);
     }
 
     public void close() {
@@ -371,6 +376,57 @@ public class Drivetrain extends SubsystemBase {
         for (int i = 0; i < 4; i++) {
             modules[i].setDesiredState(swerveModuleStates[i], isOpenLoop);
         }
+    }
+
+    /**
+     * Drives the robot
+     * @param driver The driver config to get the controls from
+     */
+    public void drive(BaseDriverConfig driver){
+        // Return and do nothing if controls are disabled
+        if(!controlsEnabled) {
+            return;
+        }
+
+        // If controls are enabled, run the controller code that was in DefaultDriveCommand in 2024
+
+        double forwardTranslation = driver.getForwardTranslation();
+        double sideTranslation = driver.getSideTranslation();
+        double rotation = -driver.getRotation();
+
+        double slowFactor = driver.getIsSlowMode() ? DriveConstants.SLOW_DRIVE_FACTOR : 1;
+
+        forwardTranslation *= slowFactor;
+        sideTranslation *= slowFactor;
+        rotation *= driver.getIsSlowMode() ? DriveConstants.SLOW_ROT_FACTOR : 1;
+
+        int allianceReversal = Robot.getAlliance() == Alliance.Red ? 1 : -1;
+        forwardTranslation *= allianceReversal;
+        sideTranslation *= allianceReversal;
+
+        ChassisSpeeds driverInput = new ChassisSpeeds(forwardTranslation, sideTranslation, rotation);
+        ChassisSpeeds corrected = DriverAssist.calculate(this, driverInput, getDesiredPose(), true);
+
+        // If the driver is pressing the align button or a command set the drivetrain to align
+        // Not currently used this year
+        if (driver.getIsAlign() || getIsAlign()) {
+            driveHeading(
+                forwardTranslation,
+                sideTranslation,
+                getAlignAngle(),
+                true);
+        } else {
+            drive(
+                corrected.vxMetersPerSecond,
+                corrected.vyMetersPerSecond,
+                corrected.omegaRadiansPerSecond,
+                true,
+                false);
+        }
+    }
+
+    public void enableDriveControls(boolean enable){
+        controlsEnabled = enable;
     }
 
     /**
@@ -681,30 +737,25 @@ public class Drivetrain extends SubsystemBase {
         double accelY = pigeon.getAccelerationY().getValueAsDouble();
 
         double angularVelocity = pigeon.getAngularVelocityZWorld().getValueAsDouble();
-        double pigeonOffsetX = 0.05; //TODO: replace with actual offsets
-        double pigeonOffsetY = 0.05;
-        double radius = Math.hypot(pigeonOffsetX, pigeonOffsetY);
+        double angularAccel = (angularVelocity - previousAngularVelocity) / Constants.LOOP_TIME;
+        previousAngularVelocity = angularVelocity;
+        
+        double pigeonOffsetX = 0.082677;
+        double pigeonOffsetY = 0.030603444;
 
-        double centripetalAcceleration = Math.pow(angularVelocity, 2) * radius;
-
-        double angle = Math.atan2(pigeonOffsetY, pigeonOffsetX);
-
-        double centripetalX = centripetalAcceleration * Math.cos(angle);
-        double centripetalY = centripetalAcceleration * Math.sin(angle);
+        double centripetalX = -centripetalAcceleration * Math.cos(angle);
+        double centripetalY = -centripetalAcceleration * Math.sin(angle);
 
         double totalX = accelX + centripetalX;
         double totalY = accelY + centripetalY;
 
-        return Math.sqrt(Math.pow(totalX, 2) + Math.pow(totalY, 2));
+        return Math.hypot(totalX, totalY);
     }
    
    
    
    
     public boolean accelerationOverMax() {
-        if (getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL) {
-            return true;
-        }
-            return false;
+        return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;
     }
 }

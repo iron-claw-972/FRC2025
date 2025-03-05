@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
     private Mechanism2d stowMechanism2d;
     private MechanismLigament2d stowWheelLigament;
 
-    private final double positionTolerance = 1;
+    private final double positionTolerance = 5;
 
     private final PIDController stowPID = new PIDController(0.02, 0, 0.001);
     private double power;
@@ -44,26 +44,29 @@ public class Intake extends SubsystemBase {
     private boolean isMoving = false;
     private Timer laserCanSimTimer;
     private DCMotor dcMotor = DCMotor.getKrakenX60(1);
-    private ArmFeedforward feedforward = new ArmFeedforward(0, Constants.GRAVITY_ACCELERATION*IntakeConstants.CENTER_OF_MASS_DIST*IntakeConstants.MASS/IntakeConstants.PIVOT_GEAR_RATIO*dcMotor.rOhms/dcMotor.KtNMPerAmp/Constants.ROBOT_VOLTAGE, 0);
+    private ArmFeedforward feedforward = new ArmFeedforward(0,
+            Constants.GRAVITY_ACCELERATION * IntakeConstants.CENTER_OF_MASS_DIST * IntakeConstants.MASS
+                    / IntakeConstants.PIVOT_GEAR_RATIO * dcMotor.rOhms / dcMotor.KtNMPerAmp / Constants.ROBOT_VOLTAGE,
+            0);
     private double startPosition = 90;
 
     public Intake() {
-        stowMotor.setPosition(Units.degreesToRotations(startPosition)*IntakeConstants.PIVOT_GEAR_RATIO);
         if (RobotBase.isSimulation()) {
             stowMechanism2d = new Mechanism2d(10, 10);
-            stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5).append(new MechanismLigament2d("Intake", 4, startPosition));
+            stowWheelLigament = stowMechanism2d.getRoot("Root", 5, 5)
+                    .append(new MechanismLigament2d("Intake", 4, startPosition));
             SmartDashboard.putData("Intake pivot", stowMechanism2d);
             stowArmSim = new SingleJointedArmSim(
-                dcMotor,
-                IntakeConstants.PIVOT_GEAR_RATIO,
-                IntakeConstants.MOMENT_OFiNERTIA,
-                IntakeConstants.ARM_LENGTH,
-                Math.toRadians(0),
-                Math.toRadians(90),
-                true,
-                Units.degreesToRadians(startPosition));
+                    dcMotor,
+                    IntakeConstants.PIVOT_GEAR_RATIO,
+                    IntakeConstants.MOMENT_OFiNERTIA,
+                    IntakeConstants.ARM_LENGTH,
+                    Math.toRadians(0),
+                    Math.toRadians(90),
+                    true,
+                    Units.degreesToRadians(startPosition));
             laserCanSimTimer = new Timer();
-        }else{
+        } else {
             laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
             try {
                 laserCan.setRangingMode(RangingMode.SHORT);
@@ -73,12 +76,13 @@ public class Intake extends SubsystemBase {
                 DriverStation.reportError("LaserCan configuration error", true);
             }
         }
+        stowMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         stowPID.setTolerance(positionTolerance);
         setAngle(startPosition);
 
-        //Logging LogLevel.COMP
-        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 100, LogLevel.COMP);
-        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 15, LogLevel.COMP);
+        //Logging LogLevel.INFO
+        LogManager.logSupplier("Intake/hasCoral", () -> hasCoral(), 127, LogLevel.INFO);
+        LogManager.logSupplier("Intake/stowPosition", () -> getStowPosition(), 31, LogLevel.INFO);
     }
 
     /**
@@ -102,23 +106,24 @@ public class Intake extends SubsystemBase {
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -0.2, 0.2);
         stowMotor.set(power);
-        if(laserCan != null){
+        if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();
-            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT && measurement.distance_mm <= 1000*IntakeConstants.DETECT_CORAL_DIST;
+            hasCoral = measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+                    && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
         }
     }
 
     @Override
-    public void simulationPeriodic(){
-        stowArmSim.setInputVoltage(power*Constants.ROBOT_VOLTAGE);
+    public void simulationPeriodic() {
+        stowArmSim.setInputVoltage(power * Constants.ROBOT_VOLTAGE);
         stowArmSim.update(Constants.LOOP_TIME);
         stowWheelLigament.setAngle(Units.radiansToDegrees(stowArmSim.getAngleRads()));
-        if(!isMoving){
+        if (!isMoving) {
             laserCanSimTimer.reset();
             laserCanSimTimer.start();
             hasCoral = false;
-        }else{
-            if(isAtSetpoint()){
+        } else {
+            if (isAtSetpoint()) {
                 laserCanSimTimer.start();
             }
             hasCoral = laserCanSimTimer.hasElapsed(0.5) && !laserCanSimTimer.hasElapsed(1);
@@ -131,10 +136,10 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        if(RobotBase.isSimulation()){
+        if(RobotBase.isSimulation()) {
             return Units.radiansToDegrees(stowArmSim.getAngleRads());
-        }else{
-            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble())/IntakeConstants.PIVOT_GEAR_RATIO;
+        } else {
+            return Units.rotationsToDegrees(stowMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
         }
     }
 
@@ -162,9 +167,10 @@ public class Intake extends SubsystemBase {
 
     /**
      * Returns whether or not the intake is at its setpoint
+     * 
      * @return True if it is at the setpoint, false otherwise
      */
-    public boolean isAtSetpoint(){
+    public boolean isAtSetpoint() {
         return stowPID.atSetpoint();
     }
 
@@ -188,18 +194,17 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Moves the intake up and stops it.
+     * Moves the intake up, doesn't stop it.
      */
     public void stow() {
-        stowPID.setSetpoint(0);
-        deactivate();
+        stowPID.setSetpoint(IntakeConstants.STOW_SETPOINT);
     }
 
     /**
      * Moves the intake down.
      */
     public void unstow() {
-        stowPID.setSetpoint(0);
+        stowPID.setSetpoint(IntakeConstants.INTAKE_SETPOINT);
     }
 
     /**
@@ -210,10 +215,9 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Lowers the intake and starts the motor.
+     * Starts the motor.
      */
     public void activate() {
-        stowPID.setSetpoint(90);
-        rollerMotor.set(.8);
+        rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
     }
 }
