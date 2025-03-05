@@ -3,11 +3,16 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.gpm.IntakeCoral;
+import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -60,6 +65,7 @@ public class RobotContainer {
   private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;
+  private Thread drivetrainThread = null;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -94,14 +100,14 @@ public class RobotContainer {
     }
 
     // All of these robots need a drivetrain
-    if(robotId == RobotId.SwerveCompetition || robotId == RobotId.Phil || robotId == RobotId.Vertigo || robotId == RobotId.Vivace){
+    if(robotId == RobotId.SwerveCompetition || robotId == RobotId.Phil || robotId == RobotId.Vertigo || robotId == RobotId.Vivace || robotId == RobotId.BetaBot){
       drive = new Drivetrain(vision);
     }else{
       drive = new SimDrivetrain(vision);
     }
 
     driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-    operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
+    // operator = new Operator(drive, elevator, intake, indexer, outtake, climb)
 
     // Detected objects need access to the drivetrain
     DetectedObject.setDrive(drive);
@@ -109,7 +115,7 @@ public class RobotContainer {
     //SignalLogger.start();
 
     driver.configureControls();
-    operator.configureControls();
+    // operator.configureControls();
     initializeAutoBuilder();
     registerCommands();
     drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
@@ -119,11 +125,12 @@ public class RobotContainer {
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-
+   
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
     LiveWindow.setEnabled(false);
+    
     
     // Start a new thread to update the odometry
     odometryThread = new Thread(()->{
@@ -131,7 +138,22 @@ public class RobotContainer {
         drive.updateOdometry();
       }
     });
+    drivetrainThread = new Thread(()->{
+      long nextUpdate = System.currentTimeMillis();
+      while(!drivetrainThread.isInterrupted()){
+        if(System.currentTimeMillis() >= nextUpdate){
+          if(elevator != null){
+            drive.setCenterOfMass(elevator.getCenterOfMassHeight());
+          }
+          drive.drive(driver);
+          nextUpdate += 20;
+        }
+      }
+    });
+    odometryThread.setPriority(3);
+    drivetrainThread.setPriority(4);
     odometryThread.start();
+    drivetrainThread.start();
   }
 
 
@@ -152,11 +174,12 @@ public class RobotContainer {
   }
 
   /**
-   * Sets whether the drivetrain uses vision to update odometry
+   * Sets whether the drivetrain uses vision toupdate odometry
    */
   public void setVisionEnabled(boolean enabled) {
     drive.setVisionEnabled(enabled);
   }
+
 
   public void initializeAutoBuilder() {
     AutoBuilder.configure(
@@ -175,7 +198,39 @@ public class RobotContainer {
   }
 
   public void registerCommands() {
+    if(intake != null && indexer != null && elevator != null){
+      NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake));
+    }
+    if(elevator != null && outtake != null){
 
+      NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+      NamedCommands.registerCommand("L4", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+
+      NamedCommands.registerCommand("Lower Elevator", new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT)));
+      
+      NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+
+      
+      NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+
+      NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
+        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+        new OuttakeCoral(outtake, elevator)
+      ));
+      
+      NamedCommands.registerCommand("L3", new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+      NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+      NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+    
+
+
+    }
   }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {
@@ -193,8 +248,19 @@ public class RobotContainer {
     };
   }
 
-  public void interruptOdometryThread(){
+  // 1.795 1.108
+  public void interruptThreads(){
     odometryThread.interrupt();
+    drivetrainThread.interrupt();
+  }
+
+  public boolean brownout() {
+    if(RobotController.getBatteryVoltage() < 6.0) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }
 

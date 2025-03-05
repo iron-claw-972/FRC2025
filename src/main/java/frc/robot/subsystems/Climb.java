@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.MathUtil;
@@ -21,13 +22,14 @@ import frc.robot.util.ClimbArmSim;
 
 public class Climb extends SubsystemBase {
     
-    private double startingPosition = 0;
+    private static final double startingPosition = 0;
+    private static final double extendPosition = 2.0;
+    private static final double climbPosition = -0.83;
 
     //Motors
-    // TODO: tune better once design is finalized
-    private final PIDController pid = new PIDController(0.4, 4, 0.04);
+    private final PIDController pid = new PIDController(0.3, 0, 0.0);
 
-    private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR);
+    private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
     private TalonFXSimState encoderSim;
 
@@ -38,22 +40,22 @@ public class Climb extends SubsystemBase {
         new MechanismLigament2d("angle", 1, startingPosition, 4, new Color8Bit(Color.kAntiqueWhite))
     );
 
-    private final double versaPlanetaryGearRatio = 1.0;
-    private final double climbGearRatio = 75.0/1.0;
-    protected final double totalGearRatio = versaPlanetaryGearRatio * climbGearRatio;
+    private final double gearRatio = 60.0;
 
     protected ClimbArmSim climbSim;
 
     private double power;
 
+    private boolean resetting = false;
+
     public Climb() {
         if (isSimulation()) {
             encoderSim = motor.getSimState();
-            encoderSim.setRawRotorPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
+            encoderSim.setRawRotorPosition(Units.degreesToRotations(startingPosition)*gearRatio);
 
             climbSim = new ClimbArmSim(
                 climbGearBox, 
-                totalGearRatio, 
+                gearRatio, 
                 0.1, 
                 0.127, 
                 0, //min angle 
@@ -61,34 +63,37 @@ public class Climb extends SubsystemBase {
                 true, 
                 Units.degreesToRadians(startingPosition),
                 60
-            );
+                );
 
             climbSim.setIsClimbing(true);
+            SmartDashboard.putData("Climb Display", simulationMechanism);
         }
 
         pid.setIZone(1);
+
         pid.setSetpoint(Units.degreesToRadians(startingPosition));
 
-        motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
-
-        SmartDashboard.putData("PID", pid);
-        SmartDashboard.putData("Climb Display", simulationMechanism);
+        motor.setPosition(Units.degreesToRotations(startingPosition)*gearRatio);
+        motor.setNeutralMode(NeutralModeValue.Brake);
     }
 
     @Override
     public void periodic() { 
         double motorPosition = getMotorPosition();
-        double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
-
+        double currentPosition = Units.rotationsToRadians(motorPosition/gearRatio);
         power = pid.calculate(currentPosition);
+
+        if(resetting){
+            power = -0.1;
+        }
+
         setMotor(MathUtil.clamp(power, -1, 1));
 
-        simLigament.setAngle(Units.radiansToDegrees(currentPosition));
-
-        SmartDashboard.putNumber("Climb Position", getAngle());
-
-        SmartDashboard.putNumber("Encoder Position", getMotorPosition());
+        if(isSimulation()){
+            simLigament.setAngle(Units.radiansToDegrees(currentPosition));
+        }
     }
+
 
     @Override
     public void simulationPeriodic() {
@@ -96,7 +101,9 @@ public class Climb extends SubsystemBase {
         climbSim.update(Constants.LOOP_TIME);
 
         double climbRotations = Units.radiansToRotations(climbSim.getAngleRads());
-        encoderSim.setRawRotorPosition(climbRotations * totalGearRatio);
+        encoderSim.setRawRotorPosition(climbRotations * gearRatio);
+
+        simLigament.setAngle(Units.radiansToDegrees(getAngle()));
     }
 
     protected double getMotorPosition(){
@@ -120,14 +127,14 @@ public class Climb extends SubsystemBase {
      * @return The angle in degrees
      */
     public double getAngle() {
-        return Units.rotationsToDegrees(getMotorPosition() / totalGearRatio);
+        return Units.rotationsToDegrees(getMotorPosition() / gearRatio);
     }
 
     /**
      * Turns the motor to 90 degrees (extended positiion)
      */
     public void extend(){
-        double extendAngle = 90;
+        double extendAngle = Units.rotationsToDegrees(extendPosition);
         setAngle(extendAngle);
     }
 
@@ -135,6 +142,13 @@ public class Climb extends SubsystemBase {
      * Turns the motor to 0 degrees (climb position)
      */
     public void climb(){
+        setAngle(Units.rotationsToDegrees(climbPosition));
+    }
+
+    /**
+     * Turns the motor to 0 degrees (climb position)
+     */
+    public void stow(){
         setAngle(startingPosition);
     }
 
@@ -148,5 +162,17 @@ public class Climb extends SubsystemBase {
 
     public boolean isSimulation(){
         return RobotBase.isSimulation();
+
+    public void reset(boolean resetting){
+        this.resetting = resetting;
+        if(!resetting){
+            motor.setPosition(climbPosition*gearRatio);
+            pid.setSetpoint(Units.degreesToRadians(startingPosition));
+            pid.reset();
+        }
+    }
+
+    public double getCurrent(){
+        return motor.getStatorCurrent().getValueAsDouble();
     }
 }

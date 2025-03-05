@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.PDPSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -35,7 +34,7 @@ public class PowerPanel extends SubsystemBase {
 	public void periodic() {
 		// put the current draw on the SmartDashboard
 		//SmartDashboard.putNumber("PDH Current (Amps)", PDH.getTotalCurrent());
-		SmartDashboard.putNumber("PDH Current for Arm (Amps)", PDH.getCurrent(1) + PDH.getCurrent(2) + PDH.getCurrent(4) + PDH.getCurrent(5));
+		//SmartDashboard.putNumber("PDH Current for Arm (Amps)", PDH.getCurrent(1) + PDH.getCurrent(2) + PDH.getCurrent(4) + PDH.getCurrent(5));
 
 		// simulate the voltage on the battery
 		voltsBattery = 12.6 - PDH.getTotalCurrent() * ohmsResistance;

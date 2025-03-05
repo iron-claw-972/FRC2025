@@ -22,10 +22,9 @@ public class DriveConstants {
      * <p>
      * The frame width is 26.5 inches, and each bumper is 3.25 inches.
      */
-    public static final double ROBOT_WIDTH_WITH_BUMPERS = Units.inchesToMeters(26.5 + 3.25 * 2);
+    public static final double ROBOT_WIDTH_WITH_BUMPERS = 0.832;
 
-    //TODO update to actual values for each robot
-    public static double ROBOT_MASS = 23.36;
+    public static double ROBOT_MASS = 30;
 
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(2);
@@ -87,10 +86,10 @@ public class DriveConstants {
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-    public static double STEER_OFFSET_FRONT_LEFT = 193.884-180;
-    public static double STEER_OFFSET_FRONT_RIGHT = 110.914;
-    public static double STEER_OFFSET_BACK_LEFT = 128.054+180;
-    public static double STEER_OFFSET_BACK_RIGHT = 316.648-180;
+    public static double STEER_OFFSET_FRONT_LEFT = 302.646;
+    public static double STEER_OFFSET_FRONT_RIGHT = 103.039+180;
+    public static double STEER_OFFSET_BACK_LEFT = 155.646;
+    public static double STEER_OFFSET_BACK_RIGHT = 250.835+4.351-180;
 
     // Heading PID.
     public static final double HEADING_P = 5.5;
@@ -99,7 +98,7 @@ public class DriveConstants {
     public static final double HEADING_TOLERANCE = Units.degreesToRadians(1.5);
 
     // Translational PID
-    // TODO: Tune this better
+    // TODO: Tune this better (low priority since we aren't using it in 2025)
     public static final double TRANSLATIONAL_P = 1;
     public static final double TRANSLATIONAL_D = 0.001;
 
@@ -125,8 +124,8 @@ public class DriveConstants {
     public static final double STEER_PEAK_CURRENT_DURATION = 0.01;
     public static final boolean STEER_ENABLE_CURRENT_LIMIT = true;
 
-    public static final int DRIVE_CONTINUOUS_CURRENT_LIMIT = 80;
-    public static final int DRIVE_PEAK_CURRENT_LIMIT = 80;
+    public static final int DRIVE_CONTINUOUS_CURRENT_LIMIT = 60;
+    public static final int DRIVE_PEAK_CURRENT_LIMIT = 60;
     public static final double DRIVE_PEAK_CURRENT_DURATION = 0.01;
     public static final boolean DRIVE_ENABLE_CURRENT_LIMIT = true;
 
@@ -196,7 +195,12 @@ public class DriveConstants {
      * Updates the constants if the RobotId is not the competition robot.
      */
     public static void update(RobotId robotId) {
-        if (robotId == RobotId.Vivace) {
+        if(robotId == RobotId.BetaBot) {
+            STEER_OFFSET_FRONT_LEFT = 193.884-180;
+            STEER_OFFSET_FRONT_RIGHT = 110.914;
+            STEER_OFFSET_BACK_LEFT = 128.054+180;
+            STEER_OFFSET_BACK_RIGHT = 107.43;
+        } else if (robotId == RobotId.Vivace) {
             STEER_OFFSET_FRONT_LEFT = 100.184+180;
             STEER_OFFSET_FRONT_RIGHT = 224.293;
             STEER_OFFSET_BACK_LEFT = 304.795-180;

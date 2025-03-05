@@ -54,8 +54,8 @@ public class OuttakeAlpha extends Outtake {
     @Override
     public void periodic(){
         motor.set(power);
-        SmartDashboard.putBoolean("Coral loaded", coralLoaded());
-        SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+        // SmartDashboard.putBoolean("Coral loaded", coralLoaded());
+        // SmartDashboard.putBoolean("Coral ejected", coralEjecting());
 
     }
 

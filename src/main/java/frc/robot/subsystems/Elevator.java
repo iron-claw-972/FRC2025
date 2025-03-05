@@ -5,29 +5,16 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.LinearQuadraticRegulator;
-import edu.wpi.first.math.estimator.KalmanFilter;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,82 +25,26 @@ import frc.robot.constants.IdConstants;
 import frc.robot.util.AngledElevatorSim;
 
 public class Elevator extends SubsystemBase {
-  private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR);
-  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR);
-
-  private DigitalInput bottomLimitSwitch = new DigitalInput(IdConstants.ELEVATOR_BOTTOM_LIMIT_SWITCH);
-  protected DIOSim bottomLimitSwitchSim;
-  // TODO: Use or delete
-  private boolean limitSwitchPressed = false;
-
-  // Calibration variables
-  private boolean calibrated;
-  // TODO: Use or delete
-  private boolean movingUp;
-  private double start;
+  private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
+  
+  MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
+  private double maxVelocity = 3; // m/s
+  private double maxAcceleration = 8; // m/s
+        
   // Sim variables
   protected AngledElevatorSim sim;
   private Mechanism2d mechanism;
   private MechanismLigament2d ligament;
   protected double voltage;
 
-  private final TrapezoidProfile m_profile = new TrapezoidProfile(
-      new TrapezoidProfile.Constraints(
-          Units.feetToMeters(9.0),
-          Units.feetToMeters(11.0))); // Max elevator speed and acceleration.
-  private State m_lastProfiledReference = new State();
+  // gravity feedforward
+  double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.
+  CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
 
-  private final LinearSystem<N2, N1, N2> m_elevatorPlant = LinearSystemId.createElevatorSystem(
-      ElevatorConstants.MOTOR, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS,
-      ElevatorConstants.GEARING);
-
-  private final KalmanFilter<N2, N1, N2> m_observer = new KalmanFilter<>(
-      Nat.N2(),
-      Nat.N2(),
-      (LinearSystem<N2, N1, N2>) m_elevatorPlant,
-      VecBuilder.fill(Units.inchesToMeters(2), Units.inchesToMeters(20)), // How accurate we
-      // think our model is, in meters and meters/second.
-      VecBuilder.fill(0.001,0.001), // How accurate we think our encoder position
-      // data is. In this case we very highly trust our encoder position reading.
-      Constants.LOOP_TIME);
-  private final LinearQuadraticRegulator<N2, N1, N2> m_controller = new LinearQuadraticRegulator<>(
-      (LinearSystem<N2, N1, N2>) m_elevatorPlant,
-      VecBuilder.fill(Units.inchesToMeters(1.0), Units.inchesToMeters(20.0)), // qelms. Position
-      // and velocity error tolerances, in meters and meters per second. Decrease this
-      // to more
-      // heavily penalize state excursion, or make the controller behave more
-      // aggressively. In
-      // this example we weight position much more highly than velocity, but this can
-      // be
-      // tuned to balance the two.
-      VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
-      // heavily penalize control effort, or make the controller less aggressive. 12
-      // is a good
-      // starting point because that is the (approximate) maximum voltage of a
-      // battery.
-      Constants.LOOP_TIME); // Nominal time between loops. 0.020 for TimedRobot, but can be
-
-  // The state-space loop combines a controller, observer, feedforward and plant
-  // for easy control.
-  private final LinearSystemLoop<N2, N1, N2> m_loop = new LinearSystemLoop<>(
-      (LinearSystem<N2, N1, N2>) m_elevatorPlant,
-      m_controller,
-      m_observer,
-      12.0,
-      Constants.LOOP_TIME);
-
-  /** Creates a new Elevator. */
   public Elevator() {
-    // Left motor follows right motor in the opposite direction
-    if (!isSimulation()){
-      leftMotor.setControl(new Follower(rightMotor.getDeviceID(), true));
-      rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
-    }
-    
-
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
     if (isSimulation()) {
@@ -126,59 +57,53 @@ public class Elevator extends SubsystemBase {
       mechanism = new Mechanism2d(size, size);
       ligament = mechanism.getRoot("base", size / 2 - width / 2, size / 2 - height / 2).append(new MechanismLigament2d(
         "elevator", ElevatorConstants.START_HEIGHT, 90 - Units.radiansToDegrees(Math.abs(ElevatorConstants.ANGLE))));
-
-      bottomLimitSwitchSim = new DIOSim(bottomLimitSwitch);
-      bottomLimitSwitchSim.setValue(Math.abs(ElevatorConstants.START_HEIGHT
-        - ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
+      SmartDashboard.putData("elevator", mechanism);
     }
     Timer.delay(1.0);
-    m_loop.reset(VecBuilder.fill(getPosition(), 0));
-    m_lastProfiledReference = new State(getPosition(), 0);
 
+    //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
-    calibrate();
-    leftMotor.setNeutralMode(NeutralModeValue.Coast);
-    rightMotor.setNeutralMode(NeutralModeValue.Coast);
+
+    rightMotor.setNeutralMode(NeutralModeValue.Brake);
+
+    var talonFXConfigs = new TalonFXConfiguration();
+
+    // set slot 0 gains
+    var slot0Configs = talonFXConfigs.Slot0;
+    slot0Configs.kS = 0; // Add 0.25 V output to overcome static friction
+    slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    slot0Configs.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
+    slot0Configs.kP = 0.5; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kI = 0; // no output for integrated error
+    slot0Configs.kD = 0; // A velocity error of 1 rps results in 0.1 V output
+
+    // set Motion Magic settings
+    var motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorConstants.GEARING * maxVelocity/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target cruise velocity 
+    motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.GEARING * maxAcceleration/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target acceleration 
+    rightMotor.getConfigurator().apply(talonFXConfigs);
+    rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+
+
+    //Logging
+    // LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
+    // LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
+    // LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
 
   }
 
   @Override
   public void periodic() {
-    // The final state that the elevator is trying to get to
-    State goal = new State(setpoint, 0.0);
-
-    double currentPosition = getPosition();
-
-    m_lastProfiledReference = m_profile.calculate(Constants.LOOP_TIME, m_lastProfiledReference, goal);
-    m_loop.setNextR(m_lastProfiledReference.position, m_lastProfiledReference.velocity);
-
-    // Correct our Kalman filter's state vector estimate with encoder data.
-    m_loop.correct(MatBuilder.fill(Nat.N2(), Nat.N1(),currentPosition,getVelocity()));
-
-    // Update our LQR to generate new voltage commands and use the voltages to
-    // predict the next
-    // state with out Kalman filter.
-    m_loop.predict(Constants.LOOP_TIME);
-    // Send the new calculated voltage to the motors.
-    // voltage = duty cycle * battery voltage, so
-    // duty cycle = voltage / battery voltage
-    double nextVoltage = m_loop.getU(0);
-    SmartDashboard.putBoolean("bottom Sensor", getBottomLimitSwitch());
-    SmartDashboard.putNumber("next voltage", nextVoltage);
-    SmartDashboard.putNumber("left motor encoder", getLeftEncoder());
-    SmartDashboard.putNumber("right motor encoder", getRightEncoder());
-    SmartDashboard.putNumber("height", getPosition());
-    set(nextVoltage);
+    double setpoint2 = ElevatorConstants.GEARING * setpoint / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
+    rightMotor.setControl(voltageRequest.withPosition(setpoint2).withFeedForward(0.15));
   }
 
   @Override
   public void simulationPeriodic() {
-    sim.setInputVoltage(voltage);
+    sim.setInputVoltage(0);
     sim.update(Constants.LOOP_TIME);
-    ligament.setLength(getPosition());
-    bottomLimitSwitchSim.setValue(Math.abs(getPosition()
-        - ElevatorConstants.BOTTOM_LIMIT_SWITCH_HEIGHT) > ElevatorConstants.SIM_LIMIT_SWITCH_TRIGGER_DISTANCE);
-    setSimMotorPosition(
+    ligament.setLength(sim.getPositionMeters());
+    rightMotor.getSimState().setRawRotorPosition(
         sim.getPositionMeters() / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
   }
 
@@ -205,12 +130,18 @@ public class Elevator extends SubsystemBase {
       rightMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
     }
   }
-
+  
+  /**
+   * Get the position of the elevator in  meters. 
+  */
   public double getPosition() {
     return getRightEncoder() / ElevatorConstants.GEARING
         * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
   }
-
+  
+  /**
+   * Get the velocity of the elevator in m/s. 
+  */
   public double getVelocity(){
     return rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
     * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
@@ -220,16 +151,17 @@ public class Elevator extends SubsystemBase {
     return voltage;
   }
 
-
-
-  public boolean getBottomLimitSwitch() {
-    return !bottomLimitSwitch.get();
-  }
-
+  /**
+   * Method to set the setpoint of the elevator. Clamped between min and max height.
+   * @param setpoint The setpoint in meters.
+  */
   public void setSetpoint(double setpoint) {
     this.setpoint = MathUtil.clamp(setpoint, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT);
   }
 
+  /**
+   * Get the velocity of the elevator in meters. 
+  */
   public double getSetpoint() {
     return setpoint;
   }
@@ -238,24 +170,13 @@ public class Elevator extends SubsystemBase {
     return mechanism;
   }
 
-  /**
-   * Starts the elevator calibration.
-   * @deprecated Currently not supported
-   */
-  @Deprecated
-  public void calibrate() {
-    calibrated = false;
-    start = getPosition();
-    // This prevents it from breaking on a second calibration
-    movingUp = true;
-    // If it is already at the limit switch, it can reset the encoder
-    limitSwitchPressed = false;
+  public boolean atSetpoint(){
+    return Math.abs(getPosition() - setpoint) < 0.025;
   }
 
-  public boolean isCalibrated() {
-    return calibrated;
-  }
-
+  /*
+  * Get the COM at the current elevater height. 
+  */
   public double getCenterOfMassHeight(){
     return (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
   }
@@ -268,9 +189,7 @@ public class Elevator extends SubsystemBase {
    * Closes the motors and sets them to null
    */
   public void deleteMotors(){
-    leftMotor.close();
     rightMotor.close();
-    leftMotor = null;
     rightMotor = null;
   }
 }

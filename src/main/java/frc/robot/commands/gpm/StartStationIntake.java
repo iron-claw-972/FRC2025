@@ -15,11 +15,12 @@ public class StartStationIntake extends Command {
     @Override
     public void initialize() {
         intake.setAngle(IntakeConstants.STATION_SETPOINT);
-        intake.activate();
+        intake.setSpeed(0.3);
     }
 
     @Override
     public boolean isFinished() {
+        
         return intake.hasCoral();
     }
 

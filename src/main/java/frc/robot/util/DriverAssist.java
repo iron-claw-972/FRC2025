@@ -26,7 +26,7 @@ public class DriverAssist {
     // The amount to correct the driver's inpus by
     // 0 = return unchanged driver inputs, 1 = return a value much closer to the calculated speed, sometimes equal to it
     // This can be greater than 1 to fully correct more of the time, like from farther away
-    private static final double CORRECTION_FACTOR = 0.5;
+    private static final double CORRECTION_FACTOR = 1;
 
     
     // Variables used for first method
@@ -147,7 +147,7 @@ public class DriverAssist {
         Translation2d difference = desiredPose.getTranslation().minus(drivePose.getTranslation());
         double distance = difference.getNorm();
         double velocityAngle = difference.getAngle().getRadians();
-        double targetAngle = keepAngle ? desiredPose.getRotation().getRadians() : velocityAngle;
+        double targetAngle = keepAngle ? desiredPose.getRotation().getRadians() : MathUtil.angleModulus(velocityAngle + Math.PI/2);
         double inputSpeed = Math.hypot(driverInput.vxMetersPerSecond, driverInput.vyMetersPerSecond);
         double driverAngle = Math.atan2(driverInput.vyMetersPerSecond, driverInput.vxMetersPerSecond);
         double velocityAngleError = MathUtil.angleModulus(velocityAngle - driverAngle);

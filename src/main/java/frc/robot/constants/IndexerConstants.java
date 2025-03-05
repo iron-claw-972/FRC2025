@@ -1,11 +1,11 @@
 package frc.robot.constants;
 
 public class IndexerConstants {
-	public static final double SPEED = 0.2;
+	public static final double SPEED = 1;
 
 	public static final double MOMENT_OF_INERTIA = 0.000326;
-	public static final double GEAR_RATIO = 1.0; // TODO: actual value
-	public static final int MEASUREMENT_THRESHOLD = 60; // in millimeters
+	public static final double GEAR_RATIO = 1.0;
+	public static final int MEASUREMENT_THRESHOLD = 20; // in millimeters
 
 	// this stuff is for sim, all in meters
 	public static final double WHEEL_CIRCUMFERENCE = Math.PI * 0.1;

@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.Optional;
 
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -14,7 +15,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.VisionConstants;
-import frc.robot.util.LogManager;
+import frc.robot.constants.swerve.DriveConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -28,6 +29,8 @@ public class Robot extends TimedRobot {
 
     public Robot(){
         CanBridge.runTCP();
+        PortForwarder.add(5800,"10.9.72.12",5800);
+        PortForwarder.add(1182,"10.9.72.12",1182);
     }
 
     /**
@@ -40,8 +43,8 @@ public class Robot extends TimedRobot {
         //   SimGUI: Persistent Values, Preferences, RobotId, then restart Simulation
         //     changes networktables.json, networktables.json.bck (both Untracked)
         //   Uncomment the next line, set the desired RobotId, deploy, and then comment the line out
-        //RobotId.setRobotId(RobotId.SwerveCompetition);
-
+        //  RobotId.setRobotId(RobotId.SwerveCompetition);
+        RobotController.setBrownoutVoltage(6.0);
         // obtain this robot's identity
         RobotId robotId = RobotId.getRobotId();
 
@@ -71,7 +74,7 @@ public class Robot extends TimedRobot {
 
         CommandScheduler.getInstance().run();
         
-        LogManager.update();
+        //LogManager.update();
     }
 
     /**
@@ -179,7 +182,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void endCompetition(){
-        robotContainer.interruptOdometryThread();
+        if(robotContainer != null){
+            robotContainer.interruptThreads();
+        }
         super.endCompetition();
     }
 }

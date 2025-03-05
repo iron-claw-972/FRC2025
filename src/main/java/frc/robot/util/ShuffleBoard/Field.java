@@ -51,10 +51,9 @@ public class Field {
         field.setRobotPose(chassisPose);
         field.getObject("Modules").setPoses(modulePoses.getModulePoses());
         field.getObject("AprilTags").setPoses(aprilTagPoses);
-        // For testing, TODO: remove before competition
-        field.getObject("Detected objects").setPoses(getObjectPoses());
     }
 
+    @SuppressWarnings("unused") // Used for testing, but should not be used at comp
     private Pose2d[] getObjectPoses(){
         if(vision == null){
             return new Pose2d[0];
