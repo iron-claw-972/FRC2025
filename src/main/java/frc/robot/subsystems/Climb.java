@@ -40,7 +40,7 @@ public class Climb extends SubsystemBase {
         new MechanismLigament2d("angle", 1, startingPosition, 4, new Color8Bit(Color.kAntiqueWhite))
     );
 
-    private final double gearRatio = 60.0;
+    protected static final double gearRatio = 60.0;
 
     protected ClimbArmSim climbSim;
 
@@ -162,6 +162,7 @@ public class Climb extends SubsystemBase {
 
     public boolean isSimulation(){
         return RobotBase.isSimulation();
+    }
 
     public void reset(boolean resetting){
         this.resetting = resetting;

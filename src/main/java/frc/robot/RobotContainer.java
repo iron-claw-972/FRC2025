@@ -18,7 +18,6 @@ import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
@@ -61,7 +60,7 @@ public class RobotContainer {
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
-  private Operator operator = null;
+  // private Operator operator = null;
   private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;
@@ -121,7 +120,7 @@ public class RobotContainer {
     drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
     PathGroupLoader.loadPathGroups();
 
-    shuffleboardManager = new ShuffleBoardManager(drive, vision);
+    shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator, outtake, intake);
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);

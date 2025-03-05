@@ -15,7 +15,7 @@ public class SimIntake extends Intake {
         isMoving = Math.abs(power) > 0.01;
     }
     @Override
-    protected void setStowMotor(double power) {}
+    protected void setPivotMotor(double power) {}
 
     @Override
     public boolean isSimulation(){

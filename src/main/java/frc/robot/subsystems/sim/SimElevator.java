@@ -16,10 +16,6 @@ public class SimElevator extends Elevator {
         voltage = volts;
     }
     @Override
-    protected double getLeftEncoder(){
-        return getRightEncoder();
-    }
-    @Override
     protected double getRightEncoder(){
         return sim.getPositionMeters() / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS)  * ElevatorConstants.GEARING;
     }
@@ -28,10 +24,6 @@ public class SimElevator extends Elevator {
     @Override
     public double getVelocity(){
         return sim.getVelocityMetersPerSecond();
-    }
-    @Override
-    public boolean getBottomLimitSwitch(){
-        return !bottomLimitSwitchSim.getValue();
     }
 
     @Override

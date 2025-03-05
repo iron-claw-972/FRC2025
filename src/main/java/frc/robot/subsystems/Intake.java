@@ -239,4 +239,15 @@ public class Intake extends SubsystemBase {
     public void activate(){
         rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
     }
+
+    public boolean isSimulation(){
+        return RobotBase.isSimulation();
+    }
+
+    protected void deleteMotors(){
+        pivotMotor.close();
+        rollerMotor.close();
+        pivotMotor = null;
+        rollerMotor = null;
+    }
 }

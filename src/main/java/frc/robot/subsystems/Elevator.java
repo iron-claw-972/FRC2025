@@ -116,9 +116,6 @@ public class Elevator extends SubsystemBase {
     voltage = volts;
   }
 
-  protected double getLeftEncoder(){
-    return leftMotor.getPosition().getValueAsDouble();
-  }
   protected double getRightEncoder(){
     return rightMotor.getPosition().getValueAsDouble();
   }

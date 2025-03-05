@@ -13,7 +13,7 @@ public class SimClimb extends Climb {
     // Override some of the methods in Climb to not use the motor
     @Override
     protected double getMotorPosition(){
-        return Units.radiansToRotations(climbSim.getAngleRads()) * totalGearRatio;
+        return Units.radiansToRotations(climbSim.getAngleRads()) * gearRatio;
     }
     @Override
     protected void setMotor(double power) {}
