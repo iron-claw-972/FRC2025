@@ -22,7 +22,7 @@ public class DriveConstants {
      * <p>
      * The frame width is 26.5 inches, and each bumper is 3.25 inches.
      */
-    public static final double ROBOT_WIDTH_WITH_BUMPERS = Units.inchesToMeters(26.5 + 3.25 * 2);
+    public static final double ROBOT_WIDTH_WITH_BUMPERS = 0.832;
 
     public static double ROBOT_MASS = 30;
 
@@ -124,8 +124,8 @@ public class DriveConstants {
     public static final double STEER_PEAK_CURRENT_DURATION = 0.01;
     public static final boolean STEER_ENABLE_CURRENT_LIMIT = true;
 
-    public static final int DRIVE_CONTINUOUS_CURRENT_LIMIT = 80;
-    public static final int DRIVE_PEAK_CURRENT_LIMIT = 80;
+    public static final int DRIVE_CONTINUOUS_CURRENT_LIMIT = 60;
+    public static final int DRIVE_PEAK_CURRENT_LIMIT = 60;
     public static final double DRIVE_PEAK_CURRENT_DURATION = 0.01;
     public static final boolean DRIVE_ENABLE_CURRENT_LIMIT = true;
 

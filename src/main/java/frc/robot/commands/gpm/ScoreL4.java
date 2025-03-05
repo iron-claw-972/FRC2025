@@ -6,6 +6,7 @@ package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Outtake;
@@ -19,7 +20,8 @@ public class ScoreL4 extends SequentialCommandGroup {
     addCommands(
       new ParallelCommandGroup(
         new OuttakeCoralBasic(outake, ()-> true),
-        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT+0.07))
+        new WaitCommand(0).andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT+0.09)))
     );
   }
 }
+

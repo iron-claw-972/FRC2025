@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
@@ -37,7 +36,8 @@ import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
  * Class for storing and updating information on the auto tab in Shuffleboard
 */
 public class AutoTab extends ShuffleBoardTabs {
-
+    // TODO: Remove warnings
+    
     private final SendableChooser<Command> autoCommand = new SendableChooser<>();
 
     private Drivetrain drive;
@@ -56,18 +56,29 @@ public class AutoTab extends ShuffleBoardTabs {
     
     public void createEntries(){         
         tab = Shuffleboard.getTab("Auto");
-        autoCommand.setDefaultOption("Do nothing", new DoNothing());
-
+        try {
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Blue Right Side");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
         try {
             List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side");
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+        try {
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        autoCommand.setDefaultOption("Right Side", new PathPlannerAuto("Right Side"));
+
+        
         autoCommand.addOption("Wait", new PathPlannerAuto("Wait Test"));
 
         autoCommand.addOption("Right Side", new PathPlannerAuto("Right Side"));
-        autoCommand.addOption("Left Side", new PathPlannerAuto("Left Side"));
-        autoCommand.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
+        autoCommand.addOption("Left Side", new PathPlannerAuto("Right Side Mirrored"));
+        autoCommand.addOption("Left Side Ground", new PathPlannerAuto("Blue Right Side"));
 
        
         // autoCommand.addOption("#1", new FollowPathCommand("#1", true, drive)
