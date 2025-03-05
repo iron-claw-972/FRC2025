@@ -38,7 +38,6 @@ public class Climb extends SubsystemBase {
     private TalonFXSimState encoderSim;
 
     //Mechism2d display
-    @AutoLogOutput
     private final Mechanism2d simulationMechanism = new Mechanism2d(3, 3);
     private final MechanismRoot2d mechanismRoot = simulationMechanism.getRoot("Climb", 1.5, 1.5);
     private final MechanismLigament2d simLigament = mechanismRoot.append(
@@ -172,5 +171,11 @@ public class Climb extends SubsystemBase {
 
     public double getCurrent(){
         return motor.getStatorCurrent().getValueAsDouble();
+    }
+
+    //not working
+    @AutoLogOutput(key = "Climb/Mech2D")
+    public Mechanism2d getMech2d() {
+        return simulationMechanism;
     }
 }

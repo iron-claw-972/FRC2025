@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -123,6 +125,7 @@ public class Elevator extends SubsystemBase {
   /**
    * Get the position of the elevator in  meters. 
   */
+  @AutoLogOutput(key = "Elevator/Position")
   public double getPosition() {
     return rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
         * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);

@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeCoral;
@@ -66,6 +67,9 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+
+    SmartDashboard.putData("climb", new InstantCommand(() -> climb.climb()));
+    SmartDashboard.putData("extend", new InstantCommand(() -> climb.extend()));
 
     // dispatch on the robot
     switch (robotId) {
