@@ -12,8 +12,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.util.Vision;
 import frc.robot.util.ShuffleBoard.Tabs.AutoTab;
-import frc.robot.util.ShuffleBoard.Tabs.SwerveTab;
-import frc.robot.util.ShuffleBoard.Tabs.VisionTab;
 
 /** Add your docs here. */
 public class ShuffleBoardManager {
@@ -22,11 +20,9 @@ public class ShuffleBoardManager {
     
     //private Field feild;
 
-    private SwerveTab swerveTab;
+    // private SwerveTab swerveTab;
     private AutoTab autoTab;
-    private VisionTab visionTab;
-    private Outtake outtake;
-    private Intake intake;
+    // private VisionTab visionTab;
 
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake, Intake intake){
         

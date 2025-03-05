@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -15,18 +14,14 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.constants.IndexerConstants;
-// import frc.robot.util.LogManager;
-// import frc.robot.util.LogManager.LogLevel;
 
 public class Indexer extends SubsystemBase {
 	private SparkFlex motor;
-	//private TalonFX motor;
 	private MockLaserCan simSensor;
 	private LaserCanInterface sensor;
 
@@ -38,7 +33,6 @@ public class Indexer extends SubsystemBase {
 
 	public Indexer() {
 		motor = new SparkFlex(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
-		//motor = new TalonFX(IdConstants.INDEXER_MOTOR);
 		if (Robot.isSimulation()) {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
 					IndexerConstants.MOMENT_OF_INERTIA, IndexerConstants.GEAR_RATIO), DCMotor.getNEO(1));
