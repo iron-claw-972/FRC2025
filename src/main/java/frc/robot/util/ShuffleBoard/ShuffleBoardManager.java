@@ -5,6 +5,8 @@
 package frc.robot.util.ShuffleBoard;
 
 import java.util.ArrayList;
+
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -18,7 +20,7 @@ public class ShuffleBoardManager {
 
     private ArrayList<ShuffleBoardTabs> tabs = new ArrayList<>();
     
-    //private Field feild;
+    private Field field;
 
     // private SwerveTab swerveTab;
     private AutoTab autoTab;
@@ -37,14 +39,18 @@ public class ShuffleBoardManager {
             tab.createEntries();
         }
         
-        //feild = new Field(drive, vision);
+        if(RobotBase.isSimulation()){
+            field = new Field(drive, vision);
+        }
     }
 
     public void update(){
         for (ShuffleBoardTabs tab : tabs){
             tab.update();
         }
-        //feild.updateFeild();
+        if(field != null){
+            field.updateFeild();
+        }
     }
 
     public Command getSelectedCommand(){
