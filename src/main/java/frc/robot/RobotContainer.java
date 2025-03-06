@@ -33,6 +33,8 @@ import frc.robot.util.Vision;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -260,6 +262,7 @@ public class RobotContainer {
     drivetrainThread.interrupt();
   }
 
+  @AutoLogOutput(key = "Faults/Brownout")
   public boolean brownout() {
     if(RobotController.getBatteryVoltage() < 6.0) {
       return true;

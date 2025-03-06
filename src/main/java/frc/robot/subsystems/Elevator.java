@@ -134,11 +134,13 @@ public class Elevator extends SubsystemBase {
   /**
    * Get the velocity of the elevator in m/s. 
   */
+  @AutoLogOutput
   public double getVelocity(){
     return rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
     * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
   }
 
+  @AutoLogOutput
   public double getVoltage(){
     return voltage;
   }
@@ -154,10 +156,12 @@ public class Elevator extends SubsystemBase {
   /**
    * Get the velocity of the elevator in meters. 
   */
+  @AutoLogOutput
   public double getSetpoint() {
     return setpoint;
   }
 
+  @AutoLogOutput
   public Mechanism2d getMechanism2d() {
     return mechanism;
   }
