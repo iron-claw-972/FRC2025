@@ -88,8 +88,7 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() { 
 
-        inputs.positionDeg = getAngle();
-        inputs.appliedVolts = motor.getMotorVoltage().getValueAsDouble();
+        inputs.measuredPositionDeg = getAngle();
         inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
         Logger.processInputs("Climb", inputs);
 
@@ -102,6 +101,7 @@ public class Climb extends SubsystemBase {
         }
 
         Logger.recordOutput("Climb/Motor Power", power);
+        Logger.recordOutput("Climb/setPointDeg", Units.radiansToDegrees(pid.getSetpoint())*totalGearRatio);
 
         motor.set(MathUtil.clamp(power, -1, 1));
 
