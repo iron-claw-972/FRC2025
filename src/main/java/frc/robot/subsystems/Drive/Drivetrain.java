@@ -74,7 +74,6 @@ public class Drivetrain extends SubsystemBase {
     // Vision
     private final Vision vision;
 
-    private final Pigeon2 pigeon;
 
     // PID Controllers for chassis movement
     private final PIDController xController;
@@ -143,15 +142,6 @@ public class Drivetrain extends SubsystemBase {
                 modules[moduleConstants.ordinal()] = new ModuleSim(moduleConstants);
             });
         }
-        
-        // The Pigeon is a gyroscope and implements WPILib's Gyro interface
-        pigeon = new Pigeon2(IdConstants.PIGEON, DriveConstants.PIGEON_CAN);
-        pigeon.getConfigurator().apply(new Pigeon2Configuration());
-        
-        // Our pigeon is mounted with y forward, and z upward
-        MountPoseConfigs mountPoseConfigs = new MountPoseConfigs();
-        mountPoseConfigs.deserialize("");
-        pigeon.getConfigurator().apply(new MountPoseConfigs().withMountPosePitch(0).withMountPoseRoll(0).withMountPoseYaw(90));
 
         /*
          * By pausing init for a second before setting module offsets, we avoid a bug
@@ -161,11 +151,9 @@ public class Drivetrain extends SubsystemBase {
         Timer.delay(1.0);
         resetModulesToAbsolute();
         
-        // initial Odometry Location
-        pigeon.setYaw(DriveConstants.STARTING_HEADING.getDegrees());
         poseEstimator = new SwerveDrivePoseEstimator(
                 DriveConstants.KINEMATICS,
-                Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
+                gyroInputs.yawPosition,
                 updateModulePositions(),
                 new Pose2d(),
                 // Defaults, except trust pigeon more
@@ -183,40 +171,11 @@ public class Drivetrain extends SubsystemBase {
 
         modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
 
-        // Store all status signals that we need to wait for
-        for(int i = 0; i < modules.length; i++){
-            BaseStatusSignal[] signals = modules[0].getStatusSignals();
-            // Initialize array length and add pigeon if this is the first module
-            if(i == 0){
-                statusSignals = new BaseStatusSignal[4*signals.length+1];
-                statusSignals[0] = pigeon.getYaw();
-            }
-            // Add all signals from this module
-            for(int j = 0; j < signals.length; j++){
-                statusSignals[i*signals.length+j+1] = signals[j];
-            }
-        }
-        StatusSignal.setUpdateFrequencyForAll(250, statusSignals[0]);
-        ParentDevice.optimizeBusUtilizationForAll(pigeon);
-        // LogManager.logSupplier("Drivetrain/SpeedX", () -> getChassisSpeeds().vxMetersPerSecond, 100, LogLevel.INFO);
-        // LogManager.logSupplier("Drivetrain/SpeedY", () -> getChassisSpeeds().vyMetersPerSecond, 100, LogLevel.INFO);
-        // LogManager.logSupplier("Drivetrain/Speed", () -> Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond), 100, LogLevel.INFO);
-        // LogManager.logSupplier("Drivetrain/SpeedRot", () -> getChassisSpeeds().omegaRadiansPerSecond, 100, LogLevel.INFO);
-    
-    //     LogManager.logSupplier("Drivetrain/Pose2d", () -> {
-    //         Pose2d pose = getPose();
-    //         return new Double[]{
-    //             pose.getX(),
-    //             pose.getY(),
-    //             pose.getRotation().getRadians()
-    //         };
-    //     }, 15, LogLevel.COMP);
+  
+        
      }
 
     public void close() {
-        // close the gyro
-        pigeon.close();
-
         // close each of the modules
         for (int i = 0; i < modules.length; i++) {
             modules[i].close();
@@ -227,6 +186,9 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         gyroIO.updateInputs(gyroInputs);
         Logger.processInputs("Drive/Gyro", gyroInputs);
+        for(int i = 0; i< modules.length; i++){
+            modules[i].periodic();
+        }
         updateOdometryVision();
     }
 
@@ -294,7 +256,7 @@ public class Drivetrain extends SubsystemBase {
         synchronized(this){
             // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
             // Also stores the current pose in the buffer
-            poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), updateModulePositions()));
+            poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(gyroInputs.yawPosition, updateModulePositions()));
         }
     }
 
@@ -349,10 +311,10 @@ public class Drivetrain extends SubsystemBase {
             prevPose = pose3;
         }
 
-        if (Robot.isSimulation()) {
-            pigeon.getSimState().addYaw(
-                    +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
-        }
+        // if (Robot.isSimulation()) {
+        //     pigeon.getSimState().addYaw(
+        //             +Units.radiansToDegrees(currentSetpoint.chassisSpeeds().omegaRadiansPerSecond * Constants.LOOP_TIME));
+        // }
     }
 
     /**
@@ -476,20 +438,20 @@ public class Drivetrain extends SubsystemBase {
      * @return the rate in rads/s from the pigeon
      */
     public double getAngularRate(int id) {
-        double speed = 0;
-        switch(id){
-            case 0:
-                speed = pigeon.getAngularVelocityXWorld().getValueAsDouble();
-                break;
-            case 1:
-                speed = pigeon.getAngularVelocityYWorld().getValueAsDouble();
-                break;
-            case 2:
-                speed = pigeon.getAngularVelocityZWorld().getValueAsDouble();
-                break;
-        }
+        //double speed = 0;
+        // switch(id){
+        //     case 0:
+        //         speed = gyroInputs..getAngularVelocityXWorld().getValueAsDouble();
+        //         break;
+        //     case 1:
+        //         speed = pigeon.getAngularVelocityYWorld().getValueAsDouble();
+        //         break;
+        //     case 2:
+        //         speed = pigeon.getAngularVelocityZWorld().getValueAsDouble();
+        //         break;
+        // }
         // outputs in deg/s, so convert to rad/s
-        return Units.degreesToRadians(speed);
+        return gyroInputs.yawVelocityRadPerSec;
     }
 
 
@@ -586,7 +548,7 @@ public class Drivetrain extends SubsystemBase {
     public synchronized void resetOdometry(Pose2d pose) {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
-        poseEstimator.resetPosition(Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()), getModulePositions(), pose);
+        poseEstimator.resetPosition(gyroInputs.yawPosition, getModulePositions(), pose);
         modulePoses.reset();
     }
 
@@ -739,10 +701,10 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getAcceleration() {
-        double accelX = pigeon.getAccelerationX().getValueAsDouble();
-        double accelY = pigeon.getAccelerationY().getValueAsDouble();
+        double accelX = gyroInputs.accelerationX;
+        double accelY = gyroInputs.accelerationY;
 
-        double angularVelocity = pigeon.getAngularVelocityZWorld().getValueAsDouble();
+        double angularVelocity = getAngularRate(3);
         double angularAccel = (angularVelocity - previousAngularVelocity) / Constants.LOOP_TIME;
         previousAngularVelocity = angularVelocity;
         

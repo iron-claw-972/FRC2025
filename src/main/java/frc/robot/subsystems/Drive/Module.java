@@ -1,5 +1,9 @@
 package frc.robot.subsystems.Drive;
 
+import java.util.Queue;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -22,6 +26,7 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
 import edu.wpi.first.math.estimator.KalmanFilter;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -33,7 +38,10 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
@@ -44,7 +52,7 @@ import frc.robot.util.ConversionUtils;
 import lib.CTREModuleState;
 
 
-public class Module extends SubsystemBase {
+public class Module implements ModuleIO{
     private final ModuleType type;
     
     // Degrees
@@ -59,10 +67,29 @@ public class Module extends SubsystemBase {
     
     private boolean optimizeStates = true;
 
-    private StatusSignal<Angle> drivePosition;
-    private StatusSignal<AngularVelocity> driveVelocity;
-    private StatusSignal<Angle> steerAngle;
-    private StatusSignal<Angle> CANangle;
+    // Inputs from drive motor
+    private final StatusSignal<Angle> drivePosition;
+    private final StatusSignal<AngularVelocity> driveVelocity;
+    private final StatusSignal<Voltage> driveAppliedVolts;
+    private final StatusSignal<Current> driveCurrent;
+
+    // Inputs from turn motor
+    private final StatusSignal<Angle> turnAbsolutePosition;
+    private final StatusSignal<Angle> turnPosition;
+    private final StatusSignal<AngularVelocity> turnVelocity;
+    private final StatusSignal<Voltage> turnAppliedVolts;
+    private final StatusSignal<Current> turnCurrent;
+
+      // Connection debouncers
+    private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
+    private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
+    private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
+
+      private final Alert driveDisconnectedAlert;
+    private final Alert turnDisconnectedAlert;
+    private final Alert turnEncoderDisconnectedAlert;
+
+    private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
 
     private ModuleConstants moduleConstants;
 
@@ -120,27 +147,47 @@ public class Module extends SubsystemBase {
         driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.DRIVE_MOTOR_CAN);
         configDriveMotor();
 
-        ParentDevice.optimizeBusUtilizationForAll(angleMotor, driveMotor, CANcoder);
-        
+        driveDisconnectedAlert =
+        new Alert(
+            "Disconnected drive motor on module " + Integer.toString(moduleConstants.ordinal()) + ".",
+            AlertType.kError);
+    turnDisconnectedAlert =
+        new Alert(
+            "Disconnected turn motor on module " + Integer.toString(moduleConstants.ordinal()) + ".", AlertType.kError);
+    turnEncoderDisconnectedAlert =
+        new Alert(
+            "Disconnected turn encoder on module " + Integer.toString(moduleConstants.ordinal()) + ".",
+            AlertType.kError);        
+         // Create drive status signals
         drivePosition = driveMotor.getPosition();
         driveVelocity = driveMotor.getVelocity();
-        steerAngle = angleMotor.getPosition();
-        CANangle = CANcoder.getAbsolutePosition();
+        driveAppliedVolts = driveMotor.getMotorVoltage();
+        driveCurrent = driveMotor.getStatorCurrent();
 
-        StatusSignal.setUpdateFrequencyForAll(250, drivePosition, driveVelocity, steerAngle);
-        StatusSignal.setUpdateFrequencyForAll(5, CANangle);
+        // Create turn status signals
+        turnAbsolutePosition = CANcoder.getAbsolutePosition();
+        turnPosition = angleMotor.getPosition();
+        turnVelocity = angleMotor.getVelocity();
+        turnAppliedVolts = angleMotor.getMotorVoltage();
+        turnCurrent = angleMotor.getStatorCurrent();
+
+        // Configure periodic frames
+        BaseStatusSignal.setUpdateFrequencyForAll(
+            250, drivePosition, turnPosition);
+        BaseStatusSignal.setUpdateFrequencyForAll(
+            50.0,
+            driveVelocity,
+            driveAppliedVolts,
+            driveCurrent,
+            turnAbsolutePosition,
+            turnVelocity,
+            turnAppliedVolts,
+            turnCurrent);
+        ParentDevice.optimizeBusUtilizationForAll(driveMotor, angleMotor);
         
         m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
 
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
-
-        // String directory_name = "Drivetrain/Module" + type.name();
-        // LogManager.logSupplier(directory_name +"/AngleDesired/", () -> getDesiredAngle().getRadians(), 1000, LogLevel.DEBUG);
-        // LogManager.logSupplier(directory_name +"/AngleActual/", () -> getAngle().getRadians(), 1000, LogLevel.DEBUG);
-        // LogManager.logSupplier(directory_name +"/VelocityDesired/", () -> getDesiredVelocity(), 100, LogLevel.INFO);
-        // LogManager.logSupplier(directory_name +"/VelocityActual/", () -> getState().speedMetersPerSecond, 100, LogLevel.INFO);
-        // LogManager.logSupplier(directory_name +"/DriveVoltage/", () -> driveMotor.getMotorVoltage().getValueAsDouble(), 1000, LogLevel.DEBUG);
-        // LogManager.logSupplier(directory_name +"/DriveCurrent/", () -> driveMotor.getStatorCurrent().getValueAsDouble(), 1000, LogLevel.DEBUG);
     }
 
     public void close() {
@@ -148,9 +195,42 @@ public class Module extends SubsystemBase {
         driveMotor.close();
         CANcoder.close();
     }
+
+    @Override
+    public void updateInputs() {
+      // Refresh all signals
+      var driveStatus =
+          BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
+      var turnStatus =
+          BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
+      var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
+  
+      // Update drive inputs
+      inputs.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
+      inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
+      inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
+      inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
+      inputs.driveCurrentAmps = driveCurrent.getValueAsDouble();
+  
+      // Update turn inputs
+      inputs.turnConnected = turnConnectedDebounce.calculate(turnStatus.isOK());
+      inputs.turnEncoderConnected = turnEncoderConnectedDebounce.calculate(turnEncoderStatus.isOK());
+      inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
+      inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
+      inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
+      inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
+      inputs.turnCurrentAmps = turnCurrent.getValueAsDouble();
+
+    }
     
     public void periodic() {
-        refreshStatusSignals();
+        updateInputs();
+        Logger.processInputs("Drive/Module" + Integer.toString(moduleConstants.ordinal()), inputs);
+         // Update alerts
+        driveDisconnectedAlert.set(!inputs.driveConnected);
+        turnDisconnectedAlert.set(!inputs.turnConnected);
+        turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
+
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
@@ -224,7 +304,7 @@ public class Module extends SubsystemBase {
 
     public Rotation2d getAngle() {
         return Rotation2d.fromRotations(
-            steerAngle.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+            turnPosition.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     public Rotation2d getCANcoder() {
@@ -238,7 +318,7 @@ public class Module extends SubsystemBase {
     }
 
     public void refreshStatusSignals(){
-        StatusSignal.refreshAll(drivePosition, driveVelocity, steerAngle);
+        StatusSignal.refreshAll(drivePosition, driveVelocity, turnPosition);
     }
 
     private void configCANcoder() {
@@ -360,7 +440,7 @@ public class Module extends SubsystemBase {
         return new BaseStatusSignal[]{
             drivePosition,
             driveVelocity,
-            steerAngle,
+            turnPosition,
         };
       }
 }
