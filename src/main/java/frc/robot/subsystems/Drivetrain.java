@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
@@ -223,6 +226,11 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         updateOdometryVision();
+
+        Logger.recordOutput("Drivetrain/SpeedX", getChassisSpeeds().vxMetersPerSecond);
+        Logger.recordOutput("Drivetrain/SpeedY", getChassisSpeeds().vyMetersPerSecond);
+        Logger.recordOutput("Drivetrain/Speed", Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond));
+        Logger.recordOutput("Drivetrain/SpeedRot", getChassisSpeeds().omegaRadiansPerSecond);
     }
 
     // DRIVE
@@ -588,6 +596,7 @@ public class Drivetrain extends SubsystemBase {
     /**
      * @return the pose of the robot as estimated by the odometry
      */
+    @AutoLogOutput(key = "Drivetrain/Pose")
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
