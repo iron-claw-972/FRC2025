@@ -35,6 +35,7 @@ public class DriveToCoral extends DriveToPose {
         ? () -> getPose(detectedObject)
         : () -> tempPose);
     objectSupplier = detectedObject;
+    updateTarget = constantUpdate;
   }
 
   public static Pose2d getPose(Supplier<DetectedObject> supplier){
