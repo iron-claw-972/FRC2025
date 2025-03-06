@@ -185,8 +185,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
-
-        new Trigger(()->getDrivetrain().atSetpoint()).onTrue(new InstantCommand(()->startRumble())).onFalse(new InstantCommand(()->endRumble()));
     }
 
     private void setAlignmentDirection(){
