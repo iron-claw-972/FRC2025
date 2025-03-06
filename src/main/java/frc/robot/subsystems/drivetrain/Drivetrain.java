@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.drivetrain;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -124,6 +124,8 @@ public class Drivetrain extends SubsystemBase {
 
     private double centerOfMassHeight = 0;
 
+    private final DrivetrainIOInputsAutoLogged inputs = new DrivetrainIOInputsAutoLogged();
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -226,11 +228,13 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         updateOdometryVision();
-
-        Logger.recordOutput("Drivetrain/SpeedX", getChassisSpeeds().vxMetersPerSecond);
-        Logger.recordOutput("Drivetrain/SpeedY", getChassisSpeeds().vyMetersPerSecond);
-        Logger.recordOutput("Drivetrain/Speed", Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond));
-        Logger.recordOutput("Drivetrain/SpeedRot", getChassisSpeeds().omegaRadiansPerSecond);
+        
+        inputs.speedX = getChassisSpeeds().vxMetersPerSecond;
+        inputs.speedY = getChassisSpeeds().vyMetersPerSecond;
+        inputs.speed = Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
+        inputs.speedRot = getChassisSpeeds().omegaRadiansPerSecond;
+        inputs.pose2d = getPose();
+        Logger.processInputs("Drivetrain", inputs);
     }
 
     // DRIVE
@@ -596,7 +600,6 @@ public class Drivetrain extends SubsystemBase {
     /**
      * @return the pose of the robot as estimated by the odometry
      */
-    @AutoLogOutput(key = "Drivetrain/Pose")
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }

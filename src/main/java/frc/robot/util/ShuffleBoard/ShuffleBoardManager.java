@@ -6,9 +6,9 @@ package frc.robot.util.ShuffleBoard;
 
 import java.util.ArrayList;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.util.Vision;
 import frc.robot.util.ShuffleBoard.Tabs.AutoTab;

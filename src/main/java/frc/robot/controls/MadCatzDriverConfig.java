@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import lib.controllers.MadCatzController;
 import lib.controllers.MadCatzController.MadCatzAxis;
 import lib.controllers.MadCatzController.MadCatzButton;
