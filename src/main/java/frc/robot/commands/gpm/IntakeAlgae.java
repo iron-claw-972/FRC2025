@@ -21,6 +21,6 @@ public class IntakeAlgae extends Command {
     @Override
     public void end(boolean interrupted) {
         intake.deactivate();
-        intake.stow();
+        intake.setSpeed(-0.05);
     }
 }

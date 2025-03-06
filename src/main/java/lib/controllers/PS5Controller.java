@@ -1,6 +1,7 @@
 package lib.controllers;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.util.function.BooleanSupplier;
@@ -104,5 +105,11 @@ public class PS5Controller extends Controller {
 
     public Joystick get() {
         return controller;
+    }
+    public void rumbleOn(){
+        controller.setRumble(RumbleType.kBothRumble,0.1);
+    }
+    public void rumbleOff(){
+        controller.setRumble(RumbleType.kBothRumble,0);
     }
 }
