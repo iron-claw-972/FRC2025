@@ -39,9 +39,9 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.SwerveModulePose;
-import frc.robot.util.Vision;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
+import frc.robot.util.Vision.Vision;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -115,11 +115,7 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean slipped = false;
 
-    private BaseStatusSignal[] statusSignals = null;
-
     private double previousAngularVelocity = 0;
-
-    private boolean controlsEnabled = false;
 
     private double centerOfMassHeight = 0;
 
@@ -190,7 +186,7 @@ public class Drivetrain extends SubsystemBase {
             modules[i].periodic();
         }
         updateOdometry();
-        //updateOdometryVision();
+        updateOdometryVision();
     }
 
     // DRIVE
@@ -332,10 +328,6 @@ public class Drivetrain extends SubsystemBase {
         for (int i = 0; i < 4; i++) {
             modules[i].setDesiredState(swerveModuleStates[i], isOpenLoop);
         }
-    }
-
-    public void enableDriveControls(boolean enable){
-        controlsEnabled = enable;
     }
 
     /**
@@ -662,9 +654,6 @@ public class Drivetrain extends SubsystemBase {
 
         return Math.hypot(totalX, totalY);
     }
-   
-   
-   
    
     public boolean accelerationOverMax() {
         return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drive.Drivetrain;
 import frc.robot.util.MathUtils;
-import frc.robot.util.Vision;
+import frc.robot.util.Vision.Vision;
 
 /**
  * Calculates standard deviations for vision

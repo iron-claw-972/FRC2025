@@ -44,7 +44,7 @@ public class VisionConstants {
     public static final boolean ENABLED_GO_TO_POSE = true;
 
     /** If vision should be simulated */
-    public static final boolean ENABLED_SIM = true;
+    public static final boolean ENABLED_SIM = false;
 
     /** If vision should only return values if it can see 2 good targets */
     public static final boolean ONLY_USE_2_TAGS = false;

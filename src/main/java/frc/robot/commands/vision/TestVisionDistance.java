@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drive.Drivetrain;
-import frc.robot.util.Vision;
+import frc.robot.util.Vision.Vision;
 
 /**
  * Gathers data on the distance limits of the camera used for vision.

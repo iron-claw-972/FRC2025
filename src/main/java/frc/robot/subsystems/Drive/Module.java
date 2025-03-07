@@ -85,7 +85,7 @@ public class Module implements ModuleIO{
     private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
     private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-      private final Alert driveDisconnectedAlert;
+    private final Alert driveDisconnectedAlert;
     private final Alert turnDisconnectedAlert;
     private final Alert turnEncoderDisconnectedAlert;
 
@@ -259,7 +259,7 @@ public class Module implements ModuleIO{
             double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
             m_loop.setNextR(velocity);
             // Correct our Kalman filter's state vector estimate with encoder data.
-            m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), driveMotor.getVelocity().getValueAsDouble()*2*Math.PI/DriveConstants.DRIVE_GEAR_RATIO));
+            m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), inputs.driveVelocityRadPerSec/DriveConstants.DRIVE_GEAR_RATIO));
             // Update our LQR to generate new voltage commands and use the voltages to
             // predict the next
             // state with out Kalman filter.
@@ -303,12 +303,11 @@ public class Module implements ModuleIO{
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromRotations(
-            turnPosition.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+        return inputs.turnPosition;
     }
 
     public Rotation2d getCANcoder() {
-        return Rotation2d.fromDegrees(CANcoder.getAbsolutePosition().getValueAsDouble()*360);
+        return inputs.turnAbsolutePosition;
     }
 
     public void resetToAbsolute() {

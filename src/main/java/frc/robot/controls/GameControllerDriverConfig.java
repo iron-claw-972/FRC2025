@@ -11,7 +11,7 @@ import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.Drive.Drivetrain;
-import frc.robot.util.Vision;
+import frc.robot.util.Vision.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;

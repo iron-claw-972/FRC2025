@@ -7,7 +7,7 @@ import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.Drive.Drivetrain;
 import frc.robot.util.DetectedObject;
-import frc.robot.util.Vision;
+import frc.robot.util.Vision.Vision;
 
 public class DriverAssistIntake extends Command {
     private Drivetrain drive;
