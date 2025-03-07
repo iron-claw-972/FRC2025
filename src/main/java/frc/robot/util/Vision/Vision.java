@@ -55,9 +55,7 @@ public class Vision {
   // A list of the cameras on the robot.
   private ArrayList<VisionCamera> cameras = new ArrayList<>();
 
-  private final VisionIOInputsAutoLogged[] inputs;
-
- 
+  //private final VisionIOInputsAutoLogged[] inputs;
 
   private VisionSystemSim visionSim;
 
@@ -107,7 +105,7 @@ public class Vision {
         }
       }
     }
-    inputs = new VisionIOInputsAutoLogged[cameras.size()];
+    //inputs = new VisionIOInputsAutoLogged[cameras.size()];
   }
 
 
