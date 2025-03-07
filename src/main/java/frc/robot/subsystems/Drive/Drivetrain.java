@@ -189,7 +189,8 @@ public class Drivetrain extends SubsystemBase {
         for(int i = 0; i< modules.length; i++){
             modules[i].periodic();
         }
-        updateOdometryVision();
+        updateOdometry();
+        //updateOdometryVision();
     }
 
     // DRIVE
@@ -249,15 +250,7 @@ public class Drivetrain extends SubsystemBase {
      * Updates the field relative position of the robot.
      */
     public void updateOdometry() {
-        // Wait for all modules to update
-        BaseStatusSignal.waitForAll(0.022, statusSignals);
-        
-        // Adding synchronized to a method does the same thing as synchronized(this), so this section won't run with other synchronized methods
-        synchronized(this){
-            // Updates pose based on encoders and gyro. NOTE: must use yaw directly from gyro!
-            // Also stores the current pose in the buffer
-            poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(gyroInputs.yawPosition, updateModulePositions()));
-        }
+        poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(gyroInputs.yawPosition, updateModulePositions()));
     }
 
     /**
@@ -338,53 +331,6 @@ public class Drivetrain extends SubsystemBase {
 
         for (int i = 0; i < 4; i++) {
             modules[i].setDesiredState(swerveModuleStates[i], isOpenLoop);
-        }
-    }
-
-    /**
-     * Drives the robot
-     * @param driver The driver config to get the controls from
-     */
-    public void drive(BaseDriverConfig driver){
-        // Return and do nothing if controls are disabled
-        if(!controlsEnabled) {
-            return;
-        }
-
-        // If controls are enabled, run the controller code that was in DefaultDriveCommand in 2024
-
-        double forwardTranslation = driver.getForwardTranslation();
-        double sideTranslation = driver.getSideTranslation();
-        double rotation = -driver.getRotation();
-
-        double slowFactor = driver.getIsSlowMode() ? DriveConstants.SLOW_DRIVE_FACTOR : 1;
-
-        forwardTranslation *= slowFactor;
-        sideTranslation *= slowFactor;
-        rotation *= driver.getIsSlowMode() ? DriveConstants.SLOW_ROT_FACTOR : 1;
-
-        int allianceReversal = Robot.getAlliance() == Alliance.Red ? 1 : -1;
-        forwardTranslation *= allianceReversal;
-        sideTranslation *= allianceReversal;
-
-        ChassisSpeeds driverInput = new ChassisSpeeds(forwardTranslation, sideTranslation, rotation);
-        ChassisSpeeds corrected = DriverAssist.calculate(this, driverInput, getDesiredPose(), true);
-
-        // If the driver is pressing the align button or a command set the drivetrain to align
-        // Not currently used this year
-        if (driver.getIsAlign() || getIsAlign()) {
-            driveHeading(
-                forwardTranslation,
-                sideTranslation,
-                getAlignAngle(),
-                true);
-        } else {
-            drive(
-                corrected.vxMetersPerSecond,
-                corrected.vyMetersPerSecond,
-                corrected.omegaRadiansPerSecond,
-                true,
-                false);
         }
     }
 

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.DoNothing;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
@@ -116,9 +117,6 @@ public class Robot extends LoggedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        // Needs to be updated because RobotContainer does not have a periodic method
-        robotContainer.updateShuffleBoard();
-
         CommandScheduler.getInstance().run();
         
         //LogManager.update();
@@ -150,7 +148,8 @@ public class Robot extends LoggedRobot {
         // Get the autonomous command.
         // This access is fast (about 14 microseconds) because the value is already resident in the Network Tables.
         // There was a problem last year because the operation also installed about over a dozen items (taking more than 20 ms).
-        autoCommand = robotContainer.getAutonomousCommand();
+        //TODO when revamping auto find best way to set
+        autoCommand = new DoNothing();
 
         // If there is an autonomous command, then schedule it
         if (autoCommand != null) {
@@ -229,9 +228,6 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void endCompetition(){
-        if(robotContainer != null){
-            robotContainer.interruptThreads();
-        }
         super.endCompetition();
     }
 }

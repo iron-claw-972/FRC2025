@@ -29,7 +29,6 @@ import frc.robot.subsystems.Drive.GyroIO;
 import frc.robot.subsystems.Drive.GyroIOPigeon2;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
-import frc.robot.util.ShuffleBoard.ShuffleBoardManager;
 import frc.robot.util.Vision;
 
 import java.util.function.BooleanSupplier;
@@ -57,7 +56,6 @@ public class RobotContainer {
   // Controllers are defined here
   private BaseDriverConfig driver = null;
   private Operator operator = null;
-  private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;
   private Thread drivetrainThread = null;
@@ -116,10 +114,7 @@ public class RobotContainer {
         initializeAutoBuilder();
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        PathGroupLoader.loadPathGroups();
- 
-        shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator, outtake, intake);
-      
+        PathGroupLoader.loadPathGroups();      
         break;
       }
 
@@ -132,23 +127,6 @@ public class RobotContainer {
     LiveWindow.setEnabled(false);
     
 
-  }
-
-
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    Command pathCommand = shuffleboardManager.getSelectedCommand();
-    return pathCommand;
-  }
-
-  public void updateShuffleBoard() {
-    if (shuffleboardManager != null)
-      shuffleboardManager.update();
   }
 
   /**
@@ -225,12 +203,6 @@ public class RobotContainer {
       }
       return false;
     };
-  }
-
-  // 1.795 1.108
-  public void interruptThreads(){
-    odometryThread.interrupt();
-    drivetrainThread.interrupt();
   }
 
   public boolean brownout() {
