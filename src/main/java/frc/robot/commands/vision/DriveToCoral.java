@@ -2,14 +2,9 @@ package frc.robot.commands.vision;
 
 import java.util.function.Supplier;
 
-import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive_comm.DriveToPose;
-import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.DetectedObject;
 
