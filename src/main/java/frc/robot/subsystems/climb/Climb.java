@@ -88,7 +88,7 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() { 
 
-        inputs.measuredPositionDeg = getAngle();
+        inputs.measuredPositionDeg = Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
         inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
         Logger.processInputs("Climb", inputs);
 
@@ -135,7 +135,7 @@ public class Climb extends SubsystemBase {
      * @return The angle in degrees
      */
     public double getAngle() {
-        return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
+        return inputs.measuredPositionDeg;
     }
 
     /**

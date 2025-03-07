@@ -233,7 +233,7 @@ public class Drivetrain extends SubsystemBase {
         inputs.speedY = getChassisSpeeds().vyMetersPerSecond;
         inputs.speed = Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
         inputs.speedRot = getChassisSpeeds().omegaRadiansPerSecond;
-        inputs.pose2d = getPose();
+        inputs.pose2d = poseEstimator.getEstimatedPosition();
         Logger.processInputs("Drivetrain", inputs);
     }
 
@@ -601,7 +601,7 @@ public class Drivetrain extends SubsystemBase {
      * @return the pose of the robot as estimated by the odometry
      */
     public Pose2d getPose() {
-        return poseEstimator.getEstimatedPosition();
+        return inputs.pose2d;
     }
 
     /**

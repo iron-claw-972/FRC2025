@@ -106,8 +106,10 @@ public class Elevator extends SubsystemBase {
     double setpoint2 = ElevatorConstants.GEARING * setpoint / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpoint2).withFeedForward(0.15));
 
-    inputs.measuredPosition = getPosition();
-    inputs.velocity = getVelocity();
+    inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
     inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("Elevator/Setpoint", getSetpoint());
@@ -134,16 +136,14 @@ public class Elevator extends SubsystemBase {
    * Get the position of the elevator in  meters. 
   */
   public double getPosition() {
-    return rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
-        * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    return inputs.measuredPosition;
   }
   
   /**
    * Get the velocity of the elevator in m/s. 
   */
   public double getVelocity(){
-    return rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
-    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    return inputs.velocity;
   }
 
   public double getVoltage(){
