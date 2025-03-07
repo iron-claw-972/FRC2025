@@ -1,4 +1,8 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.climb;
+
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -50,6 +54,8 @@ public class Climb extends SubsystemBase {
 
     private boolean resetting = false;
 
+    private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
+
     public Climb() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
@@ -81,6 +87,11 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void periodic() { 
+
+        inputs.measuredPositionDeg = Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
+        inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
+        Logger.processInputs("Climb", inputs);
+
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
         power = pid.calculate(currentPosition);
@@ -88,6 +99,9 @@ public class Climb extends SubsystemBase {
         if(resetting){
             power = -0.1;
         }
+
+        Logger.recordOutput("Climb/Motor Power", power);
+        Logger.recordOutput("Climb/setPointDeg", Units.radiansToDegrees(pid.getSetpoint())*totalGearRatio);
 
         motor.set(MathUtil.clamp(power, -1, 1));
 
@@ -121,7 +135,7 @@ public class Climb extends SubsystemBase {
      * @return The angle in degrees
      */
     public double getAngle() {
-        return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
+        return inputs.measuredPositionDeg;
     }
 
     /**
@@ -157,5 +171,11 @@ public class Climb extends SubsystemBase {
 
     public double getCurrent(){
         return motor.getStatorCurrent().getValueAsDouble();
+    }
+
+    //not working
+    @AutoLogOutput(key = "Climb/Mech2D")
+    public Mechanism2d getMech2d() {
+        return simulationMechanism;
     }
 }

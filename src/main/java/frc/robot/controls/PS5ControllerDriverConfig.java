@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.gpm.IntakeAlgae;
@@ -23,12 +24,12 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
-import frc.robot.subsystems.Drive.Drivetrain;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.elevator.Elevator;
 import lib.controllers.PS5Controller;
 import lib.controllers.PS5Controller.DPad;
 import lib.controllers.PS5Controller.PS5Axis;
@@ -63,11 +64,13 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Elevator setpoints
         if(elevator != null && outtake != null) {
-            driver.get(PS5Button.CREATE).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT).deadlineFor(new RemoveAlgae(outtake)));
+            driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+            driver.get(PS5Button.LB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
+            driver.get(PS5Button.LB).and(menu).onTrue(new MoveElevator(elevator, 0.35).andThen(new RemoveAlgae(outtake)));
+            driver.get(PS5Button.RB).and(menu).onTrue(new MoveElevator(elevator, 0.72).andThen(new RemoveAlgae(outtake)));
         }
 
         // Intake/outtake
@@ -122,8 +125,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Climb
         if(climb != null){
-            driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->climb.extend(), climb))
-                .onFalse(new InstantCommand(()->climb.climb(), climb));
+            driver.get(PS5Button.SQUARE).and(menu.negate()).toggleOnTrue(new StartEndCommand(()->climb.extend(), ()->climb.climb(), climb));
             if(intake != null){
                 driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
             }
@@ -156,6 +158,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         driver.get(PS5Button.OPTIONS).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
                 new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI)
         )));
+
 
         // Cancel commands
         driver.get(PS5Button.TOUCHPAD).and(menu.negate()).onTrue(new InstantCommand(()->{

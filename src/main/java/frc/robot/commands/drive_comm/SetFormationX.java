@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.Drive.Drivetrain;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 
 /**
  * Sets the robot's wheels to an X formation to prevent being pushed around by other bots.

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.1,
-        "y": 3.026
+        "x": 7.18063524590164,
+        "y": 0.48
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.835351473679232,
-        "y": 3.042050980503626
+        "x": 6.657568893248929,
+        "y": 1.1465706199737888
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.257,
-        "y": 3.026
+        "x": 5.157,
+        "y": 2.996
       },
       "prevControl": {
-        "x": 5.506268607341438,
-        "y": 3.0068908034166797
+        "x": 5.322367736793619,
+        "y": 2.8085073024681857
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.32395950506186005,
+      "waypointRelativePos": 0.4514601420678732,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -60,7 +60,7 @@
   "folder": "Sequential RSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 0.0
   },
   "useDefaultConstraints": false
 }

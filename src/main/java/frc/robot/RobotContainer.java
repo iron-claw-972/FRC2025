@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeCoral;
@@ -17,21 +18,24 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
-import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.OuttakeAlpha;
 import frc.robot.subsystems.OuttakeComp;
-import frc.robot.subsystems.Drive.Drivetrain;
-import frc.robot.subsystems.Drive.GyroIO;
-import frc.robot.subsystems.Drive.GyroIOPigeon2;
+import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.drivetrain.GyroIO;
+import frc.robot.subsystems.drivetrain.GyroIOPigeon2;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.Vision.Vision;
 
 import java.util.function.BooleanSupplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -66,6 +70,9 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+
+    SmartDashboard.putData("climb", new InstantCommand(() -> climb.climb()));
+    SmartDashboard.putData("extend", new InstantCommand(() -> climb.extend()));
 
     // dispatch on the robot
     switch (robotId) {
@@ -102,7 +109,7 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision, new GyroIOPigeon2());
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-        operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
+        //operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
@@ -110,7 +117,7 @@ public class RobotContainer {
         //SignalLogger.start();
 
         driver.configureControls();
-        operator.configureControls();
+        //operator.configureControls();
         initializeAutoBuilder();
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
@@ -205,6 +212,13 @@ public class RobotContainer {
     };
   }
 
+  // 1.795 1.108
+  public void interruptThreads(){
+    odometryThread.interrupt();
+    drivetrainThread.interrupt();
+  }
+
+  @AutoLogOutput(key = "Faults/Brownout")
   public boolean brownout() {
     if(RobotController.getBatteryVoltage() < 6.0) {
       return true;
