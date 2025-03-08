@@ -4,12 +4,15 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.revrobotics.AbsoluteEncoder;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -24,12 +27,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
+import frc.robot.constants.swerve.DriveConstants;
 
 public class Arm extends SubsystemBase{
     //motor
     private TalonFX motor = new TalonFX(IdConstants.ARM_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor armGearBox = DCMotor.getKrakenX60(1);
     private TalonFXSimState encoderSim;
+    double offset = 0;
 
     //Mechism2d display
     private final Mechanism2d simulationMechanism = new Mechanism2d(3, 3);
@@ -82,6 +87,8 @@ public class Arm extends SubsystemBase{
         motionMagicConfigs.MotionMagicAcceleration = maxAcceleration * ArmConstants.GEAR_RATIO/Math.PI/2;
         motor.getConfigurator().apply(talonFXConfigs);
         motor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+
+        resetAbsolute();
     }
 
     @Override
@@ -112,5 +119,10 @@ public class Arm extends SubsystemBase{
     public double getAngle() {
         return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble()/ArmConstants.GEAR_RATIO);
     }
+
+    public void resetAbsolute(){
+        double absolutePosition = motor.getPosition().getValueAsDouble() - Units.degreesToRotations(offset);
+        motor.setPosition(absolutePosition * DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+    }    
 
 }
