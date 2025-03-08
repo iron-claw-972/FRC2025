@@ -12,6 +12,7 @@ import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -45,7 +46,12 @@ public class Arm extends SubsystemBase{
     private double maxVelocity = 5;
     private double maxAcceleration = 8;
 
-    private final ArmFeedforward feedforward = new ArmFeedforward(0, ArmConstants.MASS*ArmConstants.CENTER_OF_MASS_LENGTH/ArmConstants.GEAR_RATIO/ArmConstants.MOTOR.KtNMPerAmp*ArmConstants.MOTOR.rOhms, 0);
+    private final ArmFeedforward feedforward = new ArmFeedforward(
+        0, 
+        ArmConstants.MASS*ArmConstants.CENTER_OF_MASS_LENGTH/ArmConstants.GEAR_RATIO/ArmConstants.MOTOR.KtNMPerAmp*ArmConstants.MOTOR.rOhms, 
+        0);
+
+    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(9);
 
     public Arm() {
         if (RobotBase.isSimulation()) {
@@ -126,7 +132,7 @@ public class Arm extends SubsystemBase{
     }
 
     public void resetAbsolute(){
-        double absolutePosition = motor.getPosition().getValueAsDouble() - Units.degreesToRotations(offset);
+        double absolutePosition = absoluteEncoder.get() - Units.degreesToRotations(offset);
         motor.setPosition(absolutePosition * DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }    
 
