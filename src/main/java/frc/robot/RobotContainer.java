@@ -68,13 +68,6 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
-    Arm arm = new Arm();
-
-    SmartDashboard.putData("0 Deg", new InstantCommand(() -> arm.setSetpoint(0)));
-    SmartDashboard.putData("90 Deg", new InstantCommand(() -> arm.setSetpoint(90)));
-    SmartDashboard.putData("180 Deg", new InstantCommand(() -> arm.setSetpoint(180)));
-    SmartDashboard.putData("-90 Deg", new InstantCommand(() -> arm.setSetpoint(-90)));
-
     // dispatch on the robot
     switch (robotId) {
 
@@ -89,6 +82,12 @@ public class RobotContainer {
         outtake = new OuttakeComp();
         elevator = new Elevator();
         climb = new Climb();
+        arm = new Arm();
+
+        SmartDashboard.putData("0 Deg", new InstantCommand(() -> arm.setSetpoint(0)));
+        SmartDashboard.putData("90 Deg", new InstantCommand(() -> arm.setSetpoint(90)));
+        SmartDashboard.putData("45 Deg", new InstantCommand(() -> arm.setSetpoint(45)));
+        SmartDashboard.putData("-90 Deg", new InstantCommand(() -> arm.setSetpoint(-90)));
       case BetaBot:
         indexer = new Indexer();
         intake = new Intake();
