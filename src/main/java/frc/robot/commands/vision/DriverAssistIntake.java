@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.Drive.Drivetrain;
-import frc.robot.util.DetectedObject;
+import frc.robot.util.Vision.DetectedObject;
 import frc.robot.util.Vision.Vision;
 
 public class DriverAssistIntake extends Command {

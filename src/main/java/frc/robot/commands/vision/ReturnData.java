@@ -4,7 +4,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.VisionConstants;
-import frc.robot.util.DetectedObject;
+import frc.robot.util.Vision.DetectedObject;
 import frc.robot.util.Vision.Vision;
 
 /**

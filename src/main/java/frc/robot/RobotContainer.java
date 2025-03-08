@@ -27,8 +27,8 @@ import frc.robot.subsystems.OuttakeComp;
 import frc.robot.subsystems.Drive.Drivetrain;
 import frc.robot.subsystems.Drive.GyroIO;
 import frc.robot.subsystems.Drive.GyroIOPigeon2;
-import frc.robot.util.DetectedObject;
 import frc.robot.util.PathGroupLoader;
+import frc.robot.util.Vision.DetectedObject;
 import frc.robot.util.Vision.Vision;
 
 import java.util.function.BooleanSupplier;

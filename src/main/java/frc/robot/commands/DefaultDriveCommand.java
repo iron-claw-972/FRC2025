@@ -7,7 +7,7 @@ import frc.robot.Robot;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.Drive.Drivetrain;
-import frc.robot.util.DriverAssist;
+import frc.robot.util.Vision.DriverAssist;
 
 /**
  * Default drive command. Drives robot using driver controls.
