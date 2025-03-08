@@ -2,6 +2,8 @@ package frc.robot.subsystems.drivetrain;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -38,6 +41,7 @@ import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.util.EqualsUtil;
+import frc.robot.util.PhoenixOdometryThread;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
@@ -60,6 +64,8 @@ public class Drivetrain extends SubsystemBase {
     private final GyroIO gyroIO;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
 
+    public static Lock odometryLock = new ReentrantLock();
+
     private SwerveSetpoint currentSetpoint =
     new SwerveSetpoint(
         new ChassisSpeeds(),
@@ -80,8 +86,6 @@ public class Drivetrain extends SubsystemBase {
     private final PIDController xController;
     private final PIDController yController;
     private final PIDController rotationController;
-
-
 
     // If vision is enabled for drivetrain odometry updating
     // DO NOT CHANGE THIS HERE TO DISABLE VISION, change VisionConstants.ENABLED instead
@@ -112,7 +116,7 @@ public class Drivetrain extends SubsystemBase {
     // The previous pose to reset to if the current pose gets too far off the field
     private Pose2d prevPose = new Pose2d();
 
-    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];;
 
     private boolean slipped = false;
 
@@ -120,7 +124,8 @@ public class Drivetrain extends SubsystemBase {
 
     private double centerOfMassHeight = 0;
 
-    private final DrivetrainIOInputsAutoLogged inputs = new DrivetrainIOInputsAutoLogged();
+    private Rotation2d rawGyroRotation = new Rotation2d();
+
 
     /**
      * Creates a new Swerve Style Drivetrain.
@@ -168,10 +173,9 @@ public class Drivetrain extends SubsystemBase {
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
         rotationController.setTolerance(Units.degreesToRadians(0.25), Units.degreesToRadians(0.25));
 
-        modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
+        PhoenixOdometryThread.getInstance().start();
 
-  
-        
+        modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS); 
      }
 
     public void close() {
@@ -183,20 +187,29 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        odometryLock.lock(); // Prevents odometry updates while reading data
         gyroIO.updateInputs(gyroInputs);
         Logger.processInputs("Drive/Gyro", gyroInputs);
-        for(int i = 0; i< modules.length; i++){
-            modules[i].periodic();
+        for (var module : modules) {
+        module.periodic();
         }
-        updateOdometry();
+        odometryLock.unlock();
+            // Update odometry
+        double[] sampleTimestamps =
+            modules[0].getOdometryTimestamps(); // All signals are sampled together
+        int sampleCount = sampleTimestamps.length;
+        for (int i = 0; i < sampleCount; i++) {
+        // Read wheel positions and deltas from each module
+        SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+        for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+            modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+        } 
+        // Use the real gyro angle
+        rawGyroRotation = gyroInputs.odometryYawPositions[i];
+        // Apply update
+        poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+        }
         updateOdometryVision();
-        
-        inputs.speedX = getChassisSpeeds().vxMetersPerSecond;
-        inputs.speedY = getChassisSpeeds().vyMetersPerSecond;
-        inputs.speed = Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
-        inputs.speedRot = getChassisSpeeds().omegaRadiansPerSecond;
-        inputs.pose2d = poseEstimator.getEstimatedPosition();
-        Logger.processInputs("Drivetrain", inputs);
     }
 
     // DRIVE
@@ -504,7 +517,7 @@ public class Drivetrain extends SubsystemBase {
      * @return the pose of the robot as estimated by the odometry
      */
     public Pose2d getPose() {
-        return inputs.pose2d;
+        return poseEstimator.getEstimatedPosition();
     }
 
     /**
