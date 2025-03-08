@@ -54,7 +54,7 @@ public class Climb extends SubsystemBase {
 
     private boolean resetting = false;
 
-    //private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
+    private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
 
     public Climb() {
         if (RobotBase.isSimulation()) {

@@ -55,7 +55,7 @@ public class Vision {
   // A list of the cameras on the robot.
   private ArrayList<VisionCamera> cameras = new ArrayList<>();
 
-  //private final VisionIOInputsAutoLogged[] inputs;
+  private final VisionIOInputsAutoLogged[] inputs;
 
   private VisionSystemSim visionSim;
 
@@ -105,7 +105,7 @@ public class Vision {
         }
       }
     }
-    //inputs = new VisionIOInputsAutoLogged[cameras.size()];
+    inputs = new VisionIOInputsAutoLogged[cameras.size()];
   }
 
 
@@ -507,22 +507,22 @@ public class Vision {
 
       @Override
   public void updateInputs(VisionIOInputs inputs) {
-    // inputs.connected = camera.isConnected();
+    inputs.connected = camera.isConnected();
 
-    // // Read new camera observations
-    // Set<Short> tagIds = new HashSet<>();
-    // List<PoseObservation> poseObservations = new LinkedList<>();
-    // for (var result : camera.getAllUnreadResults()) {
-    //   // Update latest target observation
-    //   if (result.hasTargets()) {
-    //     inputs.latestTargetObservation =
-    //         new TargetObservation(
-    //             Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-    //             Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-    //   } else {
-    //     inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
-    //   }
-
+    // Read new camera observations
+    Set<Short> tagIds = new HashSet<>();
+    List<PoseObservation> poseObservations = new LinkedList<>();
+    for (var result : camera.getAllUnreadResults()) {
+      // Update latest target observation
+      if (result.hasTargets()) {
+        inputs.latestTargetObservation =
+            new TargetObservation(
+                Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+                Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+      } else {
+        inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+      }
+    }
     //   // Add pose observation
     //   if (result.multitagResult.isPresent()) { // Multitag result
     //     var multitagResult = result.multitagResult.get();
