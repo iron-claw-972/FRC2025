@@ -15,16 +15,18 @@ package frc.robot.util.Vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.littletonrobotics.junction.AutoLog;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 public interface VisionIO {
   @AutoLog
   public static class VisionIOInputs {
     public boolean connected = false;
-    public TargetObservation latestTargetObservation =
-        new TargetObservation(new Rotation2d(), new Rotation2d());
-    public PoseObservation[] poseObservations = new PoseObservation[0];
-    public int[] tagIds = new int[0];
+    public List<PhotonPipelineResult> results = new ArrayList<>();
   }
 
   /** Represents the angle to a simple target, not used for pose estimation. */
@@ -45,5 +47,5 @@ public interface VisionIO {
     PHOTONVISION
   }
 
-  public default void updateInputs(VisionIOInputs inputs) {}
+  public default void updateInputs() {}
 }
