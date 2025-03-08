@@ -94,11 +94,12 @@ public class Arm extends SubsystemBase{
 
     @Override
     public void simulationPeriodic() {
-        armSim.setInputVoltage(getAppliedVoltage());
+        armSim.setInputVoltage(motor.getSimState().getMotorVoltage());
         armSim.update(Constants.LOOP_TIME);
 
-        double armRotations = Units.radiansToRotations(armSim.getAngleRads());
-        encoderSim.setRawRotorPosition(armRotations * ArmConstants.GEAR_RATIO);
+        encoderSim.setRawRotorPosition(
+            armSim.getAngleRads() / (2 * Math.PI) * ArmConstants.GEAR_RATIO
+        );
         
         simLigament.setAngle(getAngle());
     }
@@ -108,9 +109,6 @@ public class Arm extends SubsystemBase{
     }
 
     public double getAppliedVoltage() {
-        if (RobotBase.isSimulation()) {
-            return encoderSim.getMotorVoltage();
-        }
         return motor.getMotorVoltage().getValueAsDouble();
     }
 
