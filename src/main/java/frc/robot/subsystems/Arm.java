@@ -95,12 +95,10 @@ public class Arm extends SubsystemBase{
         armSim.setInputVoltage(motor.getSimState().getMotorVoltage());
         armSim.update(Constants.LOOP_TIME);
 
-        encoderSim.setRawRotorPosition(
-            armSim.getAngleRads() / (2 * Math.PI) * ArmConstants.GEAR_RATIO
-        );
+        double armRotations = Units.radiansToRotations(armSim.getAngleRads());
+        encoderSim.setRawRotorPosition(armRotations * ArmConstants.GEAR_RATIO);
         
         simLigament.setAngle(getAngle());
-        
     }
 
     public void setSetpoint(double setpoint) {
