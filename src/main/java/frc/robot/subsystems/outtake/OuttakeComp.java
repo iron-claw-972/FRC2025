@@ -1,5 +1,6 @@
 package frc.robot.subsystems.outtake;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -55,8 +56,6 @@ public class OuttakeComp extends Outtake {
         //  SmartDashboard.putBoolean("Coral loaded", coralLoaded());
         //  SmartDashboard.putBoolean("Coral ejected", coralEjecting());
 
-        inputs.coralEjecting = !digitalInputEjecting.get();
-        inputs.coralLoaded = !digitalInputLoaded.get();
         inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
         Logger.processInputs("Outtake", inputs);
     }
@@ -74,9 +73,9 @@ public class OuttakeComp extends Outtake {
         // this starts the motor... what needs to be done later?
     }
 
-
+    @AutoLogOutput(key = "Outtake/CoralLoaded")
     public boolean coralLoaded(){
-       return inputs.coralLoaded;//digitalInputEjecting.get();
+       return !digitalInputLoaded.get();//digitalInputEjecting.get();
     }
 
 
@@ -84,8 +83,9 @@ public class OuttakeComp extends Outtake {
      *  Coral is at the ejecting beam break sensor.
      * @return coral is interrupting the beam breaker.
      */
+    @AutoLogOutput(key = "Outtake/CoralEjecting")
     public boolean coralEjecting() {
-        return inputs.coralEjecting;
+        return !digitalInputEjecting.get();
     }
 
 

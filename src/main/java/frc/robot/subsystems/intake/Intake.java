@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -125,9 +126,6 @@ public class Intake extends SubsystemBase {
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
         }
-
-        inputs.atSetpoint = stowPID.atSetpoint();
-        inputs.hasCoral = hasCoral;
         if(RobotBase.isSimulation()) {
             inputs.measuredPivotPosition = Units.radiansToDegrees(stowArmSim.getAngleRads());
         } else {
@@ -174,8 +172,9 @@ public class Intake extends SubsystemBase {
      * 
      * @return Boolean (True if has Coral, False otherwise)
      */
+    @AutoLogOutput(key = "Intake/HasCoral")
     public boolean hasCoral() {
-        return inputs.hasCoral;
+        return hasCoral;
     }
 
     /**
@@ -192,8 +191,9 @@ public class Intake extends SubsystemBase {
      * 
      * @return True if it is at the setpoint, false otherwise
      */
+    @AutoLogOutput(key = "Intake/AtSetPoint")
     public boolean isAtSetpoint() {
-        return inputs.atSetpoint;
+        return stowPID.atSetpoint();
     }
 
     /**

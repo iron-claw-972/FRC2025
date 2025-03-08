@@ -1,5 +1,6 @@
 package frc.robot.subsystems.indexer;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.SparkFlex;
@@ -101,8 +102,9 @@ public class Indexer extends SubsystemBase {
 	*
 	* @return the sensor's state
 	*/
+	@AutoLogOutput(key = "Intake/isIndexerClear")
 	public boolean isIndexerClear() {
-		return inputs.isIndexerClear;
+		return getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
 	}
 
 	@Override
@@ -114,7 +116,6 @@ public class Indexer extends SubsystemBase {
 		} else {
 			inputs.velocity = flywheelSim.getAngularVelocityRPM();
 		}
-		inputs.isIndexerClear = getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
 		var measurement = sensor.getMeasurement();
 		inputs.sensorDistance = (measurement == null || measurement.status > 0) ? 314159 : measurement.distance_mm;
 		Logger.processInputs("Indexer", inputs);

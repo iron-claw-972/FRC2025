@@ -678,6 +678,7 @@ public class Drivetrain extends SubsystemBase {
         return Math.hypot(totalX, totalY);
     }
    
+    @AutoLogOutput(key = "Drivetrain/AccelerationFaults")
     public boolean accelerationOverMax() {
         return getAcceleration() > DriveConstants.MAX_LINEAR_ACCEL;
     }
