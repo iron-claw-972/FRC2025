@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
-import frc.robot.util.DetectedObject;
 import frc.robot.util.MathUtils;
 
 // Vision and it's commands are adapted from Iron Claw's FRC2023

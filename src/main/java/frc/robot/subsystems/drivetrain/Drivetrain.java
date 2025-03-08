@@ -37,11 +37,11 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.controls.BaseDriverConfig;
-import frc.robot.util.DriverAssist;
 import frc.robot.util.EqualsUtil;
 import frc.robot.util.SwerveModulePose;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
+import frc.robot.util.Vision.DriverAssist;
 import frc.robot.util.Vision.Vision;
 
 /**
