@@ -13,7 +13,7 @@ public class ArmConstants {
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(1);
 
     public static final double MASS = 5; // kilograms
-    public static final double MOI = 0.1; // kg*m^2
     public static final double LENGTH = 0.127; // meters
-    public static final double CENTER_OF_MASS_LENGTH = 0.06; // meters
+    public static final double MOI = MASS*LENGTH*LENGTH/3; // kg*m^2
+    public static final double CENTER_OF_MASS_LENGTH = LENGTH/2; // meters
 }

@@ -94,7 +94,7 @@ public class Arm extends SubsystemBase{
 
     @Override
     public void simulationPeriodic() {
-        armSim.setInputVoltage(motor.getSimState().getMotorVoltage());
+        armSim.setInputVoltage(getAppliedVoltage());
         armSim.update(Constants.LOOP_TIME);
 
         double armRotations = Units.radiansToRotations(armSim.getAngleRads());
