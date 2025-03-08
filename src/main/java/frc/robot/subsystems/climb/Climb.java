@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.ClimbArmSim;
+import frc.robot.subsystems.climb.ClimbIOInputsAutoLogged;
 
 public class Climb extends SubsystemBase {
     
@@ -88,9 +89,9 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() { 
 
-        // inputs.measuredPositionDeg = Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
-        // inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
-        // Logger.processInputs("Climb", inputs);
+        inputs.measuredPositionDeg = Units.rotationsToDegrees(motor.getPosition().getValueAsDouble() / totalGearRatio);
+        inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
+        Logger.processInputs("Climb", inputs);
 
         double motorPosition = motor.getPosition().getValueAsDouble();
         double currentPosition = Units.rotationsToRadians(motorPosition/totalGearRatio);
@@ -135,8 +136,7 @@ public class Climb extends SubsystemBase {
      * @return The angle in degrees
      */
     public double getAngle() {
-        return 1;
-        //return inputs.measuredPositionDeg;
+        return inputs.measuredPositionDeg;
     }
 
     /**

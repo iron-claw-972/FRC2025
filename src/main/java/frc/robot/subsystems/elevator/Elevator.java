@@ -49,7 +49,7 @@ public class Elevator extends SubsystemBase {
   double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.
   CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
 
-  //private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
 
   public Elevator() {
@@ -106,13 +106,13 @@ public class Elevator extends SubsystemBase {
     double setpoint2 = ElevatorConstants.GEARING * setpoint / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpoint2).withFeedForward(0.15));
 
-    // //inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
-    // //* (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
-    // //inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
-    // * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
-    // inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
-    // Logger.processInputs("Elevator", inputs);
-    // Logger.recordOutput("Elevator/Setpoint", getSetpoint());
+    inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
+    Logger.processInputs("Elevator", inputs);
+    Logger.recordOutput("Elevator/Setpoint", getSetpoint());
   }
 
   @Override
@@ -136,16 +136,14 @@ public class Elevator extends SubsystemBase {
    * Get the position of the elevator in  meters. 
   */
   public double getPosition() {
-    return 1;
-    //return inputs.measuredPosition;
+    return inputs.measuredPosition;
   }
   
   /**
    * Get the velocity of the elevator in m/s. 
   */
   public double getVelocity(){
-    return 1;
-    //return inputs.velocity;
+    return inputs.velocity;
   }
 
   public double getVoltage(){
