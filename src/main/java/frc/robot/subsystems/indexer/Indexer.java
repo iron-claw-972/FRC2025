@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.indexer;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -30,6 +30,8 @@ public class Indexer extends SubsystemBase {
 	// where the coral is for simulation
 	// in meters
 	private double simCoralPos;
+
+	private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
 	public Indexer() {
 		motor = new SparkFlex(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
@@ -78,11 +80,7 @@ public class Indexer extends SubsystemBase {
 	 * @return the motor velocity in rotations per minute
 	 */
 	public double getMotor() {
-		if (Robot.isReal()) {
-			return motor.getEncoder().getVelocity() / IndexerConstants.GEAR_RATIO;
-		} else {
-			return flywheelSim.getAngularVelocityRPM();
-		}
+		return inputs.velocity;
 	}
 
 	/**
@@ -92,9 +90,7 @@ public class Indexer extends SubsystemBase {
 	 * @return the distance, in millimeters
 	 */
 	private int getSensorValue() {
-		var measurement = sensor.getMeasurement();
-		int dist = (measurement == null || measurement.status > 0) ? 314159 : measurement.distance_mm;
-		return dist;
+		return inputs.sensorDistance;
 	}
 
 	/**
@@ -104,12 +100,21 @@ public class Indexer extends SubsystemBase {
 	* @return the sensor's state
 	*/
 	public boolean isIndexerClear() {
-		return getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
+		return inputs.isIndexerClear;
 	}
 
 	@Override
 	public void periodic() {
 		//SmartDashboard.putBoolean("Indexer has coral ", isIndexerClear());
+
+		if (Robot.isReal()) {
+			inputs.velocity =  motor.getEncoder().getVelocity() / IndexerConstants.GEAR_RATIO;
+		} else {
+			inputs.velocity = flywheelSim.getAngularVelocityRPM();
+		}
+		inputs.isIndexerClear = getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
+		var measurement = sensor.getMeasurement();
+		inputs.sensorDistance = (measurement == null || measurement.status > 0) ? 314159 : measurement.distance_mm;
 	}
 
 	@Override

@@ -5,8 +5,8 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.outtake.Outtake;
 
 public class OuttakeCoral extends SequentialCommandGroup {
     public OuttakeCoral(Outtake outtake, Elevator elevator){

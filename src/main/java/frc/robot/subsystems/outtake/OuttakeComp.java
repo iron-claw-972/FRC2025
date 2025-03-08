@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.outtake;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;

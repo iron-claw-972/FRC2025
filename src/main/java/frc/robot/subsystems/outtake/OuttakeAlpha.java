@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.outtake;
 
 
 import com.revrobotics.spark.SparkBase.PersistMode;
