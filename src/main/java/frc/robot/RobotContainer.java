@@ -44,8 +44,6 @@ import java.util.function.BooleanSupplier;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
-  SmartDashboard.putData()
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
@@ -70,6 +68,12 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+    Arm arm = new Arm();
+
+    SmartDashboard.putData("0 Deg", new InstantCommand(() -> arm.setSetpoint(0)));
+    SmartDashboard.putData("90 Deg", new InstantCommand(() -> arm.setSetpoint(90)));
+    SmartDashboard.putData("180 Deg", new InstantCommand(() -> arm.setSetpoint(180)));
+    SmartDashboard.putData("-90 Deg", new InstantCommand(() -> arm.setSetpoint(-90)));
 
     // dispatch on the robot
     switch (robotId) {
@@ -85,7 +89,6 @@ public class RobotContainer {
         outtake = new OuttakeComp();
         elevator = new Elevator();
         climb = new Climb();
-        arm = new Arm();
       case BetaBot:
         indexer = new Indexer();
         intake = new Intake();

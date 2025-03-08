@@ -43,7 +43,7 @@ public class Arm extends SubsystemBase{
 
     MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
-    private double maxVelocity = 3;
+    private double maxVelocity = 5;
     private double maxAcceleration = 8;
 
     public Arm() {
@@ -92,13 +92,14 @@ public class Arm extends SubsystemBase{
 
     @Override
     public void simulationPeriodic() {
-        armSim.setInput(getAppliedVoltage());
+        armSim.setInputVoltage(getAppliedVoltage());
         armSim.update(Constants.LOOP_TIME);
 
         double armRotations = Units.radiansToRotations(armSim.getAngleRads());
         encoderSim.setRawRotorPosition(armRotations * ArmConstants.GEAR_RATIO);
-
+        
         simLigament.setAngle(Units.radiansToDegrees(getAngle()));
+        
     }
 
     public void setSetpoint(double setpoint) {
@@ -106,6 +107,9 @@ public class Arm extends SubsystemBase{
     }
 
     public double getAppliedVoltage() {
+        if (RobotBase.isSimulation()) {
+            return encoderSim.getMotorVoltage() * Constants.ROBOT_VOLTAGE;
+        }
         return motor.getMotorVoltage().getValueAsDouble();
     }
 
