@@ -218,7 +218,6 @@ public class RobotContainer {
     drivetrainThread.interrupt();
   }
 
-  @AutoLogOutput(key = "Faults/Brownout")
   public boolean brownout() {
     if(RobotController.getBatteryVoltage() < 6.0) {
       return true;

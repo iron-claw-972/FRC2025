@@ -1,5 +1,7 @@
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -53,6 +55,8 @@ public class Intake extends SubsystemBase {
                     / IntakeConstants.PIVOT_GEAR_RATIO * dcMotor.rOhms / dcMotor.KtNMPerAmp / Constants.ROBOT_VOLTAGE,
             0);
     private double startPosition = 90;
+
+    private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
     public Intake() {
         if (RobotBase.isSimulation()) {
@@ -121,7 +125,18 @@ public class Intake extends SubsystemBase {
             hasCoral = measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
                     && measurement.distance_mm <= 1000 * IntakeConstants.DETECT_CORAL_DIST;
         }
-        
+
+        inputs.atSetpoint = stowPID.atSetpoint();
+        inputs.hasCoral = hasCoral;
+        if(RobotBase.isSimulation()) {
+            inputs.measuredPivotPosition = Units.radiansToDegrees(stowArmSim.getAngleRads());
+        } else {
+            inputs.measuredPivotPosition = Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
+        }
+        inputs.rollerVelocity = rollerMotor.getVelocity().getValueAsDouble();
+        Logger.processInputs("Intake", inputs);
+
+        Logger.recordOutput("Intake/PivotSetpoint", stowPID.getSetpoint());        
     }
 
     @Override
@@ -147,11 +162,7 @@ public class Intake extends SubsystemBase {
      * @return the rotation of the intake (in degrees).
      */
     public double getStowPosition() {
-        if(RobotBase.isSimulation()) {
-            return Units.radiansToDegrees(stowArmSim.getAngleRads());
-        } else {
-            return Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble()) / IntakeConstants.PIVOT_GEAR_RATIO;
-        }
+        return inputs.measuredPivotPosition;
     }
 
     public PIDController getPID() {
@@ -164,7 +175,7 @@ public class Intake extends SubsystemBase {
      * @return Boolean (True if has Coral, False otherwise)
      */
     public boolean hasCoral() {
-        return hasCoral;
+        return inputs.hasCoral;
     }
 
     /**
@@ -182,7 +193,7 @@ public class Intake extends SubsystemBase {
      * @return True if it is at the setpoint, false otherwise
      */
     public boolean isAtSetpoint() {
-        return stowPID.atSetpoint();
+        return inputs.atSetpoint;
     }
 
     /**
@@ -202,6 +213,7 @@ public class Intake extends SubsystemBase {
     public void setSpeed(double power) {
         rollerMotor.set(power);
         isMoving = Math.abs(power) < 0.01;
+
     }
 
     /**

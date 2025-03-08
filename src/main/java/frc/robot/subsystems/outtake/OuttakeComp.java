@@ -1,5 +1,7 @@
 package frc.robot.subsystems.outtake;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -10,17 +12,17 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import frc.robot.constants.IdConstants;
 
-
 public class OuttakeComp extends Outtake {
 
     private TalonFX  motor = new TalonFX(IdConstants.OUTTAKE_MOTOR_COMP);
     private double power;
 
-
     /** Coral detected before the rollers */
     private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
     /** Coral detected after the rollers */
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
+
+    OuttakeIOIntakesAutoLogged inputs = new OuttakeIOIntakesAutoLogged();
 
     public OuttakeComp(){
         motor.getConfigurator().apply(new MotorOutputConfigs()
@@ -52,6 +54,11 @@ public class OuttakeComp extends Outtake {
         motor.set(power);
         //  SmartDashboard.putBoolean("Coral loaded", coralLoaded());
         //  SmartDashboard.putBoolean("Coral ejected", coralEjecting());
+
+        inputs.coralEjecting = !digitalInputEjecting.get();
+        inputs.coralLoaded = !digitalInputLoaded.get();
+        inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
+        Logger.processInputs("Outtake", inputs);
     }
 
     /** Set the motor power to move the coral */
@@ -69,7 +76,7 @@ public class OuttakeComp extends Outtake {
 
 
     public boolean coralLoaded(){
-       return !digitalInputLoaded.get();//digitalInputEjecting.get();
+       return inputs.coralLoaded;//digitalInputEjecting.get();
     }
 
 
@@ -78,7 +85,7 @@ public class OuttakeComp extends Outtake {
      * @return coral is interrupting the beam breaker.
      */
     public boolean coralEjecting() {
-        return !digitalInputEjecting.get();
+        return inputs.coralEjecting;
     }
 
 

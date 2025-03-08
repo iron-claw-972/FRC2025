@@ -1,5 +1,7 @@
 package frc.robot.subsystems.indexer;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -115,6 +117,7 @@ public class Indexer extends SubsystemBase {
 		inputs.isIndexerClear = getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
 		var measurement = sensor.getMeasurement();
 		inputs.sensorDistance = (measurement == null || measurement.status > 0) ? 314159 : measurement.distance_mm;
+		Logger.processInputs("Indexer", inputs);
 	}
 
 	@Override
