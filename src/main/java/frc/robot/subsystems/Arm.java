@@ -27,12 +27,11 @@ import frc.robot.constants.IdConstants;
 import frc.robot.constants.swerve.DriveConstants;
 
 public class Arm extends SubsystemBase{
-    //motor
+    // Motor
     private TalonFX motor = new TalonFX(IdConstants.ARM_MOTOR, Constants.CANIVORE_CAN);
     private TalonFXSimState encoderSim;
-    double offset = 0;
 
-    //Mechism2d display
+    // Mechism2d display
     private Mechanism2d simulationMechanism;
     private MechanismLigament2d simLigament;
     private SingleJointedArmSim armSim;
@@ -40,10 +39,6 @@ public class Arm extends SubsystemBase{
     private double setpoint = ArmConstants.START_ANGLE;
 
     private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
-
-    // rad/s and rad/s^2
-    private double maxVelocity = 5;
-    private double maxAcceleration = 8;
 
     private final ArmFeedforward feedforward = new ArmFeedforward(0, ArmConstants.MASS*ArmConstants.CENTER_OF_MASS_LENGTH/ArmConstants.GEAR_RATIO/ArmConstants.MOTOR.KtNMPerAmp*ArmConstants.MOTOR.rOhms, 0);
 
@@ -84,8 +79,8 @@ public class Arm extends SubsystemBase{
 
         // set Motion Magic settings
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity * ArmConstants.GEAR_RATIO/Math.PI/2;
-        motionMagicConfigs.MotionMagicAcceleration = maxAcceleration * ArmConstants.GEAR_RATIO/Math.PI/2;
+        motionMagicConfigs.MotionMagicCruiseVelocity = ArmConstants.MAX_VELOCITY * ArmConstants.GEAR_RATIO/Math.PI/2;
+        motionMagicConfigs.MotionMagicAcceleration = ArmConstants.MAX_ACCELERATION * ArmConstants.GEAR_RATIO/Math.PI/2;
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         motor.getConfigurator().apply(talonFXConfigs);
 
