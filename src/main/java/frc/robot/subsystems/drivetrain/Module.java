@@ -48,7 +48,7 @@ import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
 import frc.robot.util.ConversionUtils;
-
+import frc.robot.util.PhoenixOdometryThread;
 import lib.CTREModuleState;
 
 
@@ -80,7 +80,14 @@ public class Module implements ModuleIO{
     private final StatusSignal<Voltage> turnAppliedVolts;
     private final StatusSignal<Current> turnCurrent;
 
-      // Connection debouncers
+    // Timestamp inputs from Phoenix thread
+    private final Queue<Double> timestampQueue;
+    private final Queue<Double> drivePositionQueue;
+    private final Queue<Double> turnPositionQueue;
+
+    private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
+
+    // Connection debouncers
     private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
     private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
     private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
@@ -171,6 +178,12 @@ public class Module implements ModuleIO{
         turnAppliedVolts = angleMotor.getMotorVoltage();
         turnCurrent = angleMotor.getStatorCurrent();
 
+        // Create timestamp queue
+        timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
+        drivePositionQueue =
+        PhoenixOdometryThread.getInstance().registerSignal(driveMotor.getPosition());
+        turnPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(angleMotor.getPosition());
+
         // Configure periodic frames
         BaseStatusSignal.setUpdateFrequencyForAll(
             250, drivePosition, turnPosition);
@@ -221,12 +234,36 @@ public class Module implements ModuleIO{
       inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
       inputs.turnCurrentAmps = turnCurrent.getValueAsDouble();
 
+    // Update odometry inputs
+    inputs.odometryTimestamps =
+        timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryDrivePositionsRad =
+        drivePositionQueue.stream()
+            .mapToDouble((Double value) -> Units.rotationsToRadians(value))
+            .toArray();
+    inputs.odometryTurnPositions =
+        turnPositionQueue.stream()
+            .map((Double value) -> Rotation2d.fromRotations(value))
+            .toArray(Rotation2d[]::new);
+    timestampQueue.clear();
+    drivePositionQueue.clear();
+    turnPositionQueue.clear();
+
     }
     
     public void periodic() {
         updateInputs();
         Logger.processInputs("Drive/Module" + Integer.toString(moduleConstants.ordinal()), inputs);
-         // Update alerts
+
+         // Calculate positions for odometry
+        int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
+        odometryPositions = new SwerveModulePosition[sampleCount];
+        for (int i = 0; i < sampleCount; i++) {
+        double positionMeters = inputs.odometryDrivePositionsRad[i] * DriveConstants.WHEEL_RADIUS;
+        Rotation2d angle = inputs.odometryTurnPositions[i];
+        odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+        }
+        // Update alerts
         driveDisconnectedAlert.set(!inputs.driveConnected);
         turnDisconnectedAlert.set(!inputs.turnConnected);
         turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
@@ -429,9 +466,19 @@ public class Module implements ModuleIO{
         return getDesiredState().speedMetersPerSecond;
       }
     
-      public Rotation2d getDesiredAngle() {
+    public Rotation2d getDesiredAngle() {
         return getDesiredState().angle;
-      }
+    }
+
+        /** Returns the module positions received this cycle. */
+    public SwerveModulePosition[] getOdometryPositions() {
+        return odometryPositions;
+    }
+
+    /** Returns the timestamps of the samples received this cycle. */
+    public double[] getOdometryTimestamps() {
+        return inputs.odometryTimestamps;
+    }
 
       /**
        * Get an array of this module's status signals
