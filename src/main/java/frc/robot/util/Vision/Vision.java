@@ -56,8 +56,6 @@ public class Vision {
 
   private final VisionIOInputsAutoLogged[] inputs;
 
- 
-
   private VisionSystemSim visionSim;
 
   private boolean sawTag = false;
@@ -508,22 +506,22 @@ public class Vision {
 
       @Override
   public void updateInputs(VisionIOInputs inputs) {
-    // inputs.connected = camera.isConnected();
+    inputs.connected = camera.isConnected();
 
-    // // Read new camera observations
-    // Set<Short> tagIds = new HashSet<>();
-    // List<PoseObservation> poseObservations = new LinkedList<>();
-    // for (var result : camera.getAllUnreadResults()) {
-    //   // Update latest target observation
-    //   if (result.hasTargets()) {
-    //     inputs.latestTargetObservation =
-    //         new TargetObservation(
-    //             Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-    //             Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-    //   } else {
-    //     inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
-    //   }
-
+    // Read new camera observations
+    Set<Short> tagIds = new HashSet<>();
+    List<PoseObservation> poseObservations = new LinkedList<>();
+    for (var result : camera.getAllUnreadResults()) {
+      // Update latest target observation
+      if (result.hasTargets()) {
+        inputs.latestTargetObservation =
+            new TargetObservation(
+                Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+                Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+      } else {
+        inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+      }
+    }
     //   // Add pose observation
     //   if (result.multitagResult.isPresent()) { // Multitag result
     //     var multitagResult = result.multitagResult.get();

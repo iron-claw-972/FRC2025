@@ -21,11 +21,12 @@ public class AutoConstants {
 
     public static RobotConfig  CONFIG;
     public static final PPHolonomicDriveController AUTO_CONTROLLER = new PPHolonomicDriveController( 
-            new PIDConstants(1.0, 0.0, 0), // Translation PID constants
+            new PIDConstants(3.0, 0.0, 0), // Translation PID constants
             new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
         );
    
 
+        
     static {
         try{
             CONFIG = RobotConfig.fromGUISettings();

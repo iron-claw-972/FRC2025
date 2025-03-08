@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Drive;
+package frc.robot.subsystems.drivetrain;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;

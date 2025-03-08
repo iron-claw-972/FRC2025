@@ -2,7 +2,10 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.elevator;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -45,6 +48,8 @@ public class Elevator extends SubsystemBase {
   // gravity feedforward
   double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.
   CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
+
+  private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
 
   public Elevator() {
@@ -101,6 +106,13 @@ public class Elevator extends SubsystemBase {
     double setpoint2 = ElevatorConstants.GEARING * setpoint / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpoint2).withFeedForward(0.15));
 
+    inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
+    Logger.processInputs("Elevator", inputs);
+    Logger.recordOutput("Elevator/Setpoint", getSetpoint());
   }
 
   @Override
@@ -124,16 +136,14 @@ public class Elevator extends SubsystemBase {
    * Get the position of the elevator in  meters. 
   */
   public double getPosition() {
-    return rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
-        * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    return inputs.measuredPosition;
   }
   
   /**
    * Get the velocity of the elevator in m/s. 
   */
   public double getVelocity(){
-    return rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
-    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    return inputs.velocity;
   }
 
   public double getVoltage(){
@@ -155,6 +165,7 @@ public class Elevator extends SubsystemBase {
     return setpoint;
   }
 
+  @AutoLogOutput
   public Mechanism2d getMechanism2d() {
     return mechanism;
   }

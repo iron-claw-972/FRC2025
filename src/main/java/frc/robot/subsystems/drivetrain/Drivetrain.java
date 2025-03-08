@@ -1,9 +1,10 @@
-package frc.robot.subsystems.Drive;
+package frc.robot.subsystems.drivetrain;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -119,6 +120,8 @@ public class Drivetrain extends SubsystemBase {
 
     private double centerOfMassHeight = 0;
 
+    private final DrivetrainIOInputsAutoLogged inputs = new DrivetrainIOInputsAutoLogged();
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -187,6 +190,13 @@ public class Drivetrain extends SubsystemBase {
         }
         updateOdometry();
         updateOdometryVision();
+        
+        inputs.speedX = getChassisSpeeds().vxMetersPerSecond;
+        inputs.speedY = getChassisSpeeds().vyMetersPerSecond;
+        inputs.speed = Math.hypot(getChassisSpeeds().vxMetersPerSecond, getChassisSpeeds().vyMetersPerSecond);
+        inputs.speedRot = getChassisSpeeds().omegaRadiansPerSecond;
+        inputs.pose2d = poseEstimator.getEstimatedPosition();
+        Logger.processInputs("Drivetrain", inputs);
     }
 
     // DRIVE
@@ -494,7 +504,7 @@ public class Drivetrain extends SubsystemBase {
      * @return the pose of the robot as estimated by the odometry
      */
     public Pose2d getPose() {
-        return poseEstimator.getEstimatedPosition();
+        return inputs.pose2d;
     }
 
     /**

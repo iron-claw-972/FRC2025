@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
-import frc.robot.subsystems.Drive.Drivetrain;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 
 /**
 * Moves the robot to a pose using PathPlanner

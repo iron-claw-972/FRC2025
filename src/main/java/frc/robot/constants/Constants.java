@@ -17,9 +17,6 @@ public class Constants {
     // Logging 
     public static final boolean USE_TELEMETRY = true;
 
-    public static final Mode simMode = Mode.SIM;
-    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
     public static enum Mode {
         /** Running on a real robot. */
         REAL,
@@ -72,4 +69,8 @@ public class Constants {
     
     public static final double HEADING_DEADBAND = 0.05;
     public static final double HEADING_SLEWRATE = 10;
+
+    //modes
+    public static final Mode simMode = Mode.SIM;
+    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 }
