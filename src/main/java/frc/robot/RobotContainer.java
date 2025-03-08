@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeCoral;
@@ -17,6 +18,7 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -43,6 +45,7 @@ import java.util.function.BooleanSupplier;
  */
 public class RobotContainer {
 
+  SmartDashboard.putData()
   // The robot's subsystems are defined here...
   private Drivetrain drive = null;
   private Vision vision = null;
@@ -51,6 +54,7 @@ public class RobotContainer {
   private Outtake outtake = null;
   private Elevator elevator = null;
   private Climb climb = null;
+  private Arm arm = null;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -79,8 +83,9 @@ public class RobotContainer {
       default:
       case SwerveCompetition:
         outtake = new OuttakeComp();
-         elevator = new Elevator();
-         climb = new Climb();
+        elevator = new Elevator();
+        climb = new Climb();
+        arm = new Arm();
       case BetaBot:
         indexer = new Indexer();
         intake = new Intake();
