@@ -5,8 +5,8 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.commands.drive_comm.DriveToPose;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.util.DetectedObject;
+import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.util.Vision.DetectedObject;
 
 /**
  * Moves toward the detected object

@@ -4,12 +4,12 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.gpm.IntakeCoral;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Outtake;
-import frc.robot.util.DetectedObject;
+import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.outtake.Outtake;
+import frc.robot.util.Vision.DetectedObject;
 
 public class AcquireGamePiece extends SequentialCommandGroup {
     /**

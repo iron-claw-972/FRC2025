@@ -66,10 +66,6 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
-
-    SmartDashboard.putData("climb", new InstantCommand(() -> climb.climb()));
-    SmartDashboard.putData("extend", new InstantCommand(() -> climb.extend()));
-
     // dispatch on the robot
     switch (robotId) {
 
