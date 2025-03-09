@@ -133,7 +133,7 @@ public class VisionConstants {
      * <p>
      * Only affects calculations using PhotonVision, not manual calculations.
      */
-    public static final double HIGHEST_AMBIGUITY = 0.2;
+    public static final double HIGHEST_AMBIGUITY = 0.01;
 
     /**
      * The camera poses
