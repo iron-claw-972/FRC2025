@@ -41,7 +41,7 @@ public class VisionConstants {
      * If odometry should be updated using vision while running the GoToPose and
      * GoToPosePID commands in teleop
      */
-    public static final boolean ENABLED_GO_TO_POSE = false;
+    public static final boolean ENABLED_GO_TO_POSE = true;
 
     /** If vision should be simulated */
     public static final boolean ENABLED_SIM = false;
@@ -73,7 +73,7 @@ public class VisionConstants {
     public static final double MAX_DISTANCE = 6;
 
     /** If vision should use manual calculations */
-    public static final boolean USE_MANUAL_CALCULATIONS = false;
+    public static final boolean USE_MANUAL_CALCULATIONS = true;
 
     // <ol start="0"> did not work
     /**

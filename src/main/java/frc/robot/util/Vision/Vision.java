@@ -623,10 +623,11 @@ public class Vision {
         // Get the tag position relative to the robot, assuming the robot is on the ground
         Translation3d translation = target.getBestCameraToTarget().getTranslation()
           .rotateBy(robotToCamera.getRotation());
-        translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ())
+          Logger.recordOutput("Vision/scale factor", (targetPose.getZ()-robotToCamera.getZ())/translation.getZ());
+        translation = translation.times(1)
           .plus(robotToCamera.getTranslation())
           .rotateBy(new Rotation3d(0, 0, yaw))
-
+  
         // Invert it to get the robot position relative to the April tag
         // Multiply by a constant. I don't know why this works, but it was consistently 10% off in 2023 Fall Semester
           .times(-VisionConstants.DISTANCE_SCALE)

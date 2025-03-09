@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -566,7 +567,7 @@ public class Drivetrain extends SubsystemBase {
         if(timestamp < 0){
             return getPose();
         }
-        Optional<Pose2d> pose = poseBuffer.getSample(timestamp);
+        Optional<Pose2d> pose = poseEstimator.sampleAt(timestamp);
         if(pose.isPresent()){
             return pose.get();
         }else{
