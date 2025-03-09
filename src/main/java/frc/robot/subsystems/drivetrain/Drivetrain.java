@@ -16,11 +16,9 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -98,9 +96,6 @@ public class Drivetrain extends SubsystemBase {
     private boolean drive_turning = false;
 
     private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator();
-
-    // The pose buffer, used to store and get previous poses
-    private TimeInterpolatableBuffer<Pose2d> poseBuffer = TimeInterpolatableBuffer.createBuffer(2);
 
     // The pose supplier to drive to
     private Supplier<Pose2d> desiredPoSupplier = ()->null;
