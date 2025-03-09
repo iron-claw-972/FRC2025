@@ -3,8 +3,7 @@ package frc.robot.subsystems.indexer;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
@@ -24,7 +23,7 @@ import frc.robot.constants.IdConstants;
 import frc.robot.constants.IndexerConstants;
 
 public class Indexer extends SubsystemBase {
-	private SparkFlex motor;
+	private TalonFX motor;
 	private MockLaserCan simSensor;
 	private LaserCanInterface sensor;
 
@@ -37,7 +36,7 @@ public class Indexer extends SubsystemBase {
 	private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
 	public Indexer() {
-		motor = new SparkFlex(IdConstants.INDEXER_MOTOR, MotorType.kBrushless);
+		motor = new TalonFX(IdConstants.INDEXER_MOTOR);
 		if (Robot.isSimulation()) {
 			flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
 					IndexerConstants.MOMENT_OF_INERTIA, IndexerConstants.GEAR_RATIO), DCMotor.getNEO(1));
@@ -112,7 +111,7 @@ public class Indexer extends SubsystemBase {
 		//SmartDashboard.putBoolean("Indexer has coral ", isIndexerClear());
 
 		if (Robot.isReal()) {
-			inputs.velocity =  motor.getEncoder().getVelocity() / IndexerConstants.GEAR_RATIO;
+			inputs.velocity =  motor.getVelocity().getValueAsDouble() / IndexerConstants.GEAR_RATIO;
 		} else {
 			inputs.velocity = flywheelSim.getAngularVelocityRPM();
 		}
