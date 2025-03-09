@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.drive_comm;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;

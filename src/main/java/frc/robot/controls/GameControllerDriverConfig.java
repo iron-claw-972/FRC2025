@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.drive_comm.SetFormationX;
-import frc.robot.commands.vision.DriverAssistIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -51,7 +50,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     if(vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0){
       // This will only be true when it is equal to 1, but <=1 avoids a warning for comparing identical expressions
       if(VisionConstants.DRIVER_ASSIST_MODE <= 1){
-        (new Trigger(kDriver.LEFT_TRIGGER_BUTTON)).whileTrue(new DriverAssistIntake(getDrivetrain(), this, vision));
+        // Currently does nothing
       }else{
         (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
           .onTrue(new InstantCommand(()->getDrivetrain().setDesiredPose(()->vision.getBestGamePiece(Units.degreesToRadians(60), false).pose.toPose2d())))
