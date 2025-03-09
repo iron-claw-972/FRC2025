@@ -1,6 +1,5 @@
 package frc.robot.subsystems.climb;
 
-import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -23,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.ClimbArmSim;
-import frc.robot.subsystems.climb.ClimbIOInputsAutoLogged;
 
 public class Climb extends SubsystemBase {
     

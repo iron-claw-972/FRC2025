@@ -1,13 +1,11 @@
 package frc.robot.util.Vision;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.DoubleUnaryOperator;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -53,8 +51,6 @@ public class Vision {
   private AprilTagFieldLayout aprilTagFieldLayout;
   // A list of the cameras on the robot.
   private ArrayList<VisionCamera> cameras = new ArrayList<>();
-
-  private final VisionIOInputsAutoLogged[] inputs;
 
   private VisionSystemSim visionSim;
 
@@ -104,7 +100,6 @@ public class Vision {
         }
       }
     }
-    inputs = new VisionIOInputsAutoLogged[cameras.size()];
   }
 
 
@@ -354,8 +349,15 @@ public class Vision {
    */
   public void updateOdometry(SwerveDrivePoseEstimator poseEstimator, DoubleUnaryOperator yawFunction, boolean slipped){
     // Simulate vision
-    if(RobotBase.isSimulation() && VisionConstants.ENABLED_SIM){
-      visionSim.update(poseEstimator.getEstimatedPosition());
+    // 2 ifs to avoid warning
+    if(VisionConstants.ENABLED_SIM){
+      if(RobotBase.isSimulation()){
+        visionSim.update(poseEstimator.getEstimatedPosition());
+      }
+    }
+
+    for(VisionCamera c : cameras){
+      c.updateInputs();
     }
 
     sawTag = false;
@@ -429,7 +431,7 @@ public class Vision {
     private Pose2d lastPose;
     private double lastTimestamp = 0;
     private boolean enabled = true;
-    private VisionIOInputs inputs = new VisionIOInputs();
+    private final VisionIOInputs inputs = new VisionIOInputs();
   
     /**
      * Stores information about a camera
@@ -509,6 +511,8 @@ public class Vision {
     public void updateInputs() {
       inputs.connected = camera.isConnected();
       inputs.results = camera.getAllUnreadResults();
+
+      Logger.processInputs("Vision/"+camera.getName(), inputs);
 
       // Mechanical Advantage's vision logging
       // // Read new camera observations
