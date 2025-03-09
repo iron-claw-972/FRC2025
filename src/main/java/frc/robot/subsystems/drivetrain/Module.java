@@ -22,6 +22,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -144,14 +145,31 @@ public class Module implements ModuleIO{
 
         /* Angle Encoder Config */
         CANcoder = new CANcoder(moduleConstants.getEncoderPort(), DriveConstants.STEER_ENCODER_CAN);
-        configCANcoder();
-
         /* Angle Motor Config */
         angleMotor = new TalonFX(moduleConstants.getSteerPort(), DriveConstants.STEER_ENCODER_CAN);
-        configAngleMotor();
-
-        /* Drive Motor Config */
         driveMotor = new TalonFX(moduleConstants.getDrivePort(), DriveConstants.DRIVE_MOTOR_CAN);
+        // Create drive status signals
+        drivePosition = driveMotor.getPosition();
+        driveVelocity = driveMotor.getVelocity();
+        driveAppliedVolts = driveMotor.getMotorVoltage();
+        driveCurrent = driveMotor.getStatorCurrent();
+      
+        // Create turn status signals
+        turnAbsolutePosition = CANcoder.getAbsolutePosition();
+        turnPosition = angleMotor.getPosition();
+        turnVelocity = angleMotor.getVelocity();
+        turnAppliedVolts = angleMotor.getMotorVoltage();
+        turnCurrent = angleMotor.getStatorCurrent();
+      
+        // Create timestamp queue
+        timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
+        drivePositionQueue =
+        PhoenixOdometryThread.getInstance().registerSignal(driveMotor.getPosition());
+        turnPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(angleMotor.getPosition());
+        updateInputs();
+        
+        configCANcoder();
+        configAngleMotor();
         configDriveMotor();
 
         driveDisconnectedAlert =
@@ -165,24 +183,7 @@ public class Module implements ModuleIO{
         new Alert(
             "Disconnected turn encoder on module " + Integer.toString(moduleConstants.ordinal()) + ".",
             AlertType.kError);        
-         // Create drive status signals
-        drivePosition = driveMotor.getPosition();
-        driveVelocity = driveMotor.getVelocity();
-        driveAppliedVolts = driveMotor.getMotorVoltage();
-        driveCurrent = driveMotor.getStatorCurrent();
-
-        // Create turn status signals
-        turnAbsolutePosition = CANcoder.getAbsolutePosition();
-        turnPosition = angleMotor.getPosition();
-        turnVelocity = angleMotor.getVelocity();
-        turnAppliedVolts = angleMotor.getMotorVoltage();
-        turnCurrent = angleMotor.getStatorCurrent();
-
-        // Create timestamp queue
-        timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
-        drivePositionQueue =
-        PhoenixOdometryThread.getInstance().registerSignal(driveMotor.getPosition());
-        turnPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(angleMotor.getPosition());
+   
 
         // Configure periodic frames
         BaseStatusSignal.setUpdateFrequencyForAll(
@@ -228,7 +229,7 @@ public class Module implements ModuleIO{
       // Update turn inputs
       inputs.turnConnected = turnConnectedDebounce.calculate(turnStatus.isOK());
       inputs.turnEncoderConnected = turnEncoderConnectedDebounce.calculate(turnEncoderStatus.isOK());
-      inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
+      inputs.turnAbsolutePosition = Rotation2d.fromDegrees(turnAbsolutePosition.getValueAsDouble()*360);
       inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
       inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
       inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
@@ -259,15 +260,15 @@ public class Module implements ModuleIO{
         int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
         odometryPositions = new SwerveModulePosition[sampleCount];
         for (int i = 0; i < sampleCount; i++) {
-        double positionMeters = inputs.odometryDrivePositionsRad[i] * DriveConstants.WHEEL_RADIUS;
-        Rotation2d angle = inputs.odometryTurnPositions[i];
+        double positionMeters = inputs.odometryDrivePositionsRad[i]/DriveConstants.DRIVE_GEAR_RATIO * DriveConstants.WHEEL_RADIUS;
+        Rotation2d angle = inputs.odometryTurnPositions[i].div(DriveConstants.MODULE_CONSTANTS.angleGearRatio);
         odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
         }
         // Update alerts
         driveDisconnectedAlert.set(!inputs.driveConnected);
         turnDisconnectedAlert.set(!inputs.turnConnected);
         turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
-
+        Logger.recordOutput("Angle "+ moduleConstants.ordinal(), MathUtil.inputModulus(getAngle().getDegrees(), 0, 360));
     }
 
     public void setDesiredState(SwerveModuleState wantedState, boolean isOpenLoop) {
@@ -340,7 +341,7 @@ public class Module implements ModuleIO{
     }
 
     public Rotation2d getAngle() {
-        return inputs.turnPosition;
+        return inputs.turnPosition.div(DriveConstants.MODULE_CONSTANTS.angleGearRatio);
     }
 
     public Rotation2d getCANcoder() {
@@ -351,10 +352,6 @@ public class Module implements ModuleIO{
         // Sensor ticks
         double absolutePosition = getCANcoder().getRotations() - Units.degreesToRotations(angleOffset);
         angleMotor.setPosition(absolutePosition*DriveConstants.MODULE_CONSTANTS.angleGearRatio);
-    }
-
-    public void refreshStatusSignals(){
-        StatusSignal.refreshAll(drivePosition, driveVelocity, turnPosition);
     }
 
     private void configCANcoder() {
@@ -386,15 +383,15 @@ public class Module implements ModuleIO{
      * @return Speed in RPM
      */
     public double getDriveVelocity() {
-        return driveVelocity.getValueAsDouble()*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio;
+        return inputs.driveVelocityRadPerSec*60/DriveConstants.MODULE_CONSTANTS.driveGearRatio/2/Math.PI;
     }
 
     public double getDriveVoltage(){
-        return driveMotor.getMotorVoltage().getValueAsDouble();
+        return inputs.driveAppliedVolts;
     }
 
     public double getDriveStatorCurrent(){
-        return driveMotor.getStatorCurrent().getValueAsDouble();
+        return inputs.driveCurrentAmps;
     }
 
     private void configDriveMotor() {
@@ -446,14 +443,6 @@ public class Module implements ModuleIO{
         angleMotor.set(0);
     }
 
-    public TalonFX getDriveMotor(){
-        return driveMotor;
-    }
-
-    public TalonFX getAngleMotor(){
-        return angleMotor;
-    }
-
     public ModuleType getModuleType(){
         return type;
     }
@@ -480,15 +469,4 @@ public class Module implements ModuleIO{
         return inputs.odometryTimestamps;
     }
 
-      /**
-       * Get an array of this module's status signals
-       * @return The array of BaseStatusSignals
-       */
-      public BaseStatusSignal[] getStatusSignals(){
-        return new BaseStatusSignal[]{
-            drivePosition,
-            driveVelocity,
-            turnPosition,
-        };
-      }
 }

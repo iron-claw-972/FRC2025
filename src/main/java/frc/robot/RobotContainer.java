@@ -86,8 +86,8 @@ public class RobotContainer {
       default:
       case SwerveCompetition:
         outtake = new OuttakeComp();
-         elevator = new Elevator();
-         climb = new Climb();
+        elevator = new Elevator();
+        climb = new Climb();
       case BetaBot:
         indexer = new Indexer();
         intake = new Intake();

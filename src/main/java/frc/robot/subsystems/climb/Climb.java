@@ -175,7 +175,6 @@ public class Climb extends SubsystemBase {
     }
 
     //not working
-    @AutoLogOutput(key = "Climb/Mech2D")
     public Mechanism2d getMech2d() {
         return simulationMechanism;
     }

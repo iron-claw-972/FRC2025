@@ -15,6 +15,8 @@ import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.Pigeon2;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -154,7 +156,7 @@ public class Drivetrain extends SubsystemBase {
          */
         Timer.delay(1.0);
         resetModulesToAbsolute();
-        
+        gyroIO.updateInputs(gyroInputs);
         poseEstimator = new SwerveDrivePoseEstimator(
                 DriveConstants.KINEMATICS,
                 gyroInputs.yawPosition,
@@ -209,7 +211,10 @@ public class Drivetrain extends SubsystemBase {
         // Apply update
         poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
         }
+        Logger.recordOutput("Gyro", MathUtil.inputModulus(gyroInputs.yawPosition.getDegrees(), 0, 360));
+        Logger.recordOutput("module poses", modulePoses.getModulePoses());
         updateOdometryVision();
+        
     }
 
     // DRIVE
@@ -263,13 +268,6 @@ public class Drivetrain extends SubsystemBase {
         double ySpeed = yController.calculate(pose.getY(), y);
         double rotRadians = rotationController.calculate(pose.getRotation().getRadians(), rot);
         drive(xSpeed, ySpeed, rotRadians, true, false);
-    }
-
-    /**
-     * Updates the field relative position of the robot.
-     */
-    public void updateOdometry() {
-        poseBuffer.addSample(Timer.getFPGATimestamp(), poseEstimator.update(gyroInputs.yawPosition, updateModulePositions()));
     }
 
     /**
@@ -516,6 +514,7 @@ public class Drivetrain extends SubsystemBase {
     /**
      * @return the pose of the robot as estimated by the odometry
      */
+    @AutoLogOutput(key = "Odometry/Robot")
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }

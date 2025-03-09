@@ -165,7 +165,6 @@ public class Elevator extends SubsystemBase {
     return setpoint;
   }
 
-  @AutoLogOutput
   public Mechanism2d getMechanism2d() {
     return mechanism;
   }

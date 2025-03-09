@@ -129,8 +129,4 @@ public class ModuleSim extends Module {
         return 0;
     }
 
-    @Override
-    public BaseStatusSignal[] getStatusSignals(){
-        return new BaseStatusSignal[0];
-    }
 }
