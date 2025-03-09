@@ -126,8 +126,8 @@ public class Arm extends SubsystemBase{
     }
 
     public void resetAbsolute(){
-        double absolutePosition = absoluteEncoder.get() - Units.degreesToRotations(offset);
-        motor.setPosition(absolutePosition * DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+        double absolutePosition = absoluteEncoder.get() - Units.degreesToRotations(ArmConstants.OFFSET);
+        motor.setPosition(absolutePosition * ArmConstants.GEAR_RATIO);
     }    
 
 }
