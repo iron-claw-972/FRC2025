@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P  1"
+            "pathName": "AP1"
           }
         },
         {
@@ -32,13 +32,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Gronud  P2"
+            "pathName": "Ground P2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P  3"
+            "pathName": "Ground P3"
           }
         },
         {
@@ -58,18 +58,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GrondP4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "P 5"
           }
         },
         {
