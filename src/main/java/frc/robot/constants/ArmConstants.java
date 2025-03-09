@@ -8,7 +8,7 @@ public class ArmConstants {
     public static final double START_ANGLE = -90;
     public static final double MIN_ANGLE = -90;
     public static final double MAX_ANGLE = 90;
-    public static final double OFFSET = -166 - START_ANGLE;
+    public static final double OFFSET = 0 - START_ANGLE;
 
     public static final double GEAR_RATIO = 50/24;
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(1);
