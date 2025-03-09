@@ -43,5 +43,5 @@ public class IdConstants {
     public static final int OUTTAKE_DIO_EJECTING = 3;
 
     //Arm
-    public static final int ARM_MOTOR = 32;
+    public static final int ARM_MOTOR = 2;
 }

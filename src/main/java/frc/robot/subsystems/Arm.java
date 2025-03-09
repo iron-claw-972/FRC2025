@@ -29,7 +29,7 @@ import frc.robot.constants.swerve.DriveConstants;
 
 public class Arm extends SubsystemBase{
     //motor
-    private TalonFX motor = new TalonFX(IdConstants.ARM_MOTOR, Constants.CANIVORE_CAN);
+    private TalonFX motor = new TalonFX(IdConstants.ARM_MOTOR);
     private TalonFXSimState encoderSim;
     double offset = 0;
 
@@ -38,7 +38,9 @@ public class Arm extends SubsystemBase{
     private MechanismLigament2d simLigament;
     private SingleJointedArmSim armSim;
 
-    private double setpoint = ArmConstants.START_ANGLE;
+    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(5);
+
+    private double setpoint = Units.rotationsToDegrees(absoluteEncoder.get());
 
     private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
@@ -50,8 +52,6 @@ public class Arm extends SubsystemBase{
         0, 
         ArmConstants.MASS*ArmConstants.CENTER_OF_MASS_LENGTH/ArmConstants.GEAR_RATIO/ArmConstants.MOTOR.KtNMPerAmp*ArmConstants.MOTOR.rOhms, 
         0);
-
-    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(9);
 
     public Arm() {
         if (RobotBase.isSimulation()) {
@@ -81,7 +81,7 @@ public class Arm extends SubsystemBase{
         // set slot 0 gains
         var slot0Configs = talonFXConfigs.Slot0;
         // TODO: tune later
-        slot0Configs.kS = 0.3;  // Static friction compensation (should be >0 if friction exists)
+        slot0Configs.kS = 0;  // Static friction compensation (should be >0 if friction exists)
         slot0Configs.kV = 0.12; // Velocity gain: 1 rps -> 0.12V
         slot0Configs.kA = 0;  // Acceleration gain: 1 rps² -> 0V (should be tuned if acceleration matters)
         slot0Configs.kP = 0.5; // If position error is 2.5 rotations, apply 12V (0.5 * 2.5 * 12V)
@@ -100,8 +100,9 @@ public class Arm extends SubsystemBase{
 
     @Override
     public void periodic() {
-        double setpointRotations = Units.degreesToRotations(setpoint) * ArmConstants.GEAR_RATIO;
-        motor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
+        double setpointRadians = Units.degreesToRadians(setpoint) * ArmConstants.GEAR_RATIO;
+        motor.setControl(voltageRequest.withPosition(setpointRadians).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
+        SmartDashboard.putNumber("Angle", getAngle());
     }
 
     @Override
@@ -127,8 +128,9 @@ public class Arm extends SubsystemBase{
      * Gets the angle of the arm
      * @return The angle in degrees
      */
+
     public double getAngle() {
-        return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble()/ArmConstants.GEAR_RATIO);
+        return Units.rotationsToDegrees(absoluteEncoder.get()/ArmConstants.GEAR_RATIO);
     }
 
     public void resetAbsolute(){
