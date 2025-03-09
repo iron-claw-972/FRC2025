@@ -37,9 +37,11 @@ public class Arm extends SubsystemBase{
     private MechanismLigament2d simLigament;
     private SingleJointedArmSim armSim;
 
-    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(5);
+    private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(IdConstants.ARM_ABSOLUTE_ENCODER);
 
     private double setpoint = Units.rotationsToDegrees(absoluteEncoder.get());
+    private double lastAbsolutePosition = 0;
+    private double continuousAngle = 0;
 
     private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
@@ -66,7 +68,7 @@ public class Arm extends SubsystemBase{
             SmartDashboard.putData("Arm Display", simulationMechanism);
         }
 
-        motor.setPosition(Units.degreesToRotations(ArmConstants.START_ANGLE)*ArmConstants.GEAR_RATIO);
+        resetAbsolute();
         motor.setNeutralMode(NeutralModeValue.Brake);
 
         var talonFXConfigs = new TalonFXConfiguration();
@@ -76,7 +78,7 @@ public class Arm extends SubsystemBase{
         slot0Configs.kS = 0;  // Static friction compensation (should be >0 if friction exists)
         slot0Configs.kV = 0.12; // Velocity gain: 1 rps -> 0.12V
         slot0Configs.kA = 0;  // Acceleration gain: 1 rps² -> 0V (should be tuned if acceleration matters)
-        slot0Configs.kP = 0.5; // If position error is 2.5 rotations, apply 12V (0.5 * 2.5 * 12V)
+        slot0Configs.kP = 5; // If position error is 2.5 rotations, apply 12V (0.5 * 2.5 * 12V)
         slot0Configs.kI = 0;   // Integral term (usually left at 0 for MotionMagic)
         slot0Configs.kD = 0;   // Derivative term (used to dampen oscillations)
 
@@ -87,7 +89,6 @@ public class Arm extends SubsystemBase{
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         motor.getConfigurator().apply(talonFXConfigs);
 
-        resetAbsolute();
     }
 
     @Override
@@ -95,6 +96,7 @@ public class Arm extends SubsystemBase{
         double setpointRadians = Units.degreesToRadians(setpoint) * ArmConstants.GEAR_RATIO;
         motor.setControl(voltageRequest.withPosition(setpointRadians).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
         SmartDashboard.putNumber("Angle", getAngle());
+        SmartDashboard.putNumber("Motor Angle", Units.rotationsToDegrees(motor.getPosition().getValueAsDouble())/ArmConstants.GEAR_RATIO);
     }
 
     @Override
@@ -122,12 +124,22 @@ public class Arm extends SubsystemBase{
      */
 
     public double getAngle() {
-        return Units.rotationsToDegrees(absoluteEncoder.get()/ArmConstants.GEAR_RATIO);
+        double absolutePosition = absoluteEncoder.get();
+        double positionDelta = absolutePosition - lastAbsolutePosition;
+
+        if (positionDelta > 0.5) {
+            continuousAngle -= 1;
+        } else if (positionDelta < -0.5) {
+            continuousAngle += 1;
+        }
+
+        lastAbsolutePosition = absolutePosition;
+
+        return Units.rotationsToDegrees(continuousAngle + absolutePosition) / ArmConstants.GEAR_RATIO;
     }
 
     public void resetAbsolute(){
-        double absolutePosition = absoluteEncoder.get() - Units.degreesToRotations(offset);
-        motor.setPosition(absolutePosition * DriveConstants.MODULE_CONSTANTS.angleGearRatio);
-    }    
+        motor.setPosition(Units.degreesToRotations(ArmConstants.OFFSET)*ArmConstants.GEAR_RATIO);
+    }
 
 }

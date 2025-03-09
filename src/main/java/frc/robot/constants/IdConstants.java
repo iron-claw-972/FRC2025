@@ -44,4 +44,5 @@ public class IdConstants {
 
     //Arm
     public static final int ARM_MOTOR = 2;
+    public static final int ARM_ABSOLUTE_ENCODER = 5;
 }
