@@ -20,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.GeomUtil;
@@ -86,6 +87,8 @@ public class DriveToPose extends Command {
 
   @Override
   public void initialize() {
+    drive.setVisionEnabled(VisionConstants.ENABLED_GO_TO_POSE);
+
     targetPose = target.get();
     Pose2d currentPose = robot.get();
     ChassisSpeeds fieldVelocity = ChassisSpeeds.fromRobotRelativeSpeeds(drive.getChassisSpeeds(), currentPose.getRotation());
@@ -177,6 +180,7 @@ public class DriveToPose extends Command {
   @Override
   public void end(boolean interrupted) {
     drive.stop();
+    drive.setVisionEnabled(true);
     running = false;
   }
 
