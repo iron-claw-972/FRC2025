@@ -143,11 +143,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         driver.get(PS5Button.RB).onTrue(new InstantCommand(()->alignmentDirection = 4));
         driver.get(DPad.UP).onTrue(new InstantCommand(()->alignmentDirection = 5));
         if(singleAlignmentButton){
-            driver.get(DPad.LEFT).onTrue(new InstantCommand(()->{
+            driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(()->{
                 setAlignmentDirection();
                 setAlignmentPose(true);
             }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
-            driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->{
+            driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(()->{
                 setAlignmentDirection();
                 setAlignmentPose(false);
             }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
