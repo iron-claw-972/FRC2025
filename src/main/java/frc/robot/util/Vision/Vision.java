@@ -623,7 +623,7 @@ public class Vision {
         // Get the tag position relative to the robot, assuming the robot is on the ground
         Translation3d translation = target.getBestCameraToTarget().getTranslation()
           .rotateBy(robotToCamera.getRotation());
-        translation = translation.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ())
+        translation = translation//.times((targetPose.getZ()-robotToCamera.getZ())/translation.getZ())
           .plus(robotToCamera.getTranslation())
           .rotateBy(new Rotation3d(0, 0, yaw))
 
