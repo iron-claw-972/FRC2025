@@ -1,13 +1,11 @@
 package frc.robot.util.Vision;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.DoubleUnaryOperator;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -53,8 +51,6 @@ public class Vision {
   private AprilTagFieldLayout aprilTagFieldLayout;
   // A list of the cameras on the robot.
   private ArrayList<VisionCamera> cameras = new ArrayList<>();
-
-  private final VisionIOInputsAutoLogged[] inputs;
 
   private VisionSystemSim visionSim;
 
@@ -104,7 +100,6 @@ public class Vision {
         }
       }
     }
-    inputs = new VisionIOInputsAutoLogged[cameras.size()];
   }
 
 
@@ -354,8 +349,15 @@ public class Vision {
    */
   public void updateOdometry(SwerveDrivePoseEstimator poseEstimator, DoubleUnaryOperator yawFunction, boolean slipped){
     // Simulate vision
-    if(RobotBase.isSimulation() && VisionConstants.ENABLED_SIM){
-      visionSim.update(poseEstimator.getEstimatedPosition());
+    // 2 ifs to avoid warning
+    if(VisionConstants.ENABLED_SIM){
+      if(RobotBase.isSimulation()){
+        visionSim.update(poseEstimator.getEstimatedPosition());
+      }
+    }
+
+    for(VisionCamera c : cameras){
+      c.updateInputs();
     }
 
     sawTag = false;
@@ -424,11 +426,12 @@ public class Vision {
   }
   
   private class VisionCamera implements VisionIO {
-    PhotonCamera camera;
-    PhotonPoseEstimator photonPoseEstimator;
-    Pose2d lastPose;
-    double lastTimestamp = 0;
-    boolean enabled = true;
+    private PhotonCamera camera;
+    private PhotonPoseEstimator photonPoseEstimator;
+    private Pose2d lastPose;
+    private double lastTimestamp = 0;
+    private boolean enabled = true;
+    private final VisionIOInputs inputs = new VisionIOInputs();
   
     /**
      * Stores information about a camera
@@ -461,7 +464,7 @@ public class Vision {
         return list;
       }
 
-      for(PhotonPipelineResult cameraResult : camera.getAllUnreadResults()){
+      for(PhotonPipelineResult cameraResult : inputs.results){
         if(!cameraResult.hasTargets() || cameraResult.getTimestampSeconds()<0){
             continue;
         }
@@ -504,81 +507,85 @@ public class Vision {
       return list;
     }
 
-      @Override
-  public void updateInputs(VisionIOInputs inputs) {
-    inputs.connected = camera.isConnected();
+    @Override
+    public void updateInputs() {
+      inputs.connected = camera.isConnected();
+      inputs.results = camera.getAllUnreadResults();
 
-    // Read new camera observations
-    Set<Short> tagIds = new HashSet<>();
-    List<PoseObservation> poseObservations = new LinkedList<>();
-    for (var result : camera.getAllUnreadResults()) {
-      // Update latest target observation
-      if (result.hasTargets()) {
-        inputs.latestTargetObservation =
-            new TargetObservation(
-                Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-                Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
-      } else {
-        inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
-      }
+      Logger.processInputs("Vision/"+camera.getName(), inputs);
+
+      // Mechanical Advantage's vision logging
+      // // Read new camera observations
+      // Set<Short> tagIds = new HashSet<>();
+      // List<PoseObservation> poseObservations = new LinkedList<>();
+      // for (var result : camera.getAllUnreadResults()) {
+      //   // Update latest target observation
+      //   if (result.hasTargets()) {
+      //     inputs.latestTargetObservation =
+      //         new TargetObservation(
+      //             Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
+      //             Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
+      //   } else {
+      //     inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
+      //   }
+      // }
+      //   // Add pose observation
+      //   if (result.multitagResult.isPresent()) { // Multitag result
+      //     var multitagResult = result.multitagResult.get();
+
+      //     // Calculate robot pose
+      //     Transform3d fieldToCamera = multitagResult.estimatedPose.best;
+      //     Transform3d fieldToRobot = fieldToCamera.plus(VisionConstants.APRIL_TAG_CAMERAS.get(0).getSecond().inverse());
+      //     Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+
+      //     // Calculate average tag distance
+      //     double totalTagDistance = 0.0;
+      //     for (var target : result.targets) {
+      //       totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
+      //     }
+
+      //     // Add tag IDs
+      //     tagIds.addAll(multitagResult.fiducialIDsUsed);
+
+      //     // Add observation
+      //     poseObservations.add(
+      //         new PoseObservation(
+      //             result.getTimestampSeconds(), // Timestamp
+      //             robotPose, // 3D pose estimate
+      //             multitagResult.estimatedPose.ambiguity, // Ambiguity
+      //             multitagResult.fiducialIDsUsed.size(), // Tag count
+      //             totalTagDistance / result.targets.size(), // Average tag distance
+      //             PoseObservationType.PHOTONVISION)); // Observation type
+
+      //   } else if (!result.targets.isEmpty()) { // Single tag result
+      //     var target = result.targets.get(0);
+
+      //     // Calculate robot pose
+      //     var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
+      //     if (tagPose.isPresent()) {
+      //       Transform3d fieldToTarget =
+      //           new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
+      //       Transform3d cameraToTarget = target.bestCameraToTarget;
+      //       Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
+      //       Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+      //       Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+
+      //       // Add tag ID
+      //       tagIds.add((short) target.fiducialId);
+
+      //       // Add observation
+      //       poseObservations.add(
+      //           new PoseObservation(
+      //               result.getTimestampSeconds(), // Timestamp
+      //               robotPose, // 3D pose estimate
+      //               target.poseAmbiguity, // Ambiguity
+      //               1, // Tag count
+      //               cameraToTarget.getTranslation().getNorm(), // Average tag distance
+      //               PoseObservationType.PHOTONVISION)); // Observation type
+      //     }
+      //   }
+      // }
     }
-    //   // Add pose observation
-    //   if (result.multitagResult.isPresent()) { // Multitag result
-    //     var multitagResult = result.multitagResult.get();
-
-    //     // Calculate robot pose
-    //     Transform3d fieldToCamera = multitagResult.estimatedPose.best;
-    //     Transform3d fieldToRobot = fieldToCamera.plus(VisionConstants.APRIL_TAG_CAMERAS.get(0).getSecond().inverse());
-    //     Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
-
-    //     // Calculate average tag distance
-    //     double totalTagDistance = 0.0;
-    //     for (var target : result.targets) {
-    //       totalTagDistance += target.bestCameraToTarget.getTranslation().getNorm();
-    //     }
-
-    //     // Add tag IDs
-    //     tagIds.addAll(multitagResult.fiducialIDsUsed);
-
-    //     // Add observation
-    //     poseObservations.add(
-    //         new PoseObservation(
-    //             result.getTimestampSeconds(), // Timestamp
-    //             robotPose, // 3D pose estimate
-    //             multitagResult.estimatedPose.ambiguity, // Ambiguity
-    //             multitagResult.fiducialIDsUsed.size(), // Tag count
-    //             totalTagDistance / result.targets.size(), // Average tag distance
-    //             PoseObservationType.PHOTONVISION)); // Observation type
-
-    //   } else if (!result.targets.isEmpty()) { // Single tag result
-    //     var target = result.targets.get(0);
-
-    //     // Calculate robot pose
-    //     var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
-    //     if (tagPose.isPresent()) {
-    //       Transform3d fieldToTarget =
-    //           new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
-    //       Transform3d cameraToTarget = target.bestCameraToTarget;
-    //       Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
-    //       Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
-    //       Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
-
-    //       // Add tag ID
-    //       tagIds.add((short) target.fiducialId);
-
-    //       // Add observation
-    //       poseObservations.add(
-    //           new PoseObservation(
-    //               result.getTimestampSeconds(), // Timestamp
-    //               robotPose, // 3D pose estimate
-    //               target.poseAmbiguity, // Ambiguity
-    //               1, // Tag count
-    //               cameraToTarget.getTranslation().getNorm(), // Average tag distance
-    //               PoseObservationType.PHOTONVISION)); // Observation type
-    //     }
-    //   }
-    // }
-  }
     
     /**
      * Gets the pose using manual calculations
@@ -594,7 +601,7 @@ public class Vision {
       }
 
       // The latest camera results
-      for(PhotonPipelineResult result : camera.getAllUnreadResults()){
+      for(PhotonPipelineResult result : inputs.results){
         // Gets the best target to use for the calculations
         PhotonTrackedTarget target = result.getBestTarget();
         // Continue if the target doesn't exist or it should be ignored

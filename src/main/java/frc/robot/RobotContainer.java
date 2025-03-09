@@ -2,8 +2,6 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -29,7 +27,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeAlpha;
 import frc.robot.subsystems.outtake.OuttakeComp;
-import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.drivetrain.GyroIOPigeon2;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.util.PathGroupLoader;
@@ -59,6 +56,7 @@ public class RobotContainer {
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
+  @SuppressWarnings("unused")
   private Operator operator = null;
 
   private Thread odometryThread = null;

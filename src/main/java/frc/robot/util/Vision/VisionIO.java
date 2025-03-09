@@ -13,18 +13,51 @@
 
 package frc.robot.util.Vision;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.littletonrobotics.junction.LogTable;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
-  @AutoLog
-  public static class VisionIOInputs {
+  public static class VisionIOInputs implements LoggableInputs {
     public boolean connected = false;
-    public TargetObservation latestTargetObservation =
-        new TargetObservation(new Rotation2d(), new Rotation2d());
-    public PoseObservation[] poseObservations = new PoseObservation[0];
-    public int[] tagIds = new int[0];
+    public List<PhotonPipelineResult> results = new ArrayList<>();
+    
+    // PhotonVision should never return more than 5 results, except possibly for very long loop overruns
+    private static final int maxLength = 5;
+
+    @Override
+    public void toLog(LogTable table) {
+      // LogTable does not easily allow removal of logs, especially ProtobufSerializables, so extra values will need to be ignored
+      // This is not very efficient, since unused values are still taking up memory, but there is no easy way to remove them
+
+      table.put("Connected", connected);
+      double length = Math.min(results.size(), maxLength);
+      table.put("Length", length);
+      for(int i = 0; i < length; i++){
+        table.put("Results"+i, results.get(i));
+      }
+    }
+
+    @Override
+    public void fromLog(LogTable table) {
+      connected = table.get("Connected", false);
+      int length = table.get("Length", 0);
+      results = new ArrayList<>(length);
+      // Java gets confused when null is used for a generic type argument
+      PhotonPipelineResult nullResult = null;
+      for(int i = 0; i < length; i++){
+        PhotonPipelineResult result = table.get("Results"+i, nullResult);
+        if(result != null){
+          results.add(result);
+        }
+      }
+    }
   }
 
   /** Represents the angle to a simple target, not used for pose estimation. */
@@ -45,5 +78,5 @@ public interface VisionIO {
     PHOTONVISION
   }
 
-  public default void updateInputs(VisionIOInputs inputs) {}
+  public default void updateInputs() {}
 }
