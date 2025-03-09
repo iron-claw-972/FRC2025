@@ -1,15 +1,18 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
+import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
@@ -183,8 +186,11 @@ public class RobotContainer {
       NamedCommands.registerCommand("L3", new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
       NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
       NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-    
 
+      NamedCommands.registerCommand("Drive To Station Blue Right", new DriveToPose(drive, VisionConstants.BLUE_CORAL_STATION_RIGHT_POSE));  
+      NamedCommands.registerCommand("Drive To 19 Left", new DriveToPose(drive, VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));  
+      NamedCommands.registerCommand("Drive To 19 Right", new DriveToPose(drive, VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));  
+      NamedCommands.registerCommand("Drive To 18 Right", new DriveToPose(drive, VisionConstants.REEF.BLUE_BRANCH_18_LEFT.pose));  
 
     }
   }

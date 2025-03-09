@@ -11,6 +11,19 @@
           }
         },
         {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 19 Left"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -30,15 +43,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "GroundB #2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GroundB #3"
+            "name": "Drive To Station Blue Right"
           }
         },
         {
@@ -58,18 +65,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GrounddB #4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GroundB #5"
           }
         },
         {
