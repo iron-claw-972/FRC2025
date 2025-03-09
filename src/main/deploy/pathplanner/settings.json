@@ -5,10 +5,10 @@
   "pathFolders": [
     "Ground BSide",
     "Ground RSide",
-    "New Folder",
+    "Ground RSide mirrored",
+    "Align RSide",
     "Sequential BSide",
-    "Sequential RSide",
-    "Ground RSide mirrored"
+    "Sequential RSide"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

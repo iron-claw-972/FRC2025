@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.241691975851757,
-        "y": 2.4205382848833574
+        "x": 3.1545445192827195,
+        "y": 2.1583408880242017
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.0114204545454544,
-        "y": 2.1852414772727276
+        "x": 4.00733,
+        "y": 2.86082
       },
       "prevControl": {
-        "x": 2.749638585522988,
-        "y": 1.9411650737696169
+        "x": 3.482655572777105,
+        "y": 2.4255236965395213
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Elevator",
-      "waypointRelativePos": 0.16647919010123857,
+      "name": "MoveElevator",
+      "waypointRelativePos": 0.39370078740157555,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,7 +57,7 @@
     "rotation": -29.999999999999996
   },
   "reversed": false,
-  "folder": "Ground RSide",
+  "folder": "Align RSide",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -36.0
