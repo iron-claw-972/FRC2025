@@ -74,8 +74,8 @@ public class RobotContainer {
         break;
 
       case TestBed2:
+        outtake = new OuttakeComp();
         break;
-
       default:
       case SwerveCompetition:
         outtake = new OuttakeComp();

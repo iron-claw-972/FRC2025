@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.Optional;
 
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,7 +34,7 @@ public class Robot extends TimedRobot {
         PortForwarder.add(5800,"10.9.72.12",5800);
         PortForwarder.add(1182,"10.9.72.12",1182);
     }
-
+    
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
@@ -69,9 +71,9 @@ public class Robot extends TimedRobot {
 
         // Needs to be updated because RobotContainer does not have a periodic method
         robotContainer.updateShuffleBoard();
-
-        CommandScheduler.getInstance().run();
         
+        CommandScheduler.getInstance().run();
+       
         //LogManager.update();
     }
 
