@@ -88,10 +88,6 @@ public class TestVisionDistance extends Command {
           m_visionDistance-m_driveDistance, (m_visionDistance-m_driveDistance) / m_driveDistance * 100
         );
       }
-      // LogManager.log("Vision/Distance Test Drive Distance", m_driveDistance);
-      // LogManager.log("Vision/Distance Test Vision Distance", m_visionDistance);
-      // LogManager.log("Vision/Distance Test Vision Error Value", m_visionDistance - m_driveDistance);
-      // LogManager.log("Vision/Distance Test Vision Error Percentage", (m_visionDistance - m_driveDistance) / m_driveDistance * 100);
     } else {
       m_endTimer.start();
     }
