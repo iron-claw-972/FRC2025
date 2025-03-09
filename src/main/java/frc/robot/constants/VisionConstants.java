@@ -67,6 +67,11 @@ public class VisionConstants {
      */
     public static final double MAX_POSE_DIFFERENCE = 0.2;
 
+    /**
+     * The maximum distance to the tag to use
+     */
+    public static final double MAX_DISTANCE = 6;
+
     /** If vision should use manual calculations */
     public static final boolean USE_MANUAL_CALCULATIONS = false;
 

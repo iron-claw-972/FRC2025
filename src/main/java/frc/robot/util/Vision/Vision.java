@@ -474,7 +474,7 @@ public class Vision {
         List<PhotonTrackedTarget> targetsUsed = cameraResult.targets;
         for (int i = targetsUsed.size()-1; i >= 0; i--) {
           // Remove it from the list if it should not be used or if it has too high of an ambiguity
-          if(!useTag(targetsUsed.get(i).getFiducialId()) || targetsUsed.get(i).getPoseAmbiguity() > VisionConstants.HIGHEST_AMBIGUITY){
+          if(!useTag(targetsUsed.get(i).getFiducialId()) || targetsUsed.get(i).getPoseAmbiguity() > VisionConstants.HIGHEST_AMBIGUITY || targetsUsed.get(i).bestCameraToTarget.getTranslation().getNorm() > VisionConstants.MAX_DISTANCE){
             targetsUsed.remove(i);
           }
         }
@@ -610,7 +610,7 @@ public class Vision {
         }
         // Continue if the id is too high or too low
         int id = target.getFiducialId();
-        if(!useTag(id)){
+        if(!useTag(id) || target.bestCameraToTarget.getTranslation().getNorm() > VisionConstants.MAX_DISTANCE){
           continue;
         }
         // Stores target pose and robot to camera transformation for easy access later
