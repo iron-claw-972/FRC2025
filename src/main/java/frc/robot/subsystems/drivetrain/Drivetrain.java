@@ -9,6 +9,10 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PPLibTelemetry;
+import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -165,8 +169,21 @@ public class Drivetrain extends SubsystemBase {
 
         PhoenixOdometryThread.getInstance().start();
 
-        modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS); 
-     }
+        modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
+        
+
+        PathPlannerLogging.setLogActivePathCallback(
+            (activePath) -> {
+            Logger.recordOutput(
+                "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+            });
+        PathPlannerLogging.setLogTargetPoseCallback(
+            (targetPose) -> {
+            Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+            });
+
+        PPLibTelemetry.enableCompetitionMode();
+        }
 
     public void close() {
         // close each of the modules
@@ -199,14 +216,12 @@ public class Drivetrain extends SubsystemBase {
         // Apply update
         poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
         }
-        Logger.recordOutput("Gyro", MathUtil.inputModulus(gyroInputs.yawPosition.getDegrees(), 0, 360));
-        Logger.recordOutput("module poses", modulePoses.getModulePoses());
+        Logger.recordOutput("Odometry/module poses", modulePoses.getModulePoses());
         updateOdometryVision();
         
     }
 
     // DRIVE
-
     /**
      * Method to drive the robot using joystick info.
      *

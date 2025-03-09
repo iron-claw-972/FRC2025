@@ -1,18 +1,32 @@
 package frc.robot;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.function.BooleanSupplier;
+
+import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.DoNothing;
+import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -52,6 +66,9 @@ public class RobotContainer {
   private Elevator elevator = null;
   private Climb climb = null;
 
+    // Dashboard inputs
+  private final LoggedDashboardChooser<Command> autoChooser;
+
   // Controllers are defined here
   private BaseDriverConfig driver = null;
   @SuppressWarnings("unused")
@@ -80,6 +97,7 @@ public class RobotContainer {
         outtake = new OuttakeComp();
         elevator = new Elevator();
         climb = new Climb();
+        
       case BetaBot:
         indexer = new Indexer();
         intake = new Intake();
@@ -119,6 +137,7 @@ public class RobotContainer {
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
+    autoChooser = new LoggedDashboardChooser<>("auto selector");
    
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
@@ -183,10 +202,53 @@ public class RobotContainer {
       NamedCommands.registerCommand("L3", new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
       NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
       NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-    
-
-
     }
+  }
+
+  public void addPaths(){
+        autoChooser.addDefaultOption("Do Nothing", new DoNothing());
+
+        try {
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side");
+            
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
+
+        autoChooser.addOption("Right Side", new PathPlannerAuto("Right Side"));
+        autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
+        autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
+
+       
+        // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new FollowPathCommand("#2", true, drive))
+        // .andThen(new FollowPathCommand("#3", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new FollowPathCommand("#4", true, drive))
+        // .andThen(new FollowPathCommand("#5", true, drive))
+        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+        // .andThen(new OuttakeCoral(outtake, elevator)));    
+
+        
+        if(elevator != null && outtake != null) {
+         autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
+         .andThen(new OuttakeCoralBasic(outtake, ()->true))
+         .andThen(new WaitCommand(3))
+         .andThen(new FollowPathCommand("Next Tester", true, drive))
+         );
+
+          autoChooser.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
+         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+         .andThen(new OuttakeCoral(outtake, elevator)));
+
+         autoChooser.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
+         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+         .andThen(new OuttakeCoral(outtake, elevator)));
+        }
   }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {
