@@ -17,4 +17,7 @@ public class ArmConstants {
     public static final double LENGTH = 0.127; // meters
     public static final double MOI = MASS*LENGTH*LENGTH/3; // kg*m^2
     public static final double CENTER_OF_MASS_LENGTH = LENGTH/2; // meters
+
+    public static final double MAX_VELOCITY = 5; // rad/s
+    public static final double MAX_ACCELERATION = 8; // rad/s^2
 }
