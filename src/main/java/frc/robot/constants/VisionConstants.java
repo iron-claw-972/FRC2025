@@ -130,6 +130,11 @@ public class VisionConstants {
      */
     public static final double HIGHEST_AMBIGUITY = 0.2;
 
+	// used to cleanly shutdown the OrangePi
+	public static final String ORANGEPI_USERNAME = "pi";
+	public static final String ORANGEPI_IP = "10.9.72.12";
+	public static final String ORANGEPI_PASSWORD = "raspberry";
+
     /**
      * The camera poses
      * <p>

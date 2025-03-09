@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.vision.AimAtTag;
 import frc.robot.commands.vision.CalculateStdDevs;
 import frc.robot.commands.vision.ReturnData;
+import frc.robot.commands.vision.ShutdownOrangePi;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.util.Vision;
 import frc.robot.util.ShuffleBoard.ShuffleBoardTabs;
@@ -39,6 +40,8 @@ public class VisionTab extends ShuffleBoardTabs {
             tab.add("Calculate std devs", new CalculateStdDevs(1000, vision, drive));
             tab.add("Return data", new ReturnData(vision));
         }
+
+		tab.add("Shutdown OrangePi", new ShutdownOrangePi());
         tab.add("Aim at tag", new AimAtTag(drive));
     }
 
