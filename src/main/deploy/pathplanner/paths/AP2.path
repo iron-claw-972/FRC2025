@@ -3,43 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.722,
-        "y": 0.923
+        "x": 5.157,
+        "y": 2.996
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.241691975851757,
-        "y": 2.4205382848833574
+        "x": 4.011782786885246,
+        "y": 1.411649590163935
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.0114204545454544,
-        "y": 2.1852414772727276
+        "x": 1.721585264900662,
+        "y": 0.9232408940397341
       },
       "prevControl": {
-        "x": 2.749638585522988,
-        "y": 1.9411650737696169
+        "x": 3.3071269068631195,
+        "y": 3.1029906004587517
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -36.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Elevator",
-      "waypointRelativePos": 0.16647919010123857,
+      "name": "Intake",
+      "waypointRelativePos": 0.2789651293588275,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "L4"
+          "name": "IntakeCoral"
         }
       }
     }
@@ -54,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": -35.0
   },
   "reversed": false,
-  "folder": "Ground RSide",
+  "folder": "Align RSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -36.0
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": false
 }

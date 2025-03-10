@@ -193,7 +193,7 @@ public class Drivetrain extends SubsystemBase {
         gyroIO.updateInputs(gyroInputs);
         Logger.processInputs("Drive/Gyro", gyroInputs);
         for (var module : modules) {
-        module.periodic();
+            module.periodic();
         }
         odometryLock.unlock();
             // Update odometry
@@ -201,19 +201,18 @@ public class Drivetrain extends SubsystemBase {
             modules[0].getOdometryTimestamps(); // All signals are sampled together
         int sampleCount = sampleTimestamps.length;
         for (int i = 0; i < sampleCount; i++) {
-        // Read wheel positions and deltas from each module
-        SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-        for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-            modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
-        } 
-        // Use the real gyro angle
-        rawGyroRotation = gyroInputs.odometryYawPositions[i];
-        // Apply update
-        poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+            // Read wheel positions and deltas from each module
+            SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+            for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+                modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+            } 
+            // Use the real gyro angle
+            rawGyroRotation = gyroInputs.odometryYawPositions[i];
+            // Apply update
+            poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
         }
         Logger.recordOutput("Odometry/module poses", modulePoses.getModulePoses());
         updateOdometryVision();
-        
     }
 
     // DRIVE
@@ -283,6 +282,10 @@ public class Drivetrain extends SubsystemBase {
         }
 
         Pose2d pose2 = getPose();
+
+        // Even if vision is disabled, it should still update inputs
+        // This prevents it from storing a lot of unread results, and it could be useful for replays
+        vision.updateInputs();
 
         if(VisionConstants.ENABLED){
             if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){

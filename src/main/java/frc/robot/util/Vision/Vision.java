@@ -302,12 +302,6 @@ public class Vision {
         for(EstimatedRobotPose pose : cameras.get(i).getEstimatedPose(yawFunction)){
           if(pose != null){
             estimatedPoses.add(pose);
-
-            // LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-            //   pose.estimatedPose.getX(),
-            //   pose.estimatedPose.getY(),
-            //   pose.estimatedPose.toPose2d().getRotation().getRadians()
-            // });
           }
         }
       }else{
@@ -317,11 +311,6 @@ public class Vision {
           if (pose.estimatedPose != null) {
             estimatedPoses.add(pose);
 
-            // LogManager.log("Vision/camera " + i + "/estimated pose2d", new double[] {
-            //   pose.estimatedPose.getX(),
-            //   pose.estimatedPose.getY(),
-            //   pose.estimatedPose.getRotation().getZ()
-            // });
           }
         }
       }
@@ -356,10 +345,6 @@ public class Vision {
       }
     }
 
-    for(VisionCamera c : cameras){
-      c.updateInputs();
-    }
-
     sawTag = false;
 
     // An array list of poses returned by different cameras
@@ -376,6 +361,15 @@ public class Vision {
         slipped ? VisionConstants.VISION_STD_DEVS_2 : VisionConstants.VISION_STD_DEVS
       );
       sawTag = true;
+    }
+  }
+
+  /**
+   * Updates each camera's inputs for logging
+   */
+  public void updateInputs(){
+    for(VisionCamera c : cameras){
+      c.updateInputs();
     }
   }
 
@@ -507,7 +501,10 @@ public class Vision {
       return list;
     }
 
-    @Override
+  /**
+   * Updates the VisionIOInputs object with the results from PhotonVision for logging
+   */
+  @Override
     public void updateInputs() {
       inputs.connected = camera.isConnected();
       inputs.results = camera.getAllUnreadResults();

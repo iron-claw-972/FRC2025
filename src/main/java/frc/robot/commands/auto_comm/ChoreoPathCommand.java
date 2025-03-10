@@ -19,9 +19,9 @@ public class ChoreoPathCommand extends SequentialCommandGroup {
                 drive,
                 (trajectory, bool)->{
                     if(bool){
-                        //LogManager.log("Trajectory started", trajectory.name());
+                        
                     }else{
-                        //LogManager.log("Trajectory ended", trajectory.name());
+                        
                     }
                 }
             );

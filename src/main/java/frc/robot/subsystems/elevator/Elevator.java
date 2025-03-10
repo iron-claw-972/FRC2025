@@ -25,8 +25,6 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.AngledElevatorSim;
-// import frc.robot.util.LogManager;
-// import frc.robot.util.LogManager.LogLevel;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
@@ -91,13 +89,6 @@ public class Elevator extends SubsystemBase {
     motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.GEARING * maxAcceleration/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target acceleration 
     rightMotor.getConfigurator().apply(talonFXConfigs);
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
-
-
-    //Logging
-    // LogManager.logSupplier("Elevator/Voltage", () -> getVoltage(), 100, LogLevel.INFO);
-    // LogManager.logSupplier("Elevator/Velocity", () -> getVelocity(), 100, LogLevel.INFO);
-    // LogManager.logSupplier("Elevator/position", () -> getPosition(), 100, LogLevel.INFO);
-
   }
 
   @Override
