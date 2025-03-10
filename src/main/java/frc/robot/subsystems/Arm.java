@@ -2,12 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.revrobotics.AbsoluteEncoder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -25,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
-import frc.robot.constants.swerve.DriveConstants;
 
 public class Arm extends SubsystemBase{
     //motor
@@ -39,9 +36,7 @@ public class Arm extends SubsystemBase{
 
     private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(IdConstants.ARM_ABSOLUTE_ENCODER);
 
-    private double setpoint = Units.rotationsToDegrees(absoluteEncoder.get());
-    private double lastAbsolutePosition = 0;
-    private double continuousAngle = 0;
+    private double setpoint = ArmConstants.START_ANGLE;
 
     private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
@@ -68,6 +63,8 @@ public class Arm extends SubsystemBase{
             SmartDashboard.putData("Arm Display", simulationMechanism);
         }
 
+        // TODO: Might need to wait
+
         resetAbsolute();
         motor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -93,10 +90,9 @@ public class Arm extends SubsystemBase{
 
     @Override
     public void periodic() {
-        double setpointRadians = Units.degreesToRadians(setpoint) * ArmConstants.GEAR_RATIO;
-        motor.setControl(voltageRequest.withPosition(setpointRadians).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
+        double setpointRotations = Units.degreesToRotations(setpoint) * ArmConstants.GEAR_RATIO;
+        motor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
         SmartDashboard.putNumber("Angle", getAngle());
-        SmartDashboard.putNumber("Motor Angle", Units.rotationsToDegrees(motor.getPosition().getValueAsDouble())/ArmConstants.GEAR_RATIO);
     }
 
     @Override
@@ -106,7 +102,6 @@ public class Arm extends SubsystemBase{
 
         double armRotations = Units.radiansToRotations(armSim.getAngleRads());
         encoderSim.setRawRotorPosition(armRotations * ArmConstants.GEAR_RATIO);
-        
         simLigament.setAngle(getAngle());
     }
 
@@ -122,24 +117,16 @@ public class Arm extends SubsystemBase{
      * Gets the angle of the arm
      * @return The angle in degrees
      */
-
     public double getAngle() {
-        double absolutePosition = absoluteEncoder.get();
-        double positionDelta = absolutePosition - lastAbsolutePosition;
-
-        if (positionDelta > 0.5) {
-            continuousAngle -= 1;
-        } else if (positionDelta < -0.5) {
-            continuousAngle += 1;
-        }
-
-        lastAbsolutePosition = absolutePosition;
-
-        return Units.rotationsToDegrees(continuousAngle + absolutePosition) / ArmConstants.GEAR_RATIO;
+        return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble()) / ArmConstants.GEAR_RATIO;
     }
 
     public void resetAbsolute(){
-        motor.setPosition(Units.degreesToRotations(ArmConstants.OFFSET)*ArmConstants.GEAR_RATIO);
+        if(RobotBase.isSimulation()){
+            motor.setPosition(Units.degreesToRotations(ArmConstants.START_ANGLE)*ArmConstants.GEAR_RATIO);
+        }else{
+            double absolutePosition = absoluteEncoder.get() / ArmConstants.ENCODER_GEAR_RATIO;
+            motor.setPosition(MathUtil.inputModulus(absolutePosition - Units.degreesToRotations(ArmConstants.OFFSET), -0.5, 0.5)*ArmConstants.GEAR_RATIO);
+        }
     }
-
 }
