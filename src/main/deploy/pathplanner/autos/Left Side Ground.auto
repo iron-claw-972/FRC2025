@@ -140,6 +140,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "GroundB #5"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
