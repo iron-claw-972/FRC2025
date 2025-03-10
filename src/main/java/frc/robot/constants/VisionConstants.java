@@ -35,7 +35,7 @@ public class VisionConstants {
     public static final boolean OBJECT_DETECTION_ENABLED = false;
 
     /** If odometry should be updated using vision during auto */
-    public static final boolean ENABLED_AUTO = false;
+    public static final boolean ENABLED_AUTO = true;
 
     /**
      * If odometry should be updated using vision while running the GoToPose and
@@ -173,35 +173,6 @@ public class VisionConstants {
                     new Rotation3d(0, Units.degreesToRadians(20), 0))));
 
     // Poses to potentially align to
-
-    public static final Pose2d RED_CORAL_STATION_LEFT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(0).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(126)),
-            FieldConstants.APRIL_TAGS.get(0).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(126)),
-            new Rotation2d(Units.degreesToRadians(126)));
-
-    public static final Pose2d RED_CORAL_STATION_RIGHT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(1).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(234)),
-            FieldConstants.APRIL_TAGS.get(1).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(234)),
-            new Rotation2d(Units.degreesToRadians(234)));
-
-    public static final Pose2d BLUE_CORAL_STATION_LEFT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(12).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(306)),
-            FieldConstants.APRIL_TAGS.get(12).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(306)),
-            new Rotation2d(Units.degreesToRadians(306)));
-
-    public static final Pose2d BLUE_CORAL_STATION_RIGHT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(11).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(54)),
-            FieldConstants.APRIL_TAGS.get(11).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(54)),
-            new Rotation2d(Units.degreesToRadians(54)));
-
     public static final Pose2d RED_PROCESSOR_POSE = new Pose2d(
             FieldConstants.APRIL_TAGS.get(2).pose.getX(),
             FieldConstants.APRIL_TAGS.get(2).pose.getY() - DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,

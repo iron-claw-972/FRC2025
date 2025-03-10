@@ -21,7 +21,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.constants.VisionConstants.REEF;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.GeomUtil;
@@ -61,9 +60,9 @@ public class DriveToPose extends Command {
   private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
   private DoubleSupplier omegaFF = () -> 0.0;
 
-  public DriveToPose(Drivetrain drive, Pose2d pose) {
+  public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
     this.drive = drive;
-    this.target = pose;
+    this.target = target;
     robot = drive::getPose;
 
     // Set tolerance
