@@ -78,9 +78,6 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private Operator operator = null;
 
-  private Thread odometryThread = null;
-  private Thread drivetrainThread = null;
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    * <p>
@@ -218,6 +215,12 @@ public class RobotContainer {
       NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.pose));
       NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.pose));
       NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.pose));
+      NamedCommands.registerCommand("Drive To 8/17 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.pose));
+      NamedCommands.registerCommand("Drive To 8/17 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.pose));
+      NamedCommands.registerCommand("Drive To 9/22 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.pose));
+      NamedCommands.registerCommand("Drive To 9/22 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.pose));
+      NamedCommands.registerCommand("Drive To 10/21 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.pose));
+      NamedCommands.registerCommand("Drive To 10/21 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.pose));
       NamedCommands.registerCommand("Drive To 11/20 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_20_LEFT.pose));
       NamedCommands.registerCommand("Drive To 11/20 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_20_RIGHT.pose));
     }
@@ -282,12 +285,6 @@ public class RobotContainer {
       }
       return false;
     };
-  }
-
-  // 1.795 1.108
-  public void interruptThreads(){
-    odometryThread.interrupt();
-    drivetrainThread.interrupt();
   }
 
   public boolean brownout() {
