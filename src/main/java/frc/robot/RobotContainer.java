@@ -13,10 +13,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -31,6 +32,7 @@ import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
@@ -206,10 +208,12 @@ public class RobotContainer {
       NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
       NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
 
-
-      // TODO: Station poses were wrong. Use position from PathPlanner
-      // NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.RED_CORAL_STATION_LEFT_POSE : VisionConstants.BLUE_CORAL_STATION_LEFT_POSE));
-      // NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.RED_CORAL_STATION_RIGHT_POSE : VisionConstants.BLUE_CORAL_STATION_RIGHT_POSE));
+      Pose2d blueStationRight = new Pose2d(1.722, 0.923, Rotation2d.fromDegrees(-36));
+      Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH-blueStationRight.getY(), Rotation2d.fromDegrees(-144));
+      Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationRight.getX(), blueStationLeft.getY(), blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
+      Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationLeft.getX(), blueStationRight.getY(), blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
+      NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));
+      NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationRight));
       NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));
       NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.pose));
       NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.pose));

@@ -9,11 +9,9 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PPLibTelemetry;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;

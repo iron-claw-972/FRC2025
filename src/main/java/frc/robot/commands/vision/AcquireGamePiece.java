@@ -22,6 +22,6 @@ public class AcquireGamePiece extends SequentialCommandGroup {
      * @param arm The arm
      */
     public AcquireGamePiece(Supplier<DetectedObject> gamePiece, Drivetrain drive, Intake intake, Indexer indexer, Elevator elevator, Outtake outtake){
-        addCommands(new IntakeCoral(intake, indexer, elevator, outtake).deadlineWith(new DriveToCoral(gamePiece, drive)));
+        addCommands(new IntakeCoral(intake, indexer, elevator, outtake).deadlineFor(new DriveToCoral(gamePiece, drive)));
     }
 }
