@@ -189,10 +189,11 @@ public class RobotContainer {
       NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
       NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
 
-      NamedCommands.registerCommand("Drive To Station Blue Right", new DriveToPose(drive, VisionConstants.BLUE_CORAL_STATION_RIGHT_POSE));  
-      NamedCommands.registerCommand("Drive To 19 Left", new DriveToPose(drive, VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));  
-      NamedCommands.registerCommand("Drive To 19 Right", new DriveToPose(drive, VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));  
-      NamedCommands.registerCommand("Drive To 18 Right", new DriveToPose(drive, VisionConstants.REEF.BLUE_BRANCH_18_LEFT.pose));  
+      NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.RED_CORAL_STATION_RIGHT_POSE : VisionConstants.BLUE_CORAL_STATION_RIGHT_POSE));  
+      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));  
+      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.pose));  
+      NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.pose));  
+      NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.pose));  
 
     }
   }

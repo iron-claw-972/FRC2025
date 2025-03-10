@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 19 Left"
+                  "name": "Drive To 6/19 Left"
                 }
               }
             ]
@@ -53,7 +53,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Drive To Station Blue Right"
+                        "name": "Drive To Right Station"
                       }
                     },
                     {
@@ -75,7 +75,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 19 Right"
+                  "name": "Drive To 6/19 Right"
                 }
               }
             ]
@@ -111,7 +111,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Drive To Station Blue Right"
+                        "name": "Drive To Right Station"
                       }
                     },
                     {
@@ -133,7 +133,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 18 Left"
+                  "name": "Drive To 7/18 Left"
                 }
               }
             ]
