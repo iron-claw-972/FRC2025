@@ -607,7 +607,7 @@ public class Vision {
         }
         // Continue if the id is too high or too low
         int id = target.getFiducialId();
-        if(!useTag(id) || target.bestCameraToTarget.getTranslation().getNorm() > VisionConstants.MAX_DISTANCE){
+        if(!useTag(id) || target.bestCameraToTarget.getTranslation().getNorm() > VisionConstants.MAX_DISTANCE || target.poseAmbiguity > VisionConstants.HIGHEST_AMBIGUITY){
           continue;
         }
         // Stores target pose and robot to camera transformation for easy access later
