@@ -76,14 +76,14 @@ public class Intake extends SubsystemBase {
                     Units.degreesToRadians(startPosition));
             laserCanSimTimer = new Timer();
         } else {
-            laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
-            try {
-                laserCan.setRangingMode(RangingMode.SHORT);
-                laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
-                laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
-            } catch (ConfigurationFailedException e) {
-                DriverStation.reportError("Intake LaserCan configuration error", true);
-            }
+            // laserCan = new LaserCan(IdConstants.INTAKE_LASER_CAN);
+            // try {
+            //     laserCan.setRangingMode(RangingMode.SHORT);
+            //     laserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+            //     laserCan.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
+            // } catch (ConfigurationFailedException e) {
+            //     DriverStation.reportError("Intake LaserCan configuration error", true);
+            // }
         }
         rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.Clockwise_Positive));
         pivotMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));

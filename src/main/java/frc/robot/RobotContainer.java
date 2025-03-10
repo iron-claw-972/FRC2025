@@ -129,17 +129,19 @@ public class RobotContainer {
 
         driver.configureControls();
         //operator.configureControls();
+        
         initializeAutoBuilder();
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        PathGroupLoader.loadPathGroups();      
+        PathGroupLoader.loadPathGroups();
+             
         break;
       }
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = new LoggedDashboardChooser<>("auto selector");
-   
+    addPaths(); 
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
@@ -227,18 +229,18 @@ public class RobotContainer {
   }
 
   public void addPaths(){
-        autoChooser.addDefaultOption("Do Nothing", new DoNothing());
+        //autoChooser.addDefaultOption("Do Nothing", new DoNothing());
 
         try {
-            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side");
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
             
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-
+        //autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
+        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
         autoChooser.addOption("Right Side", new PathPlannerAuto("Right Side"));
-        autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
+        //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
        
@@ -294,6 +296,10 @@ public class RobotContainer {
     else {
       return false;
     }
+  }
+
+  public Command getAutoCommand(){
+    return autoChooser.get();
   }
 }
 

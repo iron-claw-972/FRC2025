@@ -55,13 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To Right Station"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCoral"
+                  "name": "Drive To Left Station"
                 }
               }
             ]
@@ -106,13 +100,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To Right Station"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCoral"
+                  "name": "Drive To Left Station"
                 }
               }
             ]
