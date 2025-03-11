@@ -129,4 +129,8 @@ public class Arm extends SubsystemBase{
             motor.setPosition(MathUtil.inputModulus(absolutePosition - Units.degreesToRotations(ArmConstants.OFFSET), -0.5, 0.5)*ArmConstants.GEAR_RATIO);
         }
     }
+
+    public boolean atSetpoint() {
+        return Math.abs(getAngle() - setpoint) < 3.0;
+    }
 }

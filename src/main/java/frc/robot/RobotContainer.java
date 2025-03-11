@@ -12,6 +12,8 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
+import frc.robot.commands.gpm.MoveArm;
+import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
@@ -218,29 +220,56 @@ public class RobotContainer {
     if(elevator != null && outtake != null){
 
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
-      NamedCommands.registerCommand("L4", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+      NamedCommands.registerCommand("L4", 
+        new SequentialCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+          new WaitCommand(0.5),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT)
+        )
+      );
 
       NamedCommands.registerCommand("Lower Elevator", new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT)));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
-        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+        new SequentialCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+          new WaitCommand(0.5),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT)),
         new OuttakeCoral(outtake, elevator)
       ));
 
       
       NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
-        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+        new SequentialCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+          new WaitCommand(0.5),
+          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
         new OuttakeCoral(outtake, elevator)
       ));
 
       NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
-        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+        new SequentialCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+          new WaitCommand(0.5),
+          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
         new OuttakeCoral(outtake, elevator)
       ));
       
-      NamedCommands.registerCommand("L3", new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-      NamedCommands.registerCommand("L2", new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-      NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+      NamedCommands.registerCommand("L3", 
+        new SequentialCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+          new WaitCommand(0.5),
+          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+        )
+      );
+      NamedCommands.registerCommand("L2", 
+        new SequentialCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+          new WaitCommand(0.5),
+          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+        )
+      );
+      //NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
     
 
 

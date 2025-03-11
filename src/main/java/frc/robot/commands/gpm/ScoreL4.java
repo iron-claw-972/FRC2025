@@ -16,11 +16,9 @@ import frc.robot.subsystems.Outtake;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreL4 extends SequentialCommandGroup {
   /** Creates a new ScoreL4. */
-  public ScoreL4(Elevator elevator, Outtake outake) {
+  public ScoreL4(Outtake outtake) {
     addCommands(
-      new ParallelCommandGroup(
-        new OuttakeCoralBasic(outake, ()-> true),
-        new WaitCommand(0).andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT+0.09)))
+        new OuttakeCoralBasic(outtake, ()-> true)
     );
   }
 }
