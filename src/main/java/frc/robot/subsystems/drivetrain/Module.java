@@ -294,7 +294,7 @@ public class Module implements ModuleIO{
             driveMotor.set(percentOutput);
         } else {
             double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
-            Logger.recordOutput("desired vel" + moduleConstants.ordinal(), velocity*DriveConstants.DRIVE_GEAR_RATIO);
+            Logger.recordOutput("desired vel" + moduleConstants.ordinal(), velocity);
             m_loop.setNextR(velocity);
             // Correct our Kalman filter's state vector estimate with encoder data.
             m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), inputs.driveVelocityRadPerSec/DriveConstants.DRIVE_GEAR_RATIO));
