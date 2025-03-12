@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 
@@ -163,6 +164,8 @@ public class RobotContainer {
     AutoBuilder.configure(
         () -> drive.getPose(),
         (pose) -> {
+          System.out.println(pose);
+          Logger.recordOutput("pose reset", pose);
           drive.resetOdometry(pose);
         },
         () -> drive.getChassisSpeeds(),
@@ -185,7 +188,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("L4", new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
     
 
-      NamedCommands.registerCommand("Lower Elevator", new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT)));
+      NamedCommands.registerCommand("Lower Elevator", new WaitCommand(0.1).andThen(new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),

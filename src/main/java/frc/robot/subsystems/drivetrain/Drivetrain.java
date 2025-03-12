@@ -175,7 +175,7 @@ public class Drivetrain extends SubsystemBase {
             Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
             });
 
-        PPLibTelemetry.enableCompetitionMode();
+        //PPLibTelemetry.enableCompetitionMode();
         }
 
     public void close() {
@@ -268,7 +268,7 @@ public class Drivetrain extends SubsystemBase {
     /**
      * Updates odometry using vision
      */
-    public synchronized void updateOdometryVision() {
+    public void updateOdometryVision() {
         // Start the timer if it hasn't started yet
         visionEnableTimer.start();
 
@@ -503,7 +503,7 @@ public class Drivetrain extends SubsystemBase {
      *
      * @param pose the pose to reset to.
      */
-    public synchronized void resetOdometry(Pose2d pose) {
+    public void resetOdometry(Pose2d pose) {
         // NOTE: must use pigeon yaw for odometer!
         currentHeading = pose.getRotation().getRadians();
         poseEstimator.resetPosition(gyroInputs.yawPosition, getModulePositions(), pose);

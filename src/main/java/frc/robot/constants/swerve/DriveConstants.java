@@ -139,10 +139,10 @@ public class DriveConstants {
 
     /* Drive Motor PID Values */
     public static final double[] P_VALUES = {
-        0.035524,
-        0.075025,
-        0.1088,
-        0.085856
+        0.1,
+        0.1,
+        0.1,
+        0.1
     };
     public static final double[] I_VALUES = {
         0,

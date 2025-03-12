@@ -220,17 +220,17 @@ public class Module implements ModuleIO{
   
       // Update drive inputs
       inputs.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-      inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
-      inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
+      inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble()/DriveConstants.DRIVE_GEAR_RATIO);
+      inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble()/DriveConstants.DRIVE_GEAR_RATIO);
       inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
       inputs.driveCurrentAmps = driveCurrent.getValueAsDouble();
   
       // Update turn inputs
       inputs.turnConnected = turnConnectedDebounce.calculate(turnStatus.isOK());
       inputs.turnEncoderConnected = turnEncoderConnectedDebounce.calculate(turnEncoderStatus.isOK());
-      inputs.turnAbsolutePosition = Rotation2d.fromDegrees(turnAbsolutePosition.getValueAsDouble()*360);
-      inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble());
-      inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble());
+      inputs.turnAbsolutePosition = Rotation2d.fromRotations(turnAbsolutePosition.getValueAsDouble());
+      inputs.turnPosition = Rotation2d.fromRotations(turnPosition.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+      inputs.turnVelocityRadPerSec = Units.rotationsToRadians(turnVelocity.getValueAsDouble()/DriveConstants.MODULE_CONSTANTS.angleGearRatio);
       inputs.turnAppliedVolts = turnAppliedVolts.getValueAsDouble();
       inputs.turnCurrentAmps = turnCurrent.getValueAsDouble();
 
@@ -294,6 +294,7 @@ public class Module implements ModuleIO{
             driveMotor.set(percentOutput);
         } else {
             double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
+            Logger.recordOutput("desired vel" + moduleConstants.ordinal(), velocity*DriveConstants.DRIVE_GEAR_RATIO);
             m_loop.setNextR(velocity);
             // Correct our Kalman filter's state vector estimate with encoder data.
             m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), inputs.driveVelocityRadPerSec/DriveConstants.DRIVE_GEAR_RATIO));
@@ -340,7 +341,7 @@ public class Module implements ModuleIO{
     }
 
     public Rotation2d getAngle() {
-        return inputs.turnPosition.div(DriveConstants.MODULE_CONSTANTS.angleGearRatio);
+        return inputs.turnPosition;
     }
 
     public Rotation2d getCANcoder() {
@@ -416,15 +417,13 @@ public class Module implements ModuleIO{
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-                ConversionUtils.falconToMPS(ConversionUtils.RPMToFalcon(driveMotor.getVelocity().getValueAsDouble()*60, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
-                                            DriveConstants.DRIVE_GEAR_RATIO),
+                inputs.driveVelocityRadPerSec*DriveConstants.WHEEL_RADIUS,
                 getAngle());
     }
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-                ConversionUtils.falconToMeters(ConversionUtils.degreesToFalcon(drivePosition.getValueAsDouble()*360, 1), DriveConstants.WHEEL_CIRCUMFERENCE,
-                                               DriveConstants.DRIVE_GEAR_RATIO),
+                inputs.drivePositionRad*DriveConstants.WHEEL_RADIUS,
                 getAngle());
     }
 
