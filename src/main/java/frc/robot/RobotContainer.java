@@ -75,6 +75,8 @@ public class RobotContainer {
   private Climb climb = null;
   private Arm arm = null;
 
+  public double armWaitTime = 0.5;
+
     // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -200,7 +202,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("L4", 
         new SequentialCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new WaitCommand(0.5),
+          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L4_SETPOINT)
         )
       );
@@ -212,21 +214,21 @@ public class RobotContainer {
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new SequentialCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new WaitCommand(0.5),
+          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L4_SETPOINT)),
         new OuttakeCoral(outtake, elevator, arm)
       ));
 
       NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
         new SequentialCommandGroup(
-          new WaitCommand(0.5),
+          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
         new OuttakeCoral(outtake, elevator, arm)
       ));
 
       NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
         new SequentialCommandGroup(
-          new WaitCommand(0.5),
+          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
         new OuttakeCoral(outtake, elevator, arm)
       ));
@@ -234,14 +236,14 @@ public class RobotContainer {
       NamedCommands.registerCommand("L3", 
         new SequentialCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
-          new WaitCommand(0.5),
+          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
         )
       );
       NamedCommands.registerCommand("L2", 
         new SequentialCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
-          new WaitCommand(0.5),
+          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
         )
       );

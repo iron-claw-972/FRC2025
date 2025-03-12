@@ -77,14 +77,14 @@ public class Arm extends SubsystemBase implements ArmIO {
         motor.setNeutralMode(NeutralModeValue.Brake);
 
         var talonFXConfigs = new TalonFXConfiguration();
-        // set slot 0 gains
+        
         var slot0Configs = talonFXConfigs.Slot0;
-        // TODO: tune later
         slot0Configs.kS = 0;  // Static friction compensation (should be >0 if friction exists)
+        slot0Configs.kG = ArmConstants.MASS * 9.81 * ArmConstants.CENTER_OF_MASS_LENGTH / ArmConstants.GEAR_RATIO; // Gravity compensation
         slot0Configs.kV = 0.12; // Velocity gain: 1 rps -> 0.12V
         slot0Configs.kA = 0;  // Acceleration gain: 1 rps² -> 0V (should be tuned if acceleration matters)
-        slot0Configs.kP = 5; // If position error is 2.5 rotations, apply 12V (0.5 * 2.5 * 12V)
-        slot0Configs.kI = 0;   // Integral term (usually left at 0 for MotionMagic)
+        slot0Configs.kP = 0.5; // If position error is 2.5 rotations, apply 12V (0.5 * 2.5 * 12V)
+        slot0Configs.kI = 0.01;   // Integral term (usually left at 0 for MotionMagic)
         slot0Configs.kD = 0;   // Derivative term (used to dampen oscillations)
 
         // set Motion Magic settings
