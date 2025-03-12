@@ -67,9 +67,9 @@ public class Arm extends SubsystemBase implements ArmIO {
             SmartDashboard.putData("Arm Display", simulationMechanism);
         }
 
-        // TODO: Might need to wait
-
         // resetAbsolute();
+        motor.setPosition(Units.degreesToRotations(ArmConstants.START_ANGLE)*ArmConstants.GEAR_RATIO);
+
         motor.setNeutralMode(NeutralModeValue.Brake);
 
         var talonFXConfigs = new TalonFXConfiguration();
@@ -89,7 +89,6 @@ public class Arm extends SubsystemBase implements ArmIO {
         motionMagicConfigs.MotionMagicAcceleration = ArmConstants.MAX_ACCELERATION * ArmConstants.GEAR_RATIO/Math.PI/2;
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         motor.getConfigurator().apply(talonFXConfigs);
-
     }
 
     @Override
