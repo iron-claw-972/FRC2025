@@ -99,7 +99,7 @@ public class Climb extends SubsystemBase {
         }
 
         Logger.recordOutput("Climb/Motor Power", power);
-        Logger.recordOutput("Climb/setPointDeg", Units.radiansToDegrees(pid.getSetpoint())*totalGearRatio);
+        Logger.recordOutput("Climb/setpointDeg", Units.radiansToDegrees(pid.getSetpoint())*totalGearRatio);
 
         motor.set(MathUtil.clamp(power, -1, 1));
 

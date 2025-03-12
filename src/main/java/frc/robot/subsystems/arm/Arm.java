@@ -134,7 +134,7 @@ public class Arm extends SubsystemBase implements ArmIO {
      * @return The angle in degrees
      */
     public double getAngle() {
-        return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble()) / ArmConstants.GEAR_RATIO;
+        return inputs.measuredAngle;
     }
 
     public void resetAbsolute(){
@@ -156,6 +156,8 @@ public class Arm extends SubsystemBase implements ArmIO {
 
     @Override
     public void updateInputs(){
-        inputs.angle = getAngle();
+        inputs.measuredAngle = Units.rotationsToDegrees(motor.getPosition().getValueAsDouble()) / ArmConstants.GEAR_RATIO;
+        inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
+        Logger.recordOutput("Arm/setpointDeg", setpoint);
     }
 }

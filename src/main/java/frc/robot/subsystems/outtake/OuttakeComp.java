@@ -40,7 +40,7 @@ public class OuttakeComp extends Outtake {
         //  SmartDashboard.putBoolean("Coral ejected", coralEjecting());
 
         inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
-        inputs.proximity = getProximity();
+        inputs.proximity = colorSensor.getProximity();
         Logger.processInputs("Outtake", inputs);
     }
 
@@ -68,7 +68,7 @@ public class OuttakeComp extends Outtake {
     }
 
     public int getProximity() {
-        return colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
+        return inputs.proximity;  // Returns 0 (far) to ~2047 (very close)
     }
 
     // coral detection from color sensor
