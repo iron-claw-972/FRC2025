@@ -26,6 +26,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
@@ -49,17 +50,19 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Indexer indexer;
     private final Outtake outtake;
     private final Climb climb;
+    private final Arm arm;
     private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_TRIGGER);
     private int alignmentDirection = 0;
     private Pose2d alignmentPose = null;
 
-    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
+    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm) {
         super(drive);
         this.elevator = elevator;
         this.intake = intake;
         this.indexer = indexer;
         this.outtake = outtake;
         this.climb = climb;
+        this.arm = arm;
     }
 
     public void configureControls() {
@@ -120,7 +123,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(outtake != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));
         }
         if(intake != null && indexer != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));

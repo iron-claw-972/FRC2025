@@ -24,6 +24,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
@@ -47,15 +48,17 @@ public class Operator {
     private final Indexer indexer;
     private final Outtake outtake;
     private final Climb climb;
+    private final Arm arm;
     private int alignmentDirection = 0;
     
-    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
+    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm) {
         this.drive = drive;
         this.elevator = elevator;
         this.intake = intake;
         this.indexer = indexer;
         this.outtake = outtake;
         this.climb = climb;
+        this.arm = arm;
     }
 
     public void configureControls() {
@@ -92,7 +95,7 @@ public class Operator {
             driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
         }
         if(outtake != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm));
         }
         if(intake != null && indexer != null){
             driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));

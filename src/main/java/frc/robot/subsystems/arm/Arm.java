@@ -1,4 +1,6 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.arm;
+
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -24,7 +26,7 @@ import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
 
-public class Arm extends SubsystemBase{
+public class Arm extends SubsystemBase implements ArmIO {
     //motor
     private TalonFX motor = new TalonFX(IdConstants.ARM_MOTOR);
     private TalonFXSimState encoderSim;
@@ -41,6 +43,8 @@ public class Arm extends SubsystemBase{
     private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
     private final ArmFeedforward feedforward = new ArmFeedforward(0, ArmConstants.MASS*ArmConstants.CENTER_OF_MASS_LENGTH/ArmConstants.GEAR_RATIO/ArmConstants.MOTOR.KtNMPerAmp*ArmConstants.MOTOR.rOhms, 0);
+
+    private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
     public Arm() {
         if (RobotBase.isSimulation()) {
@@ -65,7 +69,7 @@ public class Arm extends SubsystemBase{
 
         // TODO: Might need to wait
 
-        resetAbsolute();
+        // resetAbsolute();
         motor.setNeutralMode(NeutralModeValue.Brake);
 
         var talonFXConfigs = new TalonFXConfiguration();
@@ -92,7 +96,8 @@ public class Arm extends SubsystemBase{
     public void periodic() {
         double setpointRotations = Units.degreesToRotations(setpoint) * ArmConstants.GEAR_RATIO;
         motor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
-        SmartDashboard.putNumber("Angle", getAngle());
+        updateInputs();
+        Logger.processInputs("Arm", inputs);
     }
 
     @Override
@@ -132,5 +137,10 @@ public class Arm extends SubsystemBase{
 
     public boolean atSetpoint() {
         return Math.abs(getAngle() - setpoint) < 3.0;
+    }
+
+    @Override
+    public void updateInputs(){
+        inputs.angle = getAngle();
     }
 }

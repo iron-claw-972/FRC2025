@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -28,9 +29,11 @@ import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeCoral;
+import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
+import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
@@ -46,10 +49,10 @@ import frc.robot.subsystems.outtake.OuttakeAlpha;
 import frc.robot.subsystems.outtake.OuttakeComp;
 import frc.robot.subsystems.drivetrain.GyroIOPigeon2;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.Arm;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.Vision.DetectedObject;
 import frc.robot.util.Vision.Vision;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 
 /**
@@ -94,12 +97,12 @@ public class RobotContainer {
 
       case TestBed2:
         arm = new Arm();
+        outtake = new OuttakeComp();
 
         SmartDashboard.putData("0 Deg", new InstantCommand(() -> arm.setSetpoint(0)));
         SmartDashboard.putData("90 Deg", new InstantCommand(() -> arm.setSetpoint(90)));
         SmartDashboard.putData("45 Deg", new InstantCommand(() -> arm.setSetpoint(45)));
         SmartDashboard.putData("-90 Deg", new InstantCommand(() -> arm.setSetpoint(-90)));
-        outtake = new OuttakeComp();
         break;
       default:
       case SwerveCompetition:
@@ -128,7 +131,7 @@ public class RobotContainer {
         }
       case Vertigo:
         drive = new Drivetrain(vision, new GyroIOPigeon2());
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm);
         //operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain
@@ -191,7 +194,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake));
     }
     if(elevator != null && outtake != null && arm != null){
-      NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+      NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
       NamedCommands.registerCommand("L4", 
         new SequentialCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
@@ -200,26 +203,30 @@ public class RobotContainer {
         )
       );
 
-      NamedCommands.registerCommand("Lower Elevator", new WaitCommand(0.1).andThen(new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))));
+      NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(new WaitCommand(0.1),
+        new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new SequentialCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
           new WaitCommand(0.5),
           new MoveArm(arm, ArmConstants.L4_SETPOINT)),
-        new OuttakeCoral(outtake, elevator)
+        new OuttakeCoral(outtake, elevator, arm)
       ));
 
+      NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
+        new SequentialCommandGroup(
           new WaitCommand(0.5),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
-        new OuttakeCoral(outtake, elevator)
+        new OuttakeCoral(outtake, elevator, arm)
       ));
 
       NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
         new SequentialCommandGroup(
           new WaitCommand(0.5),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
-        new OuttakeCoral(outtake, elevator)
+        new OuttakeCoral(outtake, elevator, arm)
       ));
       
       NamedCommands.registerCommand("L3", 
@@ -271,15 +278,15 @@ public class RobotContainer {
        
         // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new OuttakeCoral(outtake, elevator, arm))
         // .andThen(new FollowPathCommand("#2", true, drive))
         // .andThen(new FollowPathCommand("#3", true, drive))
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator))
+        // .andThen(new OuttakeCoral(outtake, elevator, arm))
         // .andThen(new FollowPathCommand("#4", true, drive))
         // .andThen(new FollowPathCommand("#5", true, drive))
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator)));    
+        // .andThen(new OuttakeCoral(outtake, elevator, arm)));    
 
         
         if(elevator != null && outtake != null) {
@@ -291,11 +298,11 @@ public class RobotContainer {
 
           autoChooser.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
          .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-         .andThen(new OuttakeCoral(outtake, elevator)));
+         .andThen(new OuttakeCoral(outtake, elevator, arm)));
 
          autoChooser.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
          .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-         .andThen(new OuttakeCoral(outtake, elevator)));
+         .andThen(new OuttakeCoral(outtake, elevator, arm)));
         }
   }
 

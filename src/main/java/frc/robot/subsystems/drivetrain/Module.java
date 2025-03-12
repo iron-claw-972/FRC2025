@@ -47,7 +47,6 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
-import frc.robot.util.ConversionUtils;
 import frc.robot.util.PhoenixOdometryThread;
 import lib.CTREModuleState;
 
