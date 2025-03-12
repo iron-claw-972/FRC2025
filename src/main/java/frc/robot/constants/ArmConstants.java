@@ -29,4 +29,6 @@ public class ArmConstants {
     public static final double L2_L3_SETPOINT = 30;
     public static final double ALGAE_SETPOINT = 90;
     public static final double ALGAE_NET_SETPOINT = 90;
+
+    public static final double TOLERANCE = 3.0;
 }

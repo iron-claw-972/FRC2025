@@ -1,5 +1,7 @@
 package frc.robot.subsystems.arm;
 
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -46,6 +48,8 @@ public class Arm extends SubsystemBase implements ArmIO {
 
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
+    private BooleanSupplier elevatorStowed;
+
     public Arm() {
         if (RobotBase.isSimulation()) {
             encoderSim = motor.getSimState();
@@ -91,9 +95,17 @@ public class Arm extends SubsystemBase implements ArmIO {
         motor.getConfigurator().apply(talonFXConfigs);
     }
 
+    public void setElevatorStowed(BooleanSupplier elevatorStowed){
+        this.elevatorStowed = elevatorStowed;
+    }
+
     @Override
     public void periodic() {
-        double setpointRotations = Units.degreesToRotations(setpoint) * ArmConstants.GEAR_RATIO;
+        double setpoint2 = setpoint;
+        if(elevatorStowed == null || elevatorStowed.getAsBoolean()){
+            setpoint2 = ArmConstants.START_ANGLE;
+        }
+        double setpointRotations = Units.degreesToRotations(setpoint2) * ArmConstants.GEAR_RATIO;
         motor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
         updateInputs();
         Logger.processInputs("Arm", inputs);
@@ -135,7 +147,11 @@ public class Arm extends SubsystemBase implements ArmIO {
     }
 
     public boolean atSetpoint() {
-        return Math.abs(getAngle() - setpoint) < 3.0;
+        return Math.abs(getAngle() - setpoint) < ArmConstants.TOLERANCE;
+    }
+
+    public boolean stowed() {
+        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < ArmConstants.TOLERANCE;
     }
 
     @Override
