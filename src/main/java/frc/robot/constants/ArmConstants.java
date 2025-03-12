@@ -5,9 +5,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 public class ArmConstants {
     // TODO: get angles and offset
     // Degrees
+    public static final double START_ANGLE = -90;
     public static final double MIN_ANGLE = -90;
-    public static final double MAX_ANGLE = 90;
-    public static final double START_ANGLE = MIN_ANGLE;
+    public static final double MAX_ANGLE = 200;
     public static final double OFFSET = 0 - START_ANGLE;
 
     public static final double GEAR_RATIO = 29.36;
@@ -23,10 +23,11 @@ public class ArmConstants {
     public static final double MAX_ACCELERATION = 8; // rad/s^2
 
     //TODO: get setpoint angles
-    public static final double INTAKE_SETPOINT = START_ANGLE;
+    public static final double INTAKE_SETPOINT = -90;
     public static final double STATION_INTAKE_SETPOINT = -30;
-    public static final double L4_SETPOINT = 0;
-    public static final double L2_L3_SETPOINT = 30;
-    public static final double ALGAE_SETPOINT = 90;
-    public static final double ALGAE_NET_SETPOINT = 90;
+    public static final double L4_SETPOINT = 150;
+    public static final double L2_L3_SETPOINT = 125;
+    public static final double L1_SETPOINT = 150;
+    public static final double ALGAE_SETPOINT = 190;
+    public static final double ALGAE_NET_SETPOINT = 120;
 }
