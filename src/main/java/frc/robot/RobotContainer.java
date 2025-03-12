@@ -99,6 +99,7 @@ public class RobotContainer {
         SmartDashboard.putData("90 Deg", new InstantCommand(() -> arm.setSetpoint(90)));
         SmartDashboard.putData("45 Deg", new InstantCommand(() -> arm.setSetpoint(45)));
         SmartDashboard.putData("-90 Deg", new InstantCommand(() -> arm.setSetpoint(-90)));
+        outtake = new OuttakeComp();
         break;
       default:
       case SwerveCompetition:

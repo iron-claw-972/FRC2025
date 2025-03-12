@@ -67,7 +67,7 @@ public class Robot extends LoggedRobot {
 
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     }
-
+    
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.

@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.wpilibj.I2C;
+
 public class IdConstants {
     // Drivetrain
     public static final int DRIVE_FRONT_LEFT_ID = 1;
@@ -39,8 +41,8 @@ public class IdConstants {
     // Outtake
     public static final int OUTTAKE_MOTOR_ALPHA = 14;
     public static final int OUTTAKE_MOTOR_COMP = 30; 
-    public static final int OUTTAKE_DIO_LOADED = 2;
     public static final int OUTTAKE_DIO_EJECTING = 3;
+    public static final I2C.Port i2cPort = I2C.Port.kOnboard;
 
     //Arm
     public static final int ARM_MOTOR = 2;

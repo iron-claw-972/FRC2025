@@ -1,6 +1,7 @@
 package frc.robot.subsystems.outtake;
 
 
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
@@ -23,7 +24,7 @@ public class OuttakeAlpha extends Outtake {
 
 
     /** Coral detected before the rollers */
-    private DigitalInput digitalInputLoaded = new DigitalInput(IdConstants.OUTTAKE_DIO_LOADED);
+    private final ColorSensorV3 colorSensor = new ColorSensorV3(IdConstants.i2cPort);
     /** Coral detected after the rollers */
     private DigitalInput digitalInputEjecting = new DigitalInput(IdConstants.OUTTAKE_DIO_EJECTING);
 
@@ -37,8 +38,6 @@ public class OuttakeAlpha extends Outtake {
             PersistMode.kNoPersistParameters
         );
         if (RobotBase.isSimulation()){
-            // object that will control the loaded sensor
-            dioInputLoaded = new DIOSim(digitalInputLoaded);
             // object that will control the ejecting sensor
             dioInputEjecting = new DIOSim(digitalInputEjecting);
             // assume coral is loaded
@@ -61,10 +60,6 @@ public class OuttakeAlpha extends Outtake {
 
     }
 
-
-    
-
-
     /** Set the motor power to move the coral */
     public void setMotor(double power){
         this.power = power;
@@ -78,12 +73,6 @@ public class OuttakeAlpha extends Outtake {
         setMotor(SmartDashboard.getNumber("wheel speed", 0.2));
         // this starts the motor... what needs to be done later?
     }
-
-
-    public boolean coralLoaded(){
-       return !digitalInputLoaded.get();
-    }
-
 
     /**
      *  Coral is at the ejecting beam break sensor.
@@ -101,5 +90,18 @@ public class OuttakeAlpha extends Outtake {
 
     public boolean isSimulation(){
         return RobotBase.isSimulation();
+    }
+    
+    public int getProximity() {
+        return colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
+    }
+
+    // coral detection from color sensor
+    public boolean coralLoaded() {
+        //this is about 1/2inch away -- might have to change based on placement
+        if (getProximity() > 800) {
+            return true;
+        }
+        return false;
     }
 }
