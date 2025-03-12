@@ -41,4 +41,8 @@ public class IdConstants {
     public static final int OUTTAKE_MOTOR_COMP = 30; 
     public static final int OUTTAKE_DIO_LOADED = 2;
     public static final int OUTTAKE_DIO_EJECTING = 3;
+
+    //Arm
+    public static final int ARM_MOTOR = 2;
+    public static final int ARM_ABSOLUTE_ENCODER = 5;
 }
