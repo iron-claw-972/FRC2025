@@ -30,6 +30,8 @@ public class ElevatorConstants {
     public static final double L2_SETPOINT = 0.56;
     public static final double L3_SETPOINT = 0.96;
     public static final double L4_SETPOINT = 1.58;
+    //TODO: will have to test
+    public static final double NET_SETPOINT = MAX_HEIGHT;
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
     public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(14.767);

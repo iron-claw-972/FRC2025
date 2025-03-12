@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeAlgae;
+import frc.robot.commands.gpm.IntakeAlgaeArm;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
@@ -72,7 +73,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
-        if(elevator != null && outtake != null) {
+        if(elevator != null && outtake != null && arm != null) {
             driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
                 new ParallelCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
@@ -103,8 +104,19 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     new MoveArm(arm, ArmConstants.START_ANGLE)
                 )
             );
-            driver.get(PS5Button.LB).and(menu).onTrue(new MoveElevator(elevator, 0.35).andThen(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.RB).and(menu).onTrue(new MoveElevator(elevator, 0.72).andThen(new RemoveAlgae(outtake)));
+            //TODO: will have to change setpoints
+            driver.get(PS5Button.LB).and(menu).onTrue(
+                new MoveElevator(elevator, 0.35).andThen(new IntakeAlgaeArm(outtake))
+            );
+            driver.get(PS5Button.RB).and(menu).onTrue(
+                new MoveElevator(elevator, 0.72).andThen(new IntakeAlgaeArm(outtake))
+            );
+            driver.get(DPad.UP).and(menu).onTrue(
+                new ParallelCommandGroup(
+                    new MoveElevator(elevator, ElevatorConstants.NET_SETPOINT),
+                    new MoveArm(arm, ArmConstants.ALGAE_NET_SETPOINT)
+                )
+            );
         }
 
         // Intake/outtake
