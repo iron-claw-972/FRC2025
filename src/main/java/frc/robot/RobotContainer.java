@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DoNothing;
@@ -161,7 +162,6 @@ public class RobotContainer {
     LiveWindow.disableAllTelemetry();
     LiveWindow.setEnabled(false);
     
-
   }
 
   /**
@@ -198,9 +198,8 @@ public class RobotContainer {
     if(elevator != null && outtake != null && arm != null){
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
       NamedCommands.registerCommand("L4", 
-        new SequentialCommandGroup(
+        new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L4_SETPOINT)
         )
       );
@@ -210,38 +209,38 @@ public class RobotContainer {
         new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
-        new SequentialCommandGroup(
+        new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new WaitCommand(armWaitTime),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT)),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT)
+        ),
         new OuttakeCoral(outtake, elevator, arm)
       ));
 
       NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
-        new SequentialCommandGroup(
-          new WaitCommand(armWaitTime),
-          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
+        new ParallelCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+        ),
         new OuttakeCoral(outtake, elevator, arm)
       ));
 
       NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
-        new SequentialCommandGroup(
-          new WaitCommand(armWaitTime),
-          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)),
+        new ParallelCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+          new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+        ),
         new OuttakeCoral(outtake, elevator, arm)
       ));
       
       NamedCommands.registerCommand("L3", 
-        new SequentialCommandGroup(
+        new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
-          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
         )
       );
       NamedCommands.registerCommand("L2", 
-        new SequentialCommandGroup(
+        new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
-          new WaitCommand(armWaitTime),
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
         )
       );
