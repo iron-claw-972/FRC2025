@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.elevator;
 
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -25,29 +27,27 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.AngledElevatorSim;
+import frc.robot.util.PhoenixUtil;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
   private double setpoint = ElevatorConstants.START_HEIGHT;
   
-  MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
+  private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
   private double maxVelocity = 3; // m/s
-  private double maxAcceleration = 8
-  ; // m/s
+  private double maxAcceleration = 8; // m/s
         
   // Sim variables
   private AngledElevatorSim sim;
   private Mechanism2d mechanism;
   private MechanismLigament2d ligament;
   private double voltage;
-  // gravity feedforward
-  double uff = ElevatorConstants.MOTOR.rOhms*ElevatorConstants.DRUM_RADIUS*ElevatorConstants.
-  CARRIAGE_MASS*Constants.GRAVITY_ACCELERATION/ElevatorConstants.GEARING/ElevatorConstants.MOTOR.KtNMPerAmp;
 
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
+  private BooleanSupplier armStowed;
 
   public Elevator() {
 
@@ -69,8 +69,7 @@ public class Elevator extends SubsystemBase {
 
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
-
-    rightMotor.setNeutralMode(NeutralModeValue.Brake);
+    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
 
     var talonFXConfigs = new TalonFXConfiguration();
 
@@ -91,10 +90,18 @@ public class Elevator extends SubsystemBase {
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
   }
 
+  public void setArmStowed(BooleanSupplier armStowed){
+    this.armStowed = armStowed;
+  }
+
   @Override
   public void periodic() {
-    double setpoint2 = ElevatorConstants.GEARING * setpoint / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
-    rightMotor.setControl(voltageRequest.withPosition(setpoint2).withFeedForward(0.15));
+    double setpoint2 = setpoint;
+    if(setpoint2 < ElevatorConstants.SAFE_SETPOINT && (armStowed == null || !armStowed.getAsBoolean())){
+      setpoint2 = ElevatorConstants.SAFE_SETPOINT;
+    }
+    double setpointRotations = ElevatorConstants.GEARING * setpoint2 / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
+    rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.15));
 
     inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
     * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);

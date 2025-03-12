@@ -25,6 +25,9 @@ public class ArmConstants {
     //TODO: get setpoint angles
     public static final double INTAKE_SETPOINT = -90;
     public static final double STATION_INTAKE_SETPOINT = -30;
+
+    public static final double TOLERANCE = 3.0;
+
     public static final double L4_SETPOINT = 150;
     public static final double L2_L3_SETPOINT = 125;
     public static final double L1_SETPOINT = 90;

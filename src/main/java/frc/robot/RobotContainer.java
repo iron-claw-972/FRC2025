@@ -113,6 +113,8 @@ public class RobotContainer {
         elevator = new Elevator();
         climb = new Climb();
         arm = new Arm();
+        arm.setElevatorStowed(() -> elevator.getPosition() < ElevatorConstants.SAFE_SETPOINT);
+        elevator.setArmStowed(() -> arm.stowed());
 
       case BetaBot:
         indexer = new Indexer();
