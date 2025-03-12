@@ -27,6 +27,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IdConstants;
 import frc.robot.util.AngledElevatorSim;
+import frc.robot.util.PhoenixUtil;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
@@ -68,8 +69,7 @@ public class Elevator extends SubsystemBase {
 
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
-
-    rightMotor.setNeutralMode(NeutralModeValue.Brake);
+    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
 
     var talonFXConfigs = new TalonFXConfiguration();
 
