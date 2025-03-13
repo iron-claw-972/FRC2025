@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.commands.gpm.FinishStationIntake;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.gpm.IntakeAlgae;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
@@ -80,7 +80,7 @@ public class Operator {
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
-            Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
+            Command finishIntake = new DoNothing();
             driver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
                 .onFalse(new InstantCommand(()->{
                     if(!startIntake.isScheduled()){

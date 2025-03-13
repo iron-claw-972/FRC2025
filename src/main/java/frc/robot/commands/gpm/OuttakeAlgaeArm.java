@@ -2,7 +2,6 @@ package frc.robot.commands.gpm;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.outtake.Outtake;
 
 public class OuttakeAlgaeArm extends Command{

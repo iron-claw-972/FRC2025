@@ -50,7 +50,6 @@ public class Elevator extends SubsystemBase {
   private BooleanSupplier armStowed;
 
   public Elevator() {
-
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
     if (RobotBase.isSimulation()) {

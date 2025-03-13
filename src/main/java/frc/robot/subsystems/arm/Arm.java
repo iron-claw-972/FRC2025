@@ -150,7 +150,7 @@ public class Arm extends SubsystemBase implements ArmIO {
         return Math.abs(getAngle() - setpoint) < ArmConstants.TOLERANCE;
     }
 
-    public boolean stowed() {
+    public boolean canMoveElevator() {
         return Math.abs(getAngle() - ArmConstants.START_ANGLE) < ArmConstants.TOLERANCE;
     }
 

@@ -19,7 +19,7 @@ public class IntakeCoral extends SequentialCommandGroup {
 				new InstantCommand(() -> intake.unstow()),
 				new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
 				new MoveArm(arm, ArmConstants.START_ANGLE),
-				new IntakeCoralHelper(intake, indexer, outtake));
+				new IntakeCoralHelper(intake, indexer, outtake, arm, elevator));
 	}
 
 }

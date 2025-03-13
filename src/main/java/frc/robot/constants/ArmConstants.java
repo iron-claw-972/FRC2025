@@ -7,7 +7,7 @@ public class ArmConstants {
     // Degrees
     public static final double START_ANGLE = -90;
     public static final double MIN_ANGLE = -90;
-    public static final double MAX_ANGLE = 200;
+    public static final double MAX_ANGLE = 180;
     public static final double OFFSET = 0 - START_ANGLE;
 
     public static final double GEAR_RATIO = 29.36;
@@ -23,16 +23,18 @@ public class ArmConstants {
     public static final double MAX_ACCELERATION = 8; // rad/s^2
 
     //TODO: get setpoint angles
-    public static final double INTAKE_SETPOINT = -90;
-    public static final double STATION_INTAKE_SETPOINT = -30;
+    public static final double INTAKE_SETPOINT = START_ANGLE;
+    public static final double STATION_INTAKE_SETPOINT = 30;
 
     public static final double TOLERANCE = 3.0;
 
-    public static final double L4_SETPOINT = 150;
-    public static final double L2_L3_SETPOINT = 125;
+    public static final double L4_SETPOINT = 0;
+    public static final double L2_L3_SETPOINT = 65;
     public static final double L1_SETPOINT = 90;
-    public static final double ALGAE_SETPOINT = 190;
-    public static final double ALGAE_NET_SETPOINT_1 = 60;
-    public static final double ALGAE_NET_SETPOINT_2 = 180-ALGAE_NET_SETPOINT_1;
-    public static final double PROCESSOR_SETPOINT = 190;
+    public static final double ALGAE_SETPOINT = 0;
+    public static final double ALGAE_NET_SETPOINT_1 = 100;
+    public static final double ALGAE_NET_SETPOINT_2 = 0;
+    public static final double PROCESSOR_SETPOINT = -50;
+
+    public static final double STOW_SETPOINT = L4_SETPOINT;
 }
