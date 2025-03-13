@@ -18,7 +18,7 @@ public abstract class Outtake extends SubsystemBase {
     public void simulationPeriodic() {
         ticks++;
 
-        if (getMotorSpeed() > 0.05) {
+        if (getMotorSpeed() > 0.05 && dioInputEjecting != null && dioInputLoaded != null) {
             if (ticks > 250) {
                 ticks = 0;
             }
@@ -37,7 +37,7 @@ public abstract class Outtake extends SubsystemBase {
             }
         }
 
-        if (ticks == 250) {
+        if (ticks == 250 && dioInputLoaded != null) {
             // make coral appear again (set to true)
             dioInputLoaded.setValue(false);
         }
