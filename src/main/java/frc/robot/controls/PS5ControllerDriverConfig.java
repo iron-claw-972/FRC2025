@@ -105,7 +105,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             //Processor setpoint
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
                 new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT),
+                    new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.1),
                     new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
                 )
             );
@@ -160,7 +160,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
         }
 
-        //Todo: outtake algae
         if(intake != null && outtake != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(outtake, intake));
         }
