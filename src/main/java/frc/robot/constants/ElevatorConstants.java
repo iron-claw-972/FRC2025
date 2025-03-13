@@ -31,6 +31,7 @@ public class ElevatorConstants {
     public static final double L2_SETPOINT = 0.56;
     public static final double L3_SETPOINT = 0.96;
     public static final double L4_SETPOINT = 1.58;
+
     //TODO: will have to test
     public static final double NET_SETPOINT = MAX_HEIGHT;
 

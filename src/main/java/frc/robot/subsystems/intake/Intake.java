@@ -177,7 +177,7 @@ public class Intake extends SubsystemBase {
      * 
      * @return Boolean (True if at setpoint, False otherwise)
      */
-    private boolean isAtSetpoint(double setpoint) {
+    public boolean isAtSetpoint(double setpoint) {
         return Math.abs(getStowPosition() - setpoint) < positionTolerance;
     }
 

@@ -19,6 +19,8 @@ import frc.robot.commands.gpm.IntakeAlgaeArm;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
+import frc.robot.commands.gpm.OuttakeAlgae;
+import frc.robot.commands.gpm.OuttakeAlgaeArm;
 import frc.robot.commands.gpm.OuttakeAlgaeIntake;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
@@ -29,6 +31,7 @@ import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
@@ -98,10 +101,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     new MoveArm(arm, ArmConstants.L4_SETPOINT)
                 )
             );
+            //Processor setpoint
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
                 new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-                    new MoveArm(arm, ArmConstants.START_ANGLE)
+                    new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT),
+                    new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
                 )
             );
             //TODO: will have to change setpoints
@@ -117,13 +121,16 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     new MoveArm(arm, ArmConstants.ALGAE_NET_SETPOINT)
                 )
             );
+
+            if()
+            driver.get(PS5Button.)
         }
 
         // Intake/outtake
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
         if(intake != null && indexer != null){// && elevator != null){
             boolean toggle = true;
-            Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake);
+            Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm);
             Command intakeAlgae = new IntakeAlgae(intake);
             driver.get(PS5Button.CROSS).onTrue(new InstantCommand(()->{
                 if(r3.getAsBoolean()) return;
@@ -159,8 +166,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     }
             }));
         }
-        if(intake != null){
-            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgaeIntake(intake));
+
+        //Todo: outtake algae
+        if(intake != null && outtake != null){
+            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(outtake, intake));
         }
         if(outtake != null && elevator != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));
@@ -224,6 +233,9 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }
             if(climb != null){
                 climb.stow();
+            }
+            if(arm != null){
+                arm.setSetpoint(ArmConstants.START_ANGLE);
             }
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
