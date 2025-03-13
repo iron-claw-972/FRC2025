@@ -21,6 +21,7 @@ import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeAlgaeArm;
+import frc.robot.commands.gpm.NetSetpoint;
 import frc.robot.commands.gpm.OuttakeAlgaeIntake;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
@@ -115,15 +116,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.RB).and(menu).onTrue(
                 new MoveElevator(elevator, 0.72).andThen(new IntakeAlgaeArm(outtake))
             );
-            driver.get(DPad.UP).and(menu).onTrue(
-                new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.NET_SETPOINT),
-                    new MoveArm(arm, ArmConstants.ALGAE_NET_SETPOINT)
-                )
-            );
-
-            if()
-            driver.get(PS5Button.)
+            driver.get(DPad.UP).and(menu).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
         }
 
         // Intake/outtake
@@ -234,9 +227,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             if(climb != null){
                 climb.stow();
             }
-            if(arm != null){
-                arm.setSetpoint(ArmConstants.START_ANGLE);
-            }
+            getDrivetrain().setIsAlign(false);
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));

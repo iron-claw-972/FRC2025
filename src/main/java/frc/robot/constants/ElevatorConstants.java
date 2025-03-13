@@ -14,7 +14,7 @@ public class ElevatorConstants {
     public static final int NUMBER_OF_STAGES = 3;
     public static final double GEARING = 8.333/NUMBER_OF_STAGES;
     public static final double MIN_HEIGHT = 0.0; // meters
-    public static final double MAX_HEIGHT = Units.inchesToMeters(66);;//Units.inchesToMeters(48); // meters
+    public static final double MAX_HEIGHT = Units.inchesToMeters(66);//Units.inchesToMeters(48); // meters
     public static final double START_HEIGHT = MIN_HEIGHT; // meters
     public static final double CARRIAGE_MASS = 3; // kilograms 2.49475803
     public static final double DRUM_RADIUS = Units.inchesToMeters(1.281/2); // meters
@@ -31,9 +31,7 @@ public class ElevatorConstants {
     public static final double L2_SETPOINT = 0.56;
     public static final double L3_SETPOINT = 0.96;
     public static final double L4_SETPOINT = 1.58;
-
-    //TODO: will have to test
-    public static final double NET_SETPOINT = MAX_HEIGHT;
+    public static final double NET_SETPOINT = MAX_HEIGHT-0.02;
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
     public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(14.767);
