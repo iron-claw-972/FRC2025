@@ -46,7 +46,7 @@ public class IntakeCoralHelper extends Command {
 		indexer.run();
 		phase = Phase.Acquiring;
 		if(outtake != null) {
-			outtake.setMotor(0.25);
+			outtake.setMotor(0.1);
 		}
 	}
 
@@ -61,6 +61,8 @@ public class IntakeCoralHelper extends Command {
 			case Indexing:
 				if (!indexer.isIndexerClear()) {
 					phase = Phase.Detected;
+					intake.setSpeed(0.1);
+					indexer.slow();
 				}
 				break;
 			case Detected:
