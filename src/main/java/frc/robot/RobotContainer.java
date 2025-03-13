@@ -105,7 +105,9 @@ public class RobotContainer {
         elevator = new Elevator();
         climb = new Climb();
         arm = new Arm();
-        arm.setElevatorStowed(() -> elevator.getPosition() < ElevatorConstants.SAFE_SETPOINT);
+        // Arm can move if the elevator is within tolerance of its safe setpoint or higher
+        arm.setElevatorStowed(() -> elevator.getPosition() < ElevatorConstants.SAFE_SETPOINT - 0.025);
+        // Elevator can only move down if the arm is in the intake setpoint
         elevator.setArmStowed(() -> arm.canMoveElevator());
 
       case BetaBot:
