@@ -9,20 +9,24 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeAlgae;
+import frc.robot.commands.gpm.IntakeAlgaeArm;
 import frc.robot.commands.gpm.IntakeCoral;
+import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.NetSetpoint;
-import frc.robot.commands.gpm.OuttakeAlgae;
+import frc.robot.commands.gpm.OuttakeAlgaeIntake;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
+import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
@@ -71,14 +75,44 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Elevator setpoints
         if(elevator != null && outtake != null && arm != null) {
-            driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
-            driver.get(PS5Button.LB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-            driver.get(PS5Button.RB).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
-            driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
-            driver.get(PS5Button.LB).and(menu).onTrue(new MoveElevator(elevator, 0.35).andThen(new RemoveAlgae(outtake)));
-            driver.get(PS5Button.RB).and(menu).onTrue(new MoveElevator(elevator, 0.72).andThen(new RemoveAlgae(outtake)));
-            driver.get(Dpad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
+            driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
+                new ParallelCommandGroup(
+                    new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
+                    new MoveArm(arm, ArmConstants.L1_SETPOINT)
+                )
+            );
+            driver.get(PS5Button.LB).and(menu.negate()).onTrue(
+                new ParallelCommandGroup(
+                    new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+                    new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+                )
+            );
+            driver.get(PS5Button.RB).and(menu.negate()).onTrue(
+                new ParallelCommandGroup(
+                    new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+                    new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+                )
+            );
+            driver.get(PS5Button.LEFT_TRIGGER).onTrue(
+                new ParallelCommandGroup(
+                    new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+                    new MoveArm(arm, ArmConstants.L4_SETPOINT)
+                )
+            );
+            driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
+                new ParallelCommandGroup(
+                    new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT),
+                    new MoveArm(arm, ArmConstants.START_ANGLE)
+                )
+            );
+            //TODO: will have to change setpoints
+            driver.get(PS5Button.LB).and(menu).onTrue(
+                new MoveElevator(elevator, 0.35).andThen(new IntakeAlgaeArm(outtake))
+            );
+            driver.get(PS5Button.RB).and(menu).onTrue(
+                new MoveElevator(elevator, 0.72).andThen(new IntakeAlgaeArm(outtake))
+            );
+            driver.get(DPad.UP).and(menu).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
         }
 
         // Intake/outtake
@@ -122,7 +156,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
         }
         if(intake != null){
-            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
+            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgaeIntake(intake));
         }
         if(outtake != null && elevator != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));

@@ -67,4 +67,13 @@ public abstract class Outtake extends SubsystemBase {
     public void removeAlgae(){
         setMotor(-0.6);
     }
+
+    //TODO: power was guess
+    public void intakeAlgaeReef() {
+        setMotor(-0.6);
+    }
+
+    public void outtakeAlgae() {
+        setMotor(0.6);
+    }
 }

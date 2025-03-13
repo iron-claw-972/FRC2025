@@ -15,7 +15,7 @@ import frc.robot.commands.gpm.FinishStationIntake;
 import frc.robot.commands.gpm.IntakeAlgae;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
-import frc.robot.commands.gpm.OuttakeAlgae;
+import frc.robot.commands.gpm.OuttakeAlgaeIntake;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
 import frc.robot.commands.gpm.ReverseMotors;
@@ -92,7 +92,7 @@ public class Operator {
         }
         if(intake != null){
             driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
-            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
+            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgaeIntake(intake));
         }
         if(outtake != null && elevator != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm));
