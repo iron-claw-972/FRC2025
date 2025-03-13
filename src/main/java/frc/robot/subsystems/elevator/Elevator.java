@@ -36,8 +36,8 @@ public class Elevator extends SubsystemBase {
   
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
-  private double maxVelocity = 3.68; // m/s
-  private double maxAcceleration = 8; // m/s
+  private double maxVelocity = 1; // m/s 3.68
+  private double maxAcceleration = 1; // m/s 8
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -68,7 +68,8 @@ public class Elevator extends SubsystemBase {
 
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
-    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
+    //TODO fixed the elevator not setting brake mode, add for all configuration
+    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Coast));
 
     var talonFXConfigs = new TalonFXConfiguration();
 
@@ -96,6 +97,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     double setpoint2 = setpoint;
+    // TODO armStowed.getAsBoolean() will return false for the first frame because inputs.getAngle is 0?
     if(setpoint2 < ElevatorConstants.SAFE_SETPOINT && (armStowed == null || !armStowed.getAsBoolean())){
       setpoint2 = ElevatorConstants.SAFE_SETPOINT;
     }

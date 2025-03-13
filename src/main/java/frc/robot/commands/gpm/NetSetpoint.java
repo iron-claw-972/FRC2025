@@ -14,6 +14,7 @@ import frc.robot.subsystems.elevator.Elevator;
 
 public class NetSetpoint extends SequentialCommandGroup {
     public NetSetpoint(Elevator elevator, Arm arm, Drivetrain drive){
+        //TODO will this spinning while elevator is going up break the robot?
         addCommands(
             new InstantCommand(()->{
                 drive.setAlignAngle(
