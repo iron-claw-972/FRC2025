@@ -207,7 +207,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Cancel commands
         driver.get(PS5Button.TOUCHPAD).and(menu.negate()).onTrue(new InstantCommand(()->{
             if(elevator != null){
-                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                if(outtake != null && outtake.coralLoaded()){
+                    elevator.setSetpoint(ElevatorConstants.SAFE_SETPOINT);
+                }else{
+                    elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                }
             }
             if(outtake != null){
                 outtake.stop();
@@ -221,6 +225,13 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }
             if(climb != null){
                 climb.stow();
+            }
+            if(arm != null){
+                if(outtake != null && outtake.coralLoaded()){
+                    arm.setSetpoint(ArmConstants.STOW_SETPOINT);
+                }else{
+                    arm.setSetpoint(ArmConstants.START_ANGLE);
+                }
             }
             getDrivetrain().setIsAlign(false);
             getDrivetrain().setDesiredPose(()->null);
