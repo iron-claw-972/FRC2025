@@ -45,6 +45,6 @@ public class IdConstants {
     public static final I2C.Port i2cPort = I2C.Port.kOnboard;
 
     //Arm
-    public static final int ARM_MOTOR = 2;
+    public static final int ARM_MOTOR = 29;
     public static final int ARM_ABSOLUTE_ENCODER = 5;
 }

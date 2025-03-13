@@ -153,16 +153,23 @@ public class VisionConstants {
      * <p>
      * + Yaw: Counterclockwise
      */
-
+        //TODO message a cadder for the exact camera positons, they are wiring during tutorial 3/13/2025
     public static final ArrayList<Pair<String, Transform3d>> APRIL_TAG_CAMERAS = new ArrayList<Pair<String, Transform3d>>(
             List.of(
                 new Pair<String, Transform3d>(
-                        "Camera",
+                        "CameraFront",
                         new Transform3d(
-                                new Translation3d(Units.inchesToMeters(2.617), Units.inchesToMeters(10.789),
-                                        Units.inchesToMeters(6.213)),
-                                new Rotation3d(0, Units.degreesToRadians(-20),
-                                        Math.PI/2 + Units.degreesToRadians(10))))));
+                                new Translation3d(Units.inchesToMeters(10.4), Units.inchesToMeters(9.404),
+                                        Units.inchesToMeters(10.619)),
+                                new Rotation3d(0, Units.degreesToRadians(-10),
+                                        Math.PI/2 + Units.degreesToRadians(20)))),
+                new Pair<String, Transform3d>(
+                        "CameraBack",
+                        new Transform3d(
+                                new Translation3d(Units.inchesToMeters(-9.754), Units.inchesToMeters(7.42),
+                                        Units.inchesToMeters(8.37)),
+                                new Rotation3d(0, Units.degreesToRadians(-19.5),
+                                        Math.PI/2)))));
 
     /**
      * The transformations from the robot to object detection cameras

@@ -36,8 +36,8 @@ public class Elevator extends SubsystemBase {
   
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
-  private double maxVelocity = 3.68; // m/s
-  private double maxAcceleration = 8; // m/s
+  private double maxVelocity = 1; // m/s 3.68
+  private double maxAcceleration = 1; // m/s 8
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -68,7 +68,8 @@ public class Elevator extends SubsystemBase {
 
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
-    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
+    //TODO fixed the elevator not setting brake mode, add for all configuration
+    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Coast));
 
     var talonFXConfigs = new TalonFXConfiguration();
 
@@ -87,6 +88,7 @@ public class Elevator extends SubsystemBase {
     motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.GEARING * maxAcceleration/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target acceleration 
     rightMotor.getConfigurator().apply(talonFXConfigs);
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    updateInputs();
   }
 
   public void setArmStowed(BooleanSupplier armStowed){
@@ -96,17 +98,13 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     double setpoint2 = setpoint;
+    // TODO armStowed.getAsBoolean() will return false for the first frame because inputs.getAngle is 0?
     if(setpoint2 < ElevatorConstants.SAFE_SETPOINT && (armStowed == null || !armStowed.getAsBoolean())){
       setpoint2 = ElevatorConstants.SAFE_SETPOINT;
     }
     double setpointRotations = ElevatorConstants.GEARING * setpoint2 / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.15));
-
-    inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
-    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
-    inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
-    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
-    inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
+    updateInputs();
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("Elevator/Setpoint", getSetpoint());
   }
@@ -126,6 +124,14 @@ public class Elevator extends SubsystemBase {
     if (RobotBase.isReal()) {
       rightMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
     }
+  }
+
+  public void updateInputs(){
+    inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
   }
   
   /**

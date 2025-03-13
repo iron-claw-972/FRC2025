@@ -111,6 +111,7 @@ public class Arm extends SubsystemBase implements ArmIO {
         motionMagicConfigs.MotionMagicAcceleration = ArmConstants.MAX_ACCELERATION * ArmConstants.GEAR_RATIO/Math.PI/2;
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         motor.getConfigurator().apply(talonFXConfigs);
+        updateInputs();
     }
 
     public void setElevatorStowed(BooleanSupplier elevatorStowed){
