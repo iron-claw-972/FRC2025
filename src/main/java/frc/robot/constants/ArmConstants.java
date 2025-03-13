@@ -32,5 +32,6 @@ public class ArmConstants {
     public static final double L2_L3_SETPOINT = 125;
     public static final double L1_SETPOINT = 90;
     public static final double ALGAE_SETPOINT = 190;
-    public static final double ALGAE_NET_SETPOINT = 120;
+    public static final double ALGAE_NET_SETPOINT_1 = 60;
+    public static final double ALGAE_NET_SETPOINT_2 = 180-ALGAE_NET_SETPOINT_1;
 }

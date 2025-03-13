@@ -83,9 +83,9 @@ public class Drivetrain extends SubsystemBase {
     // Disables vision for the first few seconds after deploying
     private Timer visionEnableTimer = new Timer();
 
-    // If the robot should aim at the speaker
+    // If the robot should algin to the angle
     private boolean isAlign = false;
-    // Angle to align to, null for directly toward speaker
+    // Angle to align to, can be null
     private Double alignAngle = null;
     // used for drift control
     private double currentHeading = 0;
@@ -518,8 +518,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Sets the angle to align to for the speaker
-     * @param newAngle The new angle in radians, set to null to aim directly at the speaker
+     * Sets the angle to align to
+     * @param newAngle The new angle in radians, can be set to null
      */
     public void setAlignAngle(Double newAngle){
         alignAngle = newAngle;
@@ -538,14 +538,14 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Gets the angle to align to for the speaker
+     * Gets the angle to align to
      * @return The angle in radians
      */
     public double getAlignAngle(){
         if(alignAngle != null){
             return alignAngle;
         }
-        return -Math.PI/2;
+        return 0;
     }
 
     /**

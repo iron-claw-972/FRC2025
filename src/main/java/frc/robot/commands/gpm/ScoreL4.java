@@ -15,7 +15,7 @@ public class ScoreL4 extends SequentialCommandGroup {
   /** Creates a new ScoreL4. */
   public ScoreL4(Outtake outtake, Arm arm) {
     addCommands(
-        new OuttakeCoralBasic(outtake, ()-> true)
+      new OuttakeCoralBasic(outtake, ()-> true)
     );
   }
 }
