@@ -107,10 +107,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 )
             );
             //TODO: will have to change setpoints
-            driver.get(PS5Button.LB).and(menu).onTrue(
+            driver.get(PS5Button.LB).and(menu).whileTrue(
                 new MoveElevator(elevator, 0.35).andThen(new IntakeAlgaeArm(outtake))
             );
-            driver.get(PS5Button.RB).and(menu).onTrue(
+            driver.get(PS5Button.RB).and(menu).whileTrue(
                 new MoveElevator(elevator, 0.72).andThen(new IntakeAlgaeArm(outtake))
             );
             driver.get(DPad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
