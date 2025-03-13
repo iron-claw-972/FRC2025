@@ -25,13 +25,20 @@ public class ElevatorConstants {
     public static final double SIM_LIMIT_SWITCH_TRIGGER_DISTANCE = 0.01; // meters
 
     public static final double STOW_SETPOINT = 0;
-    public static final double INTAKE_SETPOINT = 0;
+    public static final double INTAKE_SETPOINT = 0.0157;
+    public static final double INTAKE_RAISED_SETPOINT = 0.2;
+    //TODO: haven't gotten yet
     public static final double SAFE_SETPOINT = 0.5;
-    public static final double L1_SETPOINT = 0.3;
-    public static final double L2_SETPOINT = 0.56;
+    public static final double L1_SETPOINT = 0.334;
+    public static final double L2_SETPOINT = 0.568;
     public static final double L3_SETPOINT = 0.96;
-    public static final double L4_SETPOINT = 1.58;
-    public static final double NET_SETPOINT = MAX_HEIGHT-0.02;
+    public static final double L4_SETPOINT = 1.67;
+    //Dunk L4 = 1.5
+    public static final double BOTTOM_ALGAE_SETPOINT = 0.385;
+    public static final double TOP_ALGAE_SETPOINT = 0.779;
+
+    public static final double NET_SETPOINT = MAX_HEIGHT;
+
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
     public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(14.767);

@@ -28,13 +28,18 @@ public class ArmConstants {
 
     public static final double TOLERANCE = 3.0;
 
-    public static final double L4_SETPOINT = 0;
-    public static final double L2_L3_SETPOINT = 65;
-    public static final double L1_SETPOINT = 90;
-    public static final double ALGAE_SETPOINT = 0;
-    public static final double ALGAE_NET_SETPOINT_1 = 100;
-    public static final double ALGAE_NET_SETPOINT_2 = 0;
+    public static final double L4_SETPOINT = 1.89;
+    //Dunk L4 = 6.4
+    public static final double L2_L3_SETPOINT = 6.23;
+    //TODO: find L1 setpoint angle
+    public static final double L1_SETPOINT = 0;
+
+    public static final double ALGAE_SETPOINT = -16.37;
+    public static final double ALGAE_NET_SETPOINT_1 = 102.0;
+    public static final double ALGAE_NET_SETPOINT_2 = 8.130;
     public static final double PROCESSOR_SETPOINT = -50;
 
-    public static final double STOW_SETPOINT = L4_SETPOINT;
+    public static final double STOW_SETPOINT = -14.0;
+    public static final double ALGAE_STOW_SETPOINT = 50.0;
+
 }
