@@ -18,7 +18,6 @@ public class NetSetpoint extends SequentialCommandGroup {
     public NetSetpoint(boolean chooseClosestSide, Elevator elevator, Arm arm, Drivetrain drive){
             //TODO will this spinning while elevator is going up break the robot?
         addCommands(
-            new MoveArm(arm, ArmConstants.ALGAE_STOW_SETPOINT),
             new InstantCommand(()->{
                 if(chooseClosestSide){
                     drive.setAlignAngle(
@@ -28,6 +27,7 @@ public class NetSetpoint extends SequentialCommandGroup {
                     drive.setIsAlign(true);
                 }
             }),
+            new MoveArm(arm, ArmConstants.ALGAE_STOW_SETPOINT),
             new MoveElevator(elevator, ElevatorConstants.NET_SETPOINT),
             new ConditionalCommand(
                 new MoveArm(arm, ArmConstants.ALGAE_NET_SETPOINT_1),
