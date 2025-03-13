@@ -38,7 +38,7 @@ public class ArmConstants {
     public static final double ALGAE_NET_SETPOINT_1 = 102.0;
     public static final double ALGAE_NET_SETPOINT_2 = 8.130;
     // TODO
-    public static final double PROCESSOR_SETPOINT = -50;
+    public static final double PROCESSOR_SETPOINT = -14.0;
 
     public static final double STOW_SETPOINT = -14.0;
 
