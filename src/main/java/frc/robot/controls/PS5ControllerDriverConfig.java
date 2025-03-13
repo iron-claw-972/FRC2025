@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
@@ -75,25 +76,25 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Elevator setpoints
         if(elevator != null && outtake != null && arm != null) {
             driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
-                new ParallelCommandGroup(
+                new SequentialCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
                     new MoveArm(arm, ArmConstants.L1_SETPOINT)
                 )
             );
             driver.get(PS5Button.LB).and(menu.negate()).onTrue(
-                new ParallelCommandGroup(
+                new SequentialCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
                     new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
                 )
             );
             driver.get(PS5Button.RB).and(menu.negate()).onTrue(
-                new ParallelCommandGroup(
+                new SequentialCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
                     new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
                 )
             );
             driver.get(PS5Button.LEFT_TRIGGER).onTrue(
-                new ParallelCommandGroup(
+                new SequentialCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
                     new MoveArm(arm, ArmConstants.L4_SETPOINT)
                 )
@@ -101,7 +102,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             //Processor setpoint
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
                 new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.1),
+                    new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.001),
                     new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
                 )
             );
@@ -112,7 +113,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.RB).and(menu).onTrue(
                 new MoveElevator(elevator, 0.72).andThen(new IntakeAlgaeArm(outtake))
             );
-            driver.get(DPad.UP).and(menu).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
+            driver.get(DPad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
         }
 
         // Intake/outtake
@@ -157,7 +158,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }
 
         if(intake != null && outtake != null){
-            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(outtake, intake));
+            driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
+                new OuttakeAlgae(outtake, intake),
+                new MoveArm(arm, ArmConstants.START_ANGLE),
+                new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+            ));
         }
         if(outtake != null && elevator != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));
