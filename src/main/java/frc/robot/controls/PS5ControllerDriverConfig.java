@@ -161,7 +161,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
                 new MoveArm(arm, ArmConstants.START_ANGLE),
-                new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+                new InstantCommand(()->{
+                    elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                    getDrivetrain().setIsAlign(false);
+                }, elevator)
             ));
         }
         if(outtake != null && elevator != null){
