@@ -15,33 +15,7 @@ public abstract class Outtake extends SubsystemBase {
 
     protected abstract double getMotorSpeed();
 
-    public void simulationPeriodic() {
-        ticks++;
-
-        if (getMotorSpeed() > 0.05) {
-            if (ticks > 250) {
-                ticks = 0;
-            }
-            // motor is outtaking
-            // motor is spinning, ejecting will be true. after 0.14 seconds
-            if (ticks == 7) {
-                dioInputEjecting.setValue(false);
-            }
-            if (ticks == 14) {
-                // after 0.14 seconds
-                dioInputLoaded.setValue(true);
-            }
-            if (ticks == 16) {
-                // after 0.18 seconds
-                dioInputEjecting.setValue(true);
-            }
-        }
-
-        if (ticks == 250) {
-            // make coral appear again (set to true)
-            dioInputLoaded.setValue(false);
-        }
-    }
+    public void simulationPeriodic(){}
 
     /** Set the motor power to move the coral */
     public abstract void setMotor(double power);

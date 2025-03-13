@@ -2,6 +2,7 @@ package frc.robot.subsystems.arm;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -27,6 +28,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
+import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
+import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Arm extends SubsystemBase implements ArmIO {
     //motor
@@ -49,6 +53,20 @@ public class Arm extends SubsystemBase implements ArmIO {
     private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
     private BooleanSupplier elevatorStowed;
+
+    //Real mechanism
+    private LoggedMechanism2d realMechanism = new LoggedMechanism2d(3, 3);
+    LoggedMechanismRoot2d realRoot = realMechanism.getRoot("Arm", 1.5, 1.5);
+    LoggedMechanismLigament2d realLigament = realRoot.append(
+        new LoggedMechanismLigament2d("Measured Angle", 1, ArmConstants.START_ANGLE, 4, new Color8Bit(Color.kRed))
+    );
+
+    //Setpoint mechanism
+    private LoggedMechanism2d setMechanism = new LoggedMechanism2d(3, 3);
+    LoggedMechanismRoot2d setRoot = setMechanism.getRoot("Arm", 1.5, 1.5);
+    LoggedMechanismLigament2d setLigament = setRoot.append(
+        new LoggedMechanismLigament2d("Setpoint Angle", 1, ArmConstants.START_ANGLE, 4, new Color8Bit(Color.kGreen))
+    );
 
     public Arm() {
         if (RobotBase.isSimulation()) {
@@ -107,8 +125,9 @@ public class Arm extends SubsystemBase implements ArmIO {
         }
         double setpointRotations = Units.degreesToRotations(setpoint2) * ArmConstants.GEAR_RATIO;
         motor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
+        realLigament.setAngle(inputs.measuredAngle + 16.37);
+        setLigament.setAngle(setpoint + 16.37);
         updateInputs();
-        Logger.processInputs("Arm", inputs);
     }
 
     @Override
@@ -158,6 +177,10 @@ public class Arm extends SubsystemBase implements ArmIO {
     public void updateInputs(){
         inputs.measuredAngle = Units.rotationsToDegrees(motor.getPosition().getValueAsDouble()) / ArmConstants.GEAR_RATIO;
         inputs.currentAmps = motor.getStatorCurrent().getValueAsDouble();
+
+        Logger.processInputs("Arm", inputs);
         Logger.recordOutput("Arm/setpointDeg", setpoint);
+        Logger.recordOutput("Arm/RealMechanism2d", realMechanism);
+        Logger.recordOutput("Arm/SetpointMechanism2d", setMechanism);
     }
 }
