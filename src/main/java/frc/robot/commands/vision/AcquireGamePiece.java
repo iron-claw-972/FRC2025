@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.gpm.IntakeCoral;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.indexer.Indexer;
@@ -21,7 +22,7 @@ public class AcquireGamePiece extends SequentialCommandGroup {
      * @param index The indexer
      * @param arm The arm
      */
-    public AcquireGamePiece(Supplier<DetectedObject> gamePiece, Drivetrain drive, Intake intake, Indexer indexer, Elevator elevator, Outtake outtake){
-        addCommands(new IntakeCoral(intake, indexer, elevator, outtake).deadlineFor(new DriveToCoral(gamePiece, drive)));
+    public AcquireGamePiece(Supplier<DetectedObject> gamePiece, Drivetrain drive, Intake intake, Indexer indexer, Elevator elevator, Outtake outtake, Arm arm){
+        addCommands(new IntakeCoral(intake, indexer, elevator, outtake, arm).deadlineFor(new DriveToCoral(gamePiece, drive)));
     }
 }

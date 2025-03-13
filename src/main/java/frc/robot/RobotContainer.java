@@ -100,7 +100,7 @@ public class RobotContainer {
 
       case TestBed2:
         break;
-        
+
       default:
       case SwerveCompetition:
         outtake = new OuttakeComp();
@@ -189,7 +189,7 @@ public class RobotContainer {
 
   public void registerCommands() {
     if(intake != null && indexer != null && elevator != null){
-      NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake));
+      NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake, arm));
     }
     if(elevator != null && outtake != null && arm != null){
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
