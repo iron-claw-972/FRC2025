@@ -88,6 +88,7 @@ public class Elevator extends SubsystemBase {
     motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.GEARING * maxAcceleration/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target acceleration 
     rightMotor.getConfigurator().apply(talonFXConfigs);
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    updateInputs();
   }
 
   public void setArmStowed(BooleanSupplier armStowed){
@@ -103,12 +104,7 @@ public class Elevator extends SubsystemBase {
     }
     double setpointRotations = ElevatorConstants.GEARING * setpoint2 / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.15));
-
-    inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
-    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
-    inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
-    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
-    inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
+    updateInputs();
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("Elevator/Setpoint", getSetpoint());
   }
@@ -128,6 +124,14 @@ public class Elevator extends SubsystemBase {
     if (RobotBase.isReal()) {
       rightMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
     }
+  }
+
+  public void updateInputs(){
+    inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.velocity = rightMotor.getVelocity().getValueAsDouble()/ ElevatorConstants.GEARING
+    * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
+    inputs.currentAmps = rightMotor.getStatorCurrent().getValueAsDouble();
   }
   
   /**
