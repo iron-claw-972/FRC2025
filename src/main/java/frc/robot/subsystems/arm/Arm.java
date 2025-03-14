@@ -28,9 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.IdConstants;
-import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
-import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
+import frc.robot.util.PhoenixUtil;
 
 public class Arm extends SubsystemBase implements ArmIO {
     //motor
@@ -77,8 +75,7 @@ public class Arm extends SubsystemBase implements ArmIO {
 
         // resetAbsolute();
         motor.setPosition(Units.degreesToRotations(ArmConstants.START_ANGLE)*ArmConstants.GEAR_RATIO);
-
-        motor.setNeutralMode(NeutralModeValue.Brake);
+        PhoenixUtil.tryUntilOk(5, ()->motor.setNeutralMode(NeutralModeValue.Brake));
 
         var talonFXConfigs = new TalonFXConfiguration();
         

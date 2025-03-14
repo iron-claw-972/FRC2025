@@ -36,8 +36,8 @@ public class Elevator extends SubsystemBase {
   
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
-  private double maxVelocity = 1; // m/s 3.68
-  private double maxAcceleration = 1; // m/s 8
+  private double maxVelocity = 3; // m/s 3.68
+  private double maxAcceleration = 8; // m/s 8
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -69,13 +69,13 @@ public class Elevator extends SubsystemBase {
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
     //TODO fixed the elevator not setting brake mode, add for all configuration
-    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Coast));
+    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
 
     var talonFXConfigs = new TalonFXConfiguration();
 
     // set slot 0 gains
     var slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kS = 0; // Add 0.25 V output to overcome static friction
+    slot0Configs.kS = 0.15; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
     slot0Configs.kP = 0.5; // A position error of 2.5 rotations results in 12 V output
@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase {
       setpoint2 = ElevatorConstants.SAFE_SETPOINT;
     }
     double setpointRotations = ElevatorConstants.GEARING * setpoint2 / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
-    rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.15));
+    rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.45));
     updateInputs();
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("Elevator/Setpoint", getSetpoint());

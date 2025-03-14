@@ -118,6 +118,7 @@ public class Indexer extends SubsystemBase {
 		var measurement = sensor.getMeasurement();
 		inputs.sensorDistance = (measurement == null || measurement.status > 0) ? 314159 : measurement.distance_mm;
 		Logger.processInputs("Indexer", inputs);
+		Logger.recordOutput("Indexer/indexer coral",isIndexerClear());
 	}
 
 	@Override

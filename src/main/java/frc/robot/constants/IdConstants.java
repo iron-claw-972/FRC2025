@@ -27,7 +27,7 @@ public class IdConstants {
     public static final int ELEVATOR_TOP_LIMIT_SWITCH = 30;
 
 	// Indexer
-	public static final int INDEXER_MOTOR = 11;
+	public static final int INDEXER_MOTOR = 56;
 	public static final int INDEXER_SENSOR = 24;
 
     // Climb
