@@ -15,7 +15,6 @@ public class NetSetpoint extends SequentialCommandGroup {
         this(true, elevator, arm, drive);
     }
     public NetSetpoint(boolean chooseClosestSide, Elevator elevator, Arm arm, Drivetrain drive){
-            //TODO will this spinning while elevator is going up break the robot?
         addCommands(
             // new InstantCommand(()->{
             //     if(chooseClosestSide){

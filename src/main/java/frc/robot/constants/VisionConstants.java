@@ -153,7 +153,6 @@ public class VisionConstants {
      * <p>
      * + Yaw: Counterclockwise
      */
-        //TODO message a cadder for the exact camera positons, they are wiring during tutorial 3/13/2025
     public static final ArrayList<Pair<String, Transform3d>> APRIL_TAG_CAMERAS = new ArrayList<Pair<String, Transform3d>>(
             List.of(
                 new Pair<String, Transform3d>(

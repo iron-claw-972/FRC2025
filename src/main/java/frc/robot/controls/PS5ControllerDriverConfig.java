@@ -57,7 +57,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Outtake outtake;
     private final Climb climb;
     private final Arm arm;
-    private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_TRIGGER);
+    private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.TOUCHPAD);
     private int alignmentDirection = 0;
     private Pose2d alignmentPose = null;
 
@@ -157,12 +157,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     }
             }));
         }
-        // TODO will the arm hit the barge
         if(intake != null && outtake != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
-                new MoveArm(arm, ArmConstants.START_ANGLE),
                 new InstantCommand(()->{
+                    arm.setSetpoint(ArmConstants.START_ANGLE);
                     elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
                     getDrivetrain().setIsAlign(false);
                 }, elevator)
@@ -182,7 +181,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
             }
             driver.get(PS5Button.PS).and(menu).whileTrue(new ResetClimb(climb));
-            driver.get(PS5Button.TOUCHPAD).and(menu).onTrue(new InstantCommand(()->climb.stow(), climb));
+            driver.get(PS5Button.RIGHT_TRIGGER).and(menu).onTrue(new InstantCommand(()->climb.stow(), climb));
         }
 
         // Alignment
@@ -214,7 +213,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
 
         // Cancel commands
-        driver.get(PS5Button.TOUCHPAD).and(menu.negate()).onTrue(new InstantCommand(()->{
+        driver.get(PS5Button.RIGHT_TRIGGER).and(menu.negate()).onTrue(new InstantCommand(()->{
             if(elevator != null){
                 if(outtake != null && outtake.coralLoaded()){
                     elevator.setSetpoint(ElevatorConstants.SAFE_SETPOINT);

@@ -98,7 +98,6 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     double setpoint2 = setpoint;
-    // TODO armStowed.getAsBoolean() will return false for the first frame because inputs.getAngle is 0?
     if(setpoint2 < ElevatorConstants.SAFE_SETPOINT && (armStowed == null || !armStowed.getAsBoolean())){
       setpoint2 = ElevatorConstants.SAFE_SETPOINT;
     }

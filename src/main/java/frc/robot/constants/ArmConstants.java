@@ -3,7 +3,6 @@ package frc.robot.constants;
 import edu.wpi.first.math.system.plant.DCMotor;
 
 public class ArmConstants {
-    // TODO: get angles and offset
     // Degrees
     public static final double START_ANGLE = -90;
     public static final double MIN_ANGLE = -90;
@@ -22,7 +21,6 @@ public class ArmConstants {
     public static final double MAX_VELOCITY = 21; // rad/s
     public static final double MAX_ACCELERATION = 50; // rad/s^2
 
-    //TODO: get setpoint angles
     public static final double INTAKE_SETPOINT = START_ANGLE;
     public static final double STATION_INTAKE_SETPOINT = 30;
 
@@ -31,7 +29,6 @@ public class ArmConstants {
     public static final double L4_SETPOINT = 6.89;
     //Dunk L4 = 6.4
     public static final double L2_L3_SETPOINT = 12.23;
-    //TODO: find L1 setpoint angle
     public static final double L1_SETPOINT = 40;
 
     public static final double ALGAE_SETPOINT = -16.37;
@@ -40,10 +37,7 @@ public class ArmConstants {
     public static final double ALGAE_STOW_SETPOINT  = 50;
     public static final double ALGAE_LOLI_SETPOINT  = -19;
     
-
-    // TODO
     public static final double PROCESSOR_SETPOINT = -65.0;
 
     public static final double STOW_SETPOINT = -14.0;
-
 }
