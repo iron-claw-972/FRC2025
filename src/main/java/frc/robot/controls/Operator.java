@@ -11,11 +11,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.commands.gpm.FinishStationIntake;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.gpm.IntakeAlgae;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveElevator;
-import frc.robot.commands.gpm.OuttakeAlgae;
+import frc.robot.commands.gpm.OuttakeAlgaeIntake;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
 import frc.robot.commands.gpm.ReverseMotors;
@@ -24,12 +24,13 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.climb.Climb;
+import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.outtake.Outtake;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Button;
 import lib.controllers.GameController.DPad;
@@ -47,15 +48,17 @@ public class Operator {
     private final Indexer indexer;
     private final Outtake outtake;
     private final Climb climb;
+    private final Arm arm;
     private int alignmentDirection = 0;
     
-    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb) {
+    public Operator(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm) {
         this.drive = drive;
         this.elevator = elevator;
         this.intake = intake;
         this.indexer = indexer;
         this.outtake = outtake;
         this.climb = climb;
+        this.arm = arm;
     }
 
     public void configureControls() {
@@ -73,11 +76,11 @@ public class Operator {
         // Intake/outtake
         Trigger r3 = driver.get(Button.RIGHT_JOY);
         if(intake != null && indexer != null){// && elevator != null){
-            driver.get(Button.A).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator, outtake));
+            driver.get(Button.A).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator, outtake, arm));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StartStationIntake(intake);
-            Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
+            Command finishIntake = new DoNothing();
             driver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
                 .onFalse(new InstantCommand(()->{
                     if(!startIntake.isScheduled()){
@@ -89,10 +92,10 @@ public class Operator {
         }
         if(intake != null){
             driver.get(Button.A).and(menu).whileTrue(new IntakeAlgae(intake));
-            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgae(intake));
+            driver.get(DPad.DOWN).and(menu).onTrue(new OuttakeAlgaeIntake(intake));
         }
         if(outtake != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator));
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm));
         }
         if(intake != null && indexer != null){
             driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));

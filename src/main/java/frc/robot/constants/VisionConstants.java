@@ -27,7 +27,7 @@ public class VisionConstants {
     /**
      * If April tag vision is enabled on the robot
      */
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
 
     /**
      * If object detection should be enabled
@@ -35,7 +35,7 @@ public class VisionConstants {
     public static final boolean OBJECT_DETECTION_ENABLED = false;
 
     /** If odometry should be updated using vision during auto */
-    public static final boolean ENABLED_AUTO = false;
+    public static final boolean ENABLED_AUTO = true;
 
     /**
      * If odometry should be updated using vision while running the GoToPose and
@@ -44,7 +44,7 @@ public class VisionConstants {
     public static final boolean ENABLED_GO_TO_POSE = true;
 
     /** If vision should be simulated */
-    public static final boolean ENABLED_SIM = true;
+    public static final boolean ENABLED_SIM = false;
 
     /** If vision should only return values if it can see 2 good targets */
     public static final boolean ONLY_USE_2_TAGS = false;
@@ -67,8 +67,13 @@ public class VisionConstants {
      */
     public static final double MAX_POSE_DIFFERENCE = 0.2;
 
+    /**
+     * The maximum distance to the tag to use
+     */
+    public static final double MAX_DISTANCE = 6;
+
     /** If vision should use manual calculations */
-    public static final boolean USE_MANUAL_CALCULATIONS = false;
+    public static final boolean USE_MANUAL_CALCULATIONS = true;
 
     // <ol start="0"> did not work
     /**
@@ -128,7 +133,7 @@ public class VisionConstants {
      * <p>
      * Only affects calculations using PhotonVision, not manual calculations.
      */
-    public static final double HIGHEST_AMBIGUITY = 0.2;
+    public static final double HIGHEST_AMBIGUITY = 0.01;
 
     /**
      * The camera poses
@@ -148,16 +153,22 @@ public class VisionConstants {
      * <p>
      * + Yaw: Counterclockwise
      */
-
     public static final ArrayList<Pair<String, Transform3d>> APRIL_TAG_CAMERAS = new ArrayList<Pair<String, Transform3d>>(
             List.of(
                 new Pair<String, Transform3d>(
-                        "Camera",
+                        "CameraFront",
                         new Transform3d(
-                                new Translation3d(Units.inchesToMeters(2.617), Units.inchesToMeters(10.789),
-                                        Units.inchesToMeters(6.213)),
-                                new Rotation3d(0, Units.degreesToRadians(-20),
-                                        Math.PI/2 + Units.degreesToRadians(10))))));
+                                new Translation3d(Units.inchesToMeters(10.4), Units.inchesToMeters(9.404),
+                                        Units.inchesToMeters(10.619)),
+                                new Rotation3d(0, Units.degreesToRadians(-10),
+                                        Math.PI/2 + Units.degreesToRadians(20)))),
+                new Pair<String, Transform3d>(
+                        "CameraBack",
+                        new Transform3d(
+                                new Translation3d(Units.inchesToMeters(-9.754), Units.inchesToMeters(7.42),
+                                        Units.inchesToMeters(8.37)),
+                                new Rotation3d(0, Units.degreesToRadians(-19.5),
+                                        Math.PI/2)))));
 
     /**
      * The transformations from the robot to object detection cameras
@@ -168,35 +179,6 @@ public class VisionConstants {
                     new Rotation3d(0, Units.degreesToRadians(20), 0))));
 
     // Poses to potentially align to
-
-    public static final Pose2d RED_CORAL_STATION_LEFT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(0).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(126)),
-            FieldConstants.APRIL_TAGS.get(0).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(126)),
-            new Rotation2d(Units.degreesToRadians(126)));
-
-    public static final Pose2d RED_CORAL_STATION_RIGHT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(1).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(234)),
-            FieldConstants.APRIL_TAGS.get(1).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(234)),
-            new Rotation2d(Units.degreesToRadians(234)));
-
-    public static final Pose2d BLUE_CORAL_STATION_LEFT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(12).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(306)),
-            FieldConstants.APRIL_TAGS.get(12).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(306)),
-            new Rotation2d(Units.degreesToRadians(306)));
-
-    public static final Pose2d BLUE_CORAL_STATION_RIGHT_POSE = new Pose2d(
-            FieldConstants.APRIL_TAGS.get(11).pose.getX() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.cos(Units.degreesToRadians(54)),
-            FieldConstants.APRIL_TAGS.get(11).pose.getY() +
-                    (DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2) * Math.sin(Units.degreesToRadians(54)),
-            new Rotation2d(Units.degreesToRadians(54)));
-
     public static final Pose2d RED_PROCESSOR_POSE = new Pose2d(
             FieldConstants.APRIL_TAGS.get(2).pose.getX(),
             FieldConstants.APRIL_TAGS.get(2).pose.getY() - DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2,

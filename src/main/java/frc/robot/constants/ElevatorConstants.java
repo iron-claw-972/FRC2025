@@ -14,7 +14,7 @@ public class ElevatorConstants {
     public static final int NUMBER_OF_STAGES = 3;
     public static final double GEARING = 8.333/NUMBER_OF_STAGES;
     public static final double MIN_HEIGHT = 0.0; // meters
-    public static final double MAX_HEIGHT = Units.inchesToMeters(66);;//Units.inchesToMeters(48); // meters
+    public static final double MAX_HEIGHT = Units.inchesToMeters(66);//Units.inchesToMeters(48); // meters
     public static final double START_HEIGHT = MIN_HEIGHT; // meters
     public static final double CARRIAGE_MASS = 3; // kilograms 2.49475803
     public static final double DRUM_RADIUS = Units.inchesToMeters(1.281/2); // meters
@@ -25,14 +25,21 @@ public class ElevatorConstants {
     public static final double SIM_LIMIT_SWITCH_TRIGGER_DISTANCE = 0.01; // meters
 
     public static final double STOW_SETPOINT = 0;
-    public static final double INTAKE_SETPOINT = 0;
-    public static final double L1_SETPOINT = 0.3;
-    public static final double L2_SETPOINT = 0.56;
-    public static final double L3_SETPOINT = 0.96;
-    public static final double L4_SETPOINT = 1.58;
+    public static final double INTAKE_SETPOINT = 0.026;
+    public static final double SAFE_SETPOINT = 0.225;
+    public static final double L1_SETPOINT = 0.27;
+    public static final double L2_SETPOINT = 0.588;
+    public static final double L3_SETPOINT = 0.98;
+    public static final double L4_SETPOINT = 1.67;
+    //Dunk L4 = 1.5
+    public static final double BOTTOM_ALGAE_SETPOINT = 0.385;
+    public static final double TOP_ALGAE_SETPOINT = 0.779;
+
+    public static final double NET_SETPOINT = MAX_HEIGHT;
+
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
-    public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(14.767);
+    public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(10+14.767);
 
     // The x distance from the center of the robot to the outtake.
     public static final double OUTTAKE_X = Units.inchesToMeters(-7.25);

@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of P1"
+            "pathName": "P  1"
           }
         },
         {
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "\"Drive To 11/20 Left\""
+                }
+              },
               {
                 "type": "named",
                 "data": {
@@ -32,13 +38,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of Ground P2"
+            "pathName": "Gronud  P2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive To Left Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of Ground P3"
+            "pathName": "P  3"
           }
         },
         {
@@ -48,13 +60,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Drive To 6/19 Right"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "Lower Elevator"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
                 }
               }
             ]
@@ -63,19 +81,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of Grond P4"
+            "pathName": "GrondP4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive To Left Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of Ground P5"
+            "pathName": "P 5"
           }
         },
         {
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 6/19 Left"
+                }
+              },
               {
                 "type": "named",
                 "data": {

@@ -5,10 +5,10 @@
   "pathFolders": [
     "Ground BSide",
     "Ground RSide",
-    "New Folder",
+    "Ground RSide mirrored",
+    "Align RSide",
     "Sequential BSide",
-    "Sequential RSide",
-    "Ground RSide mirrored"
+    "Sequential RSide"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
@@ -19,11 +19,11 @@
   "robotMass": 58.9670081,
   "robotMOI": 7.504,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.0508,
+  "driveWheelRadius": 0.04550159,
   "driveGearing": 5.903,
   "maxDriveSpeed": 5.41,
   "driveMotorType": "krakenX60",
-  "driveCurrentLimit": 60.0,
+  "driveCurrentLimit": 52.0,
   "wheelCOF": 0.9,
   "flModuleX": 0.2635,
   "flModuleY": 0.2635,

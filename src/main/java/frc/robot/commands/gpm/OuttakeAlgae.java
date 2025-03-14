@@ -1,38 +1,16 @@
 package frc.robot.commands.gpm;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.constants.IntakeConstants;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.outtake.Outtake;
 
-public class OuttakeAlgae extends Command {
-    private Intake intake;
-
-    private final Timer timer = new Timer();
-    private final double EJECTION_TIME = 1;
-
-    public OuttakeAlgae(Intake intake) {
-        this.intake = intake;
-        addRequirements(intake);
+public class OuttakeAlgae extends ConditionalCommand {
+    public OuttakeAlgae(Outtake outtake, Intake intake){
+        super(
+            new OuttakeAlgaeArm(outtake),
+            new OuttakeAlgaeIntake(intake),
+            ()-> intake.isAtSetpoint(IntakeConstants.STOW_SETPOINT)
+        );
     }
-
-    @Override
-    public void initialize() {
-        intake.setSpeed(IntakeConstants.ALGAE_OUTTAKE_POWER);
-        intake.setAngle(50);
-        timer.restart();
-    }
-
-    @Override
-    public boolean isFinished() {
-        return timer.hasElapsed(EJECTION_TIME);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        intake.deactivate();
-        intake.stow();
-        timer.stop();
-    }
-
 }

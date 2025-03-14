@@ -6,16 +6,24 @@ package frc.robot;
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
+import frc.robot.util.BuildData;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,7 +31,7 @@ import frc.robot.constants.swerve.DriveConstants;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
     private Command autoCommand;
     private RobotContainer robotContainer;
 
@@ -31,8 +39,34 @@ public class Robot extends TimedRobot {
         CanBridge.runTCP();
         PortForwarder.add(5800,"10.9.72.12",5800);
         PortForwarder.add(1182,"10.9.72.12",1182);
-    }
 
+        Logger.recordMetadata("ProjectName", "FRC2025"); // Set a metadata value
+
+        // Set up data receivers & replay source
+        switch (Constants.currentMode) {
+            case REAL:
+            // Running on a real robot, log to a USB stick ("/U/logs")
+            Logger.addDataReceiver(new WPILOGWriter());
+            Logger.addDataReceiver(new NT4Publisher());
+            break;
+    
+            case SIM:
+            // Running a physics simulator, log to NT
+            Logger.addDataReceiver(new NT4Publisher());
+            break;
+    
+            case REPLAY:
+            // Replaying a log, set up replay source
+            setUseTiming(false); // Run as fast as possible
+            String logPath = LogFileUtil.findReplayLog();
+            Logger.setReplaySource(new WPILOGReader(logPath));
+            Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+            break;
+        }
+
+        Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    }
+    
     /**
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
@@ -48,6 +82,49 @@ public class Robot extends TimedRobot {
         RobotController.setBrownoutVoltage(6.0);
         // obtain this robot's identity
         RobotId robotId = RobotId.getRobotId();
+
+          // Record metadata
+        Logger.recordMetadata("ProjectName", BuildData.MAVEN_NAME);
+        Logger.recordMetadata("BuildDate", BuildData.BUILD_DATE);
+        Logger.recordMetadata("GitSHA", BuildData.GIT_SHA);
+        Logger.recordMetadata("GitDate", BuildData.GIT_DATE);
+        Logger.recordMetadata("GitBranch", BuildData.GIT_BRANCH);
+        switch (BuildData.DIRTY) {
+        case 0:
+            Logger.recordMetadata("GitDirty", "All changes committed");
+            break;
+        case 1:
+            Logger.recordMetadata("GitDirty", "Uncomitted changes");
+            break;
+        default:
+            Logger.recordMetadata("GitDirty", "Unknown");
+            break;
+        }
+
+        // Set up data receivers & replay source
+        switch (Constants.currentMode) {
+        case REAL:
+            // Running on a real robot, log to a USB stick ("/U/logs")
+            Logger.addDataReceiver(new WPILOGWriter());
+            Logger.addDataReceiver(new NT4Publisher());
+            break;
+
+        case SIM:
+            // Running a physics simulator, log to NT
+            Logger.addDataReceiver(new NT4Publisher());
+            break;
+
+        case REPLAY:
+            // Replaying a log, set up replay source
+            setUseTiming(false); // Run as fast as possible
+            String logPath = LogFileUtil.findReplayLog();
+            Logger.setReplaySource(new WPILOGReader(logPath));
+            Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+            break;
+        }
+
+        // Start AdvantageKit logger
+        Logger.start();
 
         // build the RobotContainer with the robot id from preferences
         robotContainer = new RobotContainer(robotId);
@@ -67,12 +144,7 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        // Needs to be updated because RobotContainer does not have a periodic method
-        robotContainer.updateShuffleBoard();
-
         CommandScheduler.getInstance().run();
-        
-        //LogManager.update();
     }
 
     /**
@@ -101,7 +173,8 @@ public class Robot extends TimedRobot {
         // Get the autonomous command.
         // This access is fast (about 14 microseconds) because the value is already resident in the Network Tables.
         // There was a problem last year because the operation also installed about over a dozen items (taking more than 20 ms).
-        autoCommand = robotContainer.getAutonomousCommand();
+        //TODO when revamping auto find best way to set
+        autoCommand = robotContainer.getAutoCommand();
 
         // If there is an autonomous command, then schedule it
         if (autoCommand != null) {
@@ -174,15 +247,4 @@ public class Robot extends TimedRobot {
 		else
 			return Alliance.Red; // default to Red alliance
 	}
-
-    /**
-     * Interrupt all threads and call TimedRobot's endCompetition method
-     */
-    @Override
-    public void endCompetition(){
-        if(robotContainer != null){
-            robotContainer.interruptThreads();
-        }
-        super.endCompetition();
-    }
 }

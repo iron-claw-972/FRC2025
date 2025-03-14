@@ -14,7 +14,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.util.Vision;
+import frc.robot.util.Vision.Vision;
 
 /**
  * Tests if all of the AprilTags are in the right spot

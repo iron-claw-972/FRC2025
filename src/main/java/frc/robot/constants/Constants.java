@@ -1,6 +1,6 @@
 package frc.robot.constants;
 
-
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class Constants {
 
@@ -16,6 +16,17 @@ public class Constants {
 
     // Logging 
     public static final boolean USE_TELEMETRY = true;
+
+    public static enum Mode {
+        /** Running on a real robot. */
+        REAL,
+
+        /** Running a physics simulator. */
+        SIM,
+
+        /** Replaying from a log file. */
+        REPLAY
+    }
 
     // Kraken Speed
     public static double MAX_RPM = 5800.0; // Rotations per minute
@@ -58,4 +69,8 @@ public class Constants {
     
     public static final double HEADING_DEADBAND = 0.05;
     public static final double HEADING_SLEWRATE = 10;
+
+    //modes
+    public static final Mode simMode = Mode.REAL;
+    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 }

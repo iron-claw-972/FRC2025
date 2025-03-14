@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.wpilibj.I2C;
+
 public class IdConstants {
     // Drivetrain
     public static final int DRIVE_FRONT_LEFT_ID = 1;
@@ -25,7 +27,7 @@ public class IdConstants {
     public static final int ELEVATOR_TOP_LIMIT_SWITCH = 30;
 
 	// Indexer
-	public static final int INDEXER_MOTOR = 11;
+	public static final int INDEXER_MOTOR = 56;
 	public static final int INDEXER_SENSOR = 24;
 
     // Climb
@@ -39,6 +41,10 @@ public class IdConstants {
     // Outtake
     public static final int OUTTAKE_MOTOR_ALPHA = 14;
     public static final int OUTTAKE_MOTOR_COMP = 30; 
-    public static final int OUTTAKE_DIO_LOADED = 2;
     public static final int OUTTAKE_DIO_EJECTING = 3;
+    public static final I2C.Port i2cPort = I2C.Port.kMXP;
+
+    //Arm
+    public static final int ARM_MOTOR = 29;
+    public static final int ARM_ABSOLUTE_ENCODER = 5;
 }
