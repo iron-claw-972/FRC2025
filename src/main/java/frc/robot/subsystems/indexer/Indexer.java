@@ -64,7 +64,7 @@ public class Indexer extends SubsystemBase {
 	}
 
 	public void slow(){
-		motor.set(0.2);
+		motor.set(0.6);
 	}
 
 	/** Reverses the indexer. */

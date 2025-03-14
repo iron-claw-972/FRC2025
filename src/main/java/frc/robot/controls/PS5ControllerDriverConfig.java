@@ -104,8 +104,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             Command l3Algae = new ParallelCommandGroup(
                 new MoveElevator(elevator, ElevatorConstants.TOP_ALGAE_SETPOINT),
                 new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake));
-            driver.get(PS5Button.RB).whileTrue(new ConditionalCommand(l2Algae, l2Coral, menu));
-            driver.get(PS5Button.LB).whileTrue(new ConditionalCommand(l3Algae, l3Coral, menu));
+            driver.get(PS5Button.RB).onTrue(new ConditionalCommand(l2Algae, l2Coral, menu));
+            driver.get(PS5Button.LB).onTrue(new ConditionalCommand(l3Algae, l3Coral, menu));
     
             //Processor setpoint
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(

@@ -109,6 +109,7 @@ public class Arm extends SubsystemBase implements ArmIO {
         double setpointRotations = Units.degreesToRotations(setpoint2) * ArmConstants.GEAR_RATIO;
         motor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
         updateInputs();
+        Logger.recordOutput("Arm/Atsetpoint",atSetpoint());
     }
 
     @Override

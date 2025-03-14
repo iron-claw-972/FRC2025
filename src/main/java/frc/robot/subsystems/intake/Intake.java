@@ -80,7 +80,7 @@ public class Intake extends SubsystemBase {
             //     DriverStation.reportError("Intake LaserCan configuration error", true);
             // }
         }
-        rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.Clockwise_Positive));
+        rollerMotor.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake).withInverted(InvertedValue.CounterClockwise_Positive));
         pivotMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
         pivotMotor.setPosition(Units.degreesToRotations(startPosition) * IntakeConstants.PIVOT_GEAR_RATIO);
         pivotMotor.setNeutralMode(NeutralModeValue.Coast);

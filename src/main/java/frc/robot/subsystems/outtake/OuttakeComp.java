@@ -62,7 +62,7 @@ public class OuttakeComp extends Outtake {
 
 
     public void reverse(){
-        setMotor(-0.2);
+        setMotor(0.2);
     }
 
     public int getProximity() {
