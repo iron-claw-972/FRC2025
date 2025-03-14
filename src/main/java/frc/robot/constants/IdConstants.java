@@ -42,7 +42,7 @@ public class IdConstants {
     public static final int OUTTAKE_MOTOR_ALPHA = 14;
     public static final int OUTTAKE_MOTOR_COMP = 30; 
     public static final int OUTTAKE_DIO_EJECTING = 3;
-    public static final I2C.Port i2cPort = I2C.Port.kOnboard;
+    public static final I2C.Port i2cPort = I2C.Port.kMXP;
 
     //Arm
     public static final int ARM_MOTOR = 29;

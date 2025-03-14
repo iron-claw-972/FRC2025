@@ -17,7 +17,7 @@ public class OuttakeComp extends Outtake {
     private double power;
 
     /** Coral detected before the rollers */
-    //private final ColorSensorV3 colorSensor = new ColorSensorV3(IdConstants.i2cPort);
+    private final ColorSensorV3 colorSensor = new ColorSensorV3(IdConstants.i2cPort);
 
     OuttakeIOIntakesAutoLogged inputs = new OuttakeIOIntakesAutoLogged();
 
@@ -40,7 +40,7 @@ public class OuttakeComp extends Outtake {
         //  SmartDashboard.putBoolean("Coral ejected", coralEjecting());
 
         inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
-        inputs.proximity = 0;
+        inputs.proximity = colorSensor.getProximity();
         Logger.processInputs("Outtake", inputs);
     }
 
@@ -51,7 +51,7 @@ public class OuttakeComp extends Outtake {
 
     /** start spinning the rollers to eject the coral */
     public void outtake(){
-        setMotor(0.3);
+        setMotor(-0.3);
     }
 
     /**

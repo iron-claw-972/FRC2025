@@ -48,6 +48,6 @@ public abstract class Outtake extends SubsystemBase {
     }
 
     public void outtakeAlgae() {
-        setMotor(0.6);
+        setMotor(0.8);
     }
 }
