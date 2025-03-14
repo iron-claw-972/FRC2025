@@ -19,8 +19,8 @@ public class ArmConstants {
     public static final double MOI = 0.0261057394; // kg*m^2
     public static final double CENTER_OF_MASS_LENGTH = 0.138; // meters
 
-    public static final double MAX_VELOCITY = 20; // rad/s
-    public static final double MAX_ACCELERATION = 30; // rad/s^2
+    public static final double MAX_VELOCITY = 21; // rad/s
+    public static final double MAX_ACCELERATION = 50; // rad/s^2
 
     //TODO: get setpoint angles
     public static final double INTAKE_SETPOINT = START_ANGLE;
