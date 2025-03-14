@@ -2,7 +2,6 @@ package frc.robot.subsystems.arm;
 
 import java.util.function.BooleanSupplier;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;

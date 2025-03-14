@@ -1,6 +1,5 @@
 package frc.robot.subsystems.outtake;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -40,7 +39,6 @@ public class OuttakeComp extends Outtake {
         //  SmartDashboard.putBoolean("Coral ejected", coralEjecting());
 
         inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
-        inputs.proximity = colorSensor.getProximity();
         Logger.processInputs("Outtake", inputs);
     }
 
@@ -55,8 +53,8 @@ public class OuttakeComp extends Outtake {
     }
 
     /**
-     *  Coral is at the ejecting beam break sensor.
-     * @return coral is interrupting the beam breaker.
+     *  Coral is in the outtake.
+     * @return The same thing as coralLoaded(), for compatibility with previous code
      */
     public boolean coralEjecting() {
         return coralLoaded();
@@ -68,13 +66,11 @@ public class OuttakeComp extends Outtake {
     }
 
     public int getProximity() {
-        return inputs.proximity;  // Returns 0 (far) to ~2047 (very close)
+        return inputs.proximity = colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
     }
 
     // coral detection from color sensor
-    @AutoLogOutput(key = "Outtake/CoralLoaded")
     public boolean coralLoaded() {
-        //this is about 1/2inch away -- might have to change based on placement
         return getProximity() > 2000;
     }
 }

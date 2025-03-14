@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * Abstract class for the outtake. All commands should use this subsystem
  */
 public abstract class Outtake extends SubsystemBase {
-    private int ticks = 0;
     /** Coral detected before the rollers */
     protected DIOSim dioInputLoaded;
     /** Coral detected after the rollers */
