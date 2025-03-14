@@ -19,8 +19,8 @@ public class ArmConstants {
     public static final double MOI = 0.0261057394; // kg*m^2
     public static final double CENTER_OF_MASS_LENGTH = 0.138; // meters
 
-    public static final double MAX_VELOCITY = 15; // rad/s
-    public static final double MAX_ACCELERATION = 20; // rad/s^2
+    public static final double MAX_VELOCITY = 20; // rad/s
+    public static final double MAX_ACCELERATION = 30; // rad/s^2
 
     //TODO: get setpoint angles
     public static final double INTAKE_SETPOINT = START_ANGLE;
@@ -28,9 +28,9 @@ public class ArmConstants {
 
     public static final double TOLERANCE = 3.0;
 
-    public static final double L4_SETPOINT = 1.89;
+    public static final double L4_SETPOINT = 6.89;
     //Dunk L4 = 6.4
-    public static final double L2_L3_SETPOINT = 6.23;
+    public static final double L2_L3_SETPOINT = 12.23;
     //TODO: find L1 setpoint angle
     public static final double L1_SETPOINT = 0;
 

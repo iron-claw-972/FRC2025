@@ -29,8 +29,8 @@ public class ElevatorConstants {
     //TODO: haven't gotten yet (add 0.025 to the safe setpoint value determined, see line 109 in RobotContainer for reason)
     public static final double SAFE_SETPOINT = 0.225;
     public static final double L1_SETPOINT = 0.334;
-    public static final double L2_SETPOINT = 0.568;
-    public static final double L3_SETPOINT = 0.96;
+    public static final double L2_SETPOINT = 0.588;
+    public static final double L3_SETPOINT = 0.98;
     public static final double L4_SETPOINT = 1.67;
     //Dunk L4 = 1.5
     public static final double BOTTOM_ALGAE_SETPOINT = 0.385;
