@@ -74,7 +74,6 @@ public class Arm extends SubsystemBase implements ArmIO {
 
         // resetAbsolute();
         motor.setPosition(Units.degreesToRotations(ArmConstants.START_ANGLE)*ArmConstants.GEAR_RATIO);
-        PhoenixUtil.tryUntilOk(5, ()->motor.setNeutralMode(NeutralModeValue.Brake));
 
         var talonFXConfigs = new TalonFXConfiguration();
         
@@ -94,6 +93,8 @@ public class Arm extends SubsystemBase implements ArmIO {
         talonFXConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         motor.getConfigurator().apply(talonFXConfigs);
         updateInputs();
+        PhoenixUtil.tryUntilOk(100, ()->motor.setNeutralMode(NeutralModeValue.Brake));
+
     }
 
     public void setElevatorStowed(BooleanSupplier elevatorStowed){

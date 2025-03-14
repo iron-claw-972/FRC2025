@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase {
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
     resetEncoder(ElevatorConstants.START_HEIGHT);
     //TODO fixed the elevator not setting brake mode, add for all configuration
-    PhoenixUtil.tryUntilOk(5, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
+  
 
     var talonFXConfigs = new TalonFXConfiguration();
 
@@ -89,6 +89,7 @@ public class Elevator extends SubsystemBase {
     rightMotor.getConfigurator().apply(talonFXConfigs);
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     updateInputs();
+    PhoenixUtil.tryUntilOk(100, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
   }
 
   public void setArmStowed(BooleanSupplier armStowed){
