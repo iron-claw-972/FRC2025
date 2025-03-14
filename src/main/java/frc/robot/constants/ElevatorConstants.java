@@ -28,7 +28,7 @@ public class ElevatorConstants {
     public static final double INTAKE_SETPOINT = 0.026;
     //TODO: haven't gotten yet (add 0.025 to the safe setpoint value determined, see line 109 in RobotContainer for reason)
     public static final double SAFE_SETPOINT = 0.225;
-    public static final double L1_SETPOINT = 0.334;
+    public static final double L1_SETPOINT = 0.27;
     public static final double L2_SETPOINT = 0.588;
     public static final double L3_SETPOINT = 0.98;
     public static final double L4_SETPOINT = 1.67;

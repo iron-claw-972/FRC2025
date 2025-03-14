@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
@@ -258,7 +259,7 @@ public class RobotContainer {
   }
 
   public void addPaths(){
-        //autoChooser.addDefaultOption("Do Nothing", new DoNothing());
+        autoChooser.addDefaultOption("Do Nothing", new DoNothing());
 
         try {
             List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
@@ -267,7 +268,7 @@ public class RobotContainer {
             e.printStackTrace();
         }
         //autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
+        autoChooser.addOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
         //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
