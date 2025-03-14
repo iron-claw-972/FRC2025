@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -81,41 +82,37 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     new MoveArm(arm, ArmConstants.L1_SETPOINT)
                 )
             );
-            driver.get(PS5Button.LB).and(menu.negate()).onTrue(
-                new SequentialCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
-                    new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
-                )
-            );
-            driver.get(PS5Button.RB).and(menu.negate()).onTrue(
-                new SequentialCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
-                    new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
-                )
-            );
+
             driver.get(PS5Button.LEFT_TRIGGER).onTrue(
                 new SequentialCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
                     new MoveArm(arm, ArmConstants.L4_SETPOINT)
                 )
             );
+
+            Command l2Coral = new SequentialCommandGroup(
+                new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+                new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+            );
+            Command l3Coral = new SequentialCommandGroup(
+                new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+                new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+            );
+            Command l2Algae = new ParallelCommandGroup(
+                new MoveElevator(elevator, ElevatorConstants.BOTTOM_ALGAE_SETPOINT),
+                new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake));
+            Command l3Algae = new ParallelCommandGroup(
+                new MoveElevator(elevator, ElevatorConstants.TOP_ALGAE_SETPOINT),
+                new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake));
+            driver.get(PS5Button.RB).whileTrue(new ConditionalCommand(l2Algae, l2Coral, menu));
+            driver.get(PS5Button.LB).whileTrue(new ConditionalCommand(l3Algae, l3Coral, menu));
+    
             //Processor setpoint
             driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
                 new ParallelCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.001),
                     new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
                 )
-            );
-            //TODO: will have to change setpoints
-            driver.get(PS5Button.LB).and(menu).whileTrue(
-                new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.BOTTOM_ALGAE_SETPOINT),
-                    new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake))
-            );
-            driver.get(PS5Button.RB).and(menu).whileTrue(
-                new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.TOP_ALGAE_SETPOINT),
-                    new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake))
             );
             driver.get(DPad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
         }
