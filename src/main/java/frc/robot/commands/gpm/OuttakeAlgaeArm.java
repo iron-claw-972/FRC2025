@@ -8,7 +8,7 @@ public class OuttakeAlgaeArm extends Command{
     private final Outtake outtake;
 
     private final Timer timer = new Timer();
-    private final double EJECTION_TIME = 1;
+    private final double EJECTION_TIME = 0.25;
 
     public OuttakeAlgaeArm(Outtake outtake) {
         this.outtake = outtake;
