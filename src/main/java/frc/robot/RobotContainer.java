@@ -37,6 +37,7 @@ import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
@@ -145,6 +146,7 @@ public class RobotContainer {
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
+        
              
         break;
       }
@@ -179,6 +181,7 @@ public class RobotContainer {
         },
         () -> drive.getChassisSpeeds(),
         (chassisSpeeds) -> {
+          Logger.recordOutput("RobotContainer/ChassisSpeeds", chassisSpeeds);
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
         AutoConstants.AUTO_CONTROLLER,
@@ -190,6 +193,7 @@ public class RobotContainer {
   public void registerCommands() {
     if(intake != null && indexer != null && elevator != null){
       NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake, arm));
+      NamedCommands.registerCommand("lower intake", new InstantCommand(() -> intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT)));
     }
     if(elevator != null && outtake != null && arm != null){
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
@@ -259,7 +263,7 @@ public class RobotContainer {
   }
 
   public void addPaths(){
-        autoChooser.addDefaultOption("Do Nothing", new DoNothing());
+        
 
         try {
             List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
@@ -272,7 +276,7 @@ public class RobotContainer {
         //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
-       
+        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
         // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake, elevator, arm))

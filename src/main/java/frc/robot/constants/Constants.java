@@ -72,5 +72,5 @@ public class Constants {
 
     //modes
     public static final Mode simMode = Mode.REAL;
-    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
 }

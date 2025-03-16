@@ -18,6 +18,6 @@ public class IntakeAlgaeArm extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        outtake.setMotor(-0.05);
+        outtake.setMotor(-0.1);
     }
 }

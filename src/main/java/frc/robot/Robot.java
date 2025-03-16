@@ -40,8 +40,6 @@ public class Robot extends LoggedRobot {
         PortForwarder.add(5800,"10.9.72.12",5800);
         PortForwarder.add(1182,"10.9.72.12",1182);
 
-        Logger.recordMetadata("ProjectName", "FRC2025"); // Set a metadata value
-
         // Set up data receivers & replay source
         switch (Constants.currentMode) {
             case REAL:
@@ -63,7 +61,6 @@ public class Robot extends LoggedRobot {
             Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
             break;
         }
-
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     }
     
@@ -100,31 +97,6 @@ public class Robot extends LoggedRobot {
             Logger.recordMetadata("GitDirty", "Unknown");
             break;
         }
-
-        // Set up data receivers & replay source
-        switch (Constants.currentMode) {
-        case REAL:
-            // Running on a real robot, log to a USB stick ("/U/logs")
-            Logger.addDataReceiver(new WPILOGWriter());
-            Logger.addDataReceiver(new NT4Publisher());
-            break;
-
-        case SIM:
-            // Running a physics simulator, log to NT
-            Logger.addDataReceiver(new NT4Publisher());
-            break;
-
-        case REPLAY:
-            // Replaying a log, set up replay source
-            setUseTiming(false); // Run as fast as possible
-            String logPath = LogFileUtil.findReplayLog();
-            Logger.setReplaySource(new WPILOGReader(logPath));
-            Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-            break;
-        }
-
-        // Start AdvantageKit logger
-        Logger.start();
 
         // build the RobotContainer with the robot id from preferences
         robotContainer = new RobotContainer(robotId);

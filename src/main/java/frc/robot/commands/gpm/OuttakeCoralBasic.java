@@ -14,8 +14,8 @@ import frc.robot.subsystems.outtake.Outtake;
  */
 public class OuttakeCoralBasic extends Command {
     public static final double L1_SPEED = -0.1;
-    public static final double L4_SPEED = -0.4;
-    public static final double OUTTAKE_SPEED = -0.4;
+    public static final double L4_SPEED = -0.6;
+    public static final double OUTTAKE_SPEED = -0.6;
 
     private Outtake outtake;
 
@@ -42,7 +42,7 @@ public class OuttakeCoralBasic extends Command {
     }
 
     public boolean isFinished(){
-        return timer.hasElapsed(0.5);
+        return timer.hasElapsed(0.25);
     }
 
 
