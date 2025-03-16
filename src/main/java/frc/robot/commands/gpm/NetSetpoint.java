@@ -2,6 +2,7 @@ package frc.robot.commands.gpm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.ElevatorConstants;
@@ -25,8 +26,9 @@ public class NetSetpoint extends SequentialCommandGroup {
             //         drive.setIsAlign(false);
             //     }
             // }),
+            new ParallelCommandGroup(
             new MoveArm(arm, ArmConstants.ALGAE_STOW_SETPOINT),
-            new MoveElevator(elevator, ElevatorConstants.NET_SETPOINT),
+            new MoveElevator(elevator, ElevatorConstants.NET_SETPOINT)),
             new ConditionalCommand(
                 new MoveArm(arm, ArmConstants.ALGAE_NET_SETPOINT_1),
                 new MoveArm(arm, ArmConstants.ALGAE_NET_SETPOINT_2),

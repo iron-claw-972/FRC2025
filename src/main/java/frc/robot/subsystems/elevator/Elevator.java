@@ -32,7 +32,7 @@ import frc.robot.util.PhoenixUtil;
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
-  private double setpoint = ElevatorConstants.START_HEIGHT;
+  private double setpoint = ElevatorConstants.INTAKE_SETPOINT;
   
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 

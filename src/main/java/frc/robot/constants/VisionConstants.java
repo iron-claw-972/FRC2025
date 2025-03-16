@@ -27,7 +27,7 @@ public class VisionConstants {
     /**
      * If April tag vision is enabled on the robot
      */
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true;
 
     /**
      * If object detection should be enabled
@@ -158,17 +158,17 @@ public class VisionConstants {
                 new Pair<String, Transform3d>(
                         "CameraFront",
                         new Transform3d(
-                                new Translation3d(Units.inchesToMeters(10.4), Units.inchesToMeters(9.404),
-                                        Units.inchesToMeters(10.619)),
-                                new Rotation3d(0, Units.degreesToRadians(-10),
+                                new Translation3d(Units.inchesToMeters(10.485), Units.inchesToMeters(10.217),
+                                        Units.inchesToMeters(11.012)),
+                                new Rotation3d(0, Units.degreesToRadians(-11),
                                         Math.PI/2 + Units.degreesToRadians(20)))),
                 new Pair<String, Transform3d>(
                         "CameraBack",
                         new Transform3d(
-                                new Translation3d(Units.inchesToMeters(-9.754), Units.inchesToMeters(7.42),
-                                        Units.inchesToMeters(8.37)),
+                                new Translation3d(Units.inchesToMeters(-9.538), Units.inchesToMeters(7.474),
+                                        Units.inchesToMeters(8.719)),
                                 new Rotation3d(0, Units.degreesToRadians(-19.5),
-                                        Math.PI/2)))));
+                                        Math.PI/2-Units.degreesToRadians(25))))));
 
     /**
      * The transformations from the robot to object detection cameras
