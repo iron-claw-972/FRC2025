@@ -276,7 +276,21 @@ public class RobotContainer {
         //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
-        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
+        autoChooser.addDefaultOption("One peice", 
+        new SequentialCommandGroup(
+          new InstantCommand(()->{
+            drive.resetOdometry(new Pose2d(7.229,4.191, Rotation2d.fromDegrees(90.0)));
+            intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
+          }),
+          new DriveToPose(drive, () -> VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.pose).withTimeout(8),
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT),
+          new OuttakeCoral(outtake, elevator, arm),
+          new SequentialCommandGroup(new WaitCommand(0.1),
+          new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+          new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
+          new InstantCommand(()-> intake.stow())
+          ));
         // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake, elevator, arm))
