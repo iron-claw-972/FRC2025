@@ -219,9 +219,16 @@ public class VisionConstants {
             FieldConstants.FIELD_WIDTH / 2 - Units.inchesToMeters(-1019.0 / 8),
             new Rotation2d(Math.PI));
 
+   /**
+    * The distance between the AprilTag and algae setpoint in the directin parallel to the face of the reef
+    * Positive is to the left
+    */
+    public static final double ALGAE_X_OFFSET = 0.02;
+
     /**
      * Stores all of the alignment poses for both reefs.
      * Each branch is in the format (RED or BLUE)_BRANCH_(tag ID)_(LEFT or RIGHT)
+     * Each algae setpoint is in the form (RED or BLUE)_ALGAE_(tag ID)
      * Left and right refer to the position of the branch when looking directly at the AprilTag
      */
     public enum REEF {
@@ -249,7 +256,20 @@ public class VisionConstants {
         BLUE_BRANCH_21_LEFT(20, 0.1651, .0587),
         BLUE_BRANCH_21_RIGHT(20, -0.1651, .0587),
         BLUE_BRANCH_22_LEFT(21, 0.1651, .0587),
-        BLUE_BRANCH_22_RIGHT(21, -0.1651, .0587);
+        BLUE_BRANCH_22_RIGHT(21, -0.1651, .0587),
+
+        RED_ALGAE_6(5, ALGAE_X_OFFSET, 0, true),
+        RED_ALGAE_7(6, ALGAE_X_OFFSET, 0, true),
+        RED_ALGAE_8(7, ALGAE_X_OFFSET, 0, true),
+        RED_ALGAE_9(8, ALGAE_X_OFFSET, 0, true),
+        RED_ALGAE_10(9, ALGAE_X_OFFSET, 0, true),
+        RED_ALGAE_11(10, ALGAE_X_OFFSET, 0, true),
+        BLUE_ALGAE_17(16, ALGAE_X_OFFSET, 0, true),
+        BLUE_ALGAE_18(17, ALGAE_X_OFFSET, 0, true),
+        BLUE_ALGAE_19(18, ALGAE_X_OFFSET, 0, true),
+        BLUE_ALGAE_20(19, ALGAE_X_OFFSET, 0, true),
+        BLUE_ALGAE_21(20, ALGAE_X_OFFSET, 0, true),
+        BLUE_ALGAE_22(21, ALGAE_X_OFFSET, 0, true);
 
         /**
          * The pose to align to for scoring on this branch
@@ -269,11 +289,17 @@ public class VisionConstants {
          */
         public final double yOffset;
 
+        public final boolean isAlgae;
+
         private REEF(int aprilTagIndex, double xOffset, double yOffset) {
+            this(aprilTagIndex, xOffset, yOffset, false);
+        }
+        private REEF(int aprilTagIndex, double xOffset, double yOffset, boolean isAlgae) {
             this.aprilTagIndex = aprilTagIndex;
             aprilTagId = aprilTagIndex+1;
             this.xOffset = xOffset;
             this.yOffset = yOffset;
+            this.isAlgae = isAlgae;
             pose = getPose();
         }
 
@@ -297,17 +323,32 @@ public class VisionConstants {
         }
 
         /**
-         * Finds the appropriate ReefBranch based on the April tag ID and whether the
+         * Finds the appropriate reef branch based on the AprilTag ID and whether the
          * pose is left or right.
          *
-         * @param aprilTagId The ID of the April tag.
+         * @param aprilTagId The ID of the AprilTag.
          * @param isLeftPose True if the pose is left, false if it's right.
-         * @return The matching ReefBranch, or null if no match is found.
+         * @return The matching REEF, or null if no match is found.
          */
         public static REEF fromAprilTagIdAndPose(int aprilTagId, boolean isLeftPose) {
             for (REEF branch : values()) {
-                if (branch.aprilTagId == aprilTagId &&
+                if (!branch.isAlgae && branch.aprilTagId == aprilTagId &&
                         ((isLeftPose && branch.xOffset > 0) || (!isLeftPose && branch.xOffset < 0))) {
+                    return branch;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Finds the appropriate reef algae position based on the AprilTag ID
+         *
+         * @param aprilTagId The ID of the AprilTag.
+         * @return The matching REEF, or null if no match is found.
+         */
+        public static REEF fromAprilTagIdAlgae(int aprilTagId) {
+            for (REEF branch : values()) {
+                if (branch.isAlgae && branch.aprilTagId == aprilTagId) {
                     return branch;
                 }
             }

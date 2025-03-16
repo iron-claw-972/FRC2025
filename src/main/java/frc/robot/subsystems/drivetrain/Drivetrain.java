@@ -683,4 +683,11 @@ public class Drivetrain extends SubsystemBase {
     public void setCenterOfMass(double height){
         centerOfMassHeight = height;
     }
+
+    public void alignWheels(){
+        SwerveModuleState state = new SwerveModuleState(0, new Rotation2d(1.465));
+        setModuleStates(new SwerveModuleState[]{
+            state, state, state, state
+        }, false);
+    }
 }

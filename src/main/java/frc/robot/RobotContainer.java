@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
@@ -175,13 +174,11 @@ public class RobotContainer {
     AutoBuilder.configure(
         () -> drive.getPose(),
         (pose) -> {
-          System.out.println(pose);
-          Logger.recordOutput("pose reset", pose);
           drive.resetOdometry(pose);
         },
         () -> drive.getChassisSpeeds(),
         (chassisSpeeds) -> {
-          Logger.recordOutput("RobotContainer/ChassisSpeeds", chassisSpeeds);
+          Logger.recordOutput("Auto/ChassisSpeeds", chassisSpeeds);
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
         AutoConstants.AUTO_CONTROLLER,
@@ -306,7 +303,7 @@ public class RobotContainer {
         
         if(elevator != null && outtake != null) {
          autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-         .andThen(new OuttakeCoralBasic(outtake, ()->true))
+         .andThen(new OuttakeCoralBasic(outtake, ()->true, ()->false))
          .andThen(new WaitCommand(3))
          .andThen(new FollowPathCommand("Next Tester", true, drive))
          );
