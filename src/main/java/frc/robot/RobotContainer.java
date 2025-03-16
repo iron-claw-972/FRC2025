@@ -179,6 +179,7 @@ public class RobotContainer {
         },
         () -> drive.getChassisSpeeds(),
         (chassisSpeeds) -> {
+          Logger.recordOutput("RobotContainer/ChassisSpeeds", chassisSpeeds);
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
         AutoConstants.AUTO_CONTROLLER,
