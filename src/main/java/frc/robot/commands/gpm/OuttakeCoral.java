@@ -11,11 +11,12 @@ import frc.robot.subsystems.outtake.Outtake;
 
 public class OuttakeCoral extends SequentialCommandGroup {
     public OuttakeCoral(Outtake outtake, Elevator elevator, Arm arm){
-        BooleanSupplier l4Supplier = ()-> elevator.getSetpoint() > ElevatorConstants.L3_SETPOINT + 0.001;
+        BooleanSupplier l4Supplier = () -> elevator.getSetpoint() > ElevatorConstants.L3_SETPOINT + 0.001;
+        BooleanSupplier l1Supplier = () -> elevator.getSetpoint() < ElevatorConstants.L1_SETPOINT + 0.001;
         addCommands(
             new ConditionalCommand(
                 new ScoreL4(outtake, arm),
-                new OuttakeCoralBasic(outtake, l4Supplier),
+                new OuttakeCoralBasic(outtake, l4Supplier, l1Supplier),
                 l4Supplier)
             //new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT), elevator)
         );

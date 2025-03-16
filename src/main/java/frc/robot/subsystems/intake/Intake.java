@@ -114,7 +114,7 @@ public class Intake extends SubsystemBase {
 
         double position = getStowPosition();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
-        power = MathUtil.clamp(power, -0.5, 0.5);
+        power = MathUtil.clamp(power, -1, 1);
         pivotMotor.set(power);
         if (laserCan != null) {
             Measurement measurement = laserCan.getMeasurement();

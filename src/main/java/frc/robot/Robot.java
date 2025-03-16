@@ -40,8 +40,6 @@ public class Robot extends LoggedRobot {
         PortForwarder.add(5800,"10.9.72.12",5800);
         PortForwarder.add(1182,"10.9.72.12",1182);
 
-        Logger.recordMetadata("ProjectName", "FRC2025"); // Set a metadata value
-
         // Set up data receivers & replay source
         switch (Constants.currentMode) {
             case REAL:
@@ -63,7 +61,6 @@ public class Robot extends LoggedRobot {
             Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
             break;
         }
-
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     }
     
