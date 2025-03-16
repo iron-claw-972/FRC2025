@@ -288,7 +288,7 @@ public class RobotContainer {
         
         if(elevator != null && outtake != null) {
          autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-         .andThen(new OuttakeCoralBasic(outtake, ()->true))
+         .andThen(new OuttakeCoralBasic(outtake, ()->true, ()->false))
          .andThen(new WaitCommand(3))
          .andThen(new FollowPathCommand("Next Tester", true, drive))
          );
