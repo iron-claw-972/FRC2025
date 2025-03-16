@@ -221,8 +221,9 @@ public class VisionConstants {
 
    /**
     * The distance between the AprilTag and algae setpoint in the directin parallel to the face of the reef
+    * Positive is to the left
     */
-    public static final double ALGAE_X_OFFSET = 0;
+    public static final double ALGAE_X_OFFSET = 0.02;
 
     /**
      * Stores all of the alignment poses for both reefs.
