@@ -98,6 +98,7 @@ public class Robot extends LoggedRobot {
             break;
         }
 
+        robotContainer = new RobotContainer(robotId);
         
     }
 
