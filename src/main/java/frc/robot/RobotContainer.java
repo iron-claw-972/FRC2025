@@ -175,13 +175,11 @@ public class RobotContainer {
     AutoBuilder.configure(
         () -> drive.getPose(),
         (pose) -> {
-          System.out.println(pose);
-          Logger.recordOutput("pose reset", pose);
           drive.resetOdometry(pose);
         },
         () -> drive.getChassisSpeeds(),
         (chassisSpeeds) -> {
-          Logger.recordOutput("RobotContainer/ChassisSpeeds", chassisSpeeds);
+          Logger.recordOutput("Auto/ChassisSpeeds", chassisSpeeds);
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
         AutoConstants.AUTO_CONTROLLER,
