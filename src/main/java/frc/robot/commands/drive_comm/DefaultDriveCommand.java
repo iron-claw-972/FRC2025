@@ -14,7 +14,7 @@ import frc.robot.util.Vision.DriverAssist;
  * Default drive command. Drives robot using driver controls.
  */
 public class DefaultDriveCommand extends Command {
-    private final Drivetrain swerve;
+    protected final Drivetrain swerve;
     private final BaseDriverConfig driver;
 
     public DefaultDriveCommand(
@@ -50,19 +50,27 @@ public class DefaultDriveCommand extends Command {
         ChassisSpeeds driverInput = new ChassisSpeeds(forwardTranslation, sideTranslation, rotation);
         ChassisSpeeds corrected = DriverAssist.calculate(swerve, driverInput, swerve.getDesiredPose(), true);
 
+        drive(corrected);
+    }
+
+    /**
+     * Drives the robot
+     * @param speeds The ChassisSpeeds to drive at
+     */
+    protected void drive(ChassisSpeeds speeds){
         // If the driver is pressing the align button or a command set the drivetrain to
         // align, then align to speaker
         if (driver.getIsAlign() || swerve.getIsAlign()) {
             swerve.driveHeading(
-                    forwardTranslation,
-                    sideTranslation,
+                    speeds.vxMetersPerSecond,
+                    speeds.vyMetersPerSecond,
                     swerve.getAlignAngle(),
                     true);
         } else {
             swerve.drive(
-                    corrected.vxMetersPerSecond,
-                    corrected.vyMetersPerSecond,
-                    corrected.omegaRadiansPerSecond,
+                    speeds.vxMetersPerSecond,
+                    speeds.vyMetersPerSecond,
+                    speeds.omegaRadiansPerSecond,
                     true,
                     false);
         }

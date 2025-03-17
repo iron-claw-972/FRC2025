@@ -2,6 +2,7 @@ package frc.robot.commands.vision;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.commands.drive_comm.DriveToPose;
@@ -36,7 +37,7 @@ public class DriveToCoral extends DriveToPose {
   public static Pose2d getPose(Supplier<DetectedObject> supplier){
     DetectedObject object = supplier.get();
     if(object == null) return null;
-    return new Pose2d(object.pose.toPose2d().getTranslation(), new Rotation2d(object.getAngle()+Math.PI/2));
+    return new Pose2d(object.pose.toPose2d().getTranslation(), new Rotation2d(MathUtil.angleModulus(object.getAngle()+Math.PI/2)));
   }
 
   @Override
