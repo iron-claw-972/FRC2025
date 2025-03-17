@@ -46,7 +46,7 @@ public class IntakeCoralHelper extends Command {
 		indexer.run();
 		phase = Phase.Acquiring;
 		if(outtake != null) {
-			outtake.setMotor(0.5);
+			outtake.setMotor(0.7);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class IntakeCoralHelper extends Command {
 		intake.deactivate();
 		indexer.stop();
 		if(outtake != null){
-			outtake.setMotor(.05);
+			outtake.setMotor(.02);
 		}
 		if(!interrupted || phase == Phase.Acquiring || outtake.coralLoaded() && elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025){
 			// If it ended normally or hasn't started, intake can stow
