@@ -269,7 +269,7 @@ public class RobotContainer {
             e.printStackTrace();
         }
         //autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-        autoChooser.addOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
+        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
         //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
@@ -288,7 +288,7 @@ public class RobotContainer {
           new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
           new InstantCommand(()-> intake.stow())
           ));
-          autoChooser.addDefaultOption("One peice red", 
+          autoChooser.addOption("One peice red", 
           new SequentialCommandGroup(
             new InstantCommand(()->{
               drive.resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH-7.229,FieldConstants.FIELD_WIDTH-4.191, Rotation2d.fromDegrees(-90.0)));

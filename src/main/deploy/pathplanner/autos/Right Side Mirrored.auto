@@ -66,13 +66,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Lower Elevator"
+                  "name": "OuttakeCoral"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Lower Elevator"
                 }
               }
             ]

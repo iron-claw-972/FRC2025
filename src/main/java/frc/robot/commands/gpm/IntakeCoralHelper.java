@@ -94,7 +94,7 @@ public class IntakeCoralHelper extends Command {
 		intake.deactivate();
 		indexer.stop();
 		if(outtake != null){
-			outtake.stop();
+			outtake.setMotor(.05);
 		}
 		if(!interrupted || phase == Phase.Acquiring || outtake.coralLoaded() && elevator.atSetpoint()){
 			// If it ended normally or hasn't started, intake can stow
