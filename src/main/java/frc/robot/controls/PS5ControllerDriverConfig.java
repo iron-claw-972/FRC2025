@@ -221,7 +221,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         driver.get(PS5Button.RIGHT_TRIGGER).and(menu.negate()).onTrue(new InstantCommand(()->{
             if(elevator != null){
                 if(outtake != null && outtake.coralLoaded()){
-                    elevator.setSetpoint(ElevatorConstants.SAFE_SETPOINT);
+                    elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
                 }else{
                     elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
                 }
