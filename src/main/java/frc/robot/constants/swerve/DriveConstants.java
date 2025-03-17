@@ -24,7 +24,7 @@ public class DriveConstants {
      */
     public static final double ROBOT_WIDTH_WITH_BUMPERS = 0.832;
 
-    public static double ROBOT_MASS = 20;
+    public static double ROBOT_MASS = 25;
 
     /** Radius of the drive wheels [meters]. */
     public static final double WHEEL_RADIUS = Units.inchesToMeters(1.95);
@@ -89,7 +89,7 @@ public class DriveConstants {
     public static double STEER_OFFSET_FRONT_LEFT = 302.646;
     public static double STEER_OFFSET_FRONT_RIGHT = 103.039+180;
     public static double STEER_OFFSET_BACK_LEFT = 155.646;
-    public static double STEER_OFFSET_BACK_RIGHT = 250.835+4.351-180;
+    public static double STEER_OFFSET_BACK_RIGHT = 255.46-180;
 
     // Heading PID.
     public static final double HEADING_P = 5.5;

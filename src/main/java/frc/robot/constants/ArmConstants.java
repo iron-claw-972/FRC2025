@@ -19,21 +19,21 @@ public class ArmConstants {
     public static final double CENTER_OF_MASS_LENGTH = 0.138; // meters
 
     public static final double MAX_VELOCITY = 21; // rad/s
-    public static final double MAX_ACCELERATION = 80; // rad/s^2
+    public static final double MAX_ACCELERATION = 100; // rad/s^2
 
     public static final double INTAKE_SETPOINT = START_ANGLE;
     public static final double STATION_INTAKE_SETPOINT = 30;
 
     public static final double TOLERANCE = 3.0;
 
-    public static final double L4_SETPOINT = 6.89;
+    public static final double L4_SETPOINT = 1.89;
     //Dunk L4 = 6.4
     public static final double L2_L3_SETPOINT = 12.23;
     public static final double L1_SETPOINT = 40;
 
     public static final double ALGAE_SETPOINT = -16.37;
-    public static final double ALGAE_NET_SETPOINT_1 = 90.0;
-    public static final double ALGAE_NET_SETPOINT_2 = 20;
+    public static final double ALGAE_NET_SETPOINT_1 = 85.0;
+    public static final double ALGAE_NET_SETPOINT_2 = 25;
     public static final double ALGAE_STOW_SETPOINT  = 50;
     public static final double ALGAE_LOLI_SETPOINT  = -19;
     

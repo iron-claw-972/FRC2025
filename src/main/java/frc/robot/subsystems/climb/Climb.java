@@ -29,7 +29,7 @@ public class Climb extends SubsystemBase {
     private static final double climbPosition = -0.83;
 
     //Motors
-    private final PIDController pid = new PIDController(0.3, 0, 0.0);
+    private final PIDController pid = new PIDController(1.2, 0, 0.0);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
@@ -81,6 +81,7 @@ public class Climb extends SubsystemBase {
 
         motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
         motor.setNeutralMode(NeutralModeValue.Brake);
+        SmartDashboard.putData("Climb PID", pid);
     }
 
     @Override
