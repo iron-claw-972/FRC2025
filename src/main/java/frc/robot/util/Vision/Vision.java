@@ -183,6 +183,7 @@ public class Vision {
     String[] objectClass = getDetectedObjectClass();
     // long[] cameraIndex = getCameraIndex();
     DetectedObject[] objects = new DetectedObject[Math.min(xOffset.length, yOffset.length)];
+    Pose2d[] poses = new Pose2d[objects.length];
     for(int i = 0; i < objects.length; i++){
       objects[i] = new DetectedObject(
         Units.degreesToRadians(xOffset[i]),
@@ -192,7 +193,9 @@ public class Vision {
         // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
         VisionConstants.OBJECT_DETECTION_CAMERAS.get(0)
       );
+      poses[i] = objects[i].pose.toPose2d();
     }
+    Logger.recordOutput("Vision/objects", poses);
     return objects;
   }
 
