@@ -67,9 +67,7 @@ public class Elevator extends SubsystemBase {
     Timer.delay(1.0);
 
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
-    resetEncoder(ElevatorConstants.START_HEIGHT);
-    //TODO fixed the elevator not setting brake mode, add for all configuration
-  
+    resetEncoder(ElevatorConstants.START_HEIGHT);  
 
     var talonFXConfigs = new TalonFXConfiguration();
 
