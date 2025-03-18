@@ -129,7 +129,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
         if(intake != null && indexer != null){// && elevator != null){
             boolean toggle = true;
-            Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm).alongWith(
+            Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm).deadlineFor(
                 vision != null ? new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(1, true))
                 : new DoNothing());
             Command intakeAlgae = new IntakeAlgae(intake);

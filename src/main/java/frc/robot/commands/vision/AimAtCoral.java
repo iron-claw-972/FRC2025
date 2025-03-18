@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
+import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.Vision.DetectedObject;
@@ -19,6 +20,10 @@ public class AimAtCoral extends DefaultDriveCommand {
 
     @Override
     protected void drive(ChassisSpeeds speeds){
+        if(!VisionConstants.OBJECT_DETECTION_ENABLED){
+            super.drive(speeds);
+            return;
+        }
         DetectedObject object = objectSupplier.get();
         if(object == null || object.type != ObjectType.CORAL){
             super.drive(speeds);
