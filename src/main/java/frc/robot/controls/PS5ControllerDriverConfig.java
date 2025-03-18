@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -57,7 +58,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Outtake outtake;
     private final Climb climb;
     private final Arm arm;
-    private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.TOUCHPAD);
+    private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_JOY);
     private int alignmentDirection = 0;
     private Pose2d alignmentPose = null;
 
@@ -72,6 +73,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
+        // TODO: Update checks for null
+
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
@@ -168,8 +171,9 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             ));
         }
         if(outtake != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))));
-        }
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))).
+            andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT))));}
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(()->{}, getDrivetrain()));
         if(intake != null && indexer != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
         }
@@ -193,18 +197,22 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(singleAlignmentButton){
             driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(()->{
                 setAlignmentDirection();
-                setAlignmentPose(true);
+                setAlignmentPose(false, true);
             }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
             driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(()->{
                 setAlignmentDirection();
-                setAlignmentPose(false);
+                setAlignmentPose(false, false);
             }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
         }else{
-            driver.get(DPad.LEFT).onTrue(new InstantCommand(()->setAlignmentPose(true))
+            driver.get(DPad.LEFT).onTrue(new InstantCommand(()->setAlignmentPose(false, true))
                 .andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
-            driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->setAlignmentPose(false))
+            driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->setAlignmentPose(false, false))
                 .andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
         }
+        driver.get(PS5Button.TOUCHPAD).toggleOnTrue(new InstantCommand(()->{
+            setAlignmentDirection();
+            setAlignmentPose(true, false);
+        }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
 
         // Reset the yaw. Mainly useful for testing/driver practice
         driver.get(PS5Button.OPTIONS).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
@@ -216,7 +224,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         driver.get(PS5Button.RIGHT_TRIGGER).and(menu.negate()).onTrue(new InstantCommand(()->{
             if(elevator != null){
                 if(outtake != null && outtake.coralLoaded()){
-                    elevator.setSetpoint(ElevatorConstants.SAFE_SETPOINT);
+                    elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
                 }else{
                     elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
                 }
@@ -245,6 +253,12 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             getDrivetrain().setDesiredPose(()->null);
             CommandScheduler.getInstance().cancelAll();
         }));
+
+        driver.get(PS5Button.MUTE).and(menu).onTrue(new FunctionalCommand(
+            ()->getDrivetrain().setStateDeadband(false),
+            getDrivetrain()::alignWheels,
+            interrupted->getDrivetrain().setStateDeadband(true),
+            ()->false, getDrivetrain()).withTimeout(2));
     }
 
     private void setAlignmentDirection(){
@@ -268,13 +282,17 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     /**
      * Sets the drivetrain's alignmetn pose to the selected position
-     * @param isLeft True for left branch, false for right
+     * @param isAlgae True for algae, false for branches
+     * @param isLeft True for left branch, false for right, ignored for algae
      */
-    private void setAlignmentPose(boolean isLeft){
-        alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(
-            Robot.getAlliance() == Alliance.Blue ? alignmentDirection + 17
-            : (8-alignmentDirection) % 6 + 6,
-        isLeft).pose;
+    private void setAlignmentPose(boolean isAlgae, boolean isLeft){
+        int id = Robot.getAlliance() == Alliance.Blue ? alignmentDirection + 17
+            : (8-alignmentDirection) % 6 + 6;
+        if(isAlgae){
+            alignmentPose = VisionConstants.REEF.fromAprilTagIdAlgae(id).pose;
+        }else{
+            alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(id, isLeft).pose;
+        }
     }
 
     @Override

@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.DoNothing;
 import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
@@ -37,6 +36,7 @@ import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
@@ -145,6 +145,7 @@ public class RobotContainer {
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
+        
              
         break;
       }
@@ -173,12 +174,11 @@ public class RobotContainer {
     AutoBuilder.configure(
         () -> drive.getPose(),
         (pose) -> {
-          System.out.println(pose);
-          Logger.recordOutput("pose reset", pose);
           drive.resetOdometry(pose);
         },
         () -> drive.getChassisSpeeds(),
         (chassisSpeeds) -> {
+          Logger.recordOutput("Auto/ChassisSpeeds", chassisSpeeds);
           drive.setChassisSpeeds(chassisSpeeds, false); // problem??
         },
         AutoConstants.AUTO_CONTROLLER,
@@ -190,6 +190,7 @@ public class RobotContainer {
   public void registerCommands() {
     if(intake != null && indexer != null && elevator != null){
       NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake, arm));
+      NamedCommands.registerCommand("lower intake", new InstantCommand(() -> intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT)));
     }
     if(elevator != null && outtake != null && arm != null){
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
@@ -259,7 +260,7 @@ public class RobotContainer {
   }
 
   public void addPaths(){
-        autoChooser.addDefaultOption("Do Nothing", new DoNothing());
+        
 
         try {
             List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
@@ -268,12 +269,41 @@ public class RobotContainer {
             e.printStackTrace();
         }
         //autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-        autoChooser.addOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
+        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
         //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
-       
-        // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
+        autoChooser.addOption("One peice blue", 
+        new SequentialCommandGroup(
+          new InstantCommand(()->{
+            drive.resetOdometry(new Pose2d(7.229,4.191, Rotation2d.fromDegrees(90.0)));
+            intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
+          }),
+          new DriveToPose(drive, () -> VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.pose).withTimeout(8),
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT),
+          new OuttakeCoral(outtake, elevator, arm),
+          new SequentialCommandGroup(new WaitCommand(0.1),
+          new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+          new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
+          new InstantCommand(()-> intake.stow())
+          ));
+          autoChooser.addOption("One peice red", 
+          new SequentialCommandGroup(
+            new InstantCommand(()->{
+              drive.resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH-7.229,FieldConstants.FIELD_WIDTH-4.191, Rotation2d.fromDegrees(-90.0)));
+              intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
+            }),
+            new DriveToPose(drive, () -> VisionConstants.REEF.RED_BRANCH_10_RIGHT.pose).withTimeout(8),
+            new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+            new MoveArm(arm, ArmConstants.L4_SETPOINT),
+            new OuttakeCoral(outtake, elevator, arm),
+            new SequentialCommandGroup(new WaitCommand(0.1),
+            new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+            new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
+            new InstantCommand(()-> intake.stow())
+            ));
+          // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
         // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
         // .andThen(new OuttakeCoral(outtake, elevator, arm))
         // .andThen(new FollowPathCommand("#2", true, drive))
@@ -288,7 +318,7 @@ public class RobotContainer {
         
         if(elevator != null && outtake != null) {
          autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-         .andThen(new OuttakeCoralBasic(outtake, ()->true))
+         .andThen(new OuttakeCoralBasic(outtake, ()->true, ()->false))
          .andThen(new WaitCommand(3))
          .andThen(new FollowPathCommand("Next Tester", true, drive))
          );

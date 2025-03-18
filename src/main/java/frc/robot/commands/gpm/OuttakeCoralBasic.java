@@ -13,7 +13,8 @@ import frc.robot.subsystems.outtake.Outtake;
  * Wants coral to be present.
  */
 public class OuttakeCoralBasic extends Command {
-    public static final double L4_SPEED = -0.4;
+    public static final double L1_SPEED = -0.1;
+    public static final double L4_SPEED = -0.6;
     public static final double OUTTAKE_SPEED = -0.4;
 
     private Outtake outtake;
@@ -22,10 +23,12 @@ public class OuttakeCoralBasic extends Command {
     private Timer timer = new Timer();
 
     private BooleanSupplier l4Supplier;
+    private BooleanSupplier l1Supplier;
 
-    public OuttakeCoralBasic(Outtake outtake, BooleanSupplier l4Supplier){
+    public OuttakeCoralBasic(Outtake outtake, BooleanSupplier l4Supplier, BooleanSupplier l1Supplier){
         this.outtake = outtake;
         this.l4Supplier = l4Supplier;
+        this.l1Supplier = l1Supplier;
         addRequirements(outtake);
     }
 
@@ -33,11 +36,13 @@ public class OuttakeCoralBasic extends Command {
     @Override
     public void initialize(){
         timer.restart();
-        outtake.setMotor(l4Supplier.getAsBoolean() ? L4_SPEED : OUTTAKE_SPEED);
+        boolean l4 = l4Supplier.getAsBoolean();
+        boolean l1 = !l4 && l1Supplier.getAsBoolean();
+        outtake.setMotor(l4 ? L4_SPEED : l1 ? L1_SPEED : OUTTAKE_SPEED);
     }
 
     public boolean isFinished(){
-        return timer.hasElapsed(0.5);
+        return timer.hasElapsed(0.25);
     }
 
 

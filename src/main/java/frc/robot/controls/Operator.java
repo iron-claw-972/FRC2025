@@ -62,6 +62,7 @@ public class Operator {
     }
 
     public void configureControls() {
+        // TODO: Update to match new driver controls, except the ones that move the drivetrain
         Trigger menu = driver.get(Button.LEFT_JOY);
 
         // Elevator setpoints

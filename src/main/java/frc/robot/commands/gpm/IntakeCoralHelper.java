@@ -46,7 +46,7 @@ public class IntakeCoralHelper extends Command {
 		indexer.run();
 		phase = Phase.Acquiring;
 		if(outtake != null) {
-			outtake.setMotor(0.5);
+			outtake.setMotor(0.7);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class IntakeCoralHelper extends Command {
 			case InOuttake:
 				if(outtake == null || outtake.coralLoaded()){
 					phase = Phase.Done;
-					elevator.setSetpoint(ElevatorConstants.SAFE_SETPOINT);
+					elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
 					arm.setSetpoint(ArmConstants.STOW_SETPOINT);
 				}
 				break;
@@ -85,7 +85,7 @@ public class IntakeCoralHelper extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return phase == Phase.Done && elevator.atSetpoint() && arm.atSetpoint();
+		return phase == Phase.Done && elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025 && arm.atSetpoint();
 	}
 
 	@Override
@@ -94,9 +94,9 @@ public class IntakeCoralHelper extends Command {
 		intake.deactivate();
 		indexer.stop();
 		if(outtake != null){
-			outtake.stop();
+			outtake.setMotor(.02);
 		}
-		if(!interrupted || phase == Phase.Acquiring || outtake.coralLoaded() && elevator.atSetpoint()){
+		if(!interrupted || phase == Phase.Acquiring || outtake.coralLoaded() && elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025){
 			// If it ended normally or hasn't started, intake can stow
 			intake.stow();
 		}

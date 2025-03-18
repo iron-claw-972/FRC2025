@@ -32,12 +32,12 @@ import frc.robot.util.PhoenixUtil;
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
-  private double setpoint = ElevatorConstants.START_HEIGHT;
+  private double setpoint = ElevatorConstants.INTAKE_SETPOINT;
   
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
   private double maxVelocity = 3.6; // m/s 3.68
-  private double maxAcceleration = 8; // m/s 8
+  private double maxAcceleration = 12; // m/s 8
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -67,9 +67,7 @@ public class Elevator extends SubsystemBase {
     Timer.delay(1.0);
 
     //m_lastProfiledReference = new ExponentialProfile.State(getPosition(),0);
-    resetEncoder(ElevatorConstants.START_HEIGHT);
-    //TODO fixed the elevator not setting brake mode, add for all configuration
-  
+    resetEncoder(ElevatorConstants.START_HEIGHT);  
 
     var talonFXConfigs = new TalonFXConfiguration();
 
@@ -78,7 +76,7 @@ public class Elevator extends SubsystemBase {
     slot0Configs.kS = 0.15; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 0.55; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kP = 0.75; // A position error of 2.5 rotations results in 12 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // A velocity error of 1 rps results in 0.1 V output
 
@@ -173,7 +171,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atSetpoint(){
-    return Math.abs(getPosition() - setpoint) < 0.025;
+    return Math.abs(getPosition() - setpoint) < (0.025+0.0125);
   }
 
   /**

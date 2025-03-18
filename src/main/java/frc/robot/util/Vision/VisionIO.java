@@ -31,11 +31,18 @@ public interface VisionIO {
     // PhotonVision should never return more than 5 results, except possibly for very long loop overruns
     private static final int maxLength = 5;
 
+    private boolean intitalized = false;
+
     @Override
     public void toLog(LogTable table) {
       // LogTable does not easily allow removal of logs, especially ProtobufSerializables, so extra values will need to be ignored
       // This is not very efficient, since unused values are still taking up memory, but there is no easy way to remove them
-
+      if (!intitalized){
+        for(int i = 0; i < maxLength; i++){
+          table.put("Results"+i, new PhotonPipelineResult());
+          intitalized = true;
+        }
+      }
       table.put("Connected", connected);
       double length = Math.min(results.size(), maxLength);
       table.put("Length", length);

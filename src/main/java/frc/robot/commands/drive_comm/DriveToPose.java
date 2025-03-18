@@ -32,9 +32,9 @@ public class DriveToPose extends Command {
   private static final double thetakP = 7.0;
   private static final double thetakD = 0.0;
   private static final double driveMaxVelocity = DriveConstants.MAX_SPEED;
-  private static final double driveMaxAcceleration = 3.0;
+  private static final double driveMaxAcceleration = 2.25;
   private static final double thetaMaxVelocity = 5.0;
-  private static final double thetaMaxAcceleration = 4.0;
+  private static final double thetaMaxAcceleration = 5.0;
   private static final double driveTolerance = 0.01;
   private static final double thetaTolerance = Units.degreesToRadians(1.0);
   private static final double ffMinRadius = 0.05;

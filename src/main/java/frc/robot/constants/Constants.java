@@ -71,6 +71,6 @@ public class Constants {
     public static final double HEADING_SLEWRATE = 10;
 
     //modes
-    public static final Mode simMode = Mode.REAL;
+    public static final Mode simMode = Mode.REPLAY;
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 }

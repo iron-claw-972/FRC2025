@@ -82,8 +82,8 @@ public class Arm extends SubsystemBase implements ArmIO {
         slot0Configs.kG = ArmConstants.MASS * 9.81 * ArmConstants.CENTER_OF_MASS_LENGTH / ArmConstants.GEAR_RATIO; // Gravity compensation
         slot0Configs.kV = 0.12; // Velocity gain: 1 rps -> 0.12V
         slot0Configs.kA = 0;  // Acceleration gain: 1 rps² -> 0V (should be tuned if acceleration matters)
-        slot0Configs.kP = 0.7; // If position error is 2.5 rotations, apply 12V (0.5 * 2.5 * 12V)
-        slot0Configs.kI = 0.02;   // Integral term (usually left at 0 for MotionMagic)
+        slot0Configs.kP = 0.85; // If position error is 2.5 rotations, apply 12V (0.5 * 2.5 * 12V)
+        slot0Configs.kI = 0.;   // Integral term (usually left at 0 for MotionMagic)
         slot0Configs.kD = 0;   // Derivative term (used to dampen oscillations)
 
         // set Motion Magic settings
@@ -124,6 +124,7 @@ public class Arm extends SubsystemBase implements ArmIO {
     }
 
     public void setSetpoint(double setpoint) {
+        
         this.setpoint = MathUtil.clamp(setpoint, ArmConstants.MIN_ANGLE, ArmConstants.MAX_ANGLE);
     }
 
@@ -153,7 +154,7 @@ public class Arm extends SubsystemBase implements ArmIO {
     }
 
     public boolean canMoveElevator() {
-        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < ArmConstants.TOLERANCE;
+        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < 5;
     }
 
     @Override

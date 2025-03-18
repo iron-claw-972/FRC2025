@@ -33,8 +33,19 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "lower intake",
+      "waypointRelativePos": 0.14206787687450353,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "lower intake"
+        }
+      }
+    },
+    {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.32395950506186005,
+      "waypointRelativePos": 0.4625098658247798,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,8 +56,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

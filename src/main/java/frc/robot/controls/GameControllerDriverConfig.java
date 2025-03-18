@@ -31,6 +31,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   @SuppressWarnings("unused")
   @Override
   public void configureControls() {
+    // TODO: Update to match PS5ControllerDriverConfig
+
     // Reset yaw to be away from driver
     //kDriver.setRumble(RumbleStatus.RUMBLE_ON);
     kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(

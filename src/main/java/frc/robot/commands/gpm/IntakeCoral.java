@@ -18,10 +18,11 @@ public class IntakeCoral extends SequentialCommandGroup {
 	public IntakeCoral(Intake intake, Indexer indexer, Elevator elevator, Outtake outtake, Arm arm) {
 		addCommands(
 			new ParallelCommandGroup(
-					new InstantCommand(() -> intake.unstow()),
-					new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
-					new MoveArm(arm, ArmConstants.START_ANGLE)),
-				new IntakeCoralHelper(intake, indexer, outtake, arm, elevator));
+					new InstantCommand(() -> {
+						intake.unstow(); 
+						elevator.setSetpoint(ElevatorConstants.INTAKE_SETPOINT); 
+						arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);}),
+				new IntakeCoralHelper(intake, indexer, outtake, arm, elevator)));
 	}
 
 }
