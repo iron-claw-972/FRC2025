@@ -32,6 +32,7 @@ import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
+import frc.robot.commands.vision.DriveToCoral;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
@@ -188,6 +189,9 @@ public class RobotContainer {
   }
 
   public void registerCommands() {
+    if(vision != null){
+      NamedCommands.registerCommand("DriveToCoral", new DriveToCoral(()->vision.getBestGamePiece(1, true), drive));
+    }
     if(intake != null && indexer != null && elevator != null){
       NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake, arm));
       NamedCommands.registerCommand("lower intake", new InstantCommand(() -> intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT)));

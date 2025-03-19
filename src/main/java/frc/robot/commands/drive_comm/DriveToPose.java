@@ -40,7 +40,7 @@ public class DriveToPose extends Command {
   private static final double ffMinRadius = 0.05;
   private static final double ffMaxRadius = 0.1;
 
-  private final Drivetrain drive;
+  protected final Drivetrain drive;
   private final Supplier<Pose2d> target;
   private Pose2d targetPose;
 
