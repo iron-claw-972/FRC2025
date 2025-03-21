@@ -3,55 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.9713092,
-        "y": 5.191
+        "x": 4.0073368,
+        "y": 5.1909832
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.461440347544805,
-        "y": 7.189870901642059
+        "x": 2.968207499307818,
+        "y": 5.761044720256515
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.722,
-        "y": 7.1288
+        "x": 1.418,
+        "y": 5.814053911339577
       },
       "prevControl": {
-        "x": 3.2504221311513612,
-        "y": 5.103515163937142
+        "x": 2.175862759568404,
+        "y": 5.863680145561889
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.6204690831556442,
-      "rotationDegrees": -145.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.2789651293588275,
+      "waypointRelativePos": 0.40029835137795283,
       "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeCoral"
-        }
-      }
+      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -59,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -144.0
+    "rotation": -89.24717948106847
   },
   "reversed": false,
-  "folder": "Ground RSide mirrored",
+  "folder": "Lollipop Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 150.0
+    "rotation": -156.27096837716925
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
