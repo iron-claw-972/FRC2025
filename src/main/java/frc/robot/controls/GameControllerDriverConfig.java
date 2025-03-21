@@ -257,13 +257,6 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
             CommandScheduler.getInstance().cancelAll();
         }));
 
-        kDriver.get(PS5Button.MUTE).and(menu).onTrue(new FunctionalCommand(
-            ()->getDrivetrain().setStateDeadband(false),
-            getDrivetrain()::alignWheels,
-            interrupted->getDrivetrain().setStateDeadband(true),
-            ()->false, getDrivetrain()).withTimeout(2));
-    }
-
     // set the wheels to X
     kDriver.get(Button.X).whileTrue(new SetFormationX(super.getDrivetrain()));
     // Enable state deadband after setting formation to X
