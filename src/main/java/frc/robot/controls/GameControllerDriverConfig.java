@@ -83,7 +83,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     Trigger menu = kDriver.get(Button.LEFT_JOY);
 
     // Elevator setpoints
-    if (elevator != null && outtake != null && arm != null) {
+    if (elevator != null && arm != null) {
       kDriver.get(Button.BACK).and(menu.negate()).onTrue(
           new SequentialCommandGroup(
               new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
@@ -118,7 +118,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     }
     // Intake/outtake
     Trigger r3 = kDriver.get(Button.RIGHT_JOY);
-    if (intake != null && indexer != null) {// && elevator != null){
+    
+    if (intake != null && indexer != null && elevator != null && outtake != null && arm != null) {// && elevator != null){
       boolean toggle = true;
       Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm);
       Command intakeAlgae = new IntakeAlgae(intake);
@@ -159,7 +160,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
           }));
     }
 
-    if (intake != null && outtake != null) {
+    if (intake != null && outtake != null && arm != null && elevator != null) {
       kDriver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
           new OuttakeAlgae(outtake, intake),
           new InstantCommand(() -> {
@@ -169,7 +170,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
           }, elevator)));
     }
 
-    if (outtake != null && elevator != null) {
+    if (outtake != null && elevator != null && arm != null) {
       kDriver.get(DPad.DOWN).and(menu.negate())
           .onTrue(new OuttakeCoral(outtake, elevator, arm)
               .alongWith(new InstantCommand(() -> getDrivetrain().setDesiredPose(() -> null)))
@@ -178,7 +179,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     }
     kDriver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(() -> {
     }, getDrivetrain()));
-    if (intake != null && indexer != null) {
+    if (intake != null && indexer != null && outtake != null) {
       kDriver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
     }
 
