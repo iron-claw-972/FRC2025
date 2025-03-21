@@ -57,7 +57,7 @@
     "rotation": -150.0
   },
   "reversed": false,
-  "folder": "Ground RSide mirrored",
+  "folder": "Ground LSide",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -145.0

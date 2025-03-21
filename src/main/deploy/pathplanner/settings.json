@@ -5,8 +5,9 @@
   "pathFolders": [
     "Ground BSide",
     "Ground RSide",
-    "Ground RSide mirrored",
-    "Lollipop Path"
+    "Ground LSide",
+    "Lollipop Path",
+    "Sweep Right Side"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
