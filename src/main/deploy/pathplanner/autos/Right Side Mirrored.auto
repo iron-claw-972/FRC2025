@@ -50,6 +50,49 @@
         {
           "type": "path",
           "data": {
+            "pathName": "P 5"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 6/19 Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lower Elevator"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GroundB #6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive To Left Station"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "P  3"
           }
         },
@@ -81,7 +124,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GrondP4"
+            "pathName": "GrounddB #4"
           }
         },
         {
@@ -93,7 +136,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P 5"
+            "pathName": "GroundB #5"
           }
         },
         {
@@ -103,7 +146,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 6/19 Left"
+                  "name": "Drive To 7/18 Left"
                 }
               },
               {
