@@ -281,7 +281,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     /**
-     * Sets the drivetrain's alignment pose to the selected position.
+     * Sets the drivetrain's alignmetn pose to the selected position
      * @param isAlgae True for algae, false for branches
      * @param isLeft True for left branch, false for right, ignored for algae
      */
