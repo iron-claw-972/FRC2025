@@ -159,10 +159,10 @@ public class DriveConstants {
     /* Drive Motor Characterization Values
      * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
     public static final double[] S_VALUES = {
-        0.11079,
-        0.1117,
-        0.11257,
-        0.075667
+        0.11,
+        0.11,
+        0.11,
+        0.11
     };
     public static final double[] V_VALUES = {
         0.11079,
