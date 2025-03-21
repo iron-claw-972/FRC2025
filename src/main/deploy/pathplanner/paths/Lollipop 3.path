@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0073368,
-        "y": 5.1909832
+        "x": 3.7213752,
+        "y": 5.0258832
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.968207499307818,
-        "y": 5.761044720256515
+        "x": 3.2876961995928338,
+        "y": 5.240725359507329
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.239,
-        "y": 5.843
+        "x": 1.224,
+        "y": 4.023
       },
       "prevControl": {
-        "x": 1.9968631781709456,
-        "y": 5.892619841156129
+        "x": 2.2404897088951454,
+        "y": 4.642129432338781
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0.40029835137795283,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -89.24717948106847
+    "rotation": -48.652092538649285
   },
   "reversed": false,
   "folder": "Lollipop Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -150.80983238234546
+    "rotation": -149.20719589802195
   },
   "useDefaultConstraints": true
 }

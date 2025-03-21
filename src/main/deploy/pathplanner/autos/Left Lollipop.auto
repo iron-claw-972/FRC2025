@@ -47,6 +47,69 @@
           "data": {
             "pathName": "P 5"
           }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 6/19 Left"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Lollipop 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Lollipop 2"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 6/19 Right"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Lollipop 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Lollipop 4"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 7/18 Left"
+                }
+              }
+            ]
+          }
         }
       ]
     }
