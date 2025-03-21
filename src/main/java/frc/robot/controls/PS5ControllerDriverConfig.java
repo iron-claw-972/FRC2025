@@ -73,8 +73,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
-        // TODO: Update checks for null
-
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
