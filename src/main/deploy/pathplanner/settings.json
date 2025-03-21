@@ -3,13 +3,10 @@
   "robotLength": 0.832,
   "holonomicMode": true,
   "pathFolders": [
-    "Align RSide",
     "Ground BSide",
     "Ground RSide",
     "Ground RSide mirrored",
-    "Lollipop Path",
-    "Sequential BSide",
-    "Sequential RSide"
+    "Lollipop Path"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
