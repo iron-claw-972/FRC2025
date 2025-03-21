@@ -8,36 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.461440347544805,
-        "y": 7.189870901642059
+        "x": 4.267840909084701,
+        "y": 7.908934659084283
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.410284090909091,
-        "y": 7.49012784090909
+        "x": 0.7777840909028838,
+        "y": 6.602656249993373
       },
       "prevControl": {
-        "x": 3.912138589462855,
-        "y": 7.360862288251302
-      },
-      "nextControl": {
-        "x": 2.7521590909090907,
-        "y": 7.659644886363636
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 0.788,
-        "y": 6.832
-      },
-      "prevControl": {
-        "x": 2.0873920454545454,
-        "y": 7.991055113636363
+        "x": 2.183778409084702,
+        "y": 7.44026988635701
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.25,
-      "rotationDegrees": -89.1939270582298
+      "waypointRelativePos": 0.3996447602131443,
+      "rotationDegrees": -61.80745579456678
     }
   ],
   "constraintZones": [],
@@ -55,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.55,
+      "waypointRelativePos": 0.3,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
