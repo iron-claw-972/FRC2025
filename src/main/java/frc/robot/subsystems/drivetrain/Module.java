@@ -359,7 +359,7 @@ public class Module implements ModuleIO{
         motionMagicConfigs.MotionMagicCruiseVelocity = DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE;
         motionMagicConfigs.MotionMagicAcceleration = DriveConstants.MAX_DRIVE_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE;
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
+        slot0Configs.kS = moduleConstants.getDriveS(); // Add 0.25 V output to overcome static friction
         slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
         slot0Configs.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
         slot0Configs.kP = moduleConstants.getDriveP(); // A position error of 2.5 rotations results in 12 V output
