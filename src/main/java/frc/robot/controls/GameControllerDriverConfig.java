@@ -3,7 +3,6 @@ package frc.robot.controls;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -15,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.drive_comm.DriveToPose;
-import frc.robot.commands.drive_comm.SetFormationX;
 import frc.robot.commands.gpm.IntakeAlgae;
 import frc.robot.commands.gpm.IntakeAlgaeArm;
 import frc.robot.commands.gpm.IntakeCoral;
@@ -122,7 +120,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       boolean toggle = true;
       Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm);
       Command intakeAlgae = new IntakeAlgae(intake);
-      kDriver.get(Button.BACK).onTrue(new InstantCommand(() -> {
+      kDriver.get(Button.A).onTrue(new InstantCommand(() -> {
         if (r3.getAsBoolean())
           return;
         if (menu.getAsBoolean()) {
@@ -189,16 +187,11 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       if (intake != null) {
         kDriver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(() -> intake.setAngle(65), intake));
       }
-      kDriver.get(Button.RB).and(kDriver.get(Button.X)).whileTrue(new ResetClimb(climb));
+      kDriver.get(Button.X).and(menu.negate()).whileTrue(new ResetClimb(climb));
       kDriver.get(kDriver.RIGHT_TRIGGER_BUTTON).and(menu).onTrue(new InstantCommand(() -> climb.stow(), climb));
     }
 
     // Alignment
-    kDriver.get(Button.B).and(menu).onTrue(new InstantCommand(() -> alignmentDirection = 0));
-    kDriver.get(Button.Y).and(menu).onTrue(new InstantCommand(() -> alignmentDirection = 2));
-    kDriver.get(Button.X).and(menu).onTrue(new InstantCommand(() -> alignmentDirection = 3));
-    kDriver.get(Button.RB).onTrue(new InstantCommand(() -> alignmentDirection = 4));
-    kDriver.get(DPad.UP).onTrue(new InstantCommand(() -> alignmentDirection = 5));
     if (singleAlignmentButton) {
       kDriver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(() -> {
         setAlignmentDirection();
@@ -216,7 +209,6 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     }
 
     // Reset yaw to be away from driver
-    // kDriver.setRumble(RumbleStatus.RUMBLE_ON);
     kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
 
@@ -253,31 +245,6 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       getDrivetrain().setDesiredPose(() -> null);
       CommandScheduler.getInstance().cancelAll();
     }));
-
-    // set the wheels to X
-    kDriver.get(Button.X).whileTrue(new SetFormationX(super.getDrivetrain()));
-    // Enable state deadband after setting formation to X
-    kDriver.get(Button.X).onFalse(new InstantCommand(() -> getDrivetrain().setStateDeadband(true)));
-
-    // Resets the modules to absolute if they are having the unresolved zeroing
-    // error
-    kDriver.get(Button.RB).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
-
-    kDriver.get(Button.BACK).onTrue(new InstantCommand(() -> getDrivetrain().getSwerveModulePose().reset()));
-
-    if (vision != null && VisionConstants.DRIVER_ASSIST_MODE > 0) {
-      // This will only be true when it is equal to 1, but <=1 avoids a warning for
-      // comparing identical expressions
-      if (VisionConstants.DRIVER_ASSIST_MODE <= 1) {
-        // Currently does nothing
-      } else {
-        (new Trigger(kDriver.LEFT_TRIGGER_BUTTON))
-            .onTrue(new InstantCommand(() -> getDrivetrain()
-                .setDesiredPose(() -> vision.getBestGamePiece(Units.degreesToRadians(60), false).pose.toPose2d())))
-            .onFalse(new InstantCommand(() -> getDrivetrain().setDesiredPose(() -> null)));
-
-      }
-    }
   }
 
   private void setAlignmentDirection() {
