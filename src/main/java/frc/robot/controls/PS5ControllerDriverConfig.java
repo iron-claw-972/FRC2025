@@ -152,14 +152,16 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             // On false, run the command to finish intaking if it has a coral
             Command startIntake = new StationIntake(outtake, arm, elevator);
             // Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
-            driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
-                .onFalse(new InstantCommand(()->{
-                    if(!startIntake.isScheduled()){
-                        // finishIntake.schedule();
-                    }else{
-                        startIntake.cancel();
-                    }
-            }));
+            // driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
+            //     .onFalse(new InstantCommand(()->{
+            //         if(!startIntake.isScheduled()){
+            //             // finishIntake.schedule();
+            //         }else{
+            //             startIntake.cancel();
+            //         }
+            // }));
+            driver.get(PS5Button.CROSS).and(r3).onTrue(startIntake);
+
         }
         if(intake != null && outtake != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
