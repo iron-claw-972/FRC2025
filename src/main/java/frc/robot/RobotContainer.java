@@ -262,17 +262,16 @@ public class RobotContainer {
   }
 
   public void addPaths(){
-        
-
         try {
-            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
-            
-        } catch (IOException | ParseException e) {
+            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
+        } 
+        catch (IOException | ParseException e) {
             e.printStackTrace();
         }
         //autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
+        autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
         //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
+        autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
         autoChooser.addOption("One peice blue", 
