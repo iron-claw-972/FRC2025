@@ -22,10 +22,6 @@ public class StationIntake extends Command {
 
     @Override
     public void initialize() {
-        new SequentialCommandGroup(
-            new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
-            new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)
-        );
         outtake.setMotor(0.7);
     }
 
