@@ -37,7 +37,6 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
-import frc.robot.util.Vision.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
@@ -50,7 +49,6 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   public static final boolean singleAlignmentButton = true;
 
   private final GameController kDriver = new GameController(Constants.DRIVER_JOY);
-  private final Vision vision;
   private final Elevator elevator;
   private final Intake intake;
   private final Indexer indexer;
@@ -60,10 +58,9 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   private int alignmentDirection = 0;
   private Pose2d alignmentPose = null;
 
-  public GameControllerDriverConfig(Drivetrain drive, Vision vision, Elevator elevator, Intake intake, Indexer indexer,
+  public GameControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer,
       Outtake outtake, Climb climb, Arm arm) {
     super(drive);
-    this.vision = vision;
     this.elevator = elevator;
     this.intake = intake;
     this.indexer = indexer;
@@ -72,11 +69,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     this.arm = arm;
   }
 
-  @SuppressWarnings("unused")
   @Override
   public void configureControls() {
-    // TODO: Update to match PS5ControllerDriverConfig
-
     Trigger menu = kDriver.get(Button.LEFT_JOY);
 
     // Elevator setpoints
@@ -187,7 +181,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       if (intake != null) {
         kDriver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(() -> intake.setAngle(65), intake));
       }
-      kDriver.get(Button.X).and(menu.negate()).whileTrue(new ResetClimb(climb));
+      kDriver.get(Button.X).and(menu).whileTrue(new ResetClimb(climb));
       kDriver.get(kDriver.RIGHT_TRIGGER_BUTTON).and(menu).onTrue(new InstantCommand(() -> climb.stow(), climb));
     }
 
