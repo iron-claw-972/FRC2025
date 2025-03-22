@@ -201,9 +201,11 @@ public class RobotContainer {
         )
       );
 
-      NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(new WaitCommand(0.1),
+      NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(
+        new WaitCommand(0.1),
         new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))));
+        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+      ));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new ParallelCommandGroup(
