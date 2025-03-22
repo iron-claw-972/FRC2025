@@ -46,7 +46,7 @@ public class DriveConstants {
     public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
 
     /** Theoretical maximum speed of the robot based on maximum motor RPM, gear ratio, and wheel radius */
-    public static final double MAX_SPEED = 4.1;
+    public static final double MAX_SPEED = 4.5;
 
     // Need to convert tangential velocity (the m/s of the edge of the robot) to angular velocity (the radians/s of the robot)
     // To do so, divide by the radius. The radius is the diagonal of the square chassis, diagonal = sqrt(2) * side_length.
@@ -159,10 +159,10 @@ public class DriveConstants {
     /* Drive Motor Characterization Values
      * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
     public static final double[] S_VALUES = {
-        0.11079,
-        0.1117,
-        0.11257,
-        0.075667
+        0.11,
+        0.11,
+        0.11,
+        0.11
     };
     public static final double[] V_VALUES = {
         0.11079,
