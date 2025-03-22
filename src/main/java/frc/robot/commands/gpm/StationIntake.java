@@ -36,7 +36,7 @@ public class StationIntake extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        outtake.stop();
+        outtake.setMotor(0.02);
     }
 
 
