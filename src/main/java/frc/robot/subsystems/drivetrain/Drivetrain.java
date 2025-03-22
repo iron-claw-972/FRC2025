@@ -36,6 +36,8 @@ import frc.robot.util.SwerveModulePose;
 import frc.robot.util.SwerveStuff.SwerveSetpoint;
 import frc.robot.util.SwerveStuff.SwerveSetpointGenerator;
 import frc.robot.util.Vision.Vision;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -175,7 +177,7 @@ public class Drivetrain extends SubsystemBase {
             });
 
         //PPLibTelemetry.enableCompetitionMode();
-        }
+    }
 
     public void close() {
         // close each of the modules

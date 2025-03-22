@@ -14,6 +14,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -117,6 +118,32 @@ public class Robot extends LoggedRobot {
         // block in order for anything in the Command-based framework to work.
 
         CommandScheduler.getInstance().run();
+
+        Logger.recordOutput(
+            "ZeroedComponentPoses", 
+            new Pose3d[] {
+                //intake
+                new Pose3d(),
+                //elevator base
+                new Pose3d(),
+                //elevator 1
+                new Pose3d(),
+                //elevator 2
+                new Pose3d(),
+                //elevator 3
+                new Pose3d(),
+                //arm
+                new Pose3d(),
+            }
+        
+        );
+        Logger.recordOutput(
+            "ComponentPoses", 
+            new Pose3d[] {
+
+            }
+        
+        );
     }
 
     /**

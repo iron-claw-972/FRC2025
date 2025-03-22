@@ -14,6 +14,8 @@ import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -238,4 +240,15 @@ public class Intake extends SubsystemBase {
     public void activate(){
         rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
     }
+
+    //TODO
+    public Pose3d getPose3d() {
+        return new Pose3d(
+            -0.238,
+            0.0,
+            0.298,
+            new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) - 1.0, 0.0)
+        );
+    }
 }
+
