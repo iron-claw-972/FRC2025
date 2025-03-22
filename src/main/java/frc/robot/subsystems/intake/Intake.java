@@ -247,7 +247,7 @@ public class Intake extends SubsystemBase {
             -0.238,
             0.0,
             0.298,
-            new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) - 1.0, 0.0)
+            new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) - 1.0, 0.0) //inputs.measuredPivotPosition
         );
     }
 }
