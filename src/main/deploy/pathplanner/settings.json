@@ -4,9 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "Ground BSide",
-    "Ground RSide",
     "Ground LSide",
+    "Ground RSide",
     "Lollipop Path",
+    "Station Left",
     "Sweep Right Side"
   ],
   "autoFolders": [],
