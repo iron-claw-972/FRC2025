@@ -93,7 +93,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StationB #5"
+            "pathName": "StationB Alt Opt"
           }
         },
         {
@@ -103,7 +103,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 7/18 Left"
+                  "name": "Drive To 6/19 Right"
                 }
               },
               {
