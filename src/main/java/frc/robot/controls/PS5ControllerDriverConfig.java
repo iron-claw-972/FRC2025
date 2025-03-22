@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -28,6 +29,7 @@ import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
+import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -149,16 +151,22 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StartStationIntake(intake);
-            // Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
-            driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
-                .onFalse(new InstantCommand(()->{
-                    if(!startIntake.isScheduled()){
-                        // finishIntake.schedule();
-                    }else{
-                        startIntake.cancel();
-                    }
-            }));
+            Command startIntake = new StationIntake(outtake, arm, elevator);
+            // Command finishIn6take = new FinishStationIntake(intake, indexer, elevator, outtake);
+            // driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
+            //     .onFalse(new InstantCommand(()->{
+            //         if(!startIntake.isScheduled()){
+            //             // finishIntake.schedule();
+            //         }else{
+            //             startIntake.cancel();
+            //         }
+            // }));
+            driver.get(PS5Button.CROSS).and(r3).onTrue(
+            new SequentialCommandGroup(
+            new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
+            new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)).
+            andThen(startIntake));
+
         }
         if(intake != null && outtake != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
