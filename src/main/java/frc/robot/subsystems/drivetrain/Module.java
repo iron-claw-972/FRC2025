@@ -260,7 +260,7 @@ public class Module implements ModuleIO{
             double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS/2/Math.PI;
+            double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS/2/Math.PI*DriveConstants.DRIVE_GEAR_RATIO;
             Logger.recordOutput("desired vel" + moduleConstants.ordinal(), velocity);
             
             driveMotor.setControl(
@@ -356,12 +356,12 @@ public class Module implements ModuleIO{
         var talonFXConfigs = new TalonFXConfiguration();
         // set Motion Magic settings
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE;
-        motionMagicConfigs.MotionMagicAcceleration = DriveConstants.MAX_DRIVE_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE;
+        motionMagicConfigs.MotionMagicCruiseVelocity = DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE * DriveConstants.DRIVE_GEAR_RATIO;
+        motionMagicConfigs.MotionMagicAcceleration = DriveConstants.MAX_DRIVE_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE * DriveConstants.DRIVE_GEAR_RATIO;
         var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = moduleConstants.getDriveS(); // Add 0.25 V output to overcome static friction
+        slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
         slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-        slot0Configs.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
+        slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
         slot0Configs.kP = moduleConstants.getDriveP(); // A position error of 2.5 rotations results in 12 V output
         slot0Configs.kI = moduleConstants.getDriveI(); // no output for integrated error
         slot0Configs.kD = moduleConstants.getDriveD(); // A velocity error of 1 rps results in 0.1 V output
