@@ -28,6 +28,7 @@ import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StartStationIntake;
+import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -149,7 +150,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StartStationIntake(intake);
+            Command startIntake = new StationIntake(outtake, arm, elevator);
             // Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
             driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
                 .onFalse(new InstantCommand(()->{
