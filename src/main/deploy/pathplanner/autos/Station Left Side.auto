@@ -44,7 +44,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Drive To Left Station"
+            "name": "Station Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StationP 3"
           }
         },
         {
@@ -75,56 +81,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StationP 3"
+            "pathName": " Station P4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Drive To Left Station"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": " Station P4"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To 6/19 Right"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lower Elevator"
-                }
-              }
-            ]
+            "name": "Station Intake"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "StationB #5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Drive To Left Station"
           }
         },
         {

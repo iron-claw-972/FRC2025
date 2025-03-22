@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 1.722,
-        "y": 7.129
+        "y": 7.4
       },
       "prevControl": {
-        "x": 3.2504221311513612,
-        "y": 5.103715163937141
+        "x": 3.2504221311513604,
+        "y": 5.374715163937142
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,13 +38,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "InsertActual",
-      "waypointRelativePos": 0.2789651293588275,
+      "name": "Station",
+      "waypointRelativePos": 0.6726659167604054,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCoral"
+          "name": "Station Setpoint"
         }
       }
     }

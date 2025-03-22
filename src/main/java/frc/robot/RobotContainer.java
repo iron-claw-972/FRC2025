@@ -32,6 +32,7 @@ import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
+import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
@@ -243,7 +244,16 @@ public class RobotContainer {
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
         )
       );
+      NamedCommands.registerCommand("Station Setpoint", 
+        new ParallelCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
+          new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)
+        )
+      );
+
       //NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+
+      NamedCommands.registerCommand("Station Intake", new StationIntake(outtake, arm, elevator));
     
       Pose2d blueStationRight = new Pose2d(1.722, 0.923, Rotation2d.fromDegrees(-36));
       Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH-blueStationRight.getY(), Rotation2d.fromDegrees(-144));
