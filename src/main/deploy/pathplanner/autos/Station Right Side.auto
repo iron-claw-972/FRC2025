@@ -17,34 +17,9 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "OuttakeCoral"
+                  "name": "Drive to 9/22 Left"
                 }
               },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lower Elevator"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Sweep P2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Sweep P3"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
               {
                 "type": "named",
                 "data": {
@@ -63,19 +38,86 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Sweep P4"
+            "pathName": "Ground P2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive to Right Station Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Station Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Sweep RP5"
+            "pathName": "Ground P3"
           }
         },
         {
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive to 8/17 Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lower Elevator"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Grond P4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive to Right Station Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Station Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Ground P5"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive to 8/17 Right"
+                }
+              },
               {
                 "type": "named",
                 "data": {
