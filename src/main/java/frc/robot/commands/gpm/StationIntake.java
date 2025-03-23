@@ -10,14 +10,10 @@ import frc.robot.subsystems.outtake.Outtake;
 
 public class StationIntake extends Command {
     private Outtake outtake;
-    private Arm arm;
-    private Elevator elevator;
 
-    public StationIntake(Outtake outtake, Arm arm, Elevator elevator) {
-        this.arm = arm;
+    public StationIntake(Outtake outtake) {
         this.outtake = outtake;
-        this.elevator = elevator;
-        addRequirements(outtake, elevator, arm);
+        addRequirements(outtake);
     }
 
     @Override

@@ -249,18 +249,18 @@ public class RobotContainer {
         new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
           new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT),
-          new StationIntake(outtake, arm, elevator)
+          new StationIntake(outtake)
         )
       );
 
       //NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
 
-      NamedCommands.registerCommand("Station Intake", new StationIntake(outtake, arm, elevator));
+      NamedCommands.registerCommand("Station Intake", new StationIntake(outtake));
     
       Pose2d blueStationRight = new Pose2d(1.722, 0.923, Rotation2d.fromDegrees(-36));
       Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH-blueStationRight.getY(), Rotation2d.fromDegrees(-144));
       //todo
-      Pose2d blueStationIntakeLeft = new Pose2d(1.54, 7.44, Rotation2d.fromDegrees(-144-180));
+      Pose2d blueStationIntakeLeft = new Pose2d(1.65, 7.4, Rotation2d.fromDegrees(-144-180));
       Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationRight.getX(), blueStationLeft.getY(), blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
       Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationLeft.getX(), blueStationRight.getY(), blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
       NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));

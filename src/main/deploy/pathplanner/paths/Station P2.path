@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 1.722,
+        "x": 1.65,
         "y": 7.4
       },
       "prevControl": {
-        "x": 3.2504221311513604,
+        "x": 3.1784221311513603,
         "y": 5.374715163937142
       },
       "nextControl": null,
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "Station",
-      "waypointRelativePos": 0.6726659167604054,
+      "waypointRelativePos": 0.6590141796083744,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -50,8 +50,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

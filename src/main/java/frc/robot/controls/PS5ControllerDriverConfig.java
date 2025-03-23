@@ -151,7 +151,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StationIntake(outtake, arm, elevator);
+            Command startIntake = new StationIntake(outtake);
             // Command finishIn6take = new FinishStationIntake(intake, indexer, elevator, outtake);
             // driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
             //     .onFalse(new InstantCommand(()->{

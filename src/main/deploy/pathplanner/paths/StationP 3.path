@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.722,
-        "y": 7.409
+        "x": 1.65,
+        "y": 7.4
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0014370334836404,
-        "y": 6.139971138637706
+        "x": 2.9294370334836404,
+        "y": 6.130971138637706
       },
       "isLocked": false,
       "linkedName": null
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.21372328458942408,
+      "waypointRelativePos": 0.45374746792707615,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -50,8 +50,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
