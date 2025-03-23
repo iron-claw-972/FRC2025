@@ -15,9 +15,12 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -119,30 +122,27 @@ public class Robot extends LoggedRobot {
 
         CommandScheduler.getInstance().run();
 
-        Logger.recordOutput(
-            "ZeroedComponentPoses", 
-            new Pose3d[] {
-                //intake
-                new Pose3d(),
-                //elevator base
-                new Pose3d(),
-                //elevator 1
-                new Pose3d(),
-                //elevator 2
-                new Pose3d(),
-                //elevator 3
-                new Pose3d(),
-                //arm
-                new Pose3d(),
-            }
-        
-        );
+        //new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) -1.0
         Logger.recordOutput(
             "ComponentPoses", 
             new Pose3d[] {
-
+                //intake
+                new Pose3d(0,-0.25,0.27, new Rotation3d(Units.degreesToRadians(robotContainer.intakeAngleLogged()), 0.0, 0.0)),
+                //climb
+                new Pose3d(0,0,0, new Rotation3d(0.0,0.0, 0.0)),
+                //arm
+                new Pose3d(0,0.110, 0.388 + robotContainer.elevatorHeightLogged(), new Rotation3d(Units.degreesToRadians(robotContainer.armAngleLogged()), 0.0, 0.0)),
+                //elevator 1
+                new Pose3d(0,0,0, new Rotation3d(0.0, 0.0, 0.0)),
+                //elevator 2
+                new Pose3d(0,0,0.3 * robotContainer.elevatorHeightLogged(), new Rotation3d(0.0, 0.0, 0.0)),
+                //elevator 3
+                new Pose3d(0,0, 0.6 * robotContainer.elevatorHeightLogged(), new Rotation3d(0.0, 0.0, 0.0)),
+                //elevator 4
+                new Pose3d(0,0, robotContainer.elevatorHeightLogged(), new Rotation3d(0.0, 0.0, 0.0)),
+                //indexer
+                new Pose3d(0,0,0, new Rotation3d(0.0, 0.0, 0.0)),
             }
-        
         );
     }
 

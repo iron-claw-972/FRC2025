@@ -360,6 +360,17 @@ public class RobotContainer {
   public Command getAutoCommand(){
     return autoChooser.get();
   }
+
+  //logging values used for robot.java
+  public double elevatorHeightLogged(){
+    return elevator.getPosition();
+  }
+  public double armAngleLogged(){
+    return arm.getAngle() + 90;
+  }
+  public double intakeAngleLogged(){
+    return intake.pivotAngle() * -1;
+  }
 }
 
 

@@ -241,14 +241,8 @@ public class Intake extends SubsystemBase {
         rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
     }
 
-    //TODO
-    public Pose3d getPose3d() {
-        return new Pose3d(
-            -0.238,
-            0.0,
-            0.298,
-            new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) - 1.0, 0.0) //inputs.measuredPivotPosition
-        );
+    public double pivotAngle() {
+        return inputs.measuredPivotPosition;
     }
 }
 
