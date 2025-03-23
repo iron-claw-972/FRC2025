@@ -73,12 +73,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
-        // TODO: Update checks for null
-
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
-        if(elevator != null && outtake != null && arm != null) {
+        if(elevator != null && arm != null) {
             driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
                 new SequentialCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
@@ -122,7 +120,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Intake/outtake
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
-        if(intake != null && indexer != null){// && elevator != null){
+
+        if(intake != null && indexer != null && elevator != null && outtake != null && arm != null){
             boolean toggle = true;
             Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm);
             Command intakeAlgae = new IntakeAlgae(intake);
@@ -166,7 +165,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             andThen(startIntake));
 
         }
-        if(intake != null && outtake != null){
+        if(intake != null && outtake != null && arm != null && elevator != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
                 new InstantCommand(()->{
@@ -176,11 +175,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 }, elevator)
             ));
         }
-        if(outtake != null && elevator != null){
+        if(outtake != null && elevator != null && arm != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))).
             andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT))));}
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(()->{}, getDrivetrain()));
-        if(intake != null && indexer != null){
+        if(intake != null && indexer != null && outtake != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
         }
 
