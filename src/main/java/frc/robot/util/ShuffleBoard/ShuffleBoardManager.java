@@ -12,6 +12,7 @@ import frc.robot.subsystems.Outtake;
 import frc.robot.util.Vision;
 import frc.robot.util.ShuffleBoard.Tabs.AutoTab;
 import frc.robot.util.ShuffleBoard.Tabs.ElevatorTab;
+import frc.robot.util.ShuffleBoard.Tabs.SwerveTab;
 import frc.robot.util.ShuffleBoard.Tabs.VisionTab;
 
 /** Add your docs here. */
@@ -21,19 +22,19 @@ public class ShuffleBoardManager {
     
     private Field feild;
 
-    //private SwerveTab swerveTab;
+    private SwerveTab swerveTab;
     private AutoTab autoTab;
     private VisionTab visionTab;
     private ElevatorTab elevatorTab;
 
     public ShuffleBoardManager(Drivetrain drive, Vision vision, Elevator elevator, Outtake outtake){
         
-        // swerveTab = new SwerveTab(drive);
-        autoTab = new AutoTab(drive, elevator, outtake);
+        swerveTab = new SwerveTab(drive);
+        // autoTab = new AutoTab(drive, elevator, outtake);
         // visionTab = new VisionTab(drive, vision);
         // elevatorTab = new ElevatorTab(elevator);
-        // tabs.add(swerveTab);
-        tabs.add(autoTab);
+        tabs.add(swerveTab);
+        // tabs.add(autoTab);
         // tabs.add(visionTab);
         // tabs.add(elevatorTab);
 
@@ -41,7 +42,7 @@ public class ShuffleBoardManager {
             tab.createEntries();        
         }
         
-        feild = new Field(drive, vision);
+        // feild = new Field(drive, vision);
     }
 
     public void update(){
@@ -51,7 +52,7 @@ public class ShuffleBoardManager {
         feild.updateFeild();
     }
 
-    public Command getSelectedCommand(){
-        return autoTab.getChooser().getSelected();
-    }
+    // public Command getSelectedCommand(){
+    //     return autoTab.getChooser().getSelected();
+    // }
 }

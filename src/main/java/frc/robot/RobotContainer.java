@@ -13,6 +13,7 @@ import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
+import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.Climb;
@@ -58,7 +59,7 @@ public class RobotContainer {
   // Controllers are defined here
   private BaseDriverConfig driver = null;
   private Operator operator = null;
-  private ShuffleBoardManager shuffleboardManager = null;
+  //private ShuffleBoardManager shuffleboardManager = null;
 
   private Thread odometryThread = null;
 
@@ -72,37 +73,37 @@ public class RobotContainer {
 
     // 2 robots have an elevator, outtake, and vision
     if(robotId == RobotId.Phil || robotId == RobotId.SwerveCompetition){
-      elevator = new Elevator();
-      outtake = robotId == RobotId.Phil ? new OuttakeAlpha() : new OuttakeComp();
-      vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+      // elevator = new Elevator();
+      // outtake = robotId == RobotId.Phil ? new OuttakeAlpha() : new OuttakeComp();
+      // vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
     }else{
-      elevator = new SimElevator();
-      outtake = new SimOuttake();
+      // elevator = new SimElevator();
+      // outtake = new SimOuttake();
       // Vision doesn't have a sim version
     }
 
     // Only the competition robot has the rest of the subsystems
-    if(robotId == RobotId.SwerveCompetition){
-      intake = new Intake();
-      indexer = new Indexer();
-      climb = new Climb();
-    }else{
-      intake = new SimIntake();
-      indexer = new SimIndexer();
-      climb = new SimClimb();
-    }
+    // if(robotId == RobotId.SwerveCompetition){
+    //   intake = new Intake();
+    //   indexer = new Indexer();
+    //   climb = new Climb();
+    // }else{
+    //   intake = new SimIntake();
+    //   indexer = new SimIndexer();
+    //   climb = new SimClimb();
+    // }
     
     // All of these robots need a drivetrain
     if(robotId == RobotId.SwerveCompetition || robotId == RobotId.Phil || robotId == RobotId.Vertigo || robotId == RobotId.Vivace){
-      drive = new Drivetrain(vision);
+      drive = new Drivetrain(new Vision(VisionConstants.APRIL_TAG_CAMERAS));
     }else{
-      drive = new SimDrivetrain(vision);
+      //drive = new SimDrivetrain(vision);
     }
 
     // All robots need controllers
     // Check the controller type to prevent it from breaking
-    driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb);
-    operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
+    driver = new GameControllerDriverConfig(drive, null, null, null);
+    //operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
     // Detected objects need access to the drivetrain
     DetectedObject.setDrive(drive);
@@ -110,13 +111,13 @@ public class RobotContainer {
     //SignalLogger.start();
 
     driver.configureControls();
-    operator.configureControls();
+    // operator.configureControls();
     initializeAutoBuilder();
     registerCommands();
     drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
     PathGroupLoader.loadPathGroups();
 
-    shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator, outtake);
+    //shuffleboardManager = new ShuffleBoardManager(drive, vision, elevator, outtake);
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -142,15 +143,15 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    Command pathCommand = shuffleboardManager.getSelectedCommand();
-    return pathCommand;
-  }
+  // public Command getAutonomousCommand() {
+    //Command pathCommand = shuffleboardManager.getSelectedCommand();
+    //return pathCommand;
+  // }
 
-  public void updateShuffleBoard() {
-    if (shuffleboardManager != null)
-      shuffleboardManager.update();
-  }
+  // public void updateShuffleBoard() {
+  //   if (shuffleboardManager != null)
+  //     shuffleboardManager.update();
+  // }
 
   /**
    * Sets whether the drivetrain uses vision to update odometry
@@ -181,29 +182,29 @@ public class RobotContainer {
   public void registerCommands() {
 
 
-    if(elevator != null && outtake != null){
+  //   if(elevator != null && outtake != null){
 
-      NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
+  //     NamedCommands.registerCommand("Outtake_L4", new OuttakeCoral(outtake, elevator).withTimeout(1.5));
 
 
-      NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
-        new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
-        new WaitCommand(1),
-        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
-      ));
-      NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
-        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
-        new OuttakeCoral(outtake, elevator)
-      ));
-      NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
-        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
-        new OuttakeCoral(outtake, elevator)
-      ));
-      NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
-        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-        new OuttakeCoral(outtake, elevator)
-      ));
-    }
+  //     NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
+  //       new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT),
+  //       new WaitCommand(1),
+  //       new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+  //     ));
+  //     NamedCommands.registerCommand("Score L2", new SequentialCommandGroup(
+  //       new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+  //       new OuttakeCoral(outtake, elevator)
+  //     ));
+  //     NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
+  //       new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+  //       new OuttakeCoral(outtake, elevator)
+  //     ));
+  //     NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
+  //       new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+  //       new OuttakeCoral(outtake, elevator)
+  //     ));
+  //   }
   }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {

@@ -45,12 +45,12 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     // error
     kDriver.get(Button.BACK).onTrue(new InstantCommand(() -> getDrivetrain().resetModulesToAbsolute()));
 
-    kDriver.get(Button.Y).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
-    kDriver.get(Button.RB ).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
-    kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
-    new Trigger(kDriver.LEFT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
-    kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
-    kDriver.get(Button.A).onTrue(new OuttakeCoral(outtake, elevator));
+    // kDriver.get(Button.Y).onTrue(new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT));
+    // kDriver.get(Button.RB ).onTrue(new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT));
+    // kDriver.get(Button.LB).onTrue(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT));
+    // new Trigger(kDriver.LEFT_TRIGGER_BUTTON).onTrue(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT));
+    // kDriver.get(Button.X).onTrue(new MoveElevator(elevator, ElevatorConstants.INTAKE_SETPOINT));
+    // kDriver.get(Button.A).onTrue(new OuttakeCoral(outtake, elevator));
 
     kDriver.get(Button.BACK).onTrue(new InstantCommand(()->getDrivetrain().getSwerveModulePose().reset()));
     }
@@ -83,7 +83,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public boolean getIsSlowMode() {
-    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean() || elevator.getSetpoint()>0;
+    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
   }
 
   @Override

@@ -87,10 +87,15 @@ public class DriveConstants {
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(MODULE_LOCATIONS);
 
-    public static double STEER_OFFSET_FRONT_LEFT = 193.884-180;
-    public static double STEER_OFFSET_FRONT_RIGHT = 110.914;
-    public static double STEER_OFFSET_BACK_LEFT = 128.054+180;
-    public static double STEER_OFFSET_BACK_RIGHT = 316.648-180;
+    // public static double STEER_OFFSET_FRONT_LEFT = 193.884-180;
+    // public static double STEER_OFFSET_FRONT_RIGHT = 110.914;
+    // public static double STEER_OFFSET_BACK_LEFT = 128.054+180;
+    // public static double STEER_OFFSET_BACK_RIGHT = 316.648-180;
+    public static double STEER_OFFSET_FRONT_LEFT = -18.9;
+    public static double STEER_OFFSET_FRONT_RIGHT = -234.7;
+    public static double STEER_OFFSET_BACK_LEFT = 148.7;
+    public static double STEER_OFFSET_BACK_RIGHT = -52.4;
+
 
     // Heading PID.
     public static final double HEADING_P = 5.5;
@@ -223,10 +228,10 @@ public class DriveConstants {
             ROBOT_MASS = 20;
             WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
-            STEER_OFFSET_FRONT_LEFT = 121.463+180;
-            STEER_OFFSET_FRONT_RIGHT = 284.242;
-            STEER_OFFSET_BACK_LEFT = 157.676;
-            STEER_OFFSET_BACK_RIGHT = 77.199;
+            // STEER_OFFSET_FRONT_LEFT = 121.463+180;
+            // STEER_OFFSET_FRONT_RIGHT = 284.242;
+            // STEER_OFFSET_BACK_LEFT = 157.676;
+            // STEER_OFFSET_BACK_RIGHT = 77.199;
 
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
         }

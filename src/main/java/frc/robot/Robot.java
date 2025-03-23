@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
         // block in order for anything in the Command-based framework to work.
 
         // Needs to be updated because RobotContainer does not have a periodic method
-        robotContainer.updateShuffleBoard();
+        // robotContainer.updateShuffleBoard();
 
         CommandScheduler.getInstance().run();
         
@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
         // Get the autonomous command.
         // This access is fast (about 14 microseconds) because the value is already resident in the Network Tables.
         // There was a problem last year because the operation also installed about over a dozen items (taking more than 20 ms).
-        autoCommand = robotContainer.getAutonomousCommand();
+        // autoCommand = robotContainer.getAutonomousCommand();
 
         // If there is an autonomous command, then schedule it
         if (autoCommand != null) {

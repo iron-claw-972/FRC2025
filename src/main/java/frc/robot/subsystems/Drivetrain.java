@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -116,6 +117,8 @@ public class Drivetrain extends SubsystemBase {
 
     private BaseStatusSignal[] statusSignals = null;
 
+    private int tick = 0;
+
     /**
      * Creates a new Swerve Style Drivetrain.
      */
@@ -217,7 +220,15 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        tick++;
         updateOdometryVision();
+        if (tick % 100 == 0){
+            System.out.println("---------------");
+            System.out.println(this.modulePositions[0].angle.getDegrees());// front left (if battery is back)
+            System.out.println(this.modulePositions[1].angle.getDegrees());//
+            System.out.println(this.modulePositions[2].angle.getDegrees());
+            System.out.println(this.modulePositions[3].angle.getDegrees());
+        }
     }
 
     // DRIVE
