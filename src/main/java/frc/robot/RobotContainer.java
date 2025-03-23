@@ -299,6 +299,8 @@ public class RobotContainer {
         autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
         //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
         autoChooser.addOption("Station Left Side", new PathPlannerAuto("Station Left Side"));
+        autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));
+        
         autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
