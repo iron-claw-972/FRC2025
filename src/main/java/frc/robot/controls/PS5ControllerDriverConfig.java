@@ -129,7 +129,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(intake != null && indexer != null && elevator != null && outtake != null && arm != null){
             boolean toggle = true;
             Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm).deadlineFor(
-                vision != null ? new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(1, true))
+                vision != null ? new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true))
                 : new DoNothing());
             Command intakeAlgae = new IntakeAlgae(intake);
             driver.get(PS5Button.CROSS).onTrue(new InstantCommand(()->{
@@ -170,7 +170,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
             new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)).
             andThen(startIntake));
-
+        }else{
+            driver.get(PS5Button.CROSS).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
         }
         if(intake != null && outtake != null && arm != null && elevator != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
