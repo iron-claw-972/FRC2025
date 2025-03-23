@@ -201,6 +201,7 @@ public class RobotContainer {
           new MoveArm(arm, ArmConstants.L4_SETPOINT)
         )
       );
+      NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
 
       NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(
         new WaitCommand(0.1),
@@ -247,7 +248,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("Station Setpoint", 
         new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
-          new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)
+          new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT),
+          new StationIntake(outtake, arm, elevator)
         )
       );
 
@@ -257,9 +259,13 @@ public class RobotContainer {
     
       Pose2d blueStationRight = new Pose2d(1.722, 0.923, Rotation2d.fromDegrees(-36));
       Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH-blueStationRight.getY(), Rotation2d.fromDegrees(-144));
+      //todo
+      Pose2d blueStationIntakeLeft = new Pose2d(1.54, 7.44, Rotation2d.fromDegrees(-144-180));
       Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationRight.getX(), blueStationLeft.getY(), blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
       Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationLeft.getX(), blueStationRight.getY(), blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
       NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));
+      
+      NamedCommands.registerCommand("Drive To Left Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationIntakeLeft));
       NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationRight));
       NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));
       NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.pose));
