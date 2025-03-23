@@ -103,9 +103,6 @@ public class Climb extends SubsystemBase {
         Logger.recordOutput("Climb/setpointDeg", Units.radiansToDegrees(pid.getSetpoint())*totalGearRatio);
 
         motor.set(MathUtil.clamp(power, -1, 1));
-
-        //simLigament.setAngle(Units.radiansToDegrees(currentPosition));
-
     }
 
 
@@ -175,5 +172,14 @@ public class Climb extends SubsystemBase {
     //not working
     public Mechanism2d getMech2d() {
         return simulationMechanism;
+    }
+
+    /**
+     * Gets the estimated angle of the climb
+     * This is slightly inaccurate since it assumes the climb rotates exactly 90 degrees and the motor position is proportional to the climb position
+     * Used only for 3D robot display
+     */
+    public double getEstimatedClimbAngle(){
+        return Units.degreesToRotations(getAngle())/(extendPosition-climbPosition)*Math.PI/2;
     }
 }

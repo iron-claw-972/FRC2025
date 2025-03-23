@@ -16,8 +16,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -182,14 +180,4 @@ public class Elevator extends SubsystemBase {
   public double getCenterOfMassHeight(){
     return (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
   }
-
-  //TODO
-    public Pose3d getPose3d() {
-        return new Pose3d(
-            -0.238,
-            0.0,
-            0.298,
-            new Rotation3d(0.0, Math.sin(Timer.getTimestamp()) - 1.0, 0.0)
-        );
-    }
 }
