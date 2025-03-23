@@ -4,11 +4,11 @@
   "holonomicMode": true,
   "pathFolders": [
     "Ground BSide",
+    "Ground LSide",
     "Ground RSide",
-    "Ground RSide mirrored",
-    "Align RSide",
-    "Sequential BSide",
-    "Sequential RSide"
+    "Lollipop Path",
+    "Station Left",
+    "Sweep Right Side"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

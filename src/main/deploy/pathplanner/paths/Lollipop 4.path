@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.722,
-        "y": 0.923
+        "x": 1.224,
+        "y": 4.023
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.241691975851757,
-        "y": 2.4205382848833574
+        "x": 1.9751816342630288,
+        "y": 4.332334397903094
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.721,
-        "y": 3.02599168
+        "x": 3.2385,
+        "y": 4.191
       },
       "prevControl": {
-        "x": 3.4592181309775336,
-        "y": 2.7819152764968895
+        "x": 2.727154799470684,
+        "y": 4.167733038986156
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Elevator",
-      "waypointRelativePos": 0.16647919010123857,
+      "waypointRelativePos": 0.23078401820866148,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": -89.04406269082419
   },
   "reversed": false,
-  "folder": "Align RSide",
+  "folder": "Lollipop Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -36.0
+    "rotation": -43.54279799705628
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

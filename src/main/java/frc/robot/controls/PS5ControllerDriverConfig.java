@@ -28,7 +28,7 @@ import frc.robot.commands.gpm.NetSetpoint;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
-import frc.robot.commands.gpm.StartStationIntake;
+import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.vision.AimAtCoral;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
@@ -78,12 +78,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
-        // TODO: Update checks for null
-
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints
-        if(elevator != null && outtake != null && arm != null) {
+        if(elevator != null && arm != null) {
             driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
                 new SequentialCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
@@ -127,7 +125,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Intake/outtake
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
-        if(intake != null && indexer != null){// && elevator != null){
+
+        if(intake != null && indexer != null && elevator != null && outtake != null && arm != null){
             boolean toggle = true;
             Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm).deadlineFor(
                 vision != null ? new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(1, true))
@@ -156,18 +155,24 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StartStationIntake(intake);
-            // Command finishIntake = new FinishStationIntake(intake, indexer, elevator, outtake);
-            driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
-                .onFalse(new InstantCommand(()->{
-                    if(!startIntake.isScheduled()){
-                        // finishIntake.schedule();
-                    }else{
-                        startIntake.cancel();
-                    }
-            }));
+            Command startIntake = new StationIntake(outtake);
+            // Command finishIn6take = new FinishStationIntake(intake, indexer, elevator, outtake);
+            // driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
+            //     .onFalse(new InstantCommand(()->{
+            //         if(!startIntake.isScheduled()){
+            //             // finishIntake.schedule();
+            //         }else{
+            //             startIntake.cancel();
+            //         }
+            // }));
+            driver.get(PS5Button.CROSS).and(r3).onTrue(
+            new SequentialCommandGroup(
+            new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
+            new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)).
+            andThen(startIntake));
+
         }
-        if(intake != null && outtake != null){
+        if(intake != null && outtake != null && arm != null && elevator != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
                 new InstantCommand(()->{
@@ -177,11 +182,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 }, elevator)
             ));
         }
-        if(outtake != null && elevator != null){
+        if(outtake != null && elevator != null && arm != null){
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))).
             andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT))));}
             driver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(()->{}, getDrivetrain()));
-        if(intake != null && indexer != null){
+        if(intake != null && indexer != null && outtake != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
         }
 

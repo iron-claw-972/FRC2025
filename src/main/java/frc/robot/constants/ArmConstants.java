@@ -22,7 +22,7 @@ public class ArmConstants {
     public static final double MAX_ACCELERATION = 100; // rad/s^2
 
     public static final double INTAKE_SETPOINT = START_ANGLE;
-    public static final double STATION_INTAKE_SETPOINT = 30;
+    public static final double STATION_INTAKE_SETPOINT = 62;
 
     public static final double TOLERANCE = 3.0;
 

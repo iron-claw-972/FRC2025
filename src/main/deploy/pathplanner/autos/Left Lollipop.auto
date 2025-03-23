@@ -7,7 +7,57 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GroundB#1"
+            "pathName": "P  1"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 11/20 Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lower Elevator"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Gronud  P2"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To Left Station"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P 5"
           }
         },
         {
@@ -19,14 +69,7 @@
                 "data": {
                   "name": "Drive To 6/19 Left"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "named",
                 "data": {
@@ -34,38 +77,24 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "Lower Elevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Drive To Right Station"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeCoral"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "Lollipop 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Lollipop 2"
           }
         },
         {
@@ -77,14 +106,7 @@
                 "data": {
                   "name": "Drive To 6/19 Right"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "named",
                 "data": {
@@ -92,38 +114,24 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "Lower Elevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Drive To Right Station"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeCoral"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "Lollipop 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Lollipop 4"
           }
         },
         {
@@ -135,20 +143,7 @@
                 "data": {
                   "name": "Drive To 7/18 Left"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GroundB #5"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "named",
                 "data": {
@@ -156,9 +151,9 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "Lower Elevator"
                 }
               }
             ]

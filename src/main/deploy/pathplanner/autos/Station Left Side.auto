@@ -38,19 +38,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Gronud  P2"
+            "pathName": "Station P2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Drive To Left Station"
+            "name": "Drive To Left Station Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Station Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P 5"
+            "pathName": "StationP 3"
           }
         },
         {
@@ -81,19 +87,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GroundB #6"
+            "pathName": " Station P4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Drive To Left Station"
+            "name": "Drive To Left Station Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Station Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P  3"
+            "pathName": "StationB Alt Opt"
           }
         },
         {
@@ -104,49 +116,6 @@
                 "type": "named",
                 "data": {
                   "name": "Drive To 6/19 Right"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lower Elevator"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GrounddB #4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Drive To Left Station"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GroundB #5"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To 7/18 Left"
                 }
               },
               {

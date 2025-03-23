@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.795,
-        "y": 1.108
+        "x": 3.721,
+        "y": 3.0259168
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1337839681547672,
-        "y": 1.4411638100874429
+        "x": 2.6805705142397143,
+        "y": 1.93927176905575
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.721,
-        "y": 3.0259
+        "x": 1.722,
+        "y": 0.923
       },
       "prevControl": {
-        "x": 3.526287902814968,
-        "y": 2.8372517903632586
+        "x": 2.6732300707441192,
+        "y": 1.959652915018721
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,22 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.19856459330143417,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCoral"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -45,10 +57,10 @@
     "rotation": -36.0
   },
   "reversed": false,
-  "folder": "Sequential RSide",
+  "folder": "Sweep Right Side",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -37.644000000000005
+    "rotation": -29.999999999999996
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

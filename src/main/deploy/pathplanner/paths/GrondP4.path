@@ -16,12 +16,28 @@
     },
     {
       "anchor": {
-        "x": 1.722,
-        "y": 7.1288
+        "x": 3.260710227277713,
+        "y": 7.240838068181818
       },
       "prevControl": {
-        "x": 1.8576916707607691,
-        "y": 6.861447775883621
+        "x": 3.769261363646335,
+        "y": 7.031434659090908
+      },
+      "nextControl": {
+        "x": 2.5266509333291625,
+        "y": 7.543097777451788
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.8076988636413492,
+        "y": 6.572741477272728
+      },
+      "prevControl": {
+        "x": 2.1270340909140755,
+        "y": 7.342904545454545
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +50,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.19856459330143417,
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -54,10 +70,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -145.0
+    "rotation": -53.616
   },
   "reversed": false,
-  "folder": "Ground RSide mirrored",
+  "folder": "Ground LSide",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -145.0

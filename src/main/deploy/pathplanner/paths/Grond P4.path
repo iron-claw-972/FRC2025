@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.722,
-        "y": 0.923
+        "x": 1.526,
+        "y": 0.729
       },
       "prevControl": {
-        "x": 2.6732300707441192,
-        "y": 1.959652915018721
+        "x": 2.4772300707441195,
+        "y": 1.765652915018721
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0.19856459330143417,
+      "name": "Station",
+      "waypointRelativePos": 0.6587112171837709,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCoral"
+          "name": "Station Setpoint"
         }
       }
     }
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -36.0
+    "rotation": 144.0
   },
   "reversed": false,
   "folder": "Ground RSide",

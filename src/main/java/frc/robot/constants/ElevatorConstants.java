@@ -37,10 +37,12 @@ public class ElevatorConstants {
     public static final double TOP_ALGAE_SETPOINT = 0.779;
 
     public static final double NET_SETPOINT = MAX_HEIGHT;
+    public static final double STATION_INTAKE_SETPOINT = 0.25;
 
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
     public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(10+14.767);
+
 
     // The x distance from the center of the robot to the outtake.
     public static final double OUTTAKE_X = Units.inchesToMeters(-7.25);

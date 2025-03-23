@@ -14,28 +14,18 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.LinearQuadraticRegulator;
-import edu.wpi.first.math.estimator.KalmanFilter;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.system.LinearSystem;
-import edu.wpi.first.math.system.LinearSystemLoop;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -43,7 +33,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import frc.robot.constants.Constants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.constants.swerve.ModuleConstants;
 import frc.robot.constants.swerve.ModuleType;
@@ -98,42 +87,9 @@ public class Module implements ModuleIO{
     private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
 
     private ModuleConstants moduleConstants;
+      private final MotionMagicVelocityVoltage velocityRequest =
+      new MotionMagicVelocityVoltage(0.0).withUpdateFreqHz(0);
 
-    private final LinearSystem<N1, N1, N1> m_driveMotor = LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60(1), DriveConstants.WHEEL_MOI, DriveConstants.DRIVE_GEAR_RATIO );
-    
-  private final KalmanFilter<N1, N1, N1> m_observer = new KalmanFilter<>(
-      Nat.N1(),
-      Nat.N1(),
-      (LinearSystem<N1, N1, N1>) m_driveMotor,
-      VecBuilder.fill(20), // How accurate we
-     
-      VecBuilder.fill(0.001), // How accurate we think our encoder position
-      // data is. In this case we very highly trust our encoder position reading.
-      Constants.LOOP_TIME);
-  private final LinearQuadraticRegulator<N1, N1, N1> m_controller = new LinearQuadraticRegulator<>(
-      (LinearSystem<N1, N1, N1>) m_driveMotor,
-      VecBuilder.fill(3), // qelms. Position
-       
-      // heavily penalize state excursion, or make the controller behave more
-      // aggressively. In
-      // this example we weight position much more highly than velocity, but this can
-      // be
-      // tuned to balance the two.
-      VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
-      // heavily penalize control effort, or make the controller less aggressive. 12
-      // is a good
-      // starting point because that is the (approximate) maximum voltage of a
-      // battery.
-      Constants.LOOP_TIME); // Nominal time between loops. 0.020 for TimedRobot, but can be
-
-  // The state-space loop combines a controller, observer, feedforward and plant
-  // for easy control.
-  private final LinearSystemLoop<N1, N1, N1> m_loop = new LinearSystemLoop<>(
-      (LinearSystem<N1, N1, N1>) m_driveMotor,
-      m_controller,
-      m_observer,
-      12,
-      Constants.LOOP_TIME);
 
     public Module(ModuleConstants moduleConstants) {
         this.moduleConstants = moduleConstants;
@@ -197,8 +153,6 @@ public class Module implements ModuleIO{
             turnCurrent);
         ParentDevice.optimizeBusUtilizationForAll(driveMotor, angleMotor);
         
-        m_loop.reset(VecBuilder.fill(driveMotor.getVelocity().getValueAsDouble()));
-
         setDesiredState(new SwerveModuleState(0, getAngle()), false);
     }
 
@@ -292,21 +246,13 @@ public class Module implements ModuleIO{
             double percentOutput = desiredState.speedMetersPerSecond / DriveConstants.MAX_SPEED;
             driveMotor.set(percentOutput);
         } else {
-            double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS;
+            double velocity = desiredState.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS/2/Math.PI*DriveConstants.DRIVE_GEAR_RATIO;
             Logger.recordOutput("desired vel" + moduleConstants.ordinal(), velocity);
-            m_loop.setNextR(velocity);
-            // Correct our Kalman filter's state vector estimate with encoder data.
-            m_loop.correct(MatBuilder.fill(Nat.N1(), Nat.N1(), inputs.driveVelocityRadPerSec/DriveConstants.DRIVE_GEAR_RATIO));
-            // Update our LQR to generate new voltage commands and use the voltages to
-            // predict the next
-            // state with out Kalman filter.
-            m_loop.predict(Constants.LOOP_TIME);
-            // Send the new calculated voltage to the motors.
-            // voltage = duty cycle * battery voltage, so
-            // duty cycle = voltage / battery voltage
-            double nextVoltage = m_loop.getU(0);
             
-            driveMotor.setControl(new VoltageOut(nextVoltage));
+            driveMotor.setControl(
+                velocityRequest
+                    .withVelocity(velocity));
+                    ///.withFeedForward(feedforward));
         }     
     }
 
@@ -392,9 +338,20 @@ public class Module implements ModuleIO{
     public double getDriveStatorCurrent(){
         return inputs.driveCurrentAmps;
     }
-
     private void configDriveMotor() {
-        driveMotor.getConfigurator().apply(new TalonFXConfiguration());
+        var talonFXConfigs = new TalonFXConfiguration();
+        // set Motion Magic settings
+        var motionMagicConfigs = talonFXConfigs.MotionMagic;
+        motionMagicConfigs.MotionMagicCruiseVelocity = DriveConstants.MAX_SPEED/DriveConstants.WHEEL_CIRCUMFERENCE * DriveConstants.DRIVE_GEAR_RATIO;
+        motionMagicConfigs.MotionMagicAcceleration = DriveConstants.MAX_DRIVE_ACCEL/DriveConstants.WHEEL_CIRCUMFERENCE * DriveConstants.DRIVE_GEAR_RATIO;
+        var slot0Configs = talonFXConfigs.Slot0;
+        slot0Configs.kS = 0; // Add 0.25 V output to overcome static friction
+        slot0Configs.kV = 0.11; // A velocity target of 1 rps results in 0.12 V output
+        slot0Configs.kA = 0.006; // An acceleration of 1 rps/s requires 0.01 V output
+        slot0Configs.kP = moduleConstants.getDriveP(); // A position error of 2.5 rotations results in 12 V output
+        slot0Configs.kI = moduleConstants.getDriveI(); // no output for integrated error
+        slot0Configs.kD = moduleConstants.getDriveD(); // A velocity error of 1 rps results in 0.1 V output
+        driveMotor.getConfigurator().apply(talonFXConfigs);
         CurrentLimitsConfigs config = new CurrentLimitsConfigs();
         config.SupplyCurrentLimitEnable = DriveConstants.DRIVE_ENABLE_CURRENT_LIMIT;
         config.SupplyCurrentLimit = DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT;
@@ -403,10 +360,6 @@ public class Module implements ModuleIO{
         config.StatorCurrentLimit = DriveConstants.DRIVE_CONTINUOUS_CURRENT_LIMIT;
         config.StatorCurrentLimitEnable = DriveConstants.DRIVE_ENABLE_CURRENT_LIMIT;
         driveMotor.getConfigurator().apply(config);
-        driveMotor.getConfigurator().apply(new Slot0Configs()
-            .withKP(moduleConstants.getDriveP())
-            .withKI(moduleConstants.getDriveI())
-            .withKD(moduleConstants.getDriveD()));
         driveMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(DriveConstants.INVERT_DRIVE_MOTOR));
         driveMotor.getConfigurator().apply(new OpenLoopRampsConfigs().withDutyCycleOpenLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
         driveMotor.getConfigurator().apply(new ClosedLoopRampsConfigs().withDutyCycleClosedLoopRampPeriod(DriveConstants.OPEN_LOOP_RAMP));
