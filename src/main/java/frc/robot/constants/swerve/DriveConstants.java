@@ -228,9 +228,9 @@ public class DriveConstants {
             WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
             STEER_OFFSET_FRONT_LEFT = 101.7;
-            STEER_OFFSET_FRONT_RIGHT = 228.16;
+            STEER_OFFSET_FRONT_RIGHT = 228.16 - 180;
             STEER_OFFSET_BACK_LEFT = 305.5;
-            STEER_OFFSET_BACK_RIGHT = 25.2;
+            STEER_OFFSET_BACK_RIGHT = 25.2 + 180;
 
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
         }
