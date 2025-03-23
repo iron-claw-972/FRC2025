@@ -116,12 +116,12 @@ public class RobotContainer {
         indexer = new Indexer();
         intake = new Intake();
         //SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
         //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
 
       case Vivace:
       case Phil:
+        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         if (robotId == RobotId.Phil) {
           outtake = new OuttakeAlpha();
         }

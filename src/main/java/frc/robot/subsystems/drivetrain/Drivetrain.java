@@ -282,7 +282,9 @@ public class Drivetrain extends SubsystemBase {
 
         // Even if vision is disabled, it should still update inputs
         // This prevents it from storing a lot of unread results, and it could be useful for replays
-        vision.updateInputs();
+        if(vision != null){
+            vision.updateInputs();
+        }
 
         if(VisionConstants.ENABLED){
             if(vision != null && visionEnabled && visionEnableTimer.hasElapsed(5)){
