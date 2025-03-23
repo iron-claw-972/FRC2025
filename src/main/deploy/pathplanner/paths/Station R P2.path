@@ -3,38 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.721,
-        "y": 3.0259168
+        "x": 4.812,
+        "y": 2.768
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6805705142397143,
-        "y": 1.93927176905575
+        "x": 3.6667827868852463,
+        "y": 1.1836495901639348
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.526,
-        "y": 0.729
+        "x": 1.525653409090909,
+        "y": 0.7293892045454539
       },
       "prevControl": {
-        "x": 2.4772300707441195,
-        "y": 1.765652915018721
+        "x": 3.111195051053366,
+        "y": 2.9091389109644723
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6287744227353493,
+      "rotationDegrees": 123.42203928409351
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Station",
-      "waypointRelativePos": 0.6587112171837709,
+      "waypointRelativePos": 0.6634844868735067,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -54,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 144.0
+    "rotation": 145.0
   },
   "reversed": false,
-  "folder": "Ground RSide",
+  "folder": "Station RSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": false
 }
