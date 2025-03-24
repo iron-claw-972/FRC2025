@@ -19,7 +19,7 @@ public class ArmConstants {
     public static final double CENTER_OF_MASS_LENGTH = 0.138; // meters
 
     public static final double MAX_VELOCITY = 21; // rad/s
-    public static final double MAX_ACCELERATION = 100; // rad/s^2
+    public static final double MAX_ACCELERATION = 120; // rad/s^2
 
     public static final double INTAKE_SETPOINT = START_ANGLE;
     public static final double STATION_INTAKE_SETPOINT = 62;

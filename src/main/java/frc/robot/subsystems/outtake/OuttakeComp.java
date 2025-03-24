@@ -40,6 +40,7 @@ public class OuttakeComp extends Outtake {
 
         inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
         Logger.processInputs("Outtake", inputs);
+        Logger.recordOutput("Outtake/Sensor", colorSensor.getProximity());
     }
 
     /** Set the motor power to move the coral */
