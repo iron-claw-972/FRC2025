@@ -122,7 +122,8 @@ public class RobotContainer {
       case Vivace:
       case Phil:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
-        if (robotId == RobotId.Phil) {
+        if (robotId == RobotId.Phil) { 
+          driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
           outtake = new OuttakeAlpha();
         }
         if (outtake != null) {
