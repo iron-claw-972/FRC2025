@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0073368,
-        "y": 5.1909832
+        "x": 3.239,
+        "y": 4.191
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.968207499307818,
-        "y": 5.761044720256515
+        "x": 3.0626564776043614,
+        "y": 3.9678578908798716
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.239,
-        "y": 5.843
+        "x": 1.197960792824073,
+        "y": 2.2002983940972216
       },
       "prevControl": {
-        "x": 1.9968631781709456,
-        "y": 5.892619841156129
+        "x": 0.9319482350521202,
+        "y": 1.9434278342202775
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5537930782710281,
+      "minWaypointRelativePos": 0.6121951664719626,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.5,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.40029835137795283,
+      "waypointRelativePos": 0.6682840182086613,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -68,13 +68,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -89.24717948106847
+    "rotation": -48.652
   },
   "reversed": false,
   "folder": "Lollipop Path",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -150.80983238234546
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }
