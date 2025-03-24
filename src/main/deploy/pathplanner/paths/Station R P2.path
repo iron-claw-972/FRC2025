@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.157,
-        "y": 2.996
+        "x": 4.812,
+        "y": 2.768
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.011782786885246,
-        "y": 1.411649590163935
+        "x": 3.6667827868852463,
+        "y": 1.1836495901639348
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.721585264900662,
-        "y": 0.9232408940397341
+        "x": 1.525653409090909,
+        "y": 0.7293892045454539
       },
       "prevControl": {
-        "x": 3.3071269068631195,
-        "y": 3.1029906004587517
+        "x": 3.111195051053366,
+        "y": 2.9091389109644723
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,28 +30,28 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -36.0
+      "waypointRelativePos": 0.6287744227353493,
+      "rotationDegrees": 131.817128535173
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0.2789651293588275,
+      "name": "Station",
+      "waypointRelativePos": 0.6634844868735067,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCoral"
+          "name": "Station Setpoint"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -59,10 +59,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": 145.0
   },
   "reversed": false,
-  "folder": "Ground RSide",
+  "folder": "Station RSide",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 29.999999999999996

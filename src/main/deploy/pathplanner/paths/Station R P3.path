@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.722,
-        "y": 0.923
+        "x": 1.526,
+        "y": 0.729
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1545445192827195,
-        "y": 2.1583408880242017
+        "x": 3.0456919758517573,
+        "y": 2.2265382848833575
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.00733,
-        "y": 2.86082
+        "x": 4.007,
+        "y": 2.861
       },
       "prevControl": {
-        "x": 3.482655572777105,
-        "y": 2.4255236965395213
+        "x": 3.745218130977533,
+        "y": 2.6169235964968895
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "MoveElevator",
-      "waypointRelativePos": 0.39370078740157555,
+      "name": "Elevator",
+      "waypointRelativePos": 0.16647919010123857,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -57,10 +57,10 @@
     "rotation": -29.999999999999996
   },
   "reversed": false,
-  "folder": "Ground RSide",
+  "folder": "Station RSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -36.0
+    "rotation": 144.0
   },
   "useDefaultConstraints": false
 }
