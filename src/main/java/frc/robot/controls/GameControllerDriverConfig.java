@@ -1,5 +1,7 @@
 package frc.robot.controls;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,7 +26,7 @@ import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
-import frc.robot.commands.gpm.StartStationIntake;
+import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -48,7 +50,8 @@ import lib.controllers.GameController.DPad;
 public class GameControllerDriverConfig extends BaseDriverConfig {
   public static final boolean singleAlignmentButton = true;
 
-  private final GameController kDriver = new GameController(Constants.DRIVER_JOY);
+  private final GameController driver = new GameController(Constants.DRIVER_JOY);
+  private final BooleanSupplier slowModeSupplier = driver.get(Button.RIGHT_JOY);
   private final Elevator elevator;
   private final Intake intake;
   private final Indexer indexer;
@@ -71,16 +74,16 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public void configureControls() {
-    Trigger menu = kDriver.get(Button.LEFT_JOY);
+    Trigger menu = driver.get(Button.LEFT_JOY);
 
     // Elevator setpoints
     if (elevator != null && arm != null) {
-      kDriver.get(Button.BACK).and(menu.negate()).onTrue(
+      driver.get(Button.BACK).and(menu.negate()).onTrue(
           new SequentialCommandGroup(
               new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
               new MoveArm(arm, ArmConstants.L1_SETPOINT)));
 
-      kDriver.get(kDriver.LEFT_TRIGGER_BUTTON).onTrue(
+      driver.get(driver.LEFT_TRIGGER_BUTTON).onTrue(
           new SequentialCommandGroup(
               new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
               new MoveArm(arm, ArmConstants.L4_SETPOINT)));
@@ -97,24 +100,24 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       Command l3Algae = new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.TOP_ALGAE_SETPOINT),
           new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake));
-      kDriver.get(Button.RB).whileTrue(new ConditionalCommand(l2Algae, new InstantCommand(l2Coral::schedule), menu));
-      kDriver.get(Button.LB).whileTrue(new ConditionalCommand(l3Algae, new InstantCommand(l3Coral::schedule), menu));
+      driver.get(Button.RB).whileTrue(new ConditionalCommand(l2Algae, new InstantCommand(l2Coral::schedule), menu));
+      driver.get(Button.LB).whileTrue(new ConditionalCommand(l3Algae, new InstantCommand(l3Coral::schedule), menu));
 
       // Processor setpoint
-      kDriver.get(Button.Y).and(menu.negate()).onTrue(
+      driver.get(Button.Y).and(menu.negate()).onTrue(
           new ParallelCommandGroup(
               new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.001),
               new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)));
-      kDriver.get(DPad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
+      driver.get(DPad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
     }
     // Intake/outtake
-    Trigger r3 = kDriver.get(Button.RIGHT_JOY);
+    Trigger r3 = driver.get(Button.RIGHT_JOY);
     
     if (intake != null && indexer != null && elevator != null && outtake != null && arm != null) {// && elevator != null){
       boolean toggle = true;
       Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm);
       Command intakeAlgae = new IntakeAlgae(intake);
-      kDriver.get(Button.A).onTrue(new InstantCommand(() -> {
+      driver.get(Button.A).onTrue(new InstantCommand(() -> {
         if (r3.getAsBoolean())
           return;
         if (menu.getAsBoolean()) {
@@ -138,10 +141,10 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       }));
       // On true, run the command to start intaking
       // On false, run the command to finish intaking if it has a coral
-      Command startIntake = new StartStationIntake(intake);
+      Command startIntake = new StationIntake(outtake);
       // Command finishIntake = new FinishStationIntake(intake, indexer, elevator,
       // outtake);
-      kDriver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
+      driver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
           .onFalse(new InstantCommand(() -> {
             if (!startIntake.isScheduled()) {
               // finishIntake.schedule();
@@ -152,7 +155,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     }
 
     if (intake != null && outtake != null && arm != null && elevator != null) {
-      kDriver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
+      driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
           new OuttakeAlgae(outtake, intake),
           new InstantCommand(() -> {
             arm.setSetpoint(ArmConstants.START_ANGLE);
@@ -162,52 +165,52 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     }
 
     if (outtake != null && elevator != null && arm != null) {
-      kDriver.get(DPad.DOWN).and(menu.negate())
+      driver.get(DPad.DOWN).and(menu.negate())
           .onTrue(new OuttakeCoral(outtake, elevator, arm)
               .alongWith(new InstantCommand(() -> getDrivetrain().setDesiredPose(() -> null)))
               .andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
                   new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT))));
     }
-    kDriver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(() -> {
+    driver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(() -> {
     }, getDrivetrain()));
     if (intake != null && indexer != null && outtake != null) {
-      kDriver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
+      driver.get(Button.B).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
     }
 
     // Climb
     if (climb != null) {
-      kDriver.get(Button.X).and(menu.negate())
+      driver.get(Button.X).and(menu.negate())
           .toggleOnTrue(new StartEndCommand(() -> climb.extend(), () -> climb.climb(), climb));
       if (intake != null) {
-        kDriver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(() -> intake.setAngle(65), intake));
+        driver.get(Button.X).and(menu.negate()).onTrue(new InstantCommand(() -> intake.setAngle(65), intake));
       }
-      kDriver.get(Button.X).and(menu).whileTrue(new ResetClimb(climb));
-      kDriver.get(kDriver.RIGHT_TRIGGER_BUTTON).and(menu).onTrue(new InstantCommand(() -> climb.stow(), climb));
+      driver.get(Button.X).and(menu).whileTrue(new ResetClimb(climb));
+      driver.get(driver.RIGHT_TRIGGER_BUTTON).and(menu).onTrue(new InstantCommand(() -> climb.stow(), climb));
     }
 
     // Alignment
     if (singleAlignmentButton) {
-      kDriver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(() -> {
+      driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(() -> {
         setAlignmentDirection();
         setAlignmentPose(false, true);
       }).andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
-      kDriver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(() -> {
+      driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(() -> {
         setAlignmentDirection();
         setAlignmentPose(false, false);
       }).andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
     } else {
-      kDriver.get(DPad.LEFT).onTrue(new InstantCommand(() -> setAlignmentPose(false, true))
+      driver.get(DPad.LEFT).onTrue(new InstantCommand(() -> setAlignmentPose(false, true))
           .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
-      kDriver.get(DPad.RIGHT).onTrue(new InstantCommand(() -> setAlignmentPose(false, false))
+      driver.get(DPad.RIGHT).onTrue(new InstantCommand(() -> setAlignmentPose(false, false))
           .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
     }
 
     // Reset yaw to be away from driver
-    kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
+    driver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
 
     // Cancel commands
-    kDriver.get(kDriver.RIGHT_TRIGGER_BUTTON).and(menu.negate()).onTrue(new InstantCommand(() -> {
+    driver.get(driver.RIGHT_TRIGGER_BUTTON).and(menu.negate()).onTrue(new InstantCommand(() -> {
       if (elevator != null) {
         if (outtake != null && outtake.coralLoaded()) {
           elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
@@ -278,32 +281,32 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public double getRawForwardTranslation() {
-    return kDriver.get(Axis.LEFT_Y);
+    return driver.get(Axis.LEFT_Y);
   }
 
   @Override
   public double getRawSideTranslation() {
-    return kDriver.get(Axis.LEFT_X);
+    return driver.get(Axis.LEFT_X);
   }
 
   @Override
   public double getRawRotation() {
-    return kDriver.get(Axis.RIGHT_X);
+    return driver.get(Axis.RIGHT_X);
   }
 
   @Override
   public double getRawHeadingAngle() {
-    return Math.atan2(kDriver.get(Axis.RIGHT_X), -kDriver.get(Axis.RIGHT_Y)) - Math.PI / 2;
+    return Math.atan2(driver.get(Axis.RIGHT_X), -driver.get(Axis.RIGHT_Y)) - Math.PI / 2;
   }
 
   @Override
   public double getRawHeadingMagnitude() {
-    return Math.hypot(kDriver.get(Axis.RIGHT_X), kDriver.get(Axis.RIGHT_Y));
+    return Math.hypot(driver.get(Axis.RIGHT_X), driver.get(Axis.RIGHT_Y));
   }
 
   @Override
   public boolean getIsSlowMode() {
-    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
+    return slowModeSupplier.getAsBoolean();
   }
 
   @Override
@@ -313,7 +316,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   }
 
   public GameController getGameController() {
-    return kDriver;
+    return driver;
   }
 
 }
