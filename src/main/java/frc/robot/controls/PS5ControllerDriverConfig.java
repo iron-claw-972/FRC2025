@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.DoNothing;
@@ -108,8 +109,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             Command l2Coral = new SequentialCommandGroup(
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-                        new MoveArm(arm, ArmConstants.L4_SETPOINT),
+                        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+                        new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
                         new DriveToPose(getDrivetrain(), ()->alignmentPose)
                     ),
                     new ConditionalCommand(
@@ -127,8 +128,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             Command l3Coral = new SequentialCommandGroup(
                 new SequentialCommandGroup(
                     new ParallelCommandGroup(
-                        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-                        new MoveArm(arm, ArmConstants.L4_SETPOINT),
+                        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+                        new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
                         new DriveToPose(getDrivetrain(), ()->alignmentPose)
                     ),
                     new ConditionalCommand(
@@ -212,11 +213,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(intake != null && outtake != null && arm != null && elevator != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
-                new InstantCommand(()->{
-                    arm.setSetpoint(ArmConstants.START_ANGLE);
-                    elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
-                    getDrivetrain().setIsAlign(false);
-                }, elevator)
+                new MoveArm(arm, ArmConstants.ALGAE_STOW_SETPOINT),
+                new InstantCommand(()-> elevator.setSetpoint(ElevatorConstants.INTAKE_SETPOINT)),
+                new WaitCommand(0.25),
+                new InstantCommand(()-> arm.setSetpoint(ArmConstants.INTAKE_SETPOINT))
             ));
         }
         if(outtake != null && elevator != null && arm != null){
