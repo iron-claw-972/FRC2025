@@ -26,7 +26,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.GeomUtil;
 
 public class DriveToPose extends Command {
-  protected static boolean updateTarget = false;
+  protected boolean updateTarget = false;
   private static final double drivekP = 6.0;
   private static final double drivekD = 0.0;
   private static final double thetakP = 7.0;
