@@ -69,9 +69,9 @@ public class Module implements ModuleIO{
     private final StatusSignal<Current> turnCurrent;
 
     // Timestamp inputs from Phoenix thread
-    private final Queue<Double> timestampQueue;
-    private final Queue<Double> drivePositionQueue;
-    private final Queue<Double> turnPositionQueue;
+    protected final Queue<Double> timestampQueue;
+    protected final Queue<Double> drivePositionQueue;
+    protected final Queue<Double> turnPositionQueue;
 
     private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
@@ -84,7 +84,7 @@ public class Module implements ModuleIO{
     private final Alert turnDisconnectedAlert;
     private final Alert turnEncoderDisconnectedAlert;
 
-    private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
+    protected final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
 
     private ModuleConstants moduleConstants;
       private final MotionMagicVelocityVoltage velocityRequest =
