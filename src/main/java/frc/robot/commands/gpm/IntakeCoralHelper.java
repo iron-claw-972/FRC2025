@@ -69,6 +69,7 @@ public class IntakeCoralHelper extends Command {
 				if(indexer.isIndexerClear()){
 					phase = Phase.InOuttake;
 					intake.deactivate();
+					intake.stow();
 				}
 				break;
 			case InOuttake:
@@ -92,13 +93,10 @@ public class IntakeCoralHelper extends Command {
 	public void end(boolean interrupted) {
 		// in case it's interrupted
 		intake.deactivate();
+		intake.stow();
 		indexer.stop();
 		if(outtake != null){
 			outtake.setMotor(.02);
-		}
-		if(!interrupted || phase == Phase.Acquiring || outtake.coralLoaded() && elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025){
-			// If it ended normally or hasn't started, intake can stow
-			intake.stow();
 		}
 	}
 }
