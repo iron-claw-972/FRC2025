@@ -29,6 +29,7 @@ public class ElevatorConstants {
     public static final double SAFE_SETPOINT = 0.225;
     public static final double INTAKE_STOW_SETPOINT = 0.58;
     public static final double L1_SETPOINT = 0.27;
+
     public static final double L2_SETPOINT = 0.578;
     public static final double L3_SETPOINT = 0.98-0.0254-0.01;
     public static final double L4_SETPOINT = 1.67;

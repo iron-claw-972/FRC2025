@@ -90,10 +90,18 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.LEFT_TRIGGER).onTrue(
                 new SequentialCommandGroup(
                     new InstantCommand(()->setAlignmentPose()),
-                    new ParallelCommandGroup(
-                        new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-                        new MoveArm(arm, ArmConstants.L4_SETPOINT),
-                        new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+                            new MoveArm(arm, ArmConstants.L4_SETPOINT),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L4_SETPOINT);
+                        }),
+                        ()->selectedDirection != 0
                     ),
                     new ConditionalCommand(
                         new OuttakeCoral(outtake, elevator, arm)
@@ -112,10 +120,18 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             Command l2Coral = new SequentialCommandGroup(
                 new SequentialCommandGroup(
                     new InstantCommand(()->setAlignmentPose()),
-                    new ParallelCommandGroup(
-                        new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
-                        new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
-                        new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+                            new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L2_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L2_L3_SETPOINT);
+                        }),
+                        ()->selectedDirection != 0
                     ),
                     new ConditionalCommand(
                         new OuttakeCoral(outtake, elevator, arm)
@@ -133,10 +149,18 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             Command l3Coral = new SequentialCommandGroup(
                 new SequentialCommandGroup(
                     new InstantCommand(()->setAlignmentPose()),
-                    new ParallelCommandGroup(
-                        new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
-                        new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
-                        new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+                            new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L3_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L2_L3_SETPOINT);
+                        }),
+                        ()->selectedDirection != 0
                     ),
                     new ConditionalCommand(
                         new OuttakeCoral(outtake, elevator, arm)
