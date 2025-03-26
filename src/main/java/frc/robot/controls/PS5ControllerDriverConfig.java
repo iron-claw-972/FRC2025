@@ -51,7 +51,7 @@ import lib.controllers.PS5Controller.PS5Button;
  * Driver controls for the PS5 controller
  */
 public class PS5ControllerDriverConfig extends BaseDriverConfig {
-    private final boolean autoOuttake = false;
+    private final boolean autoOuttake = true;
 
     private final PS5Controller driver = new PS5Controller(Constants.DRIVER_JOY);
     private final Elevator elevator;
