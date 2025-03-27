@@ -127,7 +127,6 @@ public class RobotContainer {
       case Phil:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         if (robotId == RobotId.Phil) { 
-          driver = new GameControllerDriverConfig(drive, vision);
           outtake = new OuttakeAlpha();
         }
         if (outtake != null) {
@@ -139,7 +138,7 @@ public class RobotContainer {
         }
       case Vertigo:
         drive = new Drivetrain(vision, new GyroIOPigeon2());
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
+        driver = new GameControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm);
         // operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain
