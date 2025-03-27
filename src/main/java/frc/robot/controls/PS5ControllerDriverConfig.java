@@ -244,10 +244,20 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(intake != null && outtake != null && arm != null && elevator != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
-                new MoveArm(arm, ArmConstants.ALGAE_STOW_SETPOINT),
-                new InstantCommand(()-> elevator.setSetpoint(ElevatorConstants.INTAKE_SETPOINT)),
-                new WaitCommand(0.25),
-                new InstantCommand(()-> arm.setSetpoint(ArmConstants.INTAKE_SETPOINT))
+                // Only move the arm and elevator in sequence when scoring in the net
+                new ConditionalCommand(
+                    new SequentialCommandGroup(
+                        new MoveArm(arm, ArmConstants.ALGAE_STOW_SETPOINT),
+                        new InstantCommand(()-> elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT)),
+                        new WaitCommand(0.25),
+                        new InstantCommand(()-> arm.setSetpoint(ArmConstants.INTAKE_SETPOINT))
+                    ),
+                    new InstantCommand(()->{
+                        elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                        arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                    }),
+                    () -> elevator.getSetpoint() > ElevatorConstants.NET_SETPOINT - 0.001
+                )
             ));
         }
         if(outtake != null && elevator != null && arm != null){
