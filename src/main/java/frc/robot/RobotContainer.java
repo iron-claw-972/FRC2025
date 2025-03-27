@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -32,6 +33,7 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.commands.gpm.StationIntake;
+import frc.robot.commands.vision.AimAtCoral;
 import frc.robot.commands.vision.DriveToCoral;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
@@ -40,6 +42,7 @@ import frc.robot.constants.FieldConstants;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
+import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -124,7 +127,7 @@ public class RobotContainer {
       case Phil:
         vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         if (robotId == RobotId.Phil) { 
-          driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
+          driver = new GameControllerDriverConfig(drive, vision);
           outtake = new OuttakeAlpha();
         }
         if (outtake != null) {

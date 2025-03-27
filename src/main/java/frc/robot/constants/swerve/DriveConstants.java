@@ -92,8 +92,9 @@ public class DriveConstants {
     public static double STEER_OFFSET_BACK_RIGHT = 255.46-180;
 
     // Heading PID.
-    public static final double HEADING_P = 5.5;
-    public static final double HEADING_D = 0;
+    // public static final double HEADING_P = 5.5;
+    public static final double HEADING_P = 1.0;
+    public static final double HEADING_D = 0.0;
 
     public static final double HEADING_TOLERANCE = Units.degreesToRadians(1.5);
 
@@ -227,10 +228,10 @@ public class DriveConstants {
             ROBOT_MASS = 30;
             WHEEL_MOI = 0.000326 * ROBOT_MASS;
 
-            STEER_OFFSET_FRONT_LEFT = 101.7;
-            STEER_OFFSET_FRONT_RIGHT = 228.16 - 180;
-            STEER_OFFSET_BACK_LEFT = 305.5;
-            STEER_OFFSET_BACK_RIGHT = 25.2 + 180;
+            STEER_OFFSET_FRONT_LEFT = 101.7 + 180;
+            STEER_OFFSET_FRONT_RIGHT = 228.16;
+            STEER_OFFSET_BACK_LEFT = 305.5 - 180;
+            STEER_OFFSET_BACK_RIGHT = 25.2;
 
             DRIVE_GEAR_RATIO = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0);
         }
