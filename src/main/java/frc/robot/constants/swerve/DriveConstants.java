@@ -88,8 +88,8 @@ public class DriveConstants {
 
     public static double STEER_OFFSET_FRONT_LEFT = 302.646;
     public static double STEER_OFFSET_FRONT_RIGHT = 103.039+180;
-    public static double STEER_OFFSET_BACK_LEFT = 155.646;
-    public static double STEER_OFFSET_BACK_RIGHT = 255.46-180;
+    public static double STEER_OFFSET_BACK_LEFT = 341.892-180;
+    public static double STEER_OFFSET_BACK_RIGHT = 73.563;
 
     // Heading PID.
     public static final double HEADING_P = 5.5;
