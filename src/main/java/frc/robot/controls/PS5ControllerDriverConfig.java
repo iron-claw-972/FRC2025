@@ -204,11 +204,6 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }
 
         // Alignment
-        driver.get(PS5Button.CIRCLE).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 0));
-        driver.get(PS5Button.TRIANGLE).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 2));
-        driver.get(PS5Button.SQUARE).and(menu).onTrue(new InstantCommand(()->alignmentDirection = 3));
-        driver.get(PS5Button.RB).onTrue(new InstantCommand(()->alignmentDirection = 4));
-        driver.get(DPad.UP).onTrue(new InstantCommand(()->alignmentDirection = 5));
         if(singleAlignmentButton){
             driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(()->{
                 setAlignmentDirection();
@@ -296,7 +291,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     /**
-     * Sets the drivetrain's alignmetn pose to the selected position
+     * Sets the drivetrain's alignment pose to the selected position
      * @param isAlgae True for algae, false for branches
      * @param isLeft True for left branch, false for right, ignored for algae
      */
