@@ -207,10 +207,10 @@ public class Vision {
             objectClass[i],
             // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
             VisionConstants.OBJECT_DETECTION_CAMERAS.get(0),
-            Timer.getFPGATimestamp() - (latency.getDouble(0) / 1000.0)
+            Timer.getFPGATimestamp() - (latency.getDoubleArray(new double[1])[0] / 1000.0)
             );
         poses[i] = objects[i].pose.toPose2d();
-        System.out.println(latency.getDouble(3.14159) / 1000.0);
+        //System.out.println(latency.getDoubleArray(new double[1])[0] / 1000.0);
       }
 
       Logger.recordOutput("Vision/objects", poses);
