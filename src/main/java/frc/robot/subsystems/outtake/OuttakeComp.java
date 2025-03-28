@@ -16,7 +16,7 @@ public class OuttakeComp extends Outtake {
     private double power;
 
     /** Coral detected before the rollers */
-    private final ColorSensorV3 colorSensor = new ColorSensorV3(IdConstants.i2cPort);
+    private ColorSensorV3 colorSensor = new ColorSensorV3(IdConstants.i2cPort);
 
     OuttakeIOIntakesAutoLogged inputs = new OuttakeIOIntakesAutoLogged();
 
@@ -67,7 +67,13 @@ public class OuttakeComp extends Outtake {
     }
 
     public int getProximity() {
-        return inputs.proximity = colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
+        if (inputs.proximity > 0){
+            return inputs.proximity = colorSensor.getProximity();
+        }
+        else{
+            colorSensor = new ColorSensorV3(IdConstants.i2cPort);
+            return inputs.proximity = colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
+        }
     }
 
     // coral detection from color sensor
