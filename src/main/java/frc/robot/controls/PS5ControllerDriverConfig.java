@@ -242,7 +242,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }
 
         if(intake != null && outtake != null && arm != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
+            Command algae = new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
                 // Only move the arm and elevator in sequence when scoring in the net
                 new ConditionalCommand(
@@ -259,12 +259,20 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     // 1 meter is in between L3 and net setpoints
                     () -> elevator.getSetpoint() > 1
                 )
-            ));
+            );
+            Command coral = new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)))
+                .andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT), new InstantCommand(()->selectedDirection = 0)));
+            Command cancelAlign = new InstantCommand(()->{}, getDrivetrain());
+
+            driver.get(DPad.DOWN).onTrue(new InstantCommand(()->{
+                if(menu.getAsBoolean()){
+                    algae.schedule();
+                }else{
+                    coral.schedule();
+                    cancelAlign.schedule();
+                }
+            }));
         }
-        if(outtake != null && elevator != null && arm != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))).
-            andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT), new InstantCommand(()->selectedDirection = 0))));}
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(()->{}, getDrivetrain()));
         if(intake != null && indexer != null && outtake != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
         }
