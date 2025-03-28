@@ -48,6 +48,7 @@ public class Vision {
   private NetworkTableEntry objectDistance;
   private NetworkTableEntry objectClass;
   private NetworkTableEntry cameraIndex;
+  private NetworkTableEntry latency;
 
   // The field layout. Instance variable
   private AprilTagFieldLayout aprilTagFieldLayout;
@@ -74,6 +75,7 @@ public class Vision {
     yOffset = m_objectDetectionTable.getEntry("y_offset");
     objectClass = m_objectDetectionTable.getEntry("class");
     cameraIndex = m_objectDetectionTable.getEntry("index");
+    latency = m_objectDetectionTable.getEntry("latency");
 
     // Start NetworkTables server
     NetworkTableInstance.getDefault().startServer();
@@ -204,8 +206,11 @@ public class Vision {
             // distance[i],
             objectClass[i],
             // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
-            VisionConstants.OBJECT_DETECTION_CAMERAS.get(0));
+            VisionConstants.OBJECT_DETECTION_CAMERAS.get(0),
+            Timer.getFPGATimestamp() - (latency.getDouble(0) / 1000.0)
+            );
         poses[i] = objects[i].pose.toPose2d();
+        System.out.println(latency.getDouble(3.14159) / 1000.0);
       }
 
       Logger.recordOutput("Vision/objects", poses);
