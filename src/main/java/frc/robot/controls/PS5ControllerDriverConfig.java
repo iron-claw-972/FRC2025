@@ -81,7 +81,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Elevator setpoints
         if(elevator != null && arm != null && outtake != null) {
             driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
-                new SequentialCommandGroup(
+                new ParallelCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
                     new MoveArm(arm, ArmConstants.L1_SETPOINT)
                 )
@@ -242,7 +242,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }
 
         if(intake != null && outtake != null && arm != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
+            Command algae = new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
                 // Only move the arm and elevator in sequence when scoring in the net
                 new ConditionalCommand(
@@ -256,14 +256,23 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                         elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
                         arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
                     }),
-                    () -> elevator.getSetpoint() > ElevatorConstants.NET_SETPOINT - 0.001
+                    // 1 meter is in between L3 and net setpoints
+                    () -> elevator.getSetpoint() > 1
                 )
-            ));
+            );
+            Command coral = new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)))
+                .andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT), new InstantCommand(()->selectedDirection = 0)));
+            Command cancelAlign = new InstantCommand(()->{}, getDrivetrain());
+
+            driver.get(DPad.DOWN).onTrue(new InstantCommand(()->{
+                if(menu.getAsBoolean()){
+                    algae.schedule();
+                }else{
+                    coral.schedule();
+                    cancelAlign.schedule();
+                }
+            }));
         }
-        if(outtake != null && elevator != null && arm != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))).
-            andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT), new InstantCommand(()->selectedDirection = 0))));}
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(()->{}, getDrivetrain()));
         if(intake != null && indexer != null && outtake != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
         }
@@ -290,10 +299,12 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
 
         // Reset the yaw. Mainly useful for testing/driver practice
-        driver.get(PS5Button.OPTIONS).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
+        driver.get(PS5Button.OPTIONS).and(menu.negate()).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
                 new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI)
         )));
-
+        driver.get(PS5Button.OPTIONS).and(menu).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
+                new Rotation2d(Robot.getAlliance() == Alliance.Blue ? Math.PI*5/6 : -Math.PI/6)
+        )));
 
         // Cancel commands
         driver.get(PS5Button.RIGHT_TRIGGER).and(menu.negate()).onTrue(new InstantCommand(()->{
