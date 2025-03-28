@@ -81,7 +81,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Elevator setpoints
         if(elevator != null && arm != null && outtake != null) {
             driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
-                new SequentialCommandGroup(
+                new ParallelCommandGroup(
                     new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
                     new MoveArm(arm, ArmConstants.L1_SETPOINT)
                 )
@@ -290,10 +290,12 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
 
         // Reset the yaw. Mainly useful for testing/driver practice
-        driver.get(PS5Button.OPTIONS).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
+        driver.get(PS5Button.OPTIONS).and(menu.negate()).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
                 new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI)
         )));
-
+        driver.get(PS5Button.OPTIONS).and(menu).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
+                new Rotation2d(Robot.getAlliance() == Alliance.Blue ? Math.PI*5/6 : -Math.PI/6)
+        )));
 
         // Cancel commands
         driver.get(PS5Button.RIGHT_TRIGGER).and(menu.negate()).onTrue(new InstantCommand(()->{

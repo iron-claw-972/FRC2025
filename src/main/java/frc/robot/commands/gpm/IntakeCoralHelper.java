@@ -77,6 +77,10 @@ public class IntakeCoralHelper extends Command {
 					phase = Phase.Done;
 					elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
 					arm.setSetpoint(ArmConstants.STOW_SETPOINT);
+					indexer.stop();
+					if(outtake != null){
+						outtake.setMotor(0.1);
+					}
 				}
 				break;
 			case Done:
@@ -86,7 +90,7 @@ public class IntakeCoralHelper extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return phase == Phase.Done && elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025 && arm.atSetpoint();
+		return phase == Phase.Done && elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025;
 	}
 
 	@Override
@@ -96,7 +100,7 @@ public class IntakeCoralHelper extends Command {
 		intake.stow();
 		indexer.stop();
 		if(outtake != null){
-			outtake.setMotor(.02);
+			outtake.setMotor(0.02);
 		}
 	}
 }

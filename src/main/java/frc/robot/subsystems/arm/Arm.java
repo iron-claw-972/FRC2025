@@ -154,7 +154,7 @@ public class Arm extends SubsystemBase implements ArmIO {
     }
 
     public boolean canMoveElevator() {
-        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < 5;
+        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < 5 || Math.abs(getAngle() - ArmConstants.L1_SETPOINT) < 5;
     }
 
     @Override
