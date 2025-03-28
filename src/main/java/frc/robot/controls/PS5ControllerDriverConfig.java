@@ -256,7 +256,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                         elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
                         arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
                     }),
-                    () -> elevator.getSetpoint() > ElevatorConstants.NET_SETPOINT - 0.001
+                    // 1 meter is in between L3 and net setpoints
+                    () -> elevator.getSetpoint() > 1
                 )
             ));
         }

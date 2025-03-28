@@ -31,7 +31,7 @@ public class ElevatorConstants {
     public static final double L1_SETPOINT = 0.0;
 
     public static final double L2_SETPOINT = 0.548;
-    public static final double L3_SETPOINT = 0.98-0.0254-0.01;
+    public static final double L3_SETPOINT = 0.9446;
     public static final double L4_SETPOINT = 1.655;
     //Dunk L4 = 1.5
 
