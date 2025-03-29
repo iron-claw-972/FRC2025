@@ -31,11 +31,13 @@ import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.vision.AimAtCoral;
+import frc.robot.commands.vision.DriveToCoral;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -54,6 +56,7 @@ import lib.controllers.PS5Controller.PS5Button;
  */
 public class PS5ControllerDriverConfig extends BaseDriverConfig {
     public static final boolean singleAlignmentButton = true;
+    // public static final boolean slowModeSupplier = true;
 
     private final PS5Controller driver = new PS5Controller(Constants.DRIVER_JOY);
     private final Elevator elevator;
@@ -63,7 +66,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Climb climb;
     private final Arm arm;
     private final Vision vision;
-    private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_JOY);
+    private final BooleanSupplier slowModeSupplier = () -> {return true;};
     private int alignmentDirection = 0;
     private Pose2d alignmentPose = null;
 
@@ -172,7 +175,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)).
             andThen(startIntake));
         }else{
-            driver.get(PS5Button.CROSS).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            driver.get(PS5Button.CROSS).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+            SmartDashboard.putData(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
         }
         if(intake != null && outtake != null && arm != null && elevator != null){

@@ -27,14 +27,15 @@ import frc.robot.util.GeomUtil;
 
 public class DriveToPose extends Command {
   protected boolean updateTarget = false;
-  private static final double drivekP = 6.0;
+  private static final double drivekP = 1.0;
   private static final double drivekD = 0.0;
-  private static final double thetakP = 7.0;
+  private static final double thetakP = 1.0;
   private static final double thetakD = 0.0;
-  private static final double driveMaxVelocity = DriveConstants.MAX_SPEED;
-  private static final double driveMaxAcceleration = 2.25;
-  private static final double thetaMaxVelocity = 5.0;
-  private static final double thetaMaxAcceleration = 5.0;
+//   private static final double driveMaxVelocity = DriveConstants.MAX_SPEED;
+  private static final double driveMaxVelocity = 1;
+  private static final double driveMaxAcceleration = 0.75;
+  private static final double thetaMaxVelocity = 1;
+  private static final double thetaMaxAcceleration = 0.75;
   private static final double driveTolerance = 0.015;
   private static final double thetaTolerance = Units.degreesToRadians(1.0);
   private static final double ffMinRadius = 0.05;
@@ -123,6 +124,7 @@ public class DriveToPose extends Command {
         targetPose = target.get();
     }
     if(targetPose == null){
+        System.out.println("===================================== TARGET POSE NULL =====================================");
         return;
     }
 
@@ -179,6 +181,7 @@ public class DriveToPose extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("================= FINISHED DRIVING TO CORAL! =================");
     drive.stop();
     drive.setVisionEnabled(true);
     running = false;
@@ -191,6 +194,11 @@ public class DriveToPose extends Command {
 
   /** Checks if the robot pose is within the allowed drive and theta tolerances. */
   public boolean withinTolerance(double driveTolerance, Rotation2d thetaTolerance) {
+    System.out.println("within toloance");
+    System.out.println("" + running);
+    System.out.println("" + Math.abs(driveErrorAbs) + "  " + driveTolerance);
+    System.out.println("" + Math.abs(thetaErrorAbs) + "  " + thetaTolerance.getRadians());
+    System.out.println("" + targetPose == null);
     return running
         && (Math.abs(driveErrorAbs) < driveTolerance
         && Math.abs(thetaErrorAbs) < thetaTolerance.getRadians()

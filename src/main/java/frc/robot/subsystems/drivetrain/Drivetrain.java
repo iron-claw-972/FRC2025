@@ -583,10 +583,10 @@ public class Drivetrain extends SubsystemBase {
             return getPose();
         }
         Optional<Pose2d> pose = poseEstimator.sampleAt(timestamp);
-        if(pose.isPresent()){
+        if(pose.isPresent() && pose.get() != null){
             return pose.get();
         }else{
-            return null;
+            return getPose();
         }
     }
 

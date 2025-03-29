@@ -138,7 +138,7 @@ public class RobotContainer {
         }
       case Vertigo:
         drive = new Drivetrain(vision, new GyroIOPigeon2());
-        driver = new GameControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
         // operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain
