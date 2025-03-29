@@ -197,7 +197,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Intake/outtake
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
 
-        if(intake != null && indexer != null && elevator != null && outtake != null && arm != null){
+        if(intake != null && indexer != null && elevator != null && outtake != null && arm != null||true){
             boolean toggle = true;
             Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm);
             Command intakeAlgae = new IntakeAlgae(intake);
@@ -224,7 +224,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StationIntake(outtake);
+            //Command startIntake = new StationIntake(outtake);
             // Command finishIn6take = new FinishStationIntake(intake, indexer, elevator, outtake);
             // driver.get(PS5Button.CROSS).and(r3).and(menu.negate()).onTrue(startIntake)
             //     .onFalse(new InstantCommand(()->{
@@ -234,11 +234,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             //             startIntake.cancel();
             //         }
             // }));
-            driver.get(PS5Button.CROSS).and(r3).onTrue(
-            new SequentialCommandGroup(
-            new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
-            new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)).
-            andThen(startIntake));
+            // driver.get(PS5Button.CROSS).and(r3).onTrue(
+            // new SequentialCommandGroup(
+            // new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
+            // new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)).
+            // andThen(startIntake));
         }
 
         if(intake != null && outtake != null && arm != null && elevator != null){
@@ -273,7 +273,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 }
             }));
         }
-        if(intake != null && indexer != null && outtake != null){
+        if(intake != null && indexer != null){
             driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
         }
 

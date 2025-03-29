@@ -33,7 +33,7 @@ public class IntakeCoralHelper extends Command {
 		this.outtake = outtake;
 		this.arm = arm;
 		this.elevator = elevator;
-		addRequirements(intake, indexer, arm, elevator);
+		addRequirements(intake, indexer);
 		if(outtake != null){
 			addRequirements(outtake);
 		}
@@ -61,22 +61,22 @@ public class IntakeCoralHelper extends Command {
 			case Indexing:
 				if (!indexer.isIndexerClear()) {
 					phase = Phase.Detected;
-					intake.setSpeed(0.1);
-					indexer.slow();
+					// intake.setSpeed(0.1);
+					// indexer.slow();
 				}
 				break;
 			case Detected:
 				if(indexer.isIndexerClear()){
 					phase = Phase.InOuttake;
-					intake.deactivate();
-					intake.stow();
+					// intake.deactivate();
+					// intake.stow();
 				}
 				break;
 			case InOuttake:
 				if(outtake == null || outtake.coralLoaded()){
 					phase = Phase.Done;
-					elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
-					arm.setSetpoint(ArmConstants.STOW_SETPOINT);
+					// elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
+					// arm.setSetpoint(ArmConstants.STOW_SETPOINT);
 					indexer.stop();
 					if(outtake != null){
 						outtake.setMotor(0.1);
@@ -90,7 +90,7 @@ public class IntakeCoralHelper extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return phase == Phase.Done && elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025;
+		return phase == Phase.Done; //&& elevator.getPosition() > ElevatorConstants.SAFE_SETPOINT-0.025;
 	}
 
 	@Override

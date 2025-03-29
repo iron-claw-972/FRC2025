@@ -141,9 +141,9 @@ public class RobotContainer {
         //operator.configureControls();
         
         initializeAutoBuilder();
-        registerCommands();
+        //registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        PathGroupLoader.loadPathGroups();
+        //PathGroupLoader.loadPathGroups();
         
              
         break;
@@ -152,7 +152,7 @@ public class RobotContainer {
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
     autoChooser = new LoggedDashboardChooser<>("auto selector");
-    addPaths(); 
+    //addPaths(); 
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
