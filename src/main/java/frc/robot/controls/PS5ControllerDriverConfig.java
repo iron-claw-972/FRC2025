@@ -60,7 +60,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Outtake outtake;
     private final Climb climb;
     private final Arm arm;
-    private final BooleanSupplier slowModeSupplier = driver.get(PS5Button.RIGHT_JOY);
+    private final BooleanSupplier slowModeSupplier = ()->false;
     private Pose2d alignmentPose = null;
     // 0 == not selected, -1 == left, 1 == right
     private byte selectedDirection = 0;
