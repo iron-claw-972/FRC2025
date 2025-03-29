@@ -15,7 +15,7 @@ import frc.robot.util.Vision.DetectedObject;
  * Moves toward the detected object
  * <p>Only works with the front camera
  */
-public class DriveToCoral extends DriveToPose {
+public class DriveToAlgae extends DriveToPose {
   private static final boolean constantUpdate = true;
 
   private static Pose2d tempPose;
@@ -27,7 +27,7 @@ public class DriveToCoral extends DriveToPose {
    * @param detectedObject The supplier for the detected object to use
    * @param drive The drivetrain
    */
-  public DriveToCoral(Supplier<DetectedObject> detectedObject, Drivetrain drive) {
+  public DriveToAlgae(Supplier<DetectedObject> detectedObject, Drivetrain drive) {
     super(drive,
       constantUpdate
         ? () -> getPose(detectedObject, drive)
@@ -58,7 +58,7 @@ public class DriveToCoral extends DriveToPose {
 
   @Override
   public void execute(){
-    //System.out.println("AAAAAAAAAAAAA:" + getPose(objectSupplier, drive));
+    System.out.println("AAAAAAAAAAAAA:" + getPose(objectSupplier, drive));
     // Set the static variable so the super class has access to it
     if(constantUpdate){
       tempPose = getPose(objectSupplier, drive);

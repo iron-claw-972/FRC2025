@@ -128,6 +128,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }
 
         // Intake/outtake
+
         Trigger r3 = driver.get(PS5Button.RIGHT_JOY);
 
         if(intake != null && indexer != null && elevator != null && outtake != null && arm != null){
@@ -176,9 +177,13 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             andThen(startIntake));
         }else{
             driver.get(PS5Button.CROSS).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+            // driver.get(PS5Button.CIRCLE).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
             SmartDashboard.putData(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
         }
+   
+
+
         if(intake != null && outtake != null && arm != null && elevator != null){
             driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),

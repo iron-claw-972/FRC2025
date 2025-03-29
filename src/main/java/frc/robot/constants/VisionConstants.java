@@ -173,9 +173,10 @@ public class VisionConstants {
     /**
      * The transformations from the robot to object detection cameras
      */
+    
     public static final ArrayList<Transform3d> OBJECT_DETECTION_CAMERAS = new ArrayList<>(List.of(
             new Transform3d(
-                    new Translation3d(Units.inchesToMeters(2.7), Units.inchesToMeters(10), Units.inchesToMeters(36)),
+                    new Translation3d(Units.inchesToMeters(2.7), Units.inchesToMeters(10), Units.inchesToMeters(28.75)),
                     new Rotation3d(0, Units.degreesToRadians(45), -Math.PI/2))));
 
     // Poses to potentially align to
