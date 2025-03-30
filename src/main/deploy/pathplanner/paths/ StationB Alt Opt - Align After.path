@@ -8,38 +8,33 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9294370334836404,
-        "y": 6.130971138637706
+        "x": 2.334068287037036,
+        "y": 6.521408420138889
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.8229949951171873,
-        "y": 5.580079432896205
+        "x": 3.6657752058351885,
+        "y": 5.122185271626888
       },
       "prevControl": {
-        "x": 3.6027199899253537,
-        "y": 5.6983119245714535
+        "x": 2.8362012764370403,
+        "y": 5.99030882486763
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.3836589698046169,
-      "rotationDegrees": 150.75582343932
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.45374746792707615,
+      "waypointRelativePos": 0.6806256151574805,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -58,8 +53,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -151.83
+    "velocity": 0.0,
+    "rotation": -149.28470582855732
   },
   "reversed": false,
   "folder": "Station Left",
