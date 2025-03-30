@@ -292,12 +292,10 @@ public class RobotContainer {
         catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        //autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-        autoChooser.addDefaultOption("Station Left Side - Align After", new PathPlannerAuto("Station Left Side - Align After"));
-        //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
-        autoChooser.addOption("Left Side", new PathPlannerAuto("Station Left Side"));
+        autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
+
+
         autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));
-        
         autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 

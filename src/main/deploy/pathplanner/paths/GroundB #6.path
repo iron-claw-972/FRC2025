@@ -41,7 +41,12 @@
       "name": "Intake",
       "waypointRelativePos": 0.3989065575787402,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {
