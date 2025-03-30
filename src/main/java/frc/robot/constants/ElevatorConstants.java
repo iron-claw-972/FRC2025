@@ -44,7 +44,7 @@ public class ElevatorConstants {
     public static final double TOP_ALGAE_SETPOINT = 0.779;
 
     public static final double NET_SETPOINT = MAX_HEIGHT;
-    public static final double STATION_INTAKE_SETPOINT = 0.26;
+    public static final double STATION_INTAKE_SETPOINT = 0.233;
 
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
