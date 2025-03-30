@@ -3,43 +3,60 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.65,
-        "y": 7.4
+        "x": 7.065,
+        "y": 7.315
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9294370334836404,
-        "y": 6.130971138637706
+        "x": 6.311723981584821,
+        "y": 6.540661185128348
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.8229949951171873,
-        "y": 5.580079432896205
+        "x": 5.026909205835189,
+        "y": 5.287285271626888
       },
       "prevControl": {
-        "x": 3.6027199899253537,
-        "y": 5.6983119245714535
+        "x": 5.5100830078125,
+        "y": 5.791303362165179
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.3836589698046169,
-      "rotationDegrees": 150.75582343932
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "backdrive",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "backdrive"
+        }
+      }
+    },
+    {
+      "name": "lower intake",
+      "waypointRelativePos": 0.14206787687450353,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "lower intake"
+        }
+      }
+    },
+    {
       "name": "MoveElevator",
-      "waypointRelativePos": 0.45374746792707615,
+      "waypointRelativePos": 0.4625098658247798,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -58,14 +75,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -151.83
+    "velocity": 0.5,
+    "rotation": 150.0
   },
   "reversed": false,
-  "folder": "Station Left",
+  "folder": "Ground LSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 36.0
+    "rotation": 150.0
   },
   "useDefaultConstraints": false
 }
