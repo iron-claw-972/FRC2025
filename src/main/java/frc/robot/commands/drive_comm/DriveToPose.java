@@ -124,7 +124,6 @@ public class DriveToPose extends Command {
         targetPose = target.get();
     }
     if(targetPose == null){
-        System.out.println("===================================== TARGET POSE NULL =====================================");
         return;
     }
 
@@ -181,7 +180,6 @@ public class DriveToPose extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("================= FINISHED DRIVING TO CORAL! =================");
     drive.stop();
     drive.setVisionEnabled(true);
     running = false;
@@ -194,11 +192,6 @@ public class DriveToPose extends Command {
 
   /** Checks if the robot pose is within the allowed drive and theta tolerances. */
   public boolean withinTolerance(double driveTolerance, Rotation2d thetaTolerance) {
-    System.out.println("within toloance");
-    System.out.println("" + running);
-    System.out.println("" + Math.abs(driveErrorAbs) + "  " + driveTolerance);
-    System.out.println("" + Math.abs(thetaErrorAbs) + "  " + thetaTolerance.getRadians());
-    System.out.println("" + targetPose == null);
     return running
         && (Math.abs(driveErrorAbs) < driveTolerance
         && Math.abs(thetaErrorAbs) < thetaTolerance.getRadians()

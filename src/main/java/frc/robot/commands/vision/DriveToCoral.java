@@ -16,7 +16,7 @@ import frc.robot.util.Vision.DetectedObject;
  * <p>Only works with the front camera
  */
 public class DriveToCoral extends DriveToPose {
-  private static final boolean constantUpdate = true;
+  private static final boolean constantUpdate = false;
 
   private static Pose2d tempPose;
 
@@ -50,9 +50,9 @@ public class DriveToCoral extends DriveToPose {
   @Override
   public void initialize(){
     // Set the static variable so the super class has access to it
-    if(constantUpdate){
+    // if(constantUpdate){
       tempPose = getPose(objectSupplier, drive);
-    }
+    // }
     super.initialize();
   }
 
