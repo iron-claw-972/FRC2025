@@ -32,8 +32,9 @@ public class ArmConstants {
     public static final double L1_SETPOINT = 40;
 
     //4 in offset
-    public static final double L4_SETPOINT = 16;
+    public static final double L4_SETPOINT = 11;
     public static final double L2_L3_SETPOINT = 21.25;
+
 
     public static final double ALGAE_SETPOINT = -16.37;
     public static final double ALGAE_NET_SETPOINT_1 = 85.0;
