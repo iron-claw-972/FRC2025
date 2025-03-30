@@ -89,37 +89,6 @@
           "data": {
             "name": "Drive To Left Station"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SweepGroundB #5"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To 6/19 Left"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lower Elevator"
-                }
-              }
-            ]
-          }
         }
       ]
     }
