@@ -26,15 +26,16 @@ public class ArmConstants {
 
     public static final double TOLERANCE = 3.0;
 
-    //public static final double L4_SETPOINT = 1.89;
     //Dunk L4 = 6.4
-    //public static final double L2_L3_SETPOINT = 12.23;
     public static final double L1_SETPOINT = 40;
 
     //4 in offset
     public static final double L4_SETPOINT = 11;
     public static final double L2_L3_SETPOINT = 21.25;
 
+    //touching reef
+    public static final double L4_SETPOINT_ALT = 1.89;
+    public static final double L2_L3_SETPOINT_ALT = 12.23;
 
     public static final double ALGAE_SETPOINT = -16.37;
     public static final double ALGAE_NET_SETPOINT_1 = 85.0;

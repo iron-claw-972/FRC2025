@@ -29,16 +29,18 @@ public class ElevatorConstants {
     public static final double SAFE_SETPOINT = 0.225;
     public static final double INTAKE_STOW_SETPOINT = 0.58;
     
+    //4 inch offset
     public static final double L1_SETPOINT = 0.0;
     public static final double L2_SETPOINT = 0.523;
     public static final double L3_SETPOINT = 0.9192;
     public static final double L4_SETPOINT = 1.675;
-    //Dunk L4 = 1.5
 
-    //4 inch offset
-    // public static final double L2_SETPOINT_OFFSET = 0.412;
-    // public static final double L3_SETPOINT_OFFSET = 0.803;
-    // public static final double L4_SETPOINT_OFFSET = 1.565;
+    //touching reef
+    public static final double L1_SETPOINT_ALT = 0.27;
+    public static final double L2_SETPOINT_ALT = 0.588;
+    public static final double L3_SETPOINT_ALT = 0.98-0.0254-0.01;
+    public static final double L4_SETPOINT_ALT = 1.67;
+    //Dunk L4 = 1.5
 
     public static final double BOTTOM_ALGAE_SETPOINT = 0.385;
     public static final double TOP_ALGAE_SETPOINT = 0.779;

@@ -195,8 +195,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
       NamedCommands.registerCommand("L4", 
         new ParallelCommandGroup(
-          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT)
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT_ALT),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT_ALT)
         )
       );
       NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
