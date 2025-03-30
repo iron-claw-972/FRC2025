@@ -30,7 +30,9 @@ import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StationIntake;
+import frc.robot.commands.vision.AimAtAlgae;
 import frc.robot.commands.vision.AimAtCoral;
+import frc.robot.commands.vision.DriveToAlgae;
 import frc.robot.commands.vision.DriveToCoral;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
@@ -118,12 +120,12 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.LB).whileTrue(new ConditionalCommand(l3Algae, new InstantCommand(l3Coral::schedule), menu));
     
             //Processor setpoint
-            driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
-                new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.001),
-                    new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
-                )
-            );
+            // driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
+            //     new ParallelCommandGroup(
+            //         new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.001),
+            //         new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
+            //     )
+            // );
             driver.get(DPad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
         }
 
@@ -177,9 +179,15 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             andThen(startIntake));
         }else{
             driver.get(PS5Button.CROSS).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
-            // driver.get(PS5Button.CIRCLE).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            driver.get(PS5Button.CIRCLE).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            driver.get(PS5Button.SQUARE).toggleOnTrue(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            driver.get(PS5Button.TRIANGLE).toggleOnTrue(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+
             SmartDashboard.putData(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            SmartDashboard.putData(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+            SmartDashboard.putData(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+
         }
    
 
@@ -204,10 +212,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
         // Climb
         if(climb != null){
-            driver.get(PS5Button.SQUARE).and(menu.negate()).toggleOnTrue(new StartEndCommand(()->climb.extend(), ()->climb.climb(), climb));
-            if(intake != null){
-                driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
-            }
+            // driver.get(PS5Button.SQUARE).and(menu.negate()).toggleOnTrue(new StartEndCommand(()->climb.extend(), ()->climb.climb(), climb));
+            // if(intake != null){
+            //     driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
+            // }
             driver.get(PS5Button.PS).and(menu).whileTrue(new ResetClimb(climb));
             driver.get(PS5Button.RIGHT_TRIGGER).and(menu).onTrue(new InstantCommand(()->climb.stow(), climb));
         }
