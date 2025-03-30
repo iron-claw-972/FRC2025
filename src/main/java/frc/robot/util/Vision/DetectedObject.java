@@ -332,3 +332,5 @@ public class DetectedObject {
         return type+" at ("+pose.getX()+", "+pose.getY()+", "+pose.getZ()+")";
     }
 }
+
+
