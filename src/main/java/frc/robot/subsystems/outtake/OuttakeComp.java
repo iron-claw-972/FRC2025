@@ -41,6 +41,7 @@ public class OuttakeComp extends Outtake {
         inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
         Logger.processInputs("Outtake", inputs);
         Logger.recordOutput("Outtake/Sensor", colorSensor.getProximity());
+        Logger.recordOutput("Outtake/SensorConnected", colorSensor.isConnected());
     }
 
     /** Set the motor power to move the coral */
@@ -67,13 +68,14 @@ public class OuttakeComp extends Outtake {
     }
 
     public int getProximity() {
-        if (inputs.proximity > 0){
-            return inputs.proximity = colorSensor.getProximity();
-        }
-        else{
-            colorSensor = new ColorSensorV3(IdConstants.i2cPort);
-            return inputs.proximity = colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
-        }
+        return inputs.proximity = colorSensor.getProximity();
+        // if (inputs.proximity > 0){
+        //     return inputs.proximity;
+        // }
+        // else{
+        //     colorSensor = new ColorSensorV3(IdConstants.i2cPort);
+        //     return inputs.proximity = colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
+        // }
     }
 
     // coral detection from color sensor

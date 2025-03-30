@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -59,6 +60,8 @@ public class DriveToPose extends Command {
 
   private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
   private DoubleSupplier omegaFF = () -> 0.0;
+
+  private Debouncer debouncer = new Debouncer(0.1);
 
   public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
     this.drive = drive;
@@ -199,6 +202,6 @@ public class DriveToPose extends Command {
 
   @Override
   public boolean isFinished(){
-    return withinTolerance(driveTolerance, new Rotation2d(thetaTolerance));
+    return debouncer.calculate(withinTolerance(driveTolerance, new Rotation2d(thetaTolerance)));
   }
 }
