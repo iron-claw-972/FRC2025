@@ -17,7 +17,7 @@ import frc.robot.util.Vision.DetectedObject.ObjectType;
  * <p>Only works with the front camera
  */
 public class DriveToCoral extends DriveToPose {
-  private static final boolean constantUpdate = true;
+  private static final boolean constantUpdate = false;
 
   /**
    * Moves toward the detected object
