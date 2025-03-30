@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P  1 - Align After"
+            "pathName": "P  1"
           }
         },
         {
@@ -119,18 +119,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GrounddB #4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Drive To Left Station"
           }
         }
       ]
