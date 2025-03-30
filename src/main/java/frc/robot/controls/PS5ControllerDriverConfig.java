@@ -34,6 +34,7 @@ import frc.robot.commands.vision.AimAtAlgae;
 import frc.robot.commands.vision.AimAtCoral;
 import frc.robot.commands.vision.DriveToAlgae;
 import frc.robot.commands.vision.DriveToCoral;
+import frc.robot.commands.vision.LogVision;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
@@ -178,14 +179,15 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT)).
             andThen(startIntake));
         }else{
-            driver.get(PS5Button.CROSS).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+            // driver.get(PS5Button.CROSS).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             driver.get(PS5Button.CIRCLE).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
             driver.get(PS5Button.SQUARE).toggleOnTrue(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
-            driver.get(PS5Button.TRIANGLE).toggleOnTrue(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+            // driver.get(PS5Button.TRIANGLE).toggleOnTrue(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
             SmartDashboard.putData(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            SmartDashboard.putData(new LogVision(() -> {return vision.getBestGamePiece(Math.PI, true);}));
 
         }
    

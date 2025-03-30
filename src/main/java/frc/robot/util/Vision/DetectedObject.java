@@ -11,6 +11,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import org.littletonrobotics.junction.Logger;
+
 
 /**
  * Stores information about an object detected by vision
@@ -192,6 +194,8 @@ public class DetectedObject {
             ));
         }
         pose = new Pose3d(translation, new Rotation3d());
+        //System.out.println("" + pose);
+        //Logger.recordOutput("Vision/object", null);
     }
     
     /**
@@ -306,6 +310,7 @@ public class DetectedObject {
      */
     public double getAngle(){
         Pose2d drivePose = drive.getPose();
+        // System.out.println("pose:(" + pose.getX() + ", " + pose.getY() + "); drive:(" + drivePose.getX() + ", " + drivePose.getY() + ")");
         return Math.atan2(pose.getY()-drivePose.getY(), pose.getX()-drivePose.getX());
     }
 

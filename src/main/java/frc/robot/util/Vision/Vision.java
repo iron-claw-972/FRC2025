@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
 
 import org.littletonrobotics.junction.Logger;
+import org.opencv.features2d.GFTTDetector;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -49,6 +50,7 @@ public class Vision {
   private NetworkTableEntry objectClass;
   private NetworkTableEntry cameraIndex;
   private NetworkTableEntry latency;
+  private NetworkTableEntry flippy;
 
   // The field layout. Instance variable
   private AprilTagFieldLayout aprilTagFieldLayout;
@@ -61,6 +63,10 @@ public class Vision {
 
   // Array of tags to use, null or empty array to use all tags
   private int[] onlyUse = null;
+
+  private boolean lastFlippy;
+
+  private DetectedObject[] cachedObjects;
 
   /**
    * Creates a new instance of Vision and sets up the cameras and field layout
@@ -76,6 +82,7 @@ public class Vision {
     objectClass = m_objectDetectionTable.getEntry("class");
     cameraIndex = m_objectDetectionTable.getEntry("index");
     latency = m_objectDetectionTable.getEntry("latency");
+    flippy = m_objectDetectionTable.getEntry("flippy");
 
     // Start NetworkTables server
     NetworkTableInstance.getDefault().startServer();
@@ -86,6 +93,11 @@ public class Vision {
 
     // Sets the origin to the right side of the blue alliance wall
     aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
+
+    lastFlippy = flippy.getBoolean(false);
+
+    cachedObjects = new DetectedObject[0];
+
 
     if (VisionConstants.ENABLED) {
       // Puts the cameras in an array list
@@ -117,6 +129,20 @@ public class Vision {
       return new double[0];
     }
     return xOffset.getDoubleArray(new double[0]);
+  }
+
+  /**
+   * Get the Flippy( flippy just switches every tick from the coprocessor, so we can update the poses only when needed)
+   *     __________   __ 
+   *   /           \_/  /
+   *  / *              
+   *  \
+   *   \
+   * 
+   * @return A flippy, boolean
+   */
+  public boolean getFlippy(){
+    return flippy.getBoolean(lastFlippy);
   }
 
   /**
@@ -158,7 +184,6 @@ public class Vision {
    * 
    * @return The object types as a String array
    */
-  @SuppressWarnings("unused")
   public String[] getDetectedObjectClass() {
     if (!VisionConstants.OBJECT_DETECTION_ENABLED) {
       return new String[0];
@@ -189,6 +214,13 @@ public class Vision {
     if (!VisionConstants.OBJECT_DETECTION_ENABLED) {
       return new DetectedObject[0];
     }
+
+    if (getFlippy() == lastFlippy) {
+      return cachedObjects;
+    } else {
+      lastFlippy = getFlippy();
+    }
+
     double[] xOffset = getHorizontalOffset();
     double[] yOffset = getVerticalOffset();
 
@@ -203,7 +235,6 @@ public class Vision {
         objects[i] = new DetectedObject(
             Units.degreesToRadians(xOffset[i]),
             -Units.degreesToRadians(yOffset[i]),
-            // distance[i],
             objectClass[i],
             // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
             VisionConstants.OBJECT_DETECTION_CAMERAS.get(0),
@@ -216,6 +247,7 @@ public class Vision {
       Logger.recordOutput("Vision/objects", poses);
 
     }
+    cachedObjects = objects;
     return objects;
   }
 
@@ -244,6 +276,7 @@ public class Vision {
         }
       }
     }
+
     return best;
   }
 

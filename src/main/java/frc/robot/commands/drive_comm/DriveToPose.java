@@ -122,11 +122,6 @@ public class DriveToPose extends Command {
     Pose2d currentPose = robot.get();
     if(updateTarget){
         targetPose = target.get();
-    } else {
-        Pose2d latestPose = target.get();
-        System.out.println("target " + targetPose);
-        System.out.println("latest " + latestPose);
-        System.out.println("delta " + (latestPose.relativeTo(targetPose)));
     }
     if(targetPose == null){
         return;

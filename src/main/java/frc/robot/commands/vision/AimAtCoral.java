@@ -2,6 +2,8 @@ package frc.robot.commands.vision;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
@@ -20,15 +22,19 @@ public class AimAtCoral extends DefaultDriveCommand {
 
     @Override
     protected void drive(ChassisSpeeds speeds){
+
         if(!VisionConstants.OBJECT_DETECTION_ENABLED){
             super.drive(speeds);
             return;
         }
         DetectedObject object = objectSupplier.get();
+
+
         if(object == null || object.type != ObjectType.CORAL){
             super.drive(speeds);
             return;
         }
+        // System.out.println("objangle " + object.getAngle());
         swerve.driveHeading(
             speeds.vxMetersPerSecond,
             speeds.vyMetersPerSecond,

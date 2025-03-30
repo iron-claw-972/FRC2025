@@ -35,6 +35,8 @@ import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.vision.AimAtCoral;
 import frc.robot.commands.vision.DriveToCoral;
+import frc.robot.commands.vision.LogVision;
+import frc.robot.commands.vision.ReturnData;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
@@ -156,6 +158,8 @@ public class RobotContainer {
 
         break;
     }
+
+    
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
