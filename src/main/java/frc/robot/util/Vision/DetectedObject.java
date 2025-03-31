@@ -11,8 +11,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
 import frc.robot.subsystems.drivetrain.Drivetrain;
-import org.littletonrobotics.junction.Logger;
-
 
 /**
  * Stores information about an object detected by vision

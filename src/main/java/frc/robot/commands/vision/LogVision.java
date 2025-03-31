@@ -16,7 +16,7 @@ public class LogVision extends Command {
     @Override
     public void execute() {
         DetectedObject object = this.objectSupplier.get();
-        if (object != null) Logger.recordOutput("Vision/object_angle", object.getAngle() + (Math.PI/2.0));
+        if (object != null) Logger.recordOutput("Vision/object_angle", object.getRelativeAngle() + (Math.PI/2.0));
     }
 
     @Override

@@ -2,8 +2,6 @@ package frc.robot.commands.vision;
 
 import java.util.function.Supplier;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
