@@ -195,8 +195,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
       NamedCommands.registerCommand("L4", 
         new ParallelCommandGroup(
-          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT_ALT),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT_ALT)
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT)
         )
       );
       NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
@@ -257,7 +257,6 @@ public class RobotContainer {
     
       Pose2d blueStationRight = new Pose2d(1.722, 0.923, Rotation2d.fromDegrees(-36));
       Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH-blueStationRight.getY(), Rotation2d.fromDegrees(-144));
-      
 
       Pose2d blueStationIntakeLeft = new Pose2d(1.65, 7.4, Rotation2d.fromDegrees(-144-180));
       Pose2d blueStationIntakeRight = new Pose2d(1.526, 0.729, Rotation2d.fromDegrees(-144-180));
@@ -292,7 +291,7 @@ public class RobotContainer {
         catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
+        autoChooser.addDefaultOption("Left Side Alt", new PathPlannerAuto("Left Side Alt"));
 
 
         autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));

@@ -106,8 +106,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     new ConditionalCommand(
                         new OuttakeCoral(outtake, elevator, arm)
                         .andThen(new InstantCommand(()->{
-                            elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
-                            arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                            // elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                            // arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
                             alignmentPose = null;
                             selectedDirection = 0;
                         }, elevator, arm)),

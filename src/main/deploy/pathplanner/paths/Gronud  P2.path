@@ -3,13 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.9713092,
-        "y": 5.1909832
+        "x": 5.0,
+        "y": 5.24
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.461440347544805,
-        "y": 7.189854101642059
+        "x": 4.856164772727273,
+        "y": 5.775014204545455
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.6396306818181814,
+        "y": 6.223735795454545
+      },
+      "prevControl": {
+        "x": 3.9487500000000004,
+        "y": 6.383281249999999
+      },
+      "nextControl": {
+        "x": 3.061864563544763,
+        "y": 5.925533927958591
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +36,8 @@
         "y": 7.129
       },
       "prevControl": {
-        "x": 3.2504221311513612,
-        "y": 5.103715163937141
+        "x": 2.562698863636364,
+        "y": 6.044247159090909
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6204690831556442,
+      "waypointRelativePos": 1.25,
       "rotationDegrees": -145.0
     }
   ],
@@ -39,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.2789651293588275,
+      "waypointRelativePos": 0.55,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -50,8 +66,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -64,7 +80,7 @@
   "reversed": false,
   "folder": "Ground LSide",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 150.0
   },
   "useDefaultConstraints": false
