@@ -9,7 +9,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.hal.I2CJNI;
-import edu.wpi.first.wpilibj.I2C;
 import frc.robot.constants.IdConstants;
 
 public class OuttakeComp extends Outtake {

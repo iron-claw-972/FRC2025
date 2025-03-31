@@ -89,7 +89,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
             driver.get(PS5Button.LEFT_TRIGGER).onTrue(
                 new SequentialCommandGroup(
-                    new InstantCommand(()->setAlignmentPose()),
+                    new InstantCommand(()->setAlignmentPose(true)),
                     new ConditionalCommand(
                         new ParallelCommandGroup(
                             new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
@@ -119,7 +119,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
             Command l2Coral = new SequentialCommandGroup(
                 new SequentialCommandGroup(
-                    new InstantCommand(()->setAlignmentPose()),
+                    new InstantCommand(()->setAlignmentPose(false)),
                     new ConditionalCommand(
                         new ParallelCommandGroup(
                             new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
@@ -148,7 +148,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             );
             Command l3Coral = new SequentialCommandGroup(
                 new SequentialCommandGroup(
-                    new InstantCommand(()->setAlignmentPose()),
+                    new InstantCommand(()->setAlignmentPose(false)),
                     new ConditionalCommand(
                         new ParallelCommandGroup(
                             new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
@@ -295,7 +295,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             selectedDirection = 1;
         }));
         driver.get(PS5Button.TOUCHPAD).toggleOnTrue(new InstantCommand(()->{
-            setAlignmentPose(true, false);
+            setAlignmentPose(true, false, false);
         }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
 
         // Reset the yaw. Mainly useful for testing/driver practice
@@ -353,8 +353,9 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
      * Sets the drivetrain's alignmetn pose to the nearest reef branch or algae location
      * @param isAlgae True for algae, false for branches
      * @param isLeft True for left branch, false for right, ignored for algae
+     * @param l4 If the robot should align to the L4 scoring pose
      */
-    private void setAlignmentPose(boolean isAlgae, boolean isLeft){
+    private void setAlignmentPose(boolean isAlgae, boolean isLeft, boolean l4){
         Translation2d drivePose = getDrivetrain().getPose().getTranslation();
         int closestId = 0;
         double closestDist = 20;
@@ -370,19 +371,24 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         if(isAlgae){
             alignmentPose = VisionConstants.REEF.fromAprilTagIdAlgae(closestId).pose;
         }else{
-            alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).pose;
+            if(l4){
+                alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).l4Pose;
+            }else{
+                alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).pose;
+            }
         }
     }
 
     /**
      * Sets the drivetrain's alignmetn pose to the nearest reef branch with the selected direction
+     * @param l4 If the robot should align to the L4 scoring pose
      */
-    private void setAlignmentPose(){
+    private void setAlignmentPose(boolean l4){
         if(selectedDirection == 0){
             alignmentPose = null;
             return;
         }
-        setAlignmentPose(false, selectedDirection < 0);
+        setAlignmentPose(false, selectedDirection < 0, l4);
     }
     
     @Override
