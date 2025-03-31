@@ -261,7 +261,12 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                 )
             );
             Command coral = new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null)))
-                .andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT), new InstantCommand(()->selectedDirection = 0)));
+                .andThen(
+                    new ConditionalCommand(
+                        new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT), new InstantCommand(()->selectedDirection = 0)),
+                        new DoNothing(),
+                        ()->!arm.canMoveElevator()
+                    ));
             Command cancelAlign = new InstantCommand(()->{}, getDrivetrain());
 
             driver.get(DPad.DOWN).onTrue(new InstantCommand(()->{
@@ -269,8 +274,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     algae.schedule();
                 }else{
                     coral.schedule();
-                    cancelAlign.schedule();
                 }
+                cancelAlign.schedule();
             }));
         }
         if(intake != null && indexer != null && outtake != null){
