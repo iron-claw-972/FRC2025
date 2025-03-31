@@ -112,8 +112,8 @@ public class VisionConstants {
      * The standard deviations to use for vision
      */
     public static final Matrix<N3, N1> VISION_STD_DEVS = VecBuilder.fill(
-            0.9, // x in meters (default=0.9)
-            0.9, // y in meters (default=0.9)
+            0.3, // x in meters (default=0.9)
+            0.3, // y in meters (default=0.9)
             0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
                 // correctly it is unnecessary to correct it with vision
     );
@@ -122,8 +122,8 @@ public class VisionConstants {
      * The standard deviations to use for vision when the wheels slip
      */
     public static final Matrix<N3, N1> VISION_STD_DEVS_2 = VecBuilder.fill(
-            0.02, // x in meters (default=0.9)
-            0.02, // y in meters (default=0.9)
+            0.01, // x in meters (default=0.9)
+            0.01, // y in meters (default=0.9)
             0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
                 // correctly it is unnecessary to correct it with vision
     );
@@ -308,7 +308,7 @@ public class VisionConstants {
             if(isAlgae){
                 l4Pose = null;
             }else{
-                l4Pose = pose.transformBy(new Transform2d(0, -Units.inchesToMeters(2), new Rotation2d()));
+                l4Pose = pose.transformBy(new Transform2d(0, Units.inchesToMeters(2), new Rotation2d()));
             }
         }
 
