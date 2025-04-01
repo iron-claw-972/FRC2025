@@ -202,8 +202,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
 
       NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(
-        new WaitCommand(0.1),
-        new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+        new InstantCommand(()->arm.setSetpoint(ArmConstants.INTAKE_SETPOINT)),
         new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
       ));
       
@@ -275,6 +274,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.l4Pose));
       NamedCommands.registerCommand("Drive To 10/21 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.l4Pose));
       NamedCommands.registerCommand("Drive To 11/20 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_20_LEFT.l4Pose));
+      NamedCommands.registerCommand("Drive To 11/20 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_20_RIGHT.l4Pose));
       NamedCommands.registerCommand("Drive To 9/22 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() 
       == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.l4Pose)); 
       
@@ -291,7 +291,7 @@ public class RobotContainer {
         catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        autoChooser.addDefaultOption("Left Side Alt", new PathPlannerAuto("Left Side Alt"));
+        autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
 
         autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));
         autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));

@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 11/20 Right"
+                  "name": null
                 }
               },
               {
@@ -42,12 +42,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Drive To Left Station"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "P 5"
@@ -57,12 +51,6 @@
           "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To 6/19 Left"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -82,12 +70,6 @@
           "type": "path",
           "data": {
             "pathName": "GroundB #6"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Drive To Left Station"
           }
         },
         {
