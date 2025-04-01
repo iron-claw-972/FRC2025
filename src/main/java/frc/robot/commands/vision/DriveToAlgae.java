@@ -33,7 +33,7 @@ public class DriveToAlgae extends DriveToPose {
 
   public static Pose2d getPose(Supplier<DetectedObject> supplier, Drivetrain drive){
     DetectedObject object = supplier.get();
-    if(object == null || object.type != ObjectType.CORAL) return null;
+    if(object == null || object.type != ObjectType.ALGAE) return null;
     Rotation2d rotation = new Rotation2d(MathUtil.angleModulus(object.getAngle()+Math.PI/2));
     Translation2d objectTranslation = object.pose.toPose2d().getTranslation();
     Translation2d diff = objectTranslation.minus(drive.getPose().getTranslation());
