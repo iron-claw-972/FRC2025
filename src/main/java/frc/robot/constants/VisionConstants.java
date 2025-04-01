@@ -280,6 +280,10 @@ public class VisionConstants {
          */
         public final Pose2d l4Pose;
         /**
+         * The pose to align to for scoring on L1, null for algae
+         */
+        public final Pose2d l1Pose;
+        /**
          * The ID of the AprilTag on the smae side of hte reef ast his branch
          */
         public final int aprilTagId;
@@ -295,6 +299,8 @@ public class VisionConstants {
 
         public final boolean isAlgae;
 
+        public static final double L1_OFFSET = Units.inchesToMeters(37.04/2);
+
         private REEF(int aprilTagIndex, double xOffset, double yOffset) {
             this(aprilTagIndex, xOffset, yOffset, false);
         }
@@ -307,8 +313,10 @@ public class VisionConstants {
             pose = getPose();
             if(isAlgae){
                 l4Pose = null;
+                l1Pose = null;
             }else{
                 l4Pose = pose.transformBy(new Transform2d(0, Units.inchesToMeters(2), new Rotation2d()));
+                l1Pose = getL1Pose();
             }
         }
 
@@ -330,7 +338,25 @@ public class VisionConstants {
             // Convert the calculated branch Pose3d to Pose2d
             return branchPose3d.toPose2d().transformBy(new Transform2d(0, 0, new Rotation2d(Math.PI/2)));
         }
-
+        /**
+         * Calculates the Pose2d to align to for scoring on L1 near this branch based on the AprilTag's pose and
+         * offsets.
+         *
+         * @return The calculated Pose2d for this reef branch.
+         */
+        private Pose2d getL1Pose() {
+                Pose3d basePose3d = FieldConstants.APRIL_TAGS.get(aprilTagIndex).pose;
+                double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0;
+    
+                // Apply both X and Y offsets to calculate the reef branch pose
+                Transform3d transform = new Transform3d(adjustedYOffset, -Math.signum(xOffset)*L1_OFFSET, 0, new Rotation3d(0, 0, 0));
+    
+                Pose3d branchPose3d = basePose3d.plus(transform);
+    
+                // Convert the calculated branch Pose3d to Pose2d
+                return branchPose3d.toPose2d().transformBy(new Transform2d(0, 0, new Rotation2d(Math.PI/2)));
+            }
+    
         /**
          * Finds the appropriate reef branch based on the AprilTag ID and whether the
          * pose is left or right.
