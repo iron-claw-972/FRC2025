@@ -38,8 +38,8 @@ public class VisionConstants {
     public static final boolean ENABLED_AUTO = true;
 
     /**
-     * If odometry should be updated using vision while running the GoToPose and
-     * GoToPosePID commands in teleop
+     * If odometry should be updated using vision while running the GoToPose,
+     * GoToPosePID, and DriveToPose commands in teleop
      */
     public static final boolean ENABLED_GO_TO_POSE = true;
 
