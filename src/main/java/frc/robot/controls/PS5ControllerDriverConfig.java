@@ -177,8 +177,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             andThen(startIntake));
         }else{
             // driver.get(PS5Button.CROSS).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
-            // driver.get(PS5Button.CIRCLE).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
-            // driver.get(PS5Button.SQUARE).toggleOnTrue(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            driver.get(PS5Button.CIRCLE).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+            driver.get(PS5Button.SQUARE).toggleOnTrue(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
             // driver.get(PS5Button.TRIANGLE).toggleOnTrue(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
             SmartDashboard.putData(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
