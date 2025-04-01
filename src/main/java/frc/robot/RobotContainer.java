@@ -73,11 +73,12 @@ public class RobotContainer {
   private Elevator elevator = null;
   private Climb climb = null;
   private Arm arm = null;
+  Command auto;
 
   public double armWaitTime = 0.5;
 
     // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  //private final LoggedDashboardChooser<Command> autoChooser;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -151,8 +152,14 @@ public class RobotContainer {
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-    autoChooser = new LoggedDashboardChooser<>("auto selector");
-    addPaths(); 
+    try {
+      PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
+      auto = new PathPlannerAuto("Left Side");
+    } 
+    catch (IOException | ParseException e) {
+        e.printStackTrace();
+    }
+    //addPaths(); 
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
@@ -284,80 +291,80 @@ public class RobotContainer {
     }
   }
 
-  public void addPaths(){
-        try {
-            PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
-        } 
-        catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
+  // public void addPaths(){
+  //       try {
+  //           PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
+  //       } 
+  //       catch (IOException | ParseException e) {
+  //           e.printStackTrace();
+  //       }
+  //       autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
 
-        autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));
-        autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
-        autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
+  //       autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));
+  //       autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
+  //       autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
 
-        if(intake != null && indexer != null && arm != null && elevator != null){
-          autoChooser.addOption("One peice blue", 
-          new SequentialCommandGroup(
-            new InstantCommand(()->{
-              drive.resetOdometry(new Pose2d(7.229,4.191, Rotation2d.fromDegrees(90.0)));
-              intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
-            }),
-            new DriveToPose(drive, () -> VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.pose).withTimeout(8),
-            new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-            new MoveArm(arm, ArmConstants.L4_SETPOINT),
-            new OuttakeCoral(outtake, elevator, arm),
-            new SequentialCommandGroup(new WaitCommand(0.1),
-            new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-            new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
-            new InstantCommand(()-> intake.stow())
-            ));
-            autoChooser.addOption("One peice red", 
-            new SequentialCommandGroup(
-              new InstantCommand(()->{
-                drive.resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH-7.229,FieldConstants.FIELD_WIDTH-4.191, Rotation2d.fromDegrees(-90.0)));
-                intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
-              }),
-              new DriveToPose(drive, () -> VisionConstants.REEF.RED_BRANCH_10_RIGHT.pose).withTimeout(8),
-              new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-              new MoveArm(arm, ArmConstants.L4_SETPOINT),
-              new OuttakeCoral(outtake, elevator, arm),
-              new SequentialCommandGroup(new WaitCommand(0.1),
-              new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-              new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
-              new InstantCommand(()-> intake.stow())
-              ));
-            }
-          // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator, arm))
-        // .andThen(new FollowPathCommand("#2", true, drive))
-        // .andThen(new FollowPathCommand("#3", true, drive))
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator, arm))
-        // .andThen(new FollowPathCommand("#4", true, drive))
-        // .andThen(new FollowPathCommand("#5", true, drive))
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator, arm)));    
+  //       if(intake != null && indexer != null && arm != null && elevator != null){
+  //         autoChooser.addOption("One peice blue", 
+  //         new SequentialCommandGroup(
+  //           new InstantCommand(()->{
+  //             drive.resetOdometry(new Pose2d(7.229,4.191, Rotation2d.fromDegrees(90.0)));
+  //             intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
+  //           }),
+  //           new DriveToPose(drive, () -> VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.pose).withTimeout(8),
+  //           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+  //           new MoveArm(arm, ArmConstants.L4_SETPOINT),
+  //           new OuttakeCoral(outtake, elevator, arm),
+  //           new SequentialCommandGroup(new WaitCommand(0.1),
+  //           new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+  //           new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
+  //           new InstantCommand(()-> intake.stow())
+  //           ));
+  //           autoChooser.addOption("One peice red", 
+  //           new SequentialCommandGroup(
+  //             new InstantCommand(()->{
+  //               drive.resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH-7.229,FieldConstants.FIELD_WIDTH-4.191, Rotation2d.fromDegrees(-90.0)));
+  //               intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
+  //             }),
+  //             new DriveToPose(drive, () -> VisionConstants.REEF.RED_BRANCH_10_RIGHT.pose).withTimeout(8),
+  //             new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+  //             new MoveArm(arm, ArmConstants.L4_SETPOINT),
+  //             new OuttakeCoral(outtake, elevator, arm),
+  //             new SequentialCommandGroup(new WaitCommand(0.1),
+  //             new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+  //             new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
+  //             new InstantCommand(()-> intake.stow())
+  //             ));
+  //           }
+  //         // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
+  //       // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+  //       // .andThen(new OuttakeCoral(outtake, elevator, arm))
+  //       // .andThen(new FollowPathCommand("#2", true, drive))
+  //       // .andThen(new FollowPathCommand("#3", true, drive))
+  //       // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+  //       // .andThen(new OuttakeCoral(outtake, elevator, arm))
+  //       // .andThen(new FollowPathCommand("#4", true, drive))
+  //       // .andThen(new FollowPathCommand("#5", true, drive))
+  //       // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+  //       // .andThen(new OuttakeCoral(outtake, elevator, arm)));    
 
         
-        if(elevator != null && outtake != null) {
-         autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-         .andThen(new OuttakeCoralBasic(outtake, ()->true, ()->false))
-         .andThen(new WaitCommand(3))
-         .andThen(new FollowPathCommand("Next Tester", true, drive))
-         );
+  //       if(elevator != null && outtake != null) {
+  //        autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
+  //        .andThen(new OuttakeCoralBasic(outtake, ()->true, ()->false))
+  //        .andThen(new WaitCommand(3))
+  //        .andThen(new FollowPathCommand("Next Tester", true, drive))
+  //        );
 
-          autoChooser.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
-         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-         .andThen(new OuttakeCoral(outtake, elevator, arm)));
+  //         autoChooser.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
+  //        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+  //        .andThen(new OuttakeCoral(outtake, elevator, arm)));
 
-         autoChooser.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
-         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-         .andThen(new OuttakeCoral(outtake, elevator, arm)));
-        }
-  }
+  //        autoChooser.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
+  //        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+  //        .andThen(new OuttakeCoral(outtake, elevator, arm)));
+  //       }
+  // }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {
     return () -> {
@@ -384,7 +391,7 @@ public class RobotContainer {
   }
 
   public Command getAutoCommand(){
-    return autoChooser.get();
+    return auto;
   }
 }
 
