@@ -27,7 +27,7 @@ public class ArmConstants {
     public static final double TOLERANCE = 3.0;
 
     //Dunk L4 = 6.4
-    public static final double L1_SETPOINT = 40;
+    public static final double L1_SETPOINT = 50;
 
     //4 in offset
     // public static final double L4_SETPOINT = 11;
