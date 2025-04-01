@@ -7,17 +7,21 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.commands.drive_comm.DriveToPose;
+import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.Vision.DetectedObject;
 import frc.robot.util.Vision.DetectedObject.ObjectType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Moves toward the detected object
  * <p>Only works with the front camera
  */
 public class DriveToAlgae extends DriveToPose {
-  private static final boolean constantUpdate = true;
+  private static boolean constantUpdate = true;
+  private static int ticksSinceLastObject;
+  private static DetectedObject cachedObject;
 
   /**
    * Moves toward the detected object
@@ -29,11 +33,28 @@ public class DriveToAlgae extends DriveToPose {
       () -> getPose(detectedObject, drive)
     );
     updateTarget = constantUpdate;
+    SmartDashboard.putBoolean("constantUpdate", constantUpdate);
+  }
+
+  @Override public void initialize() {
+    cachedObject = null;
+    ticksSinceLastObject = 0;
+    super.initialize();
   }
 
   public static Pose2d getPose(Supplier<DetectedObject> supplier, Drivetrain drive){
     DetectedObject object = supplier.get();
-    if(object == null || object.type != ObjectType.ALGAE) return null;
+    if(object == null || object.type != ObjectType.ALGAE) {
+      if (ticksSinceLastObject <= VisionConstants.MAX_EMPTY_TICKS && cachedObject != null) {
+        object = cachedObject;
+      } else {
+        return null;
+      }
+      ticksSinceLastObject++;
+    } else {
+      ticksSinceLastObject = 0;
+      cachedObject = object;
+    }
     Rotation2d rotation = new Rotation2d(MathUtil.angleModulus(object.getAngle()+Math.PI/2));
     Translation2d objectTranslation = object.pose.toPose2d().getTranslation();
     Translation2d diff = objectTranslation.minus(drive.getPose().getTranslation());

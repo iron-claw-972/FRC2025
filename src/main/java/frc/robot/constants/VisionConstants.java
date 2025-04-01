@@ -75,6 +75,9 @@ public class VisionConstants {
     /** If vision should use manual calculations */
     public static final boolean USE_MANUAL_CALCULATIONS = true;
 
+    // max ticks to continue driving without a new object detection
+    public static final int MAX_EMPTY_TICKS = 25;
+
     // <ol start="0"> did not work
     /**
      * Which version of driver assist to use. This would be an enum, except there is
