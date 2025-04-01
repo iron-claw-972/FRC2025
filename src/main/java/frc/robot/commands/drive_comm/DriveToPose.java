@@ -28,7 +28,7 @@ import frc.robot.util.GeomUtil;
 
 public class DriveToPose extends Command {
   protected static boolean updateTarget = false;
-  private static final double drivekP = 8.0;
+  private static final double drivekP = 4.0;
   private static final double drivekD = 0.0;
   private static final double thetakP = 7.0;
   private static final double thetakD = 0.0;
@@ -61,7 +61,7 @@ public class DriveToPose extends Command {
   private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
   private DoubleSupplier omegaFF = () -> 0.0;
 
-  private Debouncer debouncer = new Debouncer(1.0);
+  private Debouncer debouncer = new Debouncer(0.5);
 
   public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
     this.drive = drive;

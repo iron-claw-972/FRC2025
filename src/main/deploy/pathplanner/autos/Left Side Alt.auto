@@ -42,19 +42,6 @@
           }
         },
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To Left Station"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
@@ -106,22 +93,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To Left Station"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeCoral"
-                }
-              }
-            ]
+            "pathName": "GroundB #6"
           }
         },
         {

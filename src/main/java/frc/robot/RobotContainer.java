@@ -293,7 +293,6 @@ public class RobotContainer {
         }
         autoChooser.addDefaultOption("Left Side Alt", new PathPlannerAuto("Left Side Alt"));
 
-
         autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));
         autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
         autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
