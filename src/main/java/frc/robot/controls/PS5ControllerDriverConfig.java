@@ -81,9 +81,35 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         // Elevator setpoints
         if(elevator != null && arm != null && outtake != null) {
             driver.get(PS5Button.OPTIONS).and(menu.negate()).onTrue(
-                new ParallelCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
-                    new MoveArm(arm, ArmConstants.L1_SETPOINT)
+                new SequentialCommandGroup(
+                    new InstantCommand(()->setAlignmentPose(false, true)),
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
+                            new MoveArm(arm, ArmConstants.L1_SETPOINT),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L1_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L1_SETPOINT);
+                        }),
+                        ()->selectedDirection != 0
+                    ),
+                    new ConditionalCommand(
+                        new SequentialCommandGroup(
+                            new OuttakeCoral(outtake, elevator, arm),
+                            new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+                            new InstantCommand(()->{
+                                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                                arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                                alignmentPose = null;
+                                selectedDirection = 0;
+                            }, elevator, arm)
+                        ),
+                        new DoNothing(),
+                        () -> selectedDirection != 0 && autoOuttake
+                    )
                 )
             );
 
@@ -300,7 +326,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             selectedDirection = 1;
         }));
         driver.get(PS5Button.TOUCHPAD).toggleOnTrue(new InstantCommand(()->{
-            setAlignmentPose(true, false, false);
+            setAlignmentPose(true, false, false, false);
         }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
 
         // Reset the yaw. Mainly useful for testing/driver practice
@@ -360,7 +386,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
      * @param isLeft True for left branch, false for right, ignored for algae
      * @param l4 If the robot should align to the L4 scoring pose
      */
-    private void setAlignmentPose(boolean isAlgae, boolean isLeft, boolean l4){
+    private void setAlignmentPose(boolean isAlgae, boolean isLeft, boolean l4, boolean l1){
         Translation2d drivePose = getDrivetrain().getPose().getTranslation();
         int closestId = 0;
         double closestDist = 20;
@@ -378,6 +404,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }else{
             if(l4){
                 alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).l4Pose;
+            }else if(l1){
+                alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).l1Pose;
             }else{
                 alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).pose;
             }
@@ -387,13 +415,21 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     /**
      * Sets the drivetrain's alignmetn pose to the nearest reef branch with the selected direction
      * @param l4 If the robot should align to the L4 scoring pose
+     * @param l1 If the robot should align to the L1 scoring pose
      */
-    private void setAlignmentPose(boolean l4){
+    private void setAlignmentPose(boolean l4, boolean l1){
         if(selectedDirection == 0){
             alignmentPose = null;
             return;
         }
-        setAlignmentPose(false, selectedDirection < 0, l4);
+        setAlignmentPose(false, selectedDirection < 0, l4, l1);
+    }
+    /**
+     * Sets the drivetrain's alignmetn pose to the nearest reef branch with the selected direction
+     * @param l4 If the robot should align to the L4 scoring pose
+     */
+    private void setAlignmentPose(boolean l4){
+        setAlignmentPose(l4, false);
     }
     
     @Override
