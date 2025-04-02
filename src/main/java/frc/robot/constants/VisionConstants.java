@@ -70,7 +70,7 @@ public class VisionConstants {
     /**
      * The maximum distance to the tag to use
      */
-    public static final double MAX_DISTANCE = 6;
+    public static final double MAX_DISTANCE = 2;
 
     /** If vision should use manual calculations */
     public static final boolean USE_MANUAL_CALCULATIONS = true;
