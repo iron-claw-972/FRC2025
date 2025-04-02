@@ -78,6 +78,9 @@ public class VisionConstants {
     // max ticks to continue driving without a new object detection
     public static final int MAX_EMPTY_TICKS = 25;
 
+    // extra latency for object detection
+    public static double LATENCY_CONST = 10; // in ms
+
     // <ol start="0"> did not work
     /**
      * Which version of driver assist to use. This would be an enum, except there is

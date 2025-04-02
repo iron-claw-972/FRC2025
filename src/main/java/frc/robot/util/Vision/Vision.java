@@ -32,6 +32,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
@@ -95,6 +96,7 @@ public class Vision {
 
     cachedObjects = new DetectedObject[0];
 
+    SmartDashboard.putNumber("Vision latency compensation", VisionConstants.LATENCY_CONST);
 
     if (VisionConstants.ENABLED) {
       // Puts the cameras in an array list
@@ -235,7 +237,7 @@ public class Vision {
             objectClass[i],
             // VisionConstants.OBJECT_DETECTION_CAMERAS.get((int)cameraIndex[i]).getSecond()
             VisionConstants.OBJECT_DETECTION_CAMERAS.get(0),
-            Timer.getFPGATimestamp() - (latency.getDoubleArray(new double[1])[0] / 1000.0)
+            Timer.getFPGATimestamp() - (latency.getDoubleArray(new double[1])[0])// - VisionConstants.LATENCY_CONST
             );
         poses[i] = objects[i].pose.toPose2d();
         //System.out.println(latency.getDoubleArray(new double[1])[0] / 1000.0);
