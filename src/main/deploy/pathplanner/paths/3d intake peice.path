@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.98,
-        "y": 5.24
+        "x": 3.66,
+        "y": 5.12
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.316855850468241,
-        "y": 5.760793783082248
+        "x": 3.909326741052695,
+        "y": 5.101664891709005
       },
       "isLocked": false,
       "linkedName": null
@@ -20,24 +20,19 @@
         "y": 7.129
       },
       "prevControl": {
-        "x": 2.338563708774429,
-        "y": 6.649638232899023
+        "x": 1.5210513367419152,
+        "y": 7.294369927869808
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.3291032261499149,
-      "rotationDegrees": -136.13455862983048
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5509790681971605,
+      "minWaypointRelativePos": 0.6049966239027695,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.5,
@@ -52,9 +47,9 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0.11073598919649108,
-      "endWaypointRelativePos": null,
+      "name": "IntakeCoral",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
         "data": {
@@ -73,13 +68,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -142.62124693823438
+    "rotation": -145.0
   },
   "reversed": false,
-  "folder": "Ground BSide",
+  "folder": null,
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": -150.82019924107797
+    "velocity": 0.0,
+    "rotation": -150.0
   },
   "useDefaultConstraints": false
 }
