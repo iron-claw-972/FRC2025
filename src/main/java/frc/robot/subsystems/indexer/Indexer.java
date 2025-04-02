@@ -103,7 +103,7 @@ public class Indexer extends SubsystemBase {
 	*/
 	@AutoLogOutput(key = "Intake/isIndexerClear")
 	public boolean isIndexerClear() {
-		return getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
+		return true;
 	}
 
 	@Override
