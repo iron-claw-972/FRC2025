@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -24,6 +25,11 @@ import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
+import frc.robot.commands.vision.AimAtAlgae;
+import frc.robot.commands.vision.AimAtCoral;
+import frc.robot.commands.vision.DriveToAlgae;
+import frc.robot.commands.vision.DriveToCoral;
+import frc.robot.commands.vision.LogVision;
 // import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
@@ -37,6 +43,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
+import frc.robot.util.Vision.Vision;
 import lib.controllers.GameController;
 import lib.controllers.GameController.Axis;
 import lib.controllers.GameController.Button;
@@ -55,22 +62,30 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   private final Outtake outtake;
   private final Climb climb;
   private final Arm arm;
+  private final Vision vision;
   private int alignmentDirection = 0;
   private Pose2d alignmentPose = null;
 
   public GameControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer,
-      Outtake outtake, Climb climb, Arm arm) {
+      Outtake outtake, Climb climb, Arm arm, Vision vision) {
     super(drive);
+    SmartDashboard.putData(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+    SmartDashboard.putData(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+    SmartDashboard.putData(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+    SmartDashboard.putData(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+    SmartDashboard.putData(new LogVision(() -> {return vision.getBestGamePiece(Math.PI, true);}));
     this.elevator = elevator;
     this.intake = intake;
     this.indexer = indexer;
     this.outtake = outtake;
     this.climb = climb;
     this.arm = arm;
+    this.vision = vision;
   }
 
   @Override
   public void configureControls() {
+    /*
     Trigger menu = kDriver.get(Button.LEFT_JOY);
 
     // Elevator setpoints
@@ -201,11 +216,11 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       kDriver.get(DPad.RIGHT).onTrue(new InstantCommand(() -> setAlignmentPose(false, false))
           .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
     }
-
+    */
     // Reset yaw to be away from driver
     kDriver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
-
+    /*
     // Cancel commands
     kDriver.get(kDriver.RIGHT_TRIGGER_BUTTON).and(menu.negate()).onTrue(new InstantCommand(() -> {
       if (elevator != null) {
@@ -238,7 +253,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       getDrivetrain().setIsAlign(false);
       getDrivetrain().setDesiredPose(() -> null);
       CommandScheduler.getInstance().cancelAll();
-    }));
+    })); */
   }
 
   private void setAlignmentDirection() {
@@ -303,7 +318,8 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
 
   @Override
   public boolean getIsSlowMode() {
-    return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
+    //return kDriver.RIGHT_TRIGGER_BUTTON.getAsBoolean();
+    return true;
   }
 
   @Override

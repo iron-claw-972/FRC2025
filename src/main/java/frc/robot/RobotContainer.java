@@ -40,6 +40,7 @@ import frc.robot.constants.FieldConstants;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
+import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -136,6 +137,7 @@ public class RobotContainer {
       case Vertigo:
         drive = new Drivetrain(vision, new GyroIOPigeon2());
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
+        driver = new GameControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
         // operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain

@@ -13,10 +13,20 @@ import frc.robot.util.Vision.DetectedObject.ObjectType;
 
 public class AimAtCoral extends DefaultDriveCommand {
     private Supplier<DetectedObject> objectSupplier;
+    private static int ticksSinceLastObject;
+    private static DetectedObject cachedObject;
+  
+
     public AimAtCoral(Drivetrain drive, BaseDriverConfig driver, Supplier<DetectedObject> objectSupplier){
         super(drive, driver);
         this.objectSupplier = objectSupplier;
     }
+
+    @Override public void initialize() {
+        cachedObject = null;
+        ticksSinceLastObject = 0;
+        super.initialize();
+    }    
 
     @Override
     protected void drive(ChassisSpeeds speeds){
@@ -28,10 +38,23 @@ public class AimAtCoral extends DefaultDriveCommand {
         DetectedObject object = objectSupplier.get();
 
 
-        if(object == null || object.type != ObjectType.CORAL){
+        /*if(object == null || object.type != ObjectType.CORAL){
             super.drive(speeds);
             return;
-        }
+        } */
+
+        if(object == null || object.type != ObjectType.CORAL) {
+            if (ticksSinceLastObject <= VisionConstants.MAX_EMPTY_TICKS && cachedObject != null) {
+              object = cachedObject;
+            } else {
+              return;
+            }
+            ticksSinceLastObject++;
+          } else {
+            ticksSinceLastObject = 0;
+            cachedObject = object;
+          }
+      
         // System.out.println("objangle " + object.getAngle());
         swerve.driveHeading(
             speeds.vxMetersPerSecond,
