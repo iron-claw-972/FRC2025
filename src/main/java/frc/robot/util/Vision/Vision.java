@@ -134,9 +134,9 @@ public class Vision {
    * Get the Flippy( flippy just switches every tick from the coprocessor, so we can update the poses only when needed)
    *     __________   __ 
    *   /           \_/  /
-   *  / *              
-   *  \
-   *   \
+   *  / *              /
+   *  \__/          _  \
+   *   \__________/  \__\
    * 
    * @return A flippy, boolean
    */
