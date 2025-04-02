@@ -15,51 +15,53 @@ public class AimAtCoral extends DefaultDriveCommand {
     private Supplier<DetectedObject> objectSupplier;
     private static int ticksSinceLastObject;
     private static DetectedObject cachedObject;
-  
 
-    public AimAtCoral(Drivetrain drive, BaseDriverConfig driver, Supplier<DetectedObject> objectSupplier){
+    public AimAtCoral(Drivetrain drive, BaseDriverConfig driver, Supplier<DetectedObject> objectSupplier) {
         super(drive, driver);
         this.objectSupplier = objectSupplier;
     }
 
-    @Override public void initialize() {
+    @Override
+    public void initialize() {
         cachedObject = null;
         ticksSinceLastObject = 0;
         super.initialize();
-    }    
+    }
 
     @Override
-    protected void drive(ChassisSpeeds speeds){
+    protected void drive(ChassisSpeeds speeds) {
 
-        if(!VisionConstants.OBJECT_DETECTION_ENABLED){
+        if (!VisionConstants.OBJECT_DETECTION_ENABLED) {
             super.drive(speeds);
             return;
         }
         DetectedObject object = objectSupplier.get();
 
+        /*
+         * if(object == null || object.type != ObjectType.CORAL){
+         * super.drive(speeds);
+         * return;
+         * }
+         */
 
-        /*if(object == null || object.type != ObjectType.CORAL){
-            super.drive(speeds);
-            return;
-        } */
-
-        if(object == null || object.type != ObjectType.CORAL) {
+        if (object == null || object.type != ObjectType.CORAL) {
             if (ticksSinceLastObject <= VisionConstants.MAX_EMPTY_TICKS && cachedObject != null) {
-              object = cachedObject;
+                object = cachedObject;
             } else {
-              return;
+                super.drive(speeds);
+                return;
             }
             ticksSinceLastObject++;
-          } else {
+        } else {
             ticksSinceLastObject = 0;
             cachedObject = object;
-          }
-      
+        }
+
         // System.out.println("objangle " + object.getAngle());
         swerve.driveHeading(
-            speeds.vxMetersPerSecond,
-            speeds.vyMetersPerSecond,
-            MathUtil.angleModulus(object.getAngle()+Math.PI/2),
-            true);
-}
+                speeds.vxMetersPerSecond,
+                speeds.vyMetersPerSecond,
+                MathUtil.angleModulus(object.getAngle() + Math.PI / 2),
+                true);
+    }
 }
