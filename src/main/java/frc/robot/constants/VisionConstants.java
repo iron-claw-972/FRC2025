@@ -299,8 +299,6 @@ public class VisionConstants {
 
         public final boolean isAlgae;
 
-        public static final double L1_OFFSET = Units.inchesToMeters(37.04/2);
-
         private REEF(int aprilTagIndex, double xOffset, double yOffset) {
             this(aprilTagIndex, xOffset, yOffset, false);
         }
@@ -349,7 +347,7 @@ public class VisionConstants {
                 double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0;
     
                 // Apply both X and Y offsets to calculate the reef branch pose
-                Transform3d transform = new Transform3d(adjustedYOffset, -Math.signum(xOffset)*L1_OFFSET, 0, new Rotation3d(0, 0, 0));
+                Transform3d transform = new Transform3d(adjustedYOffset, -Math.signum(xOffset)*Units.inchesToMeters(37.04/2), 0, new Rotation3d(0, 0, 0));
     
                 Pose3d branchPose3d = basePose3d.plus(transform);
     
