@@ -7,13 +7,15 @@ import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -33,6 +35,7 @@ import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
+import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.IntakeConstants;
@@ -40,19 +43,19 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.drivetrain.GyroIOPigeon2;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeAlpha;
 import frc.robot.subsystems.outtake.OuttakeComp;
-import frc.robot.subsystems.drivetrain.GyroIOPigeon2;
-import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.Vision.DetectedObject;
 import frc.robot.util.Vision.Vision;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.climb.Climb;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -392,6 +395,46 @@ public class RobotContainer {
 
   public Command getAutoCommand(){
     return auto;
+  }
+
+  // Logged psoitins of subsystems
+  public double elevatorHeightLogged(){
+    return elevator == null ? 0 : elevator.getPosition();
+  }
+  public double armAngleLogged(){
+    return arm == null ? 0 : arm.getAngle() + 90;
+  }
+  public double intakeAngleLogged(){
+    return intake == null ? -90 : -intake.getPivotAngle();
+  }
+  public double climbAngleLogged(){
+    return climb == null ? 0 : climb.getEstimatedClimbAngle();
+  }
+
+  public void logComponents(){
+    if(!Constants.LOG_MECHANISMS) return;
+    
+    Logger.recordOutput(
+      "ComponentPoses", 
+      new Pose3d[] {
+        //intake
+        new Pose3d(0,-0.25,0.27, new Rotation3d(Units.degreesToRadians(intakeAngleLogged()), 0.0, 0.0)),
+        //climb
+        new Pose3d(0,0,0, new Rotation3d(0.0,climbAngleLogged(), 0.0)),
+        //arm
+        new Pose3d(0,0.110, 0.388 + elevatorHeightLogged(), new Rotation3d(Units.degreesToRadians(armAngleLogged()), 0.0, 0.0)),
+        //elevator 1
+        new Pose3d(0,0,0, new Rotation3d(0.0, 0.0, 0.0)),
+        //elevator 2
+        new Pose3d(0,0, elevatorHeightLogged()/3, new Rotation3d(0.0, 0.0, 0.0)),
+        //elevator 3
+        new Pose3d(0,0, elevatorHeightLogged()*2/3, new Rotation3d(0.0, 0.0, 0.0)),
+        //elevator 4
+        new Pose3d(0,0, elevatorHeightLogged(), new Rotation3d(0.0, 0.0, 0.0)),
+        //indexer
+        new Pose3d(0,0,0, new Rotation3d(0.0, 0.0, 0.0)),
+      }
+    );
   }
 }
 

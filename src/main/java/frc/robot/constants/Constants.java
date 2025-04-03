@@ -70,7 +70,10 @@ public class Constants {
     public static final double HEADING_DEADBAND = 0.05;
     public static final double HEADING_SLEWRATE = 10;
 
-    //modes
-    public static final Mode simMode = Mode.SIM;
-    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+    //Modes
+    public static final Mode SIM_MODE = Mode.REPLAY;
+    public static final Mode CURRENT_MODE = RobotBase.isReal() ? Mode.REAL : SIM_MODE;
+
+    // Enables 3D logs of mechanisms
+    public static final boolean LOG_MECHANISMS = true;
 }

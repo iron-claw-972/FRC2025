@@ -175,7 +175,7 @@ public class Drivetrain extends SubsystemBase {
             });
 
         //PPLibTelemetry.enableCompetitionMode();
-        }
+    }
 
     public void close() {
         // close each of the modules

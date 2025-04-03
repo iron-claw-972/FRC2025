@@ -164,6 +164,5 @@ public class Arm extends SubsystemBase implements ArmIO {
 
         Logger.processInputs("Arm", inputs);
         Logger.recordOutput("Arm/setpointDeg", setpoint);
-
     }
 }
