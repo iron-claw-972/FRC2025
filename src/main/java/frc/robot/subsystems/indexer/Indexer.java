@@ -91,7 +91,7 @@ public class Indexer extends SubsystemBase {
 	 * 
 	 * @return the distance, in millimeters
 	 */
-	private int getSensorValue() {
+	public int getSensorValue() {
 		return inputs.sensorDistance;
 	}
 

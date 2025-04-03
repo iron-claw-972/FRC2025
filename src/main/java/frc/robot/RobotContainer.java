@@ -5,7 +5,6 @@ import java.util.function.BooleanSupplier;
 
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -23,15 +22,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeCoral;
 import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
