@@ -35,6 +35,7 @@ import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
+import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.IntakeConstants;
@@ -411,6 +412,8 @@ public class RobotContainer {
   }
 
   public void logComponents(){
+    if(!Constants.LOG_MECHANISMS) return;
+    
     Logger.recordOutput(
       "ComponentPoses", 
       new Pose3d[] {

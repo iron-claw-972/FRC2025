@@ -73,4 +73,7 @@ public class Constants {
     //Modes
     public static final Mode SIM_MODE = Mode.REPLAY;
     public static final Mode CURRENT_MODE = RobotBase.isReal() ? Mode.REAL : SIM_MODE;
+
+    // Enables 3D logs of mechanisms
+    public static final boolean LOG_MECHANISMS = true;
 }
