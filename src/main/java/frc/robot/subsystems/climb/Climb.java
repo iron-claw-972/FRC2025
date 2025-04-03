@@ -29,7 +29,7 @@ public class Climb extends SubsystemBase {
     private static final double climbPosition = -0.83;
 
     //Motors
-    private final PIDController pid = new PIDController(1.5, 0, 0.0);
+    private final PIDController pid = new PIDController(2.5, 0, 0.0);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
