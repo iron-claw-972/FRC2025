@@ -104,7 +104,7 @@ public class Arm extends SubsystemBase implements ArmIO {
     @Override
     public void periodic() {
         double setpoint2 = setpoint;
-        if(elevatorStowed == null || elevatorStowed.getAsBoolean()){
+        if(elevatorStowed == null || elevatorStowed.getAsBoolean() && Math.abs(setpoint2-ArmConstants.L1_SETPOINT) > 0.0001){
             setpoint2 = ArmConstants.START_ANGLE;
         }
         double setpointRotations = Units.degreesToRotations(setpoint2) * ArmConstants.GEAR_RATIO;
@@ -154,7 +154,7 @@ public class Arm extends SubsystemBase implements ArmIO {
     }
 
     public boolean canMoveElevator() {
-        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < 5;
+        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < 5 || Math.abs(getAngle() - ArmConstants.L1_SETPOINT) < 5;
     }
 
     @Override

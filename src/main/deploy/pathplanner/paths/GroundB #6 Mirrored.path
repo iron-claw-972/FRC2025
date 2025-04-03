@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.721,
-        "y": 3.0259168
+        "x": 3.98,
+        "y": 2.81
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6805705142397143,
-        "y": 1.93927176905575
+        "x": 3.661208032083275,
+        "y": 2.7146988994001573
       },
       "isLocked": false,
       "linkedName": null
@@ -17,24 +17,43 @@
     {
       "anchor": {
         "x": 1.722,
-        "y": 0.923
+        "y": 0.921
       },
       "prevControl": {
-        "x": 2.6732300707441192,
-        "y": 1.959652915018721
+        "x": 1.2995983363740153,
+        "y": 0.5281644353113872
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3291032261499149,
+      "rotationDegrees": -32.65592295916657
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.5509790681971605,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 1.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.19856459330143417,
+      "waypointRelativePos": 0.11073598919649108,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,8 +64,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,10 +73,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -36.0
+    "rotation": -35.0
   },
   "reversed": false,
-  "folder": "Ground RSide",
+  "folder": "Ground LSide",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -29.999999999999996

@@ -7,7 +7,57 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GroundB#1"
+            "pathName": "P  1 - Align After"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Drive To 11/20 Right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lower Elevator"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Station P2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Station Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StationB Alt Opt Left - Align After"
           }
         },
         {
@@ -19,14 +69,7 @@
                 "data": {
                   "name": "Drive To 6/19 Left"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "named",
                 "data": {
@@ -34,38 +77,37 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 2.0
+                  "name": "Lower Elevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
+          "data": {
+            "pathName": " Station P4"
+          }
+        },
+        {
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "parallel",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Drive To Right Station"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeCoral"
-                      }
-                    }
-                  ]
+                  "name": "Station Intake"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": " StationB Alt Opt - Align After"
           }
         },
         {
@@ -77,14 +119,7 @@
                 "data": {
                   "name": "Drive To 6/19 Right"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "named",
                 "data": {
@@ -92,73 +127,9 @@
                 }
               },
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Drive To Right Station"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeCoral"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 7/18 Left"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GroundB #5"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoral"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
+                  "name": "Lower Elevator"
                 }
               }
             ]

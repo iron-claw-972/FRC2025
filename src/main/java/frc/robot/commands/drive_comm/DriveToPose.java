@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -27,15 +28,15 @@ import frc.robot.util.GeomUtil;
 
 public class DriveToPose extends Command {
   protected static boolean updateTarget = false;
-  private static final double drivekP = 6.0;
+  private static final double drivekP = 5.0;
   private static final double drivekD = 0.0;
   private static final double thetakP = 7.0;
   private static final double thetakD = 0.0;
   private static final double driveMaxVelocity = DriveConstants.MAX_SPEED;
-  private static final double driveMaxAcceleration = 2.25;
+  private static final double driveMaxAcceleration = 2.6;
   private static final double thetaMaxVelocity = 5.0;
   private static final double thetaMaxAcceleration = 5.0;
-  private static final double driveTolerance = 0.01;
+  private static final double driveTolerance = 0.015;
   private static final double thetaTolerance = Units.degreesToRadians(1.0);
   private static final double ffMinRadius = 0.05;
   private static final double ffMaxRadius = 0.1;
@@ -59,6 +60,8 @@ public class DriveToPose extends Command {
 
   private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
   private DoubleSupplier omegaFF = () -> 0.0;
+
+  private Debouncer debouncer = new Debouncer(0.2);
 
   public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
     this.drive = drive;
@@ -199,6 +202,6 @@ public class DriveToPose extends Command {
 
   @Override
   public boolean isFinished(){
-    return withinTolerance(driveTolerance, new Rotation2d(thetaTolerance));
+    return debouncer.calculate(withinTolerance(driveTolerance, new Rotation2d(thetaTolerance)));
   }
 }

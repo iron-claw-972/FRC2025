@@ -38,8 +38,8 @@ public class VisionConstants {
     public static final boolean ENABLED_AUTO = true;
 
     /**
-     * If odometry should be updated using vision while running the GoToPose and
-     * GoToPosePID commands in teleop
+     * If odometry should be updated using vision while running the GoToPose,
+     * GoToPosePID, and DriveToPose commands in teleop
      */
     public static final boolean ENABLED_GO_TO_POSE = true;
 
@@ -59,7 +59,7 @@ public class VisionConstants {
      * Any April tags we always want to ignore. To ignore a tag, put its id in this
      * array.
      */
-    public static final int[] TAGS_TO_IGNORE = {13,12,16,1,2,3};
+    public static final int[] TAGS_TO_IGNORE = {12, 13, 16, 1, 2, 3};
 
     /**
      * If multiple cameras return different poses, they will be ignored if the
@@ -70,7 +70,7 @@ public class VisionConstants {
     /**
      * The maximum distance to the tag to use
      */
-    public static final double MAX_DISTANCE = 6;
+    public static final double MAX_DISTANCE = 2;
 
     /** If vision should use manual calculations */
     public static final boolean USE_MANUAL_CALCULATIONS = true;
@@ -112,8 +112,8 @@ public class VisionConstants {
      * The standard deviations to use for vision
      */
     public static final Matrix<N3, N1> VISION_STD_DEVS = VecBuilder.fill(
-            0.9, // x in meters (default=0.9)
-            0.9, // y in meters (default=0.9)
+            0.3, // x in meters (default=0.9)
+            0.3, // y in meters (default=0.9)
             0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
                 // correctly it is unnecessary to correct it with vision
     );
@@ -122,8 +122,8 @@ public class VisionConstants {
      * The standard deviations to use for vision when the wheels slip
      */
     public static final Matrix<N3, N1> VISION_STD_DEVS_2 = VecBuilder.fill(
-            0.02, // x in meters (default=0.9)
-            0.02, // y in meters (default=0.9)
+            0.01, // x in meters (default=0.9)
+            0.01, // y in meters (default=0.9)
             0.9 // heading in radians. The gyroscope is very accurate, so as long as it is reset
                 // correctly it is unnecessary to correct it with vision
     );
@@ -272,9 +272,17 @@ public class VisionConstants {
         BLUE_ALGAE_22(21, ALGAE_X_OFFSET, 0, true);
 
         /**
-         * The pose to align to for scoring on this branch
+         * The pose to align to for scoring on this branch or intaking this algae
          */
         public final Pose2d pose;
+        /**
+         * The pose to align to for scoring on L4, null for algae
+         */
+        public final Pose2d l4Pose;
+        /**
+         * The pose to align to for scoring on L1, null for algae
+         */
+        public final Pose2d l1Pose;
         /**
          * The ID of the AprilTag on the smae side of hte reef ast his branch
          */
@@ -301,6 +309,13 @@ public class VisionConstants {
             this.yOffset = yOffset;
             this.isAlgae = isAlgae;
             pose = getPose();
+            if(isAlgae){
+                l4Pose = null;
+                l1Pose = null;
+            }else{
+                l4Pose = pose.transformBy(new Transform2d(0, Units.inchesToMeters(2), new Rotation2d()));
+                l1Pose = getL1Pose();
+            }
         }
 
         /**
@@ -311,7 +326,7 @@ public class VisionConstants {
          */
         private Pose2d getPose() {
             Pose3d basePose3d = FieldConstants.APRIL_TAGS.get(aprilTagIndex).pose;
-            double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0;
+            double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0 + (isAlgae ? 0 : Units.inchesToMeters(4.5));
 
             // Apply both X and Y offsets to calculate the reef branch pose
             Transform3d transform = new Transform3d(adjustedYOffset, -xOffset, 0, new Rotation3d(0, 0, 0));
@@ -321,7 +336,25 @@ public class VisionConstants {
             // Convert the calculated branch Pose3d to Pose2d
             return branchPose3d.toPose2d().transformBy(new Transform2d(0, 0, new Rotation2d(Math.PI/2)));
         }
-
+        /**
+         * Calculates the Pose2d to align to for scoring on L1 near this branch based on the AprilTag's pose and
+         * offsets.
+         *
+         * @return The calculated Pose2d for this reef branch.
+         */
+        private Pose2d getL1Pose() {
+                Pose3d basePose3d = FieldConstants.APRIL_TAGS.get(aprilTagIndex).pose;
+                double adjustedYOffset = DriveConstants.ROBOT_WIDTH_WITH_BUMPERS / 2.0;
+    
+                // Apply both X and Y offsets to calculate the reef branch pose
+                Transform3d transform = new Transform3d(adjustedYOffset, -Math.signum(xOffset)*Units.inchesToMeters(37.04/2-2), 0, new Rotation3d(0, 0, 0));
+    
+                Pose3d branchPose3d = basePose3d.plus(transform);
+    
+                // Convert the calculated branch Pose3d to Pose2d
+                return branchPose3d.toPose2d().transformBy(new Transform2d(0, 0, new Rotation2d(Math.PI/2)));
+            }
+    
         /**
          * Finds the appropriate reef branch based on the AprilTag ID and whether the
          * pose is left or right.

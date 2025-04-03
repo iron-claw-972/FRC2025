@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P  1"
+            "pathName": "P  1 - Align After"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "\"Drive To 11/20 Left\""
+                  "name": "Drive To 11/20 Right"
                 }
               },
               {
@@ -38,19 +38,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Gronud  P2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Drive To Left Station"
+            "pathName": "Official Lollipop 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P  3"
+            "pathName": "Lollipop 2"
           }
         },
         {
@@ -81,19 +75,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GrondP4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Drive To Left Station"
+            "pathName": "Lollipop 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P 5"
+            "pathName": "Lollipop 4"
           }
         },
         {
@@ -103,7 +91,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 6/19 Left"
+                  "name": "Drive To 6/19 Right"
                 }
               },
               {

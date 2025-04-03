@@ -1,7 +1,6 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import org.json.simple.parser.ParseException;
@@ -11,7 +10,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -34,6 +32,7 @@ import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.OuttakeCoralBasic;
+import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.ElevatorConstants;
@@ -76,11 +75,12 @@ public class RobotContainer {
   private Elevator elevator = null;
   private Climb climb = null;
   private Arm arm = null;
+  Command auto;
 
   public double armWaitTime = 0.5;
 
     // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  //private final LoggedDashboardChooser<Command> autoChooser;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -154,8 +154,14 @@ public class RobotContainer {
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-    autoChooser = new LoggedDashboardChooser<>("auto selector");
-    addPaths(); 
+    try {
+      PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
+      auto = new PathPlannerAuto("Left Side");
+    } 
+    catch (IOException | ParseException e) {
+        e.printStackTrace();
+    }
+    //addPaths(); 
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
@@ -190,7 +196,7 @@ public class RobotContainer {
   }
 
   public void registerCommands() {
-    if(intake != null && indexer != null && elevator != null){
+    if(intake != null && indexer != null && elevator != null && arm != null){
       NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake, arm));
       NamedCommands.registerCommand("lower intake", new InstantCommand(() -> intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT)));
     }
@@ -202,10 +208,12 @@ public class RobotContainer {
           new MoveArm(arm, ArmConstants.L4_SETPOINT)
         )
       );
+      NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
 
-      NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(new WaitCommand(0.1),
-        new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))));
+      NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(
+        new InstantCommand(()->arm.setSetpoint(ArmConstants.INTAKE_SETPOINT)),
+        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+      ));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new ParallelCommandGroup(
@@ -243,97 +251,122 @@ public class RobotContainer {
           new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
         )
       );
+      NamedCommands.registerCommand("Station Setpoint", 
+        new ParallelCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
+          new MoveArm(arm, ArmConstants.STATION_INTAKE_SETPOINT),
+          new StationIntake(outtake)
+        )
+      );
+
       //NamedCommands.registerCommand("L1", new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT));
+
+      NamedCommands.registerCommand("Station Intake", new StationIntake(outtake));
     
       Pose2d blueStationRight = new Pose2d(1.722, 0.923, Rotation2d.fromDegrees(-36));
       Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH-blueStationRight.getY(), Rotation2d.fromDegrees(-144));
+
+      Pose2d blueStationIntakeLeft = new Pose2d(1.65, 7.4, Rotation2d.fromDegrees(-144-180));
+      Pose2d blueStationIntakeRight = new Pose2d(1.526, 0.729, Rotation2d.fromDegrees(-144-180));
+      
       Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationRight.getX(), blueStationLeft.getY(), blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
       Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationLeft.getX(), blueStationRight.getY(), blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
       NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));
+      // TODO: update the positions for opposite side field as well, so far it's just updated for our practice field station
+      NamedCommands.registerCommand("Drive To Right Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationIntakeRight));
+      NamedCommands.registerCommand("Drive To Left Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationIntakeLeft));
+      
       NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationRight));
-      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));
-      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.pose));
-      NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.pose));
-      NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.pose));
-      NamedCommands.registerCommand("Drive To 10/21 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.pose));
-      NamedCommands.registerCommand("Drive To 11/20 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_LEFT.pose : VisionConstants.REEF.BLUE_BRANCH_20_LEFT.pose));
-      NamedCommands.registerCommand("Drive To 11/20 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_RIGHT.pose : VisionConstants.REEF.BLUE_BRANCH_20_RIGHT.pose));
+      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.l4Pose));
+      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.l4Pose));
+      NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 10/21 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 11/20 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_20_LEFT.l4Pose));
+      NamedCommands.registerCommand("Drive To 11/20 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_20_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 9/22 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() 
+      == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.l4Pose)); 
+      
+
+      NamedCommands.registerCommand("Drive To 8/17 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.l4Pose));
+      NamedCommands.registerCommand("Drive To 8/17 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.l4Pose));
     }
   }
 
-  public void addPaths(){
+  // public void addPaths(){
+  //       try {
+  //           PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
+  //       } 
+  //       catch (IOException | ParseException e) {
+  //           e.printStackTrace();
+  //       }
+  //       autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
+
+  //       autoChooser.addOption("Station Right Side", new PathPlannerAuto("Station Right Side"));
+  //       autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
+  //       autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
+
+  //       if(intake != null && indexer != null && arm != null && elevator != null){
+  //         autoChooser.addOption("One peice blue", 
+  //         new SequentialCommandGroup(
+  //           new InstantCommand(()->{
+  //             drive.resetOdometry(new Pose2d(7.229,4.191, Rotation2d.fromDegrees(90.0)));
+  //             intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
+  //           }),
+  //           new DriveToPose(drive, () -> VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.pose).withTimeout(8),
+  //           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+  //           new MoveArm(arm, ArmConstants.L4_SETPOINT),
+  //           new OuttakeCoral(outtake, elevator, arm),
+  //           new SequentialCommandGroup(new WaitCommand(0.1),
+  //           new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+  //           new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
+  //           new InstantCommand(()-> intake.stow())
+  //           ));
+  //           autoChooser.addOption("One peice red", 
+  //           new SequentialCommandGroup(
+  //             new InstantCommand(()->{
+  //               drive.resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH-7.229,FieldConstants.FIELD_WIDTH-4.191, Rotation2d.fromDegrees(-90.0)));
+  //               intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
+  //             }),
+  //             new DriveToPose(drive, () -> VisionConstants.REEF.RED_BRANCH_10_RIGHT.pose).withTimeout(8),
+  //             new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+  //             new MoveArm(arm, ArmConstants.L4_SETPOINT),
+  //             new OuttakeCoral(outtake, elevator, arm),
+  //             new SequentialCommandGroup(new WaitCommand(0.1),
+  //             new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
+  //             new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
+  //             new InstantCommand(()-> intake.stow())
+  //             ));
+  //           }
+  //         // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
+  //       // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+  //       // .andThen(new OuttakeCoral(outtake, elevator, arm))
+  //       // .andThen(new FollowPathCommand("#2", true, drive))
+  //       // .andThen(new FollowPathCommand("#3", true, drive))
+  //       // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+  //       // .andThen(new OuttakeCoral(outtake, elevator, arm))
+  //       // .andThen(new FollowPathCommand("#4", true, drive))
+  //       // .andThen(new FollowPathCommand("#5", true, drive))
+  //       // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
+  //       // .andThen(new OuttakeCoral(outtake, elevator, arm)));    
+
         
+  //       if(elevator != null && outtake != null) {
+  //        autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
+  //        .andThen(new OuttakeCoralBasic(outtake, ()->true, ()->false))
+  //        .andThen(new WaitCommand(3))
+  //        .andThen(new FollowPathCommand("Next Tester", true, drive))
+  //        );
 
-        try {
-            List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Right Side Mirrored");
-            
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        //autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-        autoChooser.addDefaultOption("Right Side Mirrored", new PathPlannerAuto("Right Side Mirrored"));
-        //autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
-        autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
+  //         autoChooser.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
+  //        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+  //        .andThen(new OuttakeCoral(outtake, elevator, arm)));
 
-        autoChooser.addOption("One peice blue", 
-        new SequentialCommandGroup(
-          new InstantCommand(()->{
-            drive.resetOdometry(new Pose2d(7.229,4.191, Rotation2d.fromDegrees(90.0)));
-            intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
-          }),
-          new DriveToPose(drive, () -> VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.pose).withTimeout(8),
-          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT),
-          new OuttakeCoral(outtake, elevator, arm),
-          new SequentialCommandGroup(new WaitCommand(0.1),
-          new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-          new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
-          new InstantCommand(()-> intake.stow())
-          ));
-          autoChooser.addOption("One peice red", 
-          new SequentialCommandGroup(
-            new InstantCommand(()->{
-              drive.resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH-7.229,FieldConstants.FIELD_WIDTH-4.191, Rotation2d.fromDegrees(-90.0)));
-              intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
-            }),
-            new DriveToPose(drive, () -> VisionConstants.REEF.RED_BRANCH_10_RIGHT.pose).withTimeout(8),
-            new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-            new MoveArm(arm, ArmConstants.L4_SETPOINT),
-            new OuttakeCoral(outtake, elevator, arm),
-            new SequentialCommandGroup(new WaitCommand(0.1),
-            new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-            new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
-            new InstantCommand(()-> intake.stow())
-            ));
-          // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator, arm))
-        // .andThen(new FollowPathCommand("#2", true, drive))
-        // .andThen(new FollowPathCommand("#3", true, drive))
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator, arm))
-        // .andThen(new FollowPathCommand("#4", true, drive))
-        // .andThen(new FollowPathCommand("#5", true, drive))
-        // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-        // .andThen(new OuttakeCoral(outtake, elevator, arm)));    
-
-        
-        if(elevator != null && outtake != null) {
-         autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-         .andThen(new OuttakeCoralBasic(outtake, ()->true, ()->false))
-         .andThen(new WaitCommand(3))
-         .andThen(new FollowPathCommand("Next Tester", true, drive))
-         );
-
-          autoChooser.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
-         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-         .andThen(new OuttakeCoral(outtake, elevator, arm)));
-
-         autoChooser.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
-         .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-         .andThen(new OuttakeCoral(outtake, elevator, arm)));
-        }
-  }
+  //        autoChooser.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
+  //        .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
+  //        .andThen(new OuttakeCoral(outtake, elevator, arm)));
+  //       }
+  // }
 
   public static BooleanSupplier getAllianceColorBooleanSupplier() {
     return () -> {
@@ -360,7 +393,7 @@ public class RobotContainer {
   }
 
   public Command getAutoCommand(){
-    return autoChooser.get();
+    return auto;
   }
 
   // Logged psoitins of subsystems

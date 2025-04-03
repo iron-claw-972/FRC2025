@@ -42,19 +42,39 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "P 5"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "parallel",
                 "data": {
-                  "name": "Drive To 6/19 Left"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Drive To 6/19 Left"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "L4"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -79,19 +99,39 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "P  3"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "parallel",
                 "data": {
-                  "name": "Drive To 6/19 Right"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Drive To 6/19 Right"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "L4"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -107,12 +147,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3d intake peice"
           }
         }
       ]

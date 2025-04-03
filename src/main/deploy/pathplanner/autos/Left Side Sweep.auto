@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P  1 Mirrored"
+            "pathName": "P  1 - Align After"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 9/22 Left"
+                  "name": "Drive To 11/20 Right"
                 }
               },
               {
@@ -38,13 +38,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Gronud  P2 Mirrored"
+            "pathName": "Sweep  P2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive To Left Station"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P 5 Mirrored"
+            "pathName": "LSweep P3"
           }
         },
         {
@@ -54,7 +60,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 8/17 Right"
+                  "name": "Drive To 6/19 Right"
                 }
               },
               {
@@ -75,38 +81,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GroundB #6 Mirrored"
+            "pathName": "GrondP4"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "P  3 Mirrored"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To 8/17 Left"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lower Elevator"
-                }
-              }
-            ]
+            "name": "Drive To Left Station"
           }
         }
       ]
