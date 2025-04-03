@@ -404,7 +404,7 @@ public class RobotContainer {
     return arm == null ? 0 : arm.getAngle() + 90;
   }
   public double intakeAngleLogged(){
-    return intake == null ? -90 : -intake.pivotAngle();
+    return intake == null ? -90 : -intake.getPivotAngle();
   }
   public double climbAngleLogged(){
     return climb == null ? 0 : climb.getEstimatedClimbAngle();
