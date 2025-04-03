@@ -254,6 +254,12 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       getDrivetrain().setDesiredPose(() -> null);
       CommandScheduler.getInstance().cancelAll();
     })); */
+
+    kDriver.get(Button.A).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+    kDriver.get(Button.X).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+    kDriver.get(Button.B).toggleOnTrue(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+    kDriver.get(Button.Y).toggleOnTrue(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+
   }
 
   private void setAlignmentDirection() {
