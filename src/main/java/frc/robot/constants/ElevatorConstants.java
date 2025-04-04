@@ -25,22 +25,34 @@ public class ElevatorConstants {
     public static final double SIM_LIMIT_SWITCH_TRIGGER_DISTANCE = 0.01; // meters
 
     public static final double STOW_SETPOINT = 0;
-    public static final double INTAKE_SETPOINT = 0.026;
+    public static final double INTAKE_SETPOINT = 0.036;
     public static final double SAFE_SETPOINT = 0.225;
     public static final double INTAKE_STOW_SETPOINT = 0.58;
-    public static final double L1_SETPOINT = 0.27;
-    public static final double L2_SETPOINT = 0.588;
-    public static final double L3_SETPOINT = 0.98-0.0254-0.01;
-    public static final double L4_SETPOINT = 1.67;
+    
+    //4 inch offset
+    public static final double L1_SETPOINT = 0.0;
+    public static final double L2_SETPOINT = 0.523;
+    public static final double L3_SETPOINT = 0.9192;
+    // public static final double L4_SETPOINT = 1.675;
+    public static final double L4_SETPOINT = 1.675;
+
+    //touching reef
+    public static final double L1_SETPOINT_ALT = 0.27;
+    public static final double L2_SETPOINT_ALT = 0.588;
+    public static final double L3_SETPOINT_ALT = 0.98-0.0254-0.01;
+    public static final double L4_SETPOINT_ALT = 1.675;
     //Dunk L4 = 1.5
+
     public static final double BOTTOM_ALGAE_SETPOINT = 0.385;
     public static final double TOP_ALGAE_SETPOINT = 0.779;
 
     public static final double NET_SETPOINT = MAX_HEIGHT;
+    public static final double STATION_INTAKE_SETPOINT = 0.233;
 
 
     public static final double CENTER_OF_MASS_HEIGHT_STOWED = Units.inchesToMeters(9.44);
     public static final double CENTER_OF_MASS_HEIGHT_EXTENDED = Units.inchesToMeters(10+14.767);
+
 
     // The x distance from the center of the robot to the outtake.
     public static final double OUTTAKE_X = Units.inchesToMeters(-7.25);

@@ -37,7 +37,7 @@ public class Elevator extends SubsystemBase {
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
   private double maxVelocity = 3.6; // m/s 3.68
-  private double maxAcceleration = 12; // m/s 8
+  private double maxAcceleration = 14; // m/s 8
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -180,5 +180,4 @@ public class Elevator extends SubsystemBase {
   public double getCenterOfMassHeight(){
     return (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
   }
-
 }

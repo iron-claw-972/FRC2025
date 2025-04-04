@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.567973700692232,
-        "y": 6.617402658536878
+        "x": 6.407825499545448,
+        "y": 6.60471106063858
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.257,
-        "y": 5.077
+        "x": 5.094774590163934,
+        "y": 5.33765368852459
       },
       "prevControl": {
-        "x": 5.399488548614048,
-        "y": 5.282419116719603
+        "x": 5.760558198478665,
+        "y": 6.031726466482178
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,6 +32,17 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "backdrive",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "backdrive"
+        }
+      }
+    },
     {
       "name": "lower intake",
       "waypointRelativePos": 0.14206787687450353,
@@ -56,19 +67,19 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 150.0
   },
   "reversed": false,
-  "folder": "Ground RSide mirrored",
+  "folder": "Ground LSide",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 150.0

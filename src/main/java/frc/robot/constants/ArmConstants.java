@@ -4,8 +4,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 
 public class ArmConstants {
     // Degrees
-    public static final double START_ANGLE = -90;
-    public static final double MIN_ANGLE = -90;
+    public static final double START_ANGLE = -86.5;
+    public static final double MIN_ANGLE = -86.5;
     public static final double MAX_ANGLE = 180;
     public static final double OFFSET = 0 - START_ANGLE;
 
@@ -19,17 +19,24 @@ public class ArmConstants {
     public static final double CENTER_OF_MASS_LENGTH = 0.138; // meters
 
     public static final double MAX_VELOCITY = 21; // rad/s
-    public static final double MAX_ACCELERATION = 100; // rad/s^2
+    public static final double MAX_ACCELERATION = 120; // rad/s^2
 
     public static final double INTAKE_SETPOINT = START_ANGLE;
-    public static final double STATION_INTAKE_SETPOINT = 30;
+    public static final double STATION_INTAKE_SETPOINT = 75.5;
 
     public static final double TOLERANCE = 3.0;
 
-    public static final double L4_SETPOINT = 1.89;
     //Dunk L4 = 6.4
-    public static final double L2_L3_SETPOINT = 12.23;
-    public static final double L1_SETPOINT = 40;
+    public static final double L1_SETPOINT = 50;
+
+    //4 in offset
+    // public static final double L4_SETPOINT = 11;
+    public static final double L4_SETPOINT = 7.5;
+    public static final double L2_L3_SETPOINT = 21.25;
+
+    //touching reef
+    public static final double L4_SETPOINT_ALT = 4.5;
+    public static final double L2_L3_SETPOINT_ALT = 12.23;
 
     public static final double ALGAE_SETPOINT = -16.37;
     public static final double ALGAE_NET_SETPOINT_1 = 85.0;

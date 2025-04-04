@@ -8,45 +8,50 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.622303518181818,
-        "y": 6.168199109090909
+        "x": 4.461440347544805,
+        "y": 7.189854101642059
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5028693181818182,
-        "y": 6.313480113636364
+        "x": 1.65,
+        "y": 7.4
       },
       "prevControl": {
-        "x": 3.1809374999999998,
-        "y": 6.453082386363636
+        "x": 3.1784221311513603,
+        "y": 5.374715163937142
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.4991119005328578,
+      "rotationDegrees": 61.586
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Intake",
-      "waypointRelativePos": 0.31271091113610544,
-      "endWaypointRelativePos": 1.0,
+      "name": "Station",
+      "waypointRelativePos": 0.6590141796083744,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCoral"
+          "name": "Station Setpoint"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,13 +59,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -140.19442890773485
+    "rotation": 36.0
   },
   "reversed": false,
-  "folder": "Sequential BSide",
+  "folder": "Station Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 151.1134182330893
+    "rotation": 150.0
   },
   "useDefaultConstraints": false
 }

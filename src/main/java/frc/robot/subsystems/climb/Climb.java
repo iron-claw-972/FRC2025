@@ -25,11 +25,11 @@ import frc.robot.util.ClimbArmSim;
 public class Climb extends SubsystemBase {
     
     private static final double startingPosition = 0;
-    private static final double extendPosition = 2.0;
+    private static final double extendPosition = 2;
     private static final double climbPosition = -0.83;
 
     //Motors
-    private final PIDController pid = new PIDController(1.2, 0, 0.0);
+    private final PIDController pid = new PIDController(2.5, 0, 0.0);
 
     private TalonFX motor = new TalonFX(IdConstants.CLIMB_MOTOR, Constants.CANIVORE_CAN);
     private final DCMotor climbGearBox = DCMotor.getKrakenX60(1);
@@ -81,7 +81,7 @@ public class Climb extends SubsystemBase {
 
         motor.setPosition(Units.degreesToRotations(startingPosition)*totalGearRatio);
         motor.setNeutralMode(NeutralModeValue.Brake);
-        SmartDashboard.putData("Climb PID", pid);
+        //SmartDashboard.putData("Climb PID", pid);
     }
 
     @Override
@@ -100,12 +100,9 @@ public class Climb extends SubsystemBase {
         }
 
         Logger.recordOutput("Climb/Motor Power", power);
-        Logger.recordOutput("Climb/setpointDeg", Units.radiansToDegrees(pid.getSetpoint())*totalGearRatio);
+        Logger.recordOutput("Climb/setpointDeg", motorPosition/totalGearRatio);
 
         motor.set(MathUtil.clamp(power, -1, 1));
-
-        //simLigament.setAngle(Units.radiansToDegrees(currentPosition));
-
     }
 
 
@@ -175,5 +172,14 @@ public class Climb extends SubsystemBase {
     //not working
     public Mechanism2d getMech2d() {
         return simulationMechanism;
+    }
+
+    /**
+     * Gets the estimated angle of the climb
+     * This is slightly inaccurate since it assumes the climb rotates exactly 90 degrees and the motor position is proportional to the climb position
+     * Used only for 3D robot display
+     */
+    public double getEstimatedClimbAngle(){
+        return Units.degreesToRotations(getAngle())/(extendPosition-climbPosition)*Math.PI/2;
     }
 }

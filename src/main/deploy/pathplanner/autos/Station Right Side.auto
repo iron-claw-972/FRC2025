@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P  1 Mirrored"
+            "pathName": "AP1"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 9/22 Left"
+                  "name": "Drive to 9/22 Left"
                 }
               },
               {
@@ -38,13 +38,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Gronud  P2 Mirrored"
+            "pathName": "Station R P2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive to Right Station Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Station Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P 5 Mirrored"
+            "pathName": "Station R P3"
           }
         },
         {
@@ -54,7 +66,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 8/17 Right"
+                  "name": "Drive to 8/17 Right"
                 }
               },
               {
@@ -75,13 +87,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GroundB #6 Mirrored"
+            "pathName": "Station R P4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive to Right Station Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Station Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P  3 Mirrored"
+            "pathName": "Station R P5"
           }
         },
         {
@@ -91,7 +115,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 8/17 Left"
+                  "name": "Drive to 8/17 Left"
                 }
               },
               {

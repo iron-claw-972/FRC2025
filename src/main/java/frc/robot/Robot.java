@@ -41,7 +41,7 @@ public class Robot extends LoggedRobot {
         PortForwarder.add(1182,"10.9.72.12",1182);
 
         // Set up data receivers & replay source
-        switch (Constants.currentMode) {
+        switch (Constants.CURRENT_MODE) {
             case REAL:
             // Running on a real robot, log to a USB stick ("/U/logs")
             Logger.addDataReceiver(new WPILOGWriter());
@@ -117,6 +117,8 @@ public class Robot extends LoggedRobot {
         // block in order for anything in the Command-based framework to work.
 
         CommandScheduler.getInstance().run();
+
+        robotContainer.logComponents();
     }
 
     /**
@@ -175,8 +177,6 @@ public class Robot extends LoggedRobot {
         if (autoCommand != null) {
             autoCommand.cancel();
         }
-
-
     }
 
     /**

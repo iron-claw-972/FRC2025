@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.885,
-        "y": 7.011
+        "x": 1.722,
+        "y": 7.129
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6951704545454547,
-        "y": 6.592684659090909
+        "x": 1.8649319141897391,
+        "y": 6.267760789902279
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.7649715909090908,
-        "y": 5.555639204545454
+        "x": 3.1273,
+        "y": 4.191
       },
       "prevControl": {
-        "x": 1.6249347579914086,
-        "y": 5.986521767369091
-      },
-      "nextControl": {
-        "x": 1.8946022727272724,
-        "y": 5.156775568181818
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.373238636363636,
-        "y": 4.219446022727272
-      },
-      "prevControl": {
-        "x": 2.163835227272727,
-        "y": 4.678139204545454
+        "x": 2.1273,
+        "y": 4.191
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,34 +33,34 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Elevator",
-      "waypointRelativePos": 0.5849268841394802,
-      "endWaypointRelativePos": 2.0,
+      "name": "MoveElevator",
+      "waypointRelativePos": 0.6806256151574805,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "MoveElevator"
+          "name": "L4"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -89.83541845130789
+    "velocity": 0.5,
+    "rotation": -90.89200324814249
   },
   "reversed": false,
   "folder": "Ground BSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -144.0
+    "rotation": -142.86256094570606
   },
   "useDefaultConstraints": false
 }

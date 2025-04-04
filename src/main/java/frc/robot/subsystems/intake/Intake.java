@@ -96,7 +96,7 @@ public class Intake extends SubsystemBase {
      */
     @SuppressWarnings("unused")
     private void publish() {
-        SmartDashboard.putNumber("Stow Motor Position", getStowPosition());
+        SmartDashboard.putNumber("Stow Motor Position", getPivotAngle());
         SmartDashboard.putNumber("Target Angle", stowPID.getSetpoint());
         SmartDashboard.putNumber("Roller Motor Power", power);
 
@@ -109,10 +109,10 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         //publish();
-        // SmartDashboard.putNumber("angle", getStowPosition());
+        // SmartDashboard.putNumber("angle", getPivotAngle());
         // SmartDashboard.putBoolean("Intake has coral", hasCoral());
 
-        double position = getStowPosition();
+        double position = getPivotAngle();
         power = stowPID.calculate(position) + feedforward.calculate(Units.degreesToRadians(position), 0);
         power = MathUtil.clamp(power, -1, 1);
         pivotMotor.set(power);
@@ -154,7 +154,7 @@ public class Intake extends SubsystemBase {
      * 
      * @return the rotation of the intake (in degrees).
      */
-    public double getStowPosition() {
+    public double getPivotAngle() {
         return inputs.measuredPivotPosition;
     }
 
@@ -178,7 +178,7 @@ public class Intake extends SubsystemBase {
      * @return Boolean (True if at setpoint, False otherwise)
      */
     public boolean isAtSetpoint(double setpoint) {
-        return Math.abs(getStowPosition() - setpoint) < positionTolerance;
+        return Math.abs(getPivotAngle() - setpoint) < positionTolerance;
     }
 
     /**
@@ -239,3 +239,4 @@ public class Intake extends SubsystemBase {
         rollerMotor.set(IntakeConstants.INTAKE_MOTOR_POWER);
     }
 }
+

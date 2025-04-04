@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P  1 Mirrored"
+            "pathName": "P  1"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 9/22 Left"
+                  "name": "Drive To 11/20 Right"
                 }
               },
               {
@@ -38,13 +38,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Gronud  P2 Mirrored"
+            "pathName": "Station P2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Station Intake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P 5 Mirrored"
+            "pathName": "StationP 3"
           }
         },
         {
@@ -54,7 +67,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 8/17 Right"
+                  "name": "Drive To 6/19 Left"
                 }
               },
               {
@@ -75,13 +88,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GroundB #6 Mirrored"
+            "pathName": " Station P4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Station Intake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "P  3 Mirrored"
+            "pathName": "StationB Alt Opt"
           }
         },
         {
@@ -91,7 +117,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 8/17 Left"
+                  "name": "Drive To 6/19 Right"
                 }
               },
               {

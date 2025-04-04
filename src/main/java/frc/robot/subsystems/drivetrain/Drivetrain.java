@@ -175,7 +175,7 @@ public class Drivetrain extends SubsystemBase {
             });
 
         //PPLibTelemetry.enableCompetitionMode();
-        }
+    }
 
     public void close() {
         // close each of the modules
@@ -195,7 +195,7 @@ public class Drivetrain extends SubsystemBase {
         odometryLock.unlock();
             // Update odometry
         double[] sampleTimestamps =
-            modules[0].getOdometryTimestamps(); // All signals are sampled together
+            gyroInputs.odometryYawTimestamps; // All signals are sampled together
         int sampleCount = sampleTimestamps.length;
         for (int i = 0; i < sampleCount; i++) {
             // Read wheel positions and deltas from each module

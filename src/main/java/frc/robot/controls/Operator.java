@@ -19,7 +19,7 @@ import frc.robot.commands.gpm.OuttakeAlgaeIntake;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.RemoveAlgae;
 import frc.robot.commands.gpm.ReverseMotors;
-import frc.robot.commands.gpm.StartStationIntake;
+import frc.robot.commands.gpm.StationIntake;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IntakeConstants;
@@ -80,7 +80,7 @@ public class Operator {
             driver.get(Button.A).and(menu.negate()).and(r3.negate()).whileTrue(new IntakeCoral(intake, indexer, elevator, outtake, arm));
             // On true, run the command to start intaking
             // On false, run the command to finish intaking if it has a coral
-            Command startIntake = new StartStationIntake(intake);
+            Command startIntake = new StationIntake(outtake);
             Command finishIntake = new DoNothing();
             driver.get(Button.A).and(r3).and(menu.negate()).onTrue(startIntake)
                 .onFalse(new InstantCommand(()->{
