@@ -43,8 +43,8 @@ public class ElevatorConstants {
     public static final double L4_SETPOINT_ALT = 1.675;
     //Dunk L4 = 1.5
 
-    public static final double BOTTOM_ALGAE_SETPOINT = 0.385;
-    public static final double TOP_ALGAE_SETPOINT = 0.779;
+    public static final double BOTTOM_ALGAE_SETPOINT = 0.405;
+    public static final double TOP_ALGAE_SETPOINT = 0.799;
 
     public static final double NET_SETPOINT = MAX_HEIGHT;
     public static final double STATION_INTAKE_SETPOINT = 0.233;
