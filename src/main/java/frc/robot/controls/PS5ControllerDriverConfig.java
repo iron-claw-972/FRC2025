@@ -134,6 +134,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                         ()->selectedDirection != 0
                     ),
                     new ConditionalCommand(
+                        new WaitCommand(0.5),
+                        new DoNothing(),
+                        () -> selectedDirection < 0
+                    ),
+                    new ConditionalCommand(
                         new OuttakeCoral(outtake, elevator, arm)
                         .andThen(new InstantCommand(()->{
                             elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
