@@ -203,7 +203,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("L4", 
         new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT)
+          new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT)
         )
       );
       NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
@@ -216,7 +216,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT)
+          new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT)
         ),
         new OuttakeCoral(outtake, elevator, arm)
       ));
@@ -270,7 +270,6 @@ public class RobotContainer {
       Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationRight.getX(), blueStationLeft.getY(), blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
       Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationLeft.getX(), blueStationRight.getY(), blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
       NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));
-      // TODO: update the positions for opposite side field as well, so far it's just updated for our practice field station
       NamedCommands.registerCommand("Drive To Right Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationIntakeRight));
       NamedCommands.registerCommand("Drive To Left Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationIntakeLeft));
       

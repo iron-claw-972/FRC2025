@@ -86,7 +86,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       driver.get(driver.LEFT_TRIGGER_BUTTON).onTrue(
           new SequentialCommandGroup(
               new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-              new MoveArm(arm, ArmConstants.L4_SETPOINT)));
+              new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT)));
 
       Command l2Coral = new SequentialCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),

@@ -119,13 +119,17 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                     new ConditionalCommand(
                         new ParallelCommandGroup(
                             new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-                            new MoveArm(arm, ArmConstants.L4_SETPOINT),
+                            new ConditionalCommand(
+                                new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT),
+                                new MoveArm(arm, ArmConstants.L4_SETPOINT_LEFT),
+                                () -> selectedDirection >= 0
+                            ),
                             new DriveToPose(getDrivetrain(), ()->alignmentPose)
                         ),
                         // This is instant so it doesn't requre the drivetrain for more than 1 frame
                         new InstantCommand(()->{
                             elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
-                            arm.setSetpoint(ArmConstants.L4_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L4_SETPOINT_RIGHT);
                         }),
                         ()->selectedDirection != 0
                     ),
