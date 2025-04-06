@@ -33,7 +33,7 @@ public class ArmConstants {
     // public static final double L4_SETPOINT = 11;
     // Original L4: 7.5 degrees
     public static final double L4_SETPOINT_RIGHT = 7.5;
-    public static final double L4_SETPOINT_LEFT = 5;
+    public static final double L4_SETPOINT_LEFT = 6;
     public static final double L2_L3_SETPOINT = 21.25;
 
     //touching reef
