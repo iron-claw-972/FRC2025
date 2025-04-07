@@ -274,8 +274,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("Drive To Left Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationIntakeLeft));
       
       NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationRight));
-      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.l4Pose));
-      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.l4Pose).withTimeout(1));
+      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.l4Pose).withTimeout(1));
       NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.l4Pose));
       NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.l4Pose));
       NamedCommands.registerCommand("Drive To 10/21 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.l4Pose));
@@ -285,8 +285,8 @@ public class RobotContainer {
       == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.l4Pose)); 
       
 
-      NamedCommands.registerCommand("Drive To 8/17 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.l4Pose));
-      NamedCommands.registerCommand("Drive To 8/17 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 8/17 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.l4Pose).withTimeout(1));
+      NamedCommands.registerCommand("Drive To 8/17 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.l4Pose).withTimeout(1));
     }
   }
 
