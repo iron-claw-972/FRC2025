@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeCoral;
@@ -72,11 +73,9 @@ public class RobotContainer {
   private Elevator elevator = null;
   private Climb climb = null;
   private Arm arm = null;
-  Command auto;
+  private Command auto = new DoNothing();
 
-  public double armWaitTime = 0.5;
-
-    // Dashboard inputs
+  // Dashboard inputs
   //private final LoggedDashboardChooser<Command> autoChooser;
 
   // Controllers are defined here
@@ -143,22 +142,21 @@ public class RobotContainer {
         
         initializeAutoBuilder();
         registerCommands();
-        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
-        
-             
+        // Load the auto command
+        try {
+          PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
+          auto = new PathPlannerAuto("Left Side");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         break;
       }
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-    try {
-      PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
-      auto = new PathPlannerAuto("Left Side");
-    } 
-    catch (IOException | ParseException e) {
-        e.printStackTrace();
-    }
+
     //addPaths(); 
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
