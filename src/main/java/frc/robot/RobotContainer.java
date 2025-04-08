@@ -76,7 +76,7 @@ public class RobotContainer {
   private Command auto = new DoNothing();
 
   // Dashboard inputs
-  //private final LoggedDashboardChooser<Command> autoChooser;
+  // private final LoggedDashboardChooser<Command> autoChooser;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
