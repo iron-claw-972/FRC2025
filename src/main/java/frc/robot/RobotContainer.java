@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeCoral;
@@ -72,12 +73,10 @@ public class RobotContainer {
   private Elevator elevator = null;
   private Climb climb = null;
   private Arm arm = null;
-  Command auto;
+  private Command auto = new DoNothing();
 
-  public double armWaitTime = 0.5;
-
-    // Dashboard inputs
-  //private final LoggedDashboardChooser<Command> autoChooser;
+  // Dashboard inputs
+  // private final LoggedDashboardChooser<Command> autoChooser;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -136,28 +135,28 @@ public class RobotContainer {
         DetectedObject.setDrive(drive);
         
         //SignalLogger.start();
+        
 
         driver.configureControls();
         //operator.configureControls();
         
         initializeAutoBuilder();
         registerCommands();
-        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         PathGroupLoader.loadPathGroups();
-        
-             
+        // Load the auto command
+        try {
+          PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
+          auto = new PathPlannerAuto("Left Side");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
         break;
       }
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-    try {
-      PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
-      auto = new PathPlannerAuto("Left Side");
-    } 
-    catch (IOException | ParseException e) {
-        e.printStackTrace();
-    }
+
     //addPaths(); 
     // TODO: verify this claim.
     // LiveWindow is causing periodic loop overruns
@@ -202,7 +201,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("L4", 
         new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT)
+          new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT)
         )
       );
       NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
@@ -215,7 +214,7 @@ public class RobotContainer {
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new ParallelCommandGroup(
           new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-          new MoveArm(arm, ArmConstants.L4_SETPOINT)
+          new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT)
         ),
         new OuttakeCoral(outtake, elevator, arm)
       ));
@@ -269,13 +268,12 @@ public class RobotContainer {
       Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationRight.getX(), blueStationLeft.getY(), blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
       Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationLeft.getX(), blueStationRight.getY(), blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
       NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));
-      // TODO: update the positions for opposite side field as well, so far it's just updated for our practice field station
       NamedCommands.registerCommand("Drive To Right Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationIntakeRight));
       NamedCommands.registerCommand("Drive To Left Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationIntakeLeft));
       
       NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationRight));
-      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.l4Pose));
-      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.l4Pose).withTimeout(1));
+      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.l4Pose).withTimeout(1));
       NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.l4Pose));
       NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.l4Pose));
       NamedCommands.registerCommand("Drive To 10/21 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.l4Pose));
@@ -285,8 +283,8 @@ public class RobotContainer {
       == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.l4Pose)); 
       
 
-      NamedCommands.registerCommand("Drive To 8/17 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.l4Pose));
-      NamedCommands.registerCommand("Drive To 8/17 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 8/17 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.l4Pose).withTimeout(1));
+      NamedCommands.registerCommand("Drive To 8/17 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.l4Pose).withTimeout(1));
     }
   }
 

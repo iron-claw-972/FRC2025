@@ -31,14 +31,16 @@ public class ArmConstants {
 
     //4 in offset
     // public static final double L4_SETPOINT = 11;
-    public static final double L4_SETPOINT = 7.5;
+    // Original L4: 7.5 degrees
+    public static final double L4_SETPOINT_RIGHT = 7.5;
+    public static final double L4_SETPOINT_LEFT = 6;
     public static final double L2_L3_SETPOINT = 21.25;
 
     //touching reef
     public static final double L4_SETPOINT_ALT = 4.5;
     public static final double L2_L3_SETPOINT_ALT = 12.23;
 
-    public static final double ALGAE_SETPOINT = -16.37;
+    public static final double ALGAE_SETPOINT = -19.37;
     public static final double ALGAE_NET_SETPOINT_1 = 85.0;
     public static final double ALGAE_NET_SETPOINT_2 = 25;
     public static final double ALGAE_STOW_SETPOINT  = 50;

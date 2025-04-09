@@ -599,6 +599,7 @@ public class Vision {
 
       // The latest camera results
       for(PhotonPipelineResult result : inputs.results){
+        // TODO: This could be improved by averaging all targets instead of only using 1
         // Gets the best target to use for the calculations
         PhotonTrackedTarget target = result.getBestTarget();
         // Continue if the target doesn't exist or it should be ignored
