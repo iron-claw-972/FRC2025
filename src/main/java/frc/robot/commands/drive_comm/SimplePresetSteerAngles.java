@@ -2,13 +2,15 @@ package frc.robot.commands.drive_comm;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 /**
  * Attempts to set all four modules to a constant angle. Determines if the modules are able to reach the angle requested in a certain time.
  */
-public class SimplePresetSteerAngles extends InstantCommand {
+public class SimplePresetSteerAngles extends Command {
+    private Drivetrain drive;
+    private Rotation2d rotation;
 
     /**
      * sets the angle of module steer to 0 to remove initial turn time and drift
@@ -36,16 +38,23 @@ public class SimplePresetSteerAngles extends InstantCommand {
      * @param drive    drivetrain to be used
      */
     public SimplePresetSteerAngles(Drivetrain drive, Rotation2d rotation) {
-        super(() -> {
-            drive.setStateDeadband(false);
-            drive.setModuleStates(new SwerveModuleState[]{
-                    new SwerveModuleState(0, rotation),
-                    new SwerveModuleState(0, rotation),
-                    new SwerveModuleState(0, rotation),
-                    new SwerveModuleState(0, rotation)
-            }, true);
-            drive.setStateDeadband(true);
-        }, drive);
         drive.setStateDeadband(true);
+        this.drive = drive;
+        this.rotation = rotation;
+    }
+
+    public void initialize() {
+        drive.setStateDeadband(false);
+        drive.setModuleStates(new SwerveModuleState[]{
+                new SwerveModuleState(0, rotation),
+                new SwerveModuleState(0, rotation),
+                new SwerveModuleState(0, rotation),
+                new SwerveModuleState(0, rotation)
+        }, true);
+        drive.setStateDeadband(true);
+    }
+
+    public boolean isFinished() {
+        return false;
     }
 }
