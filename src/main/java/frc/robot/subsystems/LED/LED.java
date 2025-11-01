@@ -1,5 +1,7 @@
 package frc.robot.subsystems.LED;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IdConstants;
 
@@ -15,7 +17,7 @@ public class LED extends SubsystemBase {
 
     // Constructor
     public LED() {
-        this.candle = new CANdle(IdConstants.CANDLE_ID, "rio");
+        this.candle = new CANdle(IdConstants.CANDLE_ID, "CANivore");
 
         candle.configStatusLedState(false);
         candle.configLOSBehavior(false);
@@ -25,6 +27,15 @@ public class LED extends SubsystemBase {
         candle.configBrightnessScalar(1);
         candle.configVBatOutput(VBatOutputMode.On);
         candle.configV5Enabled(true); // Turns off LEDs
+
+        SmartDashboard.putData("set LED red", new InstantCommand(() -> setLEDs(255, 0, 0)));
+        
+        SmartDashboard.putData("set LED blue", new InstantCommand(() -> setLEDs(0, 0, 255)));
+        SmartDashboard.putData("set LED green", new InstantCommand(() -> setLEDs(0, 255, 0)));
+        SmartDashboard.putData("turn off LED", new InstantCommand(() -> setLEDs(0, 0, 0)));
+        SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 8)));
+
+        SmartDashboard.putData("test_thing", new InstantCommand(() -> setSection(255, 0, 255, 0, 2)));
     }
 
     @Override
@@ -57,11 +68,11 @@ public class LED extends SubsystemBase {
      * @param r     Red value (0-255)
      * @param g     Green value (0-255)
      * @param b     Blue value (0-255)
-     * @param start Start index of the section
-     * @param end   End index of the section
+     * @param start Start index of the section inclusive
+     * @param end   End index of the section exclusive
      */
     public void setSection(int r, int g, int b, int start, int end) {
-        candle.setLEDs(r, g, b, 0, start, end);
+        candle.setLEDs(r, g, b, 0, start, end-start);
     }
 
     /**
@@ -81,9 +92,9 @@ public class LED extends SubsystemBase {
         for (int i = -offset; i < total; i += size) {
             boolean color2 = ((i - offset) / size) % 2 == 0;
             if (color2) {
-                setSection(r2, g2, b2, i, i + size - 1);
+                setSection(r2, g2, b2, i, i + size);
             } else {
-                setSection(r1, g1, b1, i, i + size - 1);
+                setSection(r1, g1, b1, i, i + size);
             }
         }
     }

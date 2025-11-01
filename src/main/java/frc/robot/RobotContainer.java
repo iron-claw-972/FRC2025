@@ -40,6 +40,7 @@ import frc.robot.constants.VisionConstants;
 import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
+import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -74,6 +75,7 @@ public class RobotContainer {
   private Climb climb = null;
   private Arm arm = null;
   private Command auto = new DoNothing();
+  private LED led = null;
 
   // Dashboard inputs
   // private final LoggedDashboardChooser<Command> autoChooser;
@@ -92,9 +94,10 @@ public class RobotContainer {
     // dispatch on the robot
     switch (robotId) {
       case TestBed1:
-        break;
+
 
       case TestBed2:
+        led = new LED();
         break;
 
       default:
