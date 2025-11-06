@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IdConstants;
 
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.Animation;
@@ -36,6 +37,7 @@ public class LED extends SubsystemBase {
         SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 8)));
 
         SmartDashboard.putData("test_thing", new InstantCommand(() -> setSection(255, 0, 255, 0, 2)));
+        SmartDashboard.putData("rainbow", new InstantCommand(() -> animate(new RainbowAnimation())));
     }
 
     @Override
