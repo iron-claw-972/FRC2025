@@ -30,14 +30,15 @@ public class LED extends SubsystemBase {
         candle.configV5Enabled(true); // Turns off LEDs
 
         SmartDashboard.putData("set LED red", new InstantCommand(() -> setLEDs(255, 0, 0)));
-        
         SmartDashboard.putData("set LED blue", new InstantCommand(() -> setLEDs(0, 0, 255)));
         SmartDashboard.putData("set LED green", new InstantCommand(() -> setLEDs(0, 255, 0)));
         SmartDashboard.putData("turn off LED", new InstantCommand(() -> setLEDs(0, 0, 0)));
-        SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 8)));
 
-        SmartDashboard.putData("test_thing", new InstantCommand(() -> setSection(255, 0, 255, 0, 2)));
-        SmartDashboard.putData("rainbow", new InstantCommand(() -> animate(new RainbowAnimation())));
+        SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 100)));
+
+        SmartDashboard.putData("rainbow animation", new InstantCommand(() -> animate(new RainbowAnimation())));
+        SmartDashboard.putData("strobe animation", new InstantCommand(() -> animate(new StrobeAnimation())));
+        SmartDashboard.putData("turn off animations", new InstantCommand(() -> animate(null)));
     }
 
     @Override
