@@ -7,6 +7,7 @@ import frc.robot.constants.IdConstants;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.Animation;
