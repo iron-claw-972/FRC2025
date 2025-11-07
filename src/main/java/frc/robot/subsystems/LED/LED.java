@@ -5,9 +5,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IdConstants;
 
+import au.grapplerobotics.CanBridge;
+
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
+
+import au.grapplerobotics.LaserCan;
+
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.Animation;
@@ -16,10 +21,13 @@ public class LED extends SubsystemBase {
 
     private CANdle candle;
     public static final int stripLength = 67;
+    private LaserCan sensor;
+  
 
     // Constructor
     public LED() {
         this.candle = new CANdle(IdConstants.CANDLE_ID, "CANivore");
+        this.sensor = new LaserCan(IdConstants.LASERCAN_ID);
 
         candle.configStatusLedState(false);
         candle.configLOSBehavior(false);
@@ -38,7 +46,7 @@ public class LED extends SubsystemBase {
         SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 100)));
 
         SmartDashboard.putData("rainbow animation", new InstantCommand(() -> animate(new RainbowAnimation())));
-        SmartDashboard.putData("strobe animation", new InstantCommand(() -> animate(new StrobeAnimation())));
+        SmartDashboard.putData("strobe animation", new InstantCommand(() -> animate(new StrobeAnimation(255, 255, 255))));
         SmartDashboard.putData("turn off animations", new InstantCommand(() -> animate(null)));
     }
 

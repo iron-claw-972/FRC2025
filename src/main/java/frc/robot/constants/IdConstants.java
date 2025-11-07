@@ -20,6 +20,7 @@ public class IdConstants {
 
     // LEDs
     public static final int CANDLE_ID = 1;
+    public static final int LASERCAN_ID = 0;
 
     // Elevator
     public static final int ELEVATOR_RIGHT_MOTOR = 50;
