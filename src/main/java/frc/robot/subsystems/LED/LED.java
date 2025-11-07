@@ -52,6 +52,7 @@ public class LED extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putString("laserCan", sensor.getMeasurement().toString());
     }
 
     /**
@@ -63,6 +64,12 @@ public class LED extends SubsystemBase {
      */
     public void setLEDs(int red, int green, int blue) {
         candle.setLEDs(red, green, blue);
+    }
+    public boolean sensorTriggered(){
+        // if(sensor.getMeasurement() <= 20){
+
+        // }
+        return true;
     }
 
    /**
