@@ -1,11 +1,14 @@
 package frc.robot.subsystems.LED;
 
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.constants.IdConstants;
-
+import frc.robot.subsystems.LaserCAN.Sensor;
 import au.grapplerobotics.CanBridge;
+import au.grapplerobotics.ConfigurationFailedException;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
@@ -13,6 +16,9 @@ import com.ctre.phoenix.led.StrobeAnimation;
 
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
+import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
+import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
 
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
@@ -22,13 +28,9 @@ public class LED extends SubsystemBase {
 
     private CANdle candle;
     public static final int stripLength = 67;
-    private LaserCan sensor;
-  
-
     // Constructor
     public LED() {
         this.candle = new CANdle(IdConstants.CANDLE_ID, "CANivore");
-        this.sensor = new LaserCan(IdConstants.LASERCAN_ID);
 
         candle.configStatusLedState(false);
         candle.configLOSBehavior(false);
@@ -39,26 +41,33 @@ public class LED extends SubsystemBase {
         candle.configVBatOutput(VBatOutputMode.On);
         candle.configV5Enabled(true); // Turns off LEDs
 
-        SmartDashboard.putData("set LED red", new InstantCommand(() -> setLEDs(255, 0, 0)));
-        SmartDashboard.putData("set LED blue", new InstantCommand(() -> setLEDs(0, 0, 255)));
-        SmartDashboard.putData("set LED green", new InstantCommand(() -> setLEDs(0, 255, 0)));
-        SmartDashboard.putData("turn off LED", new InstantCommand(() -> setLEDs(0, 0, 0)));
+        // SmartDashboard.putData("set LED red", new InstantCommand(() -> setLEDs(255, 0, 0)));
+        // SmartDashboard.putData("set LED blue", new InstantCommand(() -> setLEDs(0, 0, 255)));
+        // SmartDashboard.putData("set LED green", new InstantCommand(() -> setLEDs(0, 255, 0)));
+        // SmartDashboard.putData("turn off LED", new InstantCommand(() -> setLEDs(0, 0, 0)));
 
-        SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 100)));
+        // SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 100)));
 
-        SmartDashboard.putData("rainbow animation", new InstantCommand(() -> animate(new RainbowAnimation())));
-        SmartDashboard.putData("strobe animation", new InstantCommand(() -> animate(new StrobeAnimation(255, 255, 255))));
-        SmartDashboard.putData("turn off animations", new InstantCommand(() -> animate(null)));
+        // SmartDashboard.putData("rainbow animation", new InstantCommand(() -> animate(new RainbowAnimation())));
+        // SmartDashboard.putData("strobe animation", new InstantCommand(() -> animate(new StrobeAnimation(255, 255, 255))));
+        // SmartDashboard.putData("turn off animations", new InstantCommand(() -> animate(null)));
     }
 
     @Override
     public void periodic() {
-        Measurement measurement = sensor.getMeasurement();
-        double distance = measurement.distance_mm;
-        SmartDashboard.putString("laserCan", sensor.getMeasurement().toString());
-        if(distance <= 100){
-            System.out.println("hi");
+        Measurement m = RobotContainer.sensor.getMeasurement();
+        if (m == null) {
+            setLEDs(255, 0, 0); 
+            return;
         }
+        double d = m.distance_mm;
+        SmartDashboard.putString("LaserCan", m.toString());
+        if (Double.isNaN(d) || d <= 0) {
+            setLEDs(255, 0, 0); 
+            return;
+        }
+        if (d <= 100) setLEDs(0, 255, 0);
+        else setLEDs(255, 0, 0);
     }
 
     /**
