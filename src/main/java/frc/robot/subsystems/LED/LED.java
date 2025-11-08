@@ -12,6 +12,7 @@ import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
 import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
@@ -52,7 +53,12 @@ public class LED extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Measurement measurement = sensor.getMeasurement();
+        double distance = measurement.distance_mm;
         SmartDashboard.putString("laserCan", sensor.getMeasurement().toString());
+        if(distance <= 100){
+            System.out.println("hi");
+        }
     }
 
     /**
@@ -65,13 +71,7 @@ public class LED extends SubsystemBase {
     public void setLEDs(int red, int green, int blue) {
         candle.setLEDs(red, green, blue);
     }
-    public boolean sensorTriggered(){
-        // if(sensor.getMeasurement() <= 20){
-
-        // }
-        return true;
-    }
-
+    
    /**
      * Sets an animation for the LEDs.
      *
