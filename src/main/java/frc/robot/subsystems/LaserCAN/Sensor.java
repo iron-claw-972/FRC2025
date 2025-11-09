@@ -8,7 +8,6 @@ import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
 import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.constants.IdConstants;
 
 public class Sensor extends SubsystemBase{

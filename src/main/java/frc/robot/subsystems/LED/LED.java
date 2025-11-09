@@ -1,24 +1,9 @@
 package frc.robot.subsystems.LED;
-
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.constants.IdConstants;
 import frc.robot.subsystems.LaserCAN.Sensor;
-import au.grapplerobotics.CanBridge;
-import au.grapplerobotics.ConfigurationFailedException;
 
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.RainbowAnimation;
-import com.ctre.phoenix.led.StrobeAnimation;
-
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
-import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
-import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
-import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
 
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
