@@ -32,6 +32,7 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.led_comm.DefenseLights;
+import frc.robot.commands.led_comm.Paint;
 import frc.robot.commands.led_comm.SensorLights;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
@@ -96,6 +97,7 @@ public class RobotContainer {
    * Different robots may have different subsystems.
    */
   public RobotContainer(RobotId robotId) {
+    SmartDashboard.putString("Robot ID", robotId.toString());
     // dispatch on the robot
     switch (robotId) {
       case TestBed1:
@@ -106,6 +108,7 @@ public class RobotContainer {
         sensor = new Sensor();
         SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 20));
         SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
+        SmartDashboard.putData("Paint", new Paint(led, 4, 8));
         break;
 
       default:

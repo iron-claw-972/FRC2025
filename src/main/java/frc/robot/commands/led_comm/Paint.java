@@ -2,24 +2,23 @@ package frc.robot.commands.led_comm;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED.LED;
-import frc.robot.subsystems.LaserCAN.Sensor;
 
-public class SensorLights extends Command{
-    private Sensor sensor;
+public class Paint extends Command{
+    private int start;
+    private int end;
     private LED led;
-    public SensorLights(LED led, Sensor sensor){
+
+    public Paint(LED led, int start, int end){
         this.led = led;
-        this.sensor = sensor;
+        this.end = end;
+        this.start = start;
     }
     public void initialize(){
-
+        led.setSection(0, 0, 255, start, end);
+        System.out.println("Initialized");
     }
     public void execute(){
-        if(sensor.detected() == true){
-            led.setSection(0, 255, 0, 8, 16);
-        }else{
-            led.setSection(255, 0, 0, 8, 16);
-        }
+        System.out.println("Executing");
     }
     public boolean isFinished(){
         return false;

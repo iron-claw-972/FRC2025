@@ -28,6 +28,7 @@ public class LED extends SubsystemBase {
         candle.configV5Enabled(true); // Turns off LEDs
         setLEDs(0, 0, 0);
         setSection(0, 255, 0, 0, 4);
+        setSection(255, 0, 0, 14, 16);
     }
 
     @Override

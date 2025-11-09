@@ -10,7 +10,7 @@ public class DefenseLights extends Command{
     private LED led;
 
     public DefenseLights(LED led, int startOffset, int length){
-        this.led = new LED();
+        this.led = led;
         this.startOffset = startOffset;
         this.length = length;
     }
