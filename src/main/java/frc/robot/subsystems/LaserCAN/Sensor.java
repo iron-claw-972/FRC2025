@@ -10,41 +10,69 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IdConstants;
 
-public class Sensor extends SubsystemBase{
+public class Sensor extends SubsystemBase {
+
     private LaserCan sensor;
-        public Sensor(){
+
+    public Sensor() {
+        try {
             sensor = new LaserCan(IdConstants.LASERCAN_ID);
-            try{
-                sensor.setRangingMode(RangingMode.SHORT);
-                sensor.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
-                sensor.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
-            }
-            catch (ConfigurationFailedException e){
-                System.out.println("error");
-            }
+            sensor.setRangingMode(RangingMode.SHORT);
+            sensor.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+            sensor.setRegionOfInterest(new RegionOfInterest(-4, -4, 8, 8));
+            System.out.println("LaserCan initialized successfully");
+        } catch (ConfigurationFailedException e) {
+            System.out.println("LaserCan configuration failed: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("LaserCan initialization error: " + e.getMessage());
         }
-    public double getDistance(){
-        Measurement measurement = sensor.getMeasurement();
-        return measurement.distance_mm;
     }
-    public Measurement getMeasurement(){
-        return sensor.getMeasurement();
+
+    public double getDistance() {
+        Measurement m = sensor.getMeasurement();
+
+        if (m == null) {
+            return Double.NaN;
+        }
+
+        double d = m.distance_mm;
+        if (Double.isNaN(d) || d <= 0) {
+            return Double.NaN;
+        }
+
+        return d;
     }
+
+    public boolean detected() {
+        Measurement m = sensor.getMeasurement();
+    
+        if (m == null) {
+            SmartDashboard.putString("LaserCan", "No Measurement");
+            return false;
+        }
+    
+        double distance = m.distance_mm;
+
+        if (Double.isNaN(distance) || distance <= 0) {
+            SmartDashboard.putString("LaserCan", "No Valid Target");
+            return false;
+        }
+    
+        SmartDashboard.putNumber("LaserCan Distance (mm)", distance);
+    
+        // Valid measurement
+        return distance <= 100;
+    }
+    
+
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Distance", getDistance());
-    }
-    public boolean detected(){
-        Measurement measurement = sensor.getMeasurement();
-        if (measurement == null) {
-            return false;
+        double d = getDistance();
+
+        if (Double.isNaN(d)) {
+            SmartDashboard.putString("LaserCan Distance", "No data");
+        } else {
+            SmartDashboard.putNumber("LaserCan Distance (mm)", d);
         }
-        double distance = getDistance();
-        SmartDashboard.putString("LaserCan", measurement.toString());
-        if (Double.isNaN(distance) || distance <= 0) {
-            return false;
-        }
-        if (distance <= 100) return true;
-        else return false;
     }
 }
