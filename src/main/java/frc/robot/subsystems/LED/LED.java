@@ -27,10 +27,12 @@ import com.ctre.phoenix.led.Animation;
 public class LED extends SubsystemBase {
 
     private CANdle candle;
+    private Sensor sensor;
     public static final int stripLength = 67;
     // Constructor
     public LED() {
         this.candle = new CANdle(IdConstants.CANDLE_ID, "CANivore");
+        this.sensor = new Sensor();
 
         candle.configStatusLedState(false);
         candle.configLOSBehavior(false);
@@ -55,19 +57,11 @@ public class LED extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Measurement m = RobotContainer.sensor.getMeasurement();
-        if (m == null) {
-            setLEDs(255, 0, 0); 
-            return;
+        if(sensor.detected() == true){
+            setLEDs(0, 255, 0);
+        }else{
+            setLEDs(255, 0, 0);
         }
-        double d = m.distance_mm;
-        SmartDashboard.putString("LaserCan", m.toString());
-        if (Double.isNaN(d) || d <= 0) {
-            setLEDs(255, 0, 0); 
-            return;
-        }
-        if (d <= 100) setLEDs(0, 255, 0);
-        else setLEDs(255, 0, 0);
     }
 
     /**

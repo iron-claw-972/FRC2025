@@ -26,7 +26,6 @@ public class Sensor extends SubsystemBase{
         }
     public double getDistance(){
         Measurement measurement = sensor.getMeasurement();
-        //System.out.println(measurement); 
         return measurement.distance_mm;
     }
     public Measurement getMeasurement(){
@@ -35,19 +34,18 @@ public class Sensor extends SubsystemBase{
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Distance", getDistance());
-        System.out.println(getDistance());
     }
     public boolean detected(){
-        Measurement m = RobotContainer.sensor.getMeasurement();
-        if (m == null) {
+        Measurement measurement = sensor.getMeasurement();
+        if (measurement == null) {
             return false;
         }
-        double d = m.distance_mm;
-        SmartDashboard.putString("LaserCan", m.toString());
-        if (Double.isNaN(d) || d <= 0) {
-            return true;
+        double distance = getDistance();
+        SmartDashboard.putString("LaserCan", measurement.toString());
+        if (Double.isNaN(distance) || distance <= 0) {
+            return false;
         }
-        if (d <= 100) return true;
+        if (distance <= 100) return true;
         else return false;
     }
 }
