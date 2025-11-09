@@ -18,6 +18,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -30,6 +31,8 @@ import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.StationIntake;
+import frc.robot.commands.led_comm.DefenseLights;
+import frc.robot.commands.led_comm.SensorLights;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.Constants;
@@ -77,7 +80,7 @@ public class RobotContainer {
   private Arm arm = null;
   private Command auto = new DoNothing();
   private LED led = null;
-  public static Sensor sensor = null;
+  private static Sensor sensor = null;
 
   // Dashboard inputs
   // private final LoggedDashboardChooser<Command> autoChooser;
@@ -101,6 +104,8 @@ public class RobotContainer {
       case TestBed2:
         led = new LED();
         sensor = new Sensor();
+        SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 20));
+        SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
         break;
 
       default:

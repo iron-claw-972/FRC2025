@@ -1,4 +1,6 @@
 package frc.robot.subsystems.LED;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IdConstants;
 import frc.robot.subsystems.LaserCAN.Sensor;
@@ -10,14 +12,11 @@ import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.Animation;
 
 public class LED extends SubsystemBase {
-
     private CANdle candle;
-    private Sensor sensor;
     public static final int stripLength = 67;
     // Constructor
     public LED() {
         this.candle = new CANdle(IdConstants.CANDLE_ID, "CANivore");
-        this.sensor = new Sensor();
 
         candle.configStatusLedState(false);
         candle.configLOSBehavior(false);
@@ -27,26 +26,13 @@ public class LED extends SubsystemBase {
         candle.configBrightnessScalar(1);
         candle.configVBatOutput(VBatOutputMode.On);
         candle.configV5Enabled(true); // Turns off LEDs
-
-        // SmartDashboard.putData("set LED red", new InstantCommand(() -> setLEDs(255, 0, 0)));
-        // SmartDashboard.putData("set LED blue", new InstantCommand(() -> setLEDs(0, 0, 255)));
-        // SmartDashboard.putData("set LED green", new InstantCommand(() -> setLEDs(0, 255, 0)));
-        // SmartDashboard.putData("turn off LED", new InstantCommand(() -> setLEDs(0, 0, 0)));
-
-        // SmartDashboard.putData("set LED blue and green", new InstantCommand(() -> alternate(0, 255, 0, 0, 0, 255, 2, 0, 100)));
-
-        // SmartDashboard.putData("rainbow animation", new InstantCommand(() -> animate(new RainbowAnimation())));
-        // SmartDashboard.putData("strobe animation", new InstantCommand(() -> animate(new StrobeAnimation(255, 255, 255))));
-        // SmartDashboard.putData("turn off animations", new InstantCommand(() -> animate(null)));
+        setLEDs(0, 0, 0);
+        setSection(0, 255, 0, 0, 4);
     }
 
     @Override
     public void periodic() {
-        if(sensor.detected() == true){
-            setLEDs(0, 255, 0);
-        }else{
-            setLEDs(255, 0, 0);
-        }
+
     }
 
     /**
