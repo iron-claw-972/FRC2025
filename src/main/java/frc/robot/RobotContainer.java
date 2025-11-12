@@ -32,6 +32,7 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.led_comm.DefenseLights;
+import frc.robot.commands.led_comm.Off;
 import frc.robot.commands.led_comm.Paint;
 import frc.robot.commands.led_comm.SensorLights;
 import frc.robot.constants.ArmConstants;
@@ -106,9 +107,10 @@ public class RobotContainer {
       case TestBed2:
         led = new LED();
         sensor = new Sensor();
-        SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 20));
+        SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 66));
         SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
         SmartDashboard.putData("Paint", new Paint(led, 4, 8));
+        SmartDashboard.putData("Turn Off", new Off(led));
         break;
 
       default:

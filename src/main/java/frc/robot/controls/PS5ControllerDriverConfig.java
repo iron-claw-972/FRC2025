@@ -35,6 +35,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -65,7 +66,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     // 0 == not selected, -1 == left, 1 == right
     private byte selectedDirection = 0;
 
-    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm) {
+    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm, LED led) {
         super(drive);
         this.elevator = elevator;
         this.intake = intake;
@@ -76,6 +77,10 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
+        driver.get(PS5Button.CIRCLE).and(driver.get(PS5Button.RIGHT_TRIGGER));
+
+
+
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
         // Elevator setpoints

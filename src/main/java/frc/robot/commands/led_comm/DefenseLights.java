@@ -25,11 +25,11 @@ public class DefenseLights extends Command{
         if(counter == 1){
             //setLEDs(255, 0, 0);
             led.alternate(255, 0, 0, 0, 0, 255, 4, startOffset, length);
-        }else if(counter == 25){
+        }else if(counter == 20){
             //setLEDs(0, 0, 255);
             led.alternate(0, 0, 255, 255, 0, 0, 4, startOffset, length);
         }
-        if(counter >= 50){
+        if(counter >= 40){
             counter = 0;
         }
     
