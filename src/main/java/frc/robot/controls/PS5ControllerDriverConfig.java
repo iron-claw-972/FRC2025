@@ -30,12 +30,17 @@ import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.gpm.StationIntake;
+import frc.robot.commands.led_comm.DefenseLights;
+import frc.robot.commands.led_comm.Off;
+import frc.robot.commands.led_comm.Paint;
+import frc.robot.commands.led_comm.SensorLights;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.LED.LED;
+import frc.robot.subsystems.LaserCAN.Sensor;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -61,12 +66,14 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Outtake outtake;
     private final Climb climb;
     private final Arm arm;
+    private final LED led;
+    private final Sensor sensor;
     private final BooleanSupplier slowModeSupplier = ()->false;
     private Pose2d alignmentPose = null;
     // 0 == not selected, -1 == left, 1 == right
     private byte selectedDirection = 0;
 
-    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm, LED led) {
+    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm, LED led, Sensor sensor) {
         super(drive);
         this.elevator = elevator;
         this.intake = intake;
@@ -74,10 +81,23 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         this.outtake = outtake;
         this.climb = climb;
         this.arm = arm;
+        this.led = led;
+        this.sensor = sensor;
     }
 
     public void configureControls() {
-        driver.get(PS5Button.CIRCLE).and(driver.get(PS5Button.RIGHT_TRIGGER));
+        driver.get(PS5Button.CIRCLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+            new DefenseLights(led, 0, 66)
+        ));
+        driver.get(PS5Button.TRIANGLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+            new SensorLights(led, sensor)
+        ));
+        driver.get(PS5Button.SQUARE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+            new Paint(led, 20, 40)
+        ));
+        driver.get(PS5Button.CROSS).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+            new Off(led)
+        ));
 
 
 
