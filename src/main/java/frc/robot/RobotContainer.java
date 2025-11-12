@@ -100,6 +100,8 @@ public class RobotContainer {
   public RobotContainer(RobotId robotId) {
     SmartDashboard.putString("Robot ID", robotId.toString());
     // dispatch on the robot
+
+
     switch (robotId) {
       case TestBed1:
 
@@ -107,6 +109,7 @@ public class RobotContainer {
       case TestBed2:
         led = new LED();
         sensor = new Sensor();
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
         SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 66));
         SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
         SmartDashboard.putData("Paint", new Paint(led, 4, 8));

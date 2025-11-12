@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -96,8 +97,11 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             new Paint(led, 20, 40)
         ));
         driver.get(PS5Button.CROSS).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-            new Off(led)
+            // new Off(led)
+            new InstantCommand(() -> {led.setLEDs(0, 0, 0); System.out.println("setting le leds");})
         ));
+
+        System.out.println("fjaewa");
 
 
 
