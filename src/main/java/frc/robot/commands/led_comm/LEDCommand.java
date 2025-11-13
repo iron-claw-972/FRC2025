@@ -22,11 +22,15 @@ public class LEDCommand extends Command {
     @Override
     public void execute(){
         if (climbAligned()){
+            //When aligned to climb
             led.setLEDs(0, 50, 0);
         }
         else if (sensor.detected()){
+            //When sensor detected
             led.setLEDs(0, 0, 50);
         }
+        //Default color
+        led.setLEDs(20, 0, 0);
     }
 
     private boolean climbAligned(){
