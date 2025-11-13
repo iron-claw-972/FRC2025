@@ -32,6 +32,7 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.led_comm.DefenseLights;
+import frc.robot.commands.led_comm.LEDCommand;
 import frc.robot.commands.led_comm.Off;
 import frc.robot.commands.led_comm.Paint;
 import frc.robot.commands.led_comm.SensorLights;
@@ -170,6 +171,11 @@ public class RobotContainer {
             e.printStackTrace();
         }
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        if (led != null && drive != null && sensor != null) {
+          led.setDefaultCommand(
+              new LEDCommand(led, sensor, drive)
+          );
+      }
         break;
       }
 
