@@ -110,7 +110,7 @@ public class RobotContainer {
         led = new LED();
         sensor = new Sensor();
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
-        SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 66));
+        SmartDashboard.putData("Defense Lights", new DefenseLights(led, 8, 66));
         SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
         SmartDashboard.putData("Paint", new Paint(led, 4, 8));
         SmartDashboard.putData("Turn Off", new Off(led));

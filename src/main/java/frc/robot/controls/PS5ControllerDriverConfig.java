@@ -87,21 +87,21 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
-        driver.get(PS5Button.CIRCLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-            new DefenseLights(led, 0, 66)
-        ));
-        driver.get(PS5Button.TRIANGLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-            new SensorLights(led, sensor)
-        ));
-        driver.get(PS5Button.SQUARE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-            new Paint(led, 20, 40)
-        ));
-        driver.get(PS5Button.CROSS).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-            // new Off(led)
-            new InstantCommand(() -> {led.setLEDs(0, 0, 0); System.out.println("setting le leds");})
-        ));
+        // driver.get(PS5Button.CIRCLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+        //     new DefenseLights(led, 0, 66)
+        // ));
+        // driver.get(PS5Button.TRIANGLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+        //     new SensorLights(led, sensor)
+        // ));
+        // driver.get(PS5Button.SQUARE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+        //     new Paint(led, 20, 40)
+        // ));
+        // driver.get(PS5Button.CROSS).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+        //     // new Off(led)
+        //     new InstantCommand(() -> {led.setLEDs(0, 0, 0); System.out.println("setting le leds");})
+        // ));
 
-        System.out.println("fjaewa");
+        // System.out.println("fjaewa");
 
 
 
