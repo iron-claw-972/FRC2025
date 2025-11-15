@@ -25,14 +25,11 @@ public class LEDDefaultCommand extends Command {
     public void execute(){
         if (climbAligned()){
             //When aligned to climb
-            led.setLEDs(200, 0, 255);
-        }
-        else if (sensor.detected()){
+            led.setTwoColorWave(255, 0, 100, 100, 0, 255);
+        }else if (sensor.detected()){
             //When sensor detected
             led.setLEDs(0, 255, 0);
-        }
-        //Default color
-        if(allianceIsRed){
+        }else if(allianceIsRed){
             led.setTwoColorWave(255, 255, 255, 255, 0, 0);
         }else{
             led.setTwoColorWave(255, 255, 255, 0, 0, 255);
