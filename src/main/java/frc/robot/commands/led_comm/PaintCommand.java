@@ -3,22 +3,23 @@ package frc.robot.commands.led_comm;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED.LED;
 
-public class Paint extends Command{
+public class PaintCommand extends Command{
     private int start;
     private int end;
     private LED led;
 
-    public Paint(LED led, int start, int end){
+    public PaintCommand(LED led, int start, int end){
         this.led = led;
         this.end = end;
         this.start = start;
+
+        addRequirements(led);
     }
     public void initialize(){
         led.setSection(0, 0, 255, start, end);
-        System.out.println("Initialized");
     }
     public void execute(){
-        System.out.println("Executing");
+        led.setTwoColorWave(30, 0, 80, 255, 255, 255);
     }
     public boolean isFinished(){
         return false;

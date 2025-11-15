@@ -3,12 +3,14 @@ package frc.robot.commands.led_comm;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED.LED;
 
-public class ChangeMode extends Command{
+public class ChangeModeCommand extends Command{
     private int mode;
     private LED led;
-    public ChangeMode(int mode, LED led){
+    public ChangeModeCommand(int mode, LED led){
         this.mode = mode;
         this.led = led;
+
+        addRequirements(led);
     }
     public void initialize(){
         mode++;

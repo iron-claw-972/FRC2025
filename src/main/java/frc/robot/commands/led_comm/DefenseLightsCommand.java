@@ -3,16 +3,18 @@ package frc.robot.commands.led_comm;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED.LED;
 
-public class DefenseLights extends Command{
+public class DefenseLightsCommand extends Command{
     private int counter;
     private int startOffset;
     private int length;
     private LED led;
 
-    public DefenseLights(LED led, int startOffset, int length){
+    public DefenseLightsCommand(LED led, int startOffset, int length){
         this.led = led;
         this.startOffset = startOffset;
         this.length = length;
+
+        addRequirements(led);
     }
 
     public void initialize(){

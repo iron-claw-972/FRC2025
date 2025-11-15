@@ -31,12 +31,12 @@ import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.StationIntake;
-import frc.robot.commands.led_comm.ChangeMode;
-import frc.robot.commands.led_comm.DefenseLights;
+import frc.robot.commands.led_comm.ChangeModeCommand;
+import frc.robot.commands.led_comm.DefenseLightsCommand;
 import frc.robot.commands.led_comm.LEDDefaultCommand;
-import frc.robot.commands.led_comm.Off;
-import frc.robot.commands.led_comm.Paint;
-import frc.robot.commands.led_comm.SensorLights;
+import frc.robot.commands.led_comm.LEDSensorCommand;
+import frc.robot.commands.led_comm.TurnOffLEDsCommand;
+import frc.robot.commands.led_comm.PaintCommand;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
 import frc.robot.constants.Constants;
@@ -111,19 +111,17 @@ public class RobotContainer {
       case TestBed2:
         led = new LED();
         sensor = new Sensor();
-        if (led != null && sensor != null) {
-          led.setDefaultCommand(
-              new SensorLights(led, sensor)
-          );
-        }
+        // led.setDefaultCommand(
+        //     new LEDDefaultCommand(led, sensor, drive)
+        // );
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
-        SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 66));
-        SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
-        SmartDashboard.putData("Paint", new Paint(led, 4, 8));
-        SmartDashboard.putData("Turn Off", new Off(led));
-        SmartDashboard.putData("Change Mode", new ChangeMode(0, led));
+        SmartDashboard.putData("Defense Lights", new DefenseLightsCommand(led, 20, 66));
+        SmartDashboard.putData("Paint", new PaintCommand(led, 4, 8));
+        SmartDashboard.putData("Turn Off", new TurnOffLEDsCommand(led));
+        SmartDashboard.putData("Change Mode", new ChangeModeCommand(0, led));
         SmartDashboard.putData("CANdle test", new InstantCommand(() -> led.setSection(255, 0, 0, 0, 8)));
         SmartDashboard.putData("LED strip test", new InstantCommand(() -> led.setSection(255, 0, 0, 8, 66)));
+        SmartDashboard.putData("LED wave test", new InstantCommand(() -> led.setTwoColorWave(255, 0, 0, 255, 255, 255)));
         break;
 
       default:

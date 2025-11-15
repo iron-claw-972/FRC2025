@@ -1,5 +1,6 @@
 package frc.robot.commands.led_comm;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.LaserCAN.Sensor;
@@ -10,6 +11,7 @@ public class LEDDefaultCommand extends Command {
     private Sensor sensor;
     private Drivetrain drivetrain;
     private double climbYCoordinate = 10.0;
+    private boolean allianceIsRed = DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
 
     public LEDDefaultCommand(LED led, Sensor sensor, Drivetrain drivetrain){
         this.led = led;
@@ -23,14 +25,18 @@ public class LEDDefaultCommand extends Command {
     public void execute(){
         if (climbAligned()){
             //When aligned to climb
-            led.setLEDs(0, 50, 0);
+            led.setLEDs(200, 0, 255);
         }
         else if (sensor.detected()){
             //When sensor detected
-            led.setLEDs(0, 0, 50);
+            led.setLEDs(0, 255, 0);
         }
         //Default color
-        led.setLEDs(20, 0, 0);
+        if(allianceIsRed){
+            led.setTwoColorWave(255, 255, 255, 255, 0, 0);
+        }else{
+            led.setTwoColorWave(255, 255, 255, 0, 0, 255);
+        }
     }
 
     private boolean climbAligned(){

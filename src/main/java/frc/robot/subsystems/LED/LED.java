@@ -1,4 +1,6 @@
 package frc.robot.subsystems.LED;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,14 +11,25 @@ import com.ctre.phoenix.led.CANdle;
 
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.Animation;
 
 public class LED extends SubsystemBase {
     private CANdle candle;
     public static final int stripLength = 67;
+
+    private final CANdleConfiguration config = new CANdleConfiguration();
+
+    // Animation state
+    private double waveOffset = 0;
+    private final double waveSpeed = 0.08;
+    private final double waveFrequency = 0.25;
+
     // Constructor
     public LED() {
         this.candle = new CANdle(IdConstants.CANDLE_ID, "CANivore");
+
+        candle.configAllSettings(config);
 
         candle.configStatusLedState(false);
         candle.configLOSBehavior(false);
@@ -92,4 +105,21 @@ public class LED extends SubsystemBase {
             }
         }
     }
+    public void setTwoColorWave(int r1, int g1, int b1, int r2, int g2, int b2) {
+        for (int i = 0; i < stripLength; i++) {
+
+            double wave = (Math.sin(i * waveFrequency + waveOffset) + 1) / 2.0;
+            double inverseBias = 5;     // higher = more color 2
+            wave = 1 - Math.pow(1 - wave, inverseBias);
+
+            int r = (int)(r1 * wave + r2 * (1 - wave));
+            int g = (int)(g1 * wave + g2 * (1 - wave));
+            int b = (int)(b1 * wave + b2 * (1 - wave));
+
+            candle.setLEDs(r, g, b, 0, i, 1);
+        }
+
+        waveOffset += waveSpeed;
+    }
 }
+
