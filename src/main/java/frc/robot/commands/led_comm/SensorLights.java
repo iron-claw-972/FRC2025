@@ -16,9 +16,9 @@ public class SensorLights extends Command{
     }
     public void execute(){
         if(sensor.detected() == true){
-            led.setSection(0, 255, 0, 8, 16);
+            led.setSection(0, 255, 0, 8, 66);
         }else{
-            led.setSection(255, 0, 0, 8, 16);
+            led.setSection(255, 0, 0, 8, 66);
         }
     }
     public boolean isFinished(){

@@ -97,11 +97,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         //     new Paint(led, 20, 40)
         // ));
         // driver.get(PS5Button.CROSS).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-        //     // new Off(led)
-        //     new InstantCommand(() -> {led.setLEDs(0, 0, 0); System.out.println("setting le leds");})
+        //     new Off(led)
         // ));
-
-        // System.out.println("fjaewa");
 
 
 

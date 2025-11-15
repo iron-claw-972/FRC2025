@@ -31,6 +31,7 @@ import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.StationIntake;
+import frc.robot.commands.led_comm.ChangeMode;
 import frc.robot.commands.led_comm.DefenseLights;
 import frc.robot.commands.led_comm.LEDCommand;
 import frc.robot.commands.led_comm.Off;
@@ -110,11 +111,14 @@ public class RobotContainer {
       case TestBed2:
         led = new LED();
         sensor = new Sensor();
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
+        // driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
         SmartDashboard.putData("Defense Lights", new DefenseLights(led, 8, 66));
         SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
         SmartDashboard.putData("Paint", new Paint(led, 4, 8));
         SmartDashboard.putData("Turn Off", new Off(led));
+        SmartDashboard.putData("Change Mode", new ChangeMode(0, led));
+        SmartDashboard.putData("CANdle test", new InstantCommand(() -> led.setSection(255, 0, 0, 0, 8)));
+        SmartDashboard.putData("LED strip test", new InstantCommand(() -> led.setSection(255, 0, 0, 8, 66)));
         break;
 
       default:
