@@ -32,7 +32,7 @@ import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.led_comm.DefenseLights;
-import frc.robot.commands.led_comm.LEDCommand;
+import frc.robot.commands.led_comm.LEDDefaultCommand;
 import frc.robot.commands.led_comm.Off;
 import frc.robot.commands.led_comm.Paint;
 import frc.robot.commands.led_comm.SensorLights;
@@ -110,6 +110,11 @@ public class RobotContainer {
       case TestBed2:
         led = new LED();
         sensor = new Sensor();
+        if (led != null && sensor != null) {
+          led.setDefaultCommand(
+              new SensorLights(led, sensor)
+          );
+        }
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
         SmartDashboard.putData("Defense Lights", new DefenseLights(led, 20, 66));
         SmartDashboard.putData("Sensor Lights", new SensorLights(led, sensor));
@@ -171,11 +176,6 @@ public class RobotContainer {
             e.printStackTrace();
         }
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
-        if (led != null && drive != null && sensor != null) {
-          led.setDefaultCommand(
-              new LEDCommand(led, sensor, drive)
-          );
-      }
         break;
       }
 

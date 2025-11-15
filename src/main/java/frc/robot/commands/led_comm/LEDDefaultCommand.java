@@ -5,13 +5,13 @@ import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.LaserCAN.Sensor;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
-public class LEDCommand extends Command {
+public class LEDDefaultCommand extends Command {
     private LED led;
     private Sensor sensor;
     private Drivetrain drivetrain;
     private double climbYCoordinate = 10.0;
 
-    public LEDCommand(LED led, Sensor sensor, Drivetrain drivetrain){
+    public LEDDefaultCommand(LED led, Sensor sensor, Drivetrain drivetrain){
         this.led = led;
         this.sensor = sensor;
         this.drivetrain = drivetrain;
