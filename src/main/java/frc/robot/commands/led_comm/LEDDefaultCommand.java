@@ -13,7 +13,7 @@ public class LEDDefaultCommand extends Command {
     private Outtake outtake;
     private Drivetrain drivetrain;
     //TODO: change this to actual climb coordinate
-    private double climbYCoordinate = 10.0;
+    private double climbYCoordinate = 1.08;
     private boolean allianceIsRed = DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
 
     public LEDDefaultCommand(LED led, Outtake outtake, Drivetrain drivetrain, Vision vision){
@@ -47,6 +47,6 @@ public class LEDDefaultCommand extends Command {
 
     private boolean climbAligned(){
         double yCoordinate = drivetrain.getPose().getY();
-        return Math.abs(yCoordinate - climbYCoordinate) < 3.0;
+        return Math.abs(yCoordinate - climbYCoordinate) < 0.03;
     }
 }
