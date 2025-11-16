@@ -426,6 +426,10 @@ public class Vision {
     private double lastTimestamp = 0;
     private boolean enabled = true;
     private final VisionIOInputs inputs = new VisionIOInputs();
+
+    public boolean getCamerasConnected(){
+      return inputs.connected;
+    }
   
     /**
      * Stores information about a camera
