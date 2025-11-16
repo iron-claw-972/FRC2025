@@ -3,7 +3,6 @@ package frc.robot.commands.led_comm;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED.LED;
-import frc.robot.subsystems.LaserCAN.Sensor;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.util.Vision.Vision;
@@ -38,9 +37,11 @@ public class LEDDefaultCommand extends Command {
             //When coral detected
             led.setLEDs(0, 255, 0);
         }else if(allianceIsRed){
-            led.setTwoColorWave(255, 255, 255, 255, 0, 0);
+            //Red alliance
+            led.setTwoColorWave(255, 0, 0, 255, 255, 255);
         }else{
-            led.setTwoColorWave(255, 255, 255, 0, 0, 255);
+            //Blue alliance
+            led.setTwoColorWave(0, 0, 255, 255, 255, 255);
         }
     }
 

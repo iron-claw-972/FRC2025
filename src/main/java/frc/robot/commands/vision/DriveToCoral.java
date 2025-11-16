@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.commands.drive_comm.DriveToPose;
+import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.Vision.DetectedObject;
 
@@ -24,11 +25,11 @@ public class DriveToCoral extends DriveToPose {
    * @param detectedObject The supplier for the detected object to use
    * @param drive The drivetrain
    */
-  public DriveToCoral(Supplier<DetectedObject> detectedObject, Drivetrain drive) {
+  public DriveToCoral(Supplier<DetectedObject> detectedObject, Drivetrain drive, LED led) {
     super(drive,
       constantUpdate
         ? () -> getPose(detectedObject)
-        : () -> tempPose);
+        : () -> tempPose, led);
     objectSupplier = detectedObject;
     updateTarget = constantUpdate;
   }
