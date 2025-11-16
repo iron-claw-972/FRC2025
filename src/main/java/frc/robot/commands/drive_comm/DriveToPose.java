@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.constants.swerve.DriveConstants;
+import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.GeomUtil;
 
@@ -42,6 +43,7 @@ public class DriveToPose extends Command {
   private static final double ffMaxRadius = 0.1;
 
   private final Drivetrain drive;
+  private final LED led;
   private final Supplier<Pose2d> target;
   private Pose2d targetPose;
 
@@ -63,9 +65,10 @@ public class DriveToPose extends Command {
 
   private Debouncer debouncer = new Debouncer(0.2);
 
-  public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
+  public DriveToPose(Drivetrain drive, Supplier<Pose2d> target, LED led) {
     this.drive = drive;
     this.target = target;
+    this.led = led;
     robot = drive::getPose;
 
     // Set tolerance
@@ -75,17 +78,21 @@ public class DriveToPose extends Command {
     // Enable continuous input for theta controller
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    addRequirements(drive);
+    addRequirements(drive, led);
   }
 
   public DriveToPose(
       Drivetrain drive,
       Supplier<Pose2d> target,
       Supplier<Translation2d> linearFF,
-      DoubleSupplier omegaFF) {
-    this(drive, target);
+      DoubleSupplier omegaFF, LED led) {
+    this(drive, target, led);
     this.linearFF = linearFF;
     this.omegaFF = omegaFF;
+  }
+
+  public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
+    this(drive, target, null);
   }
 
   @Override
@@ -113,7 +120,9 @@ public class DriveToPose extends Command {
                         .getAngle()
                         .unaryMinus())
                 .getX());
-        }
+    }
+    // Sets LED to purple
+    led.setLEDs(128, 0, 128);
   }
 
   @Override
@@ -185,6 +194,8 @@ public class DriveToPose extends Command {
     drive.stop();
     drive.setVisionEnabled(true);
     running = false;
+    //Set LED to yellow
+    led.setLEDs(255, 255, 0);
   }
 
   /** Checks if the robot is stopped at the final pose. */

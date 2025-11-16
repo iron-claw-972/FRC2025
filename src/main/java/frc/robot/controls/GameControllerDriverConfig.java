@@ -32,6 +32,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.VisionConstants;
+import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -58,11 +59,12 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   private final Outtake outtake;
   private final Climb climb;
   private final Arm arm;
+  private final LED led;
   private int alignmentDirection = 0;
   private Pose2d alignmentPose = null;
 
   public GameControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer,
-      Outtake outtake, Climb climb, Arm arm) {
+      Outtake outtake, Climb climb, Arm arm, LED led) {
     super(drive);
     this.elevator = elevator;
     this.intake = intake;
@@ -70,6 +72,7 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
     this.outtake = outtake;
     this.climb = climb;
     this.arm = arm;
+    this.led = led;
   }
 
   @Override
@@ -193,16 +196,16 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(() -> {
         setAlignmentDirection();
         setAlignmentPose(false, true);
-      }).andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
+      }).andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose, led)));
       driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(() -> {
         setAlignmentDirection();
         setAlignmentPose(false, false);
-      }).andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
+      }).andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose, led)));
     } else {
       driver.get(DPad.LEFT).onTrue(new InstantCommand(() -> setAlignmentPose(false, true))
-          .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
+          .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose, led)));
       driver.get(DPad.RIGHT).onTrue(new InstantCommand(() -> setAlignmentPose(false, false))
-          .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
+          .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose, led)));
     }
 
     // Reset yaw to be away from driver

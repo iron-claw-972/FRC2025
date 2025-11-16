@@ -5,19 +5,21 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.LaserCAN.Sensor;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.util.Vision.Vision;
 
 public class LEDDefaultCommand extends Command {
     private Vision vision;
     private LED led;
-    private Sensor sensor;
+    private Outtake outtake;
     private Drivetrain drivetrain;
+    //TODO: change this to actual climb coordinate
     private double climbYCoordinate = 10.0;
     private boolean allianceIsRed = DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
 
-    public LEDDefaultCommand(LED led, Sensor sensor, Drivetrain drivetrain, Vision vision){
+    public LEDDefaultCommand(LED led, Outtake outtake, Drivetrain drivetrain, Vision vision){
         this.led = led;
-        this.sensor = sensor;
+        this.outtake = outtake;
         this.drivetrain = drivetrain;
         this.vision = vision;
 
@@ -29,11 +31,12 @@ public class LEDDefaultCommand extends Command {
         if (climbAligned()){
             //When aligned to climb
             led.setTwoColorWave(255, 0, 100, 100, 0, 255);
-        }else if (sensor.detected()){
-            //When sensor detected
+        }else if(vision.oneCameraDisconnected()){
+            //flash if camera disconnected
+            led.setStrobeLights(255, 0, 0);
+        }else if (outtake.coralLoaded()){
+            //When coral detected
             led.setLEDs(0, 255, 0);
-        }else if(vision.getCamerasConnected()){
-
         }else if(allianceIsRed){
             led.setTwoColorWave(255, 255, 255, 255, 0, 0);
         }else{

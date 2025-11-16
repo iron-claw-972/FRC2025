@@ -16,7 +16,7 @@ import com.ctre.phoenix.led.Animation;
 
 public class LED extends SubsystemBase {
     private CANdle candle;
-    public static final int stripLength = 67;
+    public static final int stripLength = 66;
 
     private final CANdleConfiguration config = new CANdleConfiguration();
 
@@ -120,6 +120,10 @@ public class LED extends SubsystemBase {
         }
 
         waveOffset += waveSpeed;
+    }
+
+    public void setStrobeLights(int r1, int g1, int b1){
+
     }
 }
 

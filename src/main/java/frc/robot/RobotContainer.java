@@ -84,7 +84,6 @@ public class RobotContainer {
   private Arm arm = null;
   private Command auto = new DoNothing();
   private LED led = null;
-  private static Sensor sensor = null;
 
   // Dashboard inputs
   // private final LoggedDashboardChooser<Command> autoChooser;
@@ -109,23 +108,24 @@ public class RobotContainer {
 
 
       case TestBed2:
-        led = new LED();
-        sensor = new Sensor();
         // led.setDefaultCommand(
         //     new LEDDefaultCommand(led, sensor, drive)
         // );
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
-        SmartDashboard.putData("Defense Lights", new DefenseLightsCommand(led, 20, 66));
-        SmartDashboard.putData("Paint", new PaintCommand(led, 4, 8));
-        SmartDashboard.putData("Turn Off", new TurnOffLEDsCommand(led));
-        SmartDashboard.putData("Change Mode", new ChangeModeCommand(0, led));
-        SmartDashboard.putData("CANdle test", new InstantCommand(() -> led.setSection(255, 0, 0, 0, 8)));
-        SmartDashboard.putData("LED strip test", new InstantCommand(() -> led.setSection(255, 0, 0, 8, 66)));
-        SmartDashboard.putData("LED wave test", new InstantCommand(() -> led.setTwoColorWave(255, 0, 0, 255, 255, 255)));
+        // SmartDashboard.putData("Defense Lights", new DefenseLightsCommand(led, 20, 66));
+        // SmartDashboard.putData("Paint", new PaintCommand(led, 4, 8));
+        // SmartDashboard.putData("Turn Off", new TurnOffLEDsCommand(led));
+        // SmartDashboard.putData("Change Mode", new ChangeModeCommand(0, led));
+        // SmartDashboard.putData("CANdle test", new InstantCommand(() -> led.setSection(255, 0, 0, 0, 8)));
+        // SmartDashboard.putData("LED strip test", new InstantCommand(() -> led.setSection(255, 0, 0, 8, 66)));
+        // SmartDashboard.putData("LED wave test", new InstantCommand(() -> led.setTwoColorWave(255, 0, 0, 255, 255, 255)));
         break;
 
       default:
       case SwerveCompetition:
+        led = new LED();
+        led.setDefaultCommand(
+            new LEDDefaultCommand(led, outtake, drive, vision)
+        );
         outtake = new OuttakeComp();
         elevator = new Elevator();
         climb = new Climb();
@@ -155,7 +155,7 @@ public class RobotContainer {
         }
       case Vertigo:
         drive = new Drivetrain(vision, new GyroIOPigeon2());
-        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led, sensor);
+        driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led);
         //operator = new Operator(drive, elevator, intake, indexer, outtake, climb);
 
         // Detected objects need access to the drivetrain

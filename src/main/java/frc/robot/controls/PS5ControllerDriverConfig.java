@@ -67,13 +67,12 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Climb climb;
     private final Arm arm;
     private final LED led;
-    private final Sensor sensor;
     private final BooleanSupplier slowModeSupplier = ()->false;
     private Pose2d alignmentPose = null;
     // 0 == not selected, -1 == left, 1 == right
     private byte selectedDirection = 0;
 
-    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm, LED led, Sensor sensor) {
+    public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm, LED led) {
         super(drive);
         this.elevator = elevator;
         this.intake = intake;
@@ -82,24 +81,16 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         this.climb = climb;
         this.arm = arm;
         this.led = led;
-        this.sensor = sensor;
     }
 
     public void configureControls() {
-        // driver.get(PS5Button.CIRCLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-        //     new DefenseLights(led, 0, 66)
-        // ));
-        // driver.get(PS5Button.TRIANGLE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-        //     new SensorLights(led, sensor)
-        // ));
-        // driver.get(PS5Button.SQUARE).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-        //     new Paint(led, 20, 40)
-        // ));
-        // driver.get(PS5Button.CROSS).and(driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
-        //     new Off(led)
-        // ));
-
-
+        if (led != null){
+            //TODO: get unused triggers for this
+            driver.get(PS5Button.CIRCLE).and(driver.get(PS5Button.LB).onTrue(
+                new DefenseLightsCommand(led, 0, 66)
+            ).onFalse(new InstantCommand(()->{}, led))
+            );
+        }
 
         Trigger menu = driver.get(PS5Button.LEFT_JOY);
 
@@ -112,7 +103,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                         new ParallelCommandGroup(
                             new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
                             new MoveArm(arm, ArmConstants.L1_SETPOINT),
-                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose, led)
                         ),
                         // This is instant so it doesn't requre the drivetrain for more than 1 frame
                         new InstantCommand(()->{
@@ -130,7 +121,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                                 arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
                                 alignmentPose = null;
                                 selectedDirection = 0;
-                            }, elevator, arm)
+                            }, elevator, arm, led)
                         ),
                         new DoNothing(),
                         () -> selectedDirection != 0 && autoOuttake
@@ -149,7 +140,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                                 new MoveArm(arm, ArmConstants.L4_SETPOINT_LEFT),
                                 () -> selectedDirection >= 0
                             ),
-                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose, led)
                         ),
                         // This is instant so it doesn't requre the drivetrain for more than 1 frame
                         new InstantCommand(()->{
@@ -170,7 +161,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                             arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
                             alignmentPose = null;
                             selectedDirection = 0;
-                        }, elevator, arm)),
+                        }, elevator, arm, led)),
                         new DoNothing(),
                         () -> selectedDirection != 0 && autoOuttake
                     )
@@ -184,7 +175,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                         new ParallelCommandGroup(
                             new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
                             new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
-                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose, led)
                         ),
                         // This is instant so it doesn't requre the drivetrain for more than 1 frame
                         new InstantCommand(()->{
@@ -200,7 +191,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                             arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
                             alignmentPose = null;
                             selectedDirection = 0;
-                        }, elevator, arm)),
+                        }, elevator, arm, led)),
                         new DoNothing(),
                         () -> selectedDirection != 0 && autoOuttake
                     )
@@ -213,7 +204,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                         new ParallelCommandGroup(
                             new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
                             new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
-                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose, led)
                         ),
                         // This is instant so it doesn't requre the drivetrain for more than 1 frame
                         new InstantCommand(()->{
@@ -229,7 +220,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
                             arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
                             alignmentPose = null;
                             selectedDirection = 0;
-                        }, elevator, arm)),
+                        }, elevator, arm, led)),
                         new DoNothing(),
                         () -> selectedDirection != 0 && autoOuttake
                     )
@@ -361,7 +352,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
         }));
         driver.get(PS5Button.TOUCHPAD).toggleOnTrue(new InstantCommand(()->{
             setAlignmentPose(true, false, false, false);
-        }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
+        }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose, led)).andThen(new InstantCommand(()->{}, led)));
 
         // Reset the yaw. Mainly useful for testing/driver practice
         driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(

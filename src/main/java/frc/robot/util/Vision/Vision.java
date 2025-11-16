@@ -59,6 +59,15 @@ public class Vision {
   // Array of tags to use, null or empty array to use all tags
   private int[] onlyUse = null;
 
+  public boolean oneCameraDisconnected(){
+    for(int i = 0; i < cameras.size(); i++){
+      if (cameras.get(i).getCameraConnected()){
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Creates a new instance of Vision and sets up the cameras and field layout
    */
@@ -427,7 +436,7 @@ public class Vision {
     private boolean enabled = true;
     private final VisionIOInputs inputs = new VisionIOInputs();
 
-    public boolean getCamerasConnected(){
+    public boolean getCameraConnected(){
       return inputs.connected;
     }
   
