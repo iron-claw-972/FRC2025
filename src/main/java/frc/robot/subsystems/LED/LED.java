@@ -19,6 +19,8 @@ public class LED extends SubsystemBase {
     public static final int stripLength = 132;
 
     private final CANdleConfiguration config = new CANdleConfiguration();
+    private int defenseCounter = 0;
+    private int strobeCounter = 0;
 
     // Animation state
     private double waveOffset = 0;
@@ -123,7 +125,30 @@ public class LED extends SubsystemBase {
     }
 
     public void setStrobeLights(int r1, int g1, int b1){
+        strobeCounter++;
 
+        if(strobeCounter == 1){
+            setLEDs(r1, g1, b1);
+        }else if(strobeCounter == 10){
+            setLEDs(0, 0, 0);
+        }
+        if(strobeCounter >= 20){
+            strobeCounter = 0;
+        }
+    }
+    public void defenseLights(){
+        defenseCounter++;
+
+        if(defenseCounter == 1){
+            //setLEDs(255, 0, 0);
+            alternate(255, 0, 0, 0, 0, 255, 5, 8, stripLength);
+        }else if(defenseCounter == 20){
+            //setLEDs(0, 0, 255);
+            alternate(0, 0, 255, 255, 0, 0, 5, 8, stripLength);
+        }
+        if(defenseCounter >= 40){
+            defenseCounter = 0;
+        }
     }
 }
 
