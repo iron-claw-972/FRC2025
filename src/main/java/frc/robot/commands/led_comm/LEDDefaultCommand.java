@@ -35,7 +35,7 @@ public class LEDDefaultCommand extends Command {
             led.setStrobeLights(255, 0, 0);
         }else if (playingDefense()){
             //When coral detected
-            new DefenseLightsCommand(led, 0, 120);
+            led.defenseLights();
         }
         else if (outtake.coralLoaded()){
             //When coral detected
