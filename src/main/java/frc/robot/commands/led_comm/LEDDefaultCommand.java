@@ -33,7 +33,11 @@ public class LEDDefaultCommand extends Command {
         }else if(vision.oneCameraDisconnected()){
             //flash if camera disconnected
             led.setStrobeLights(255, 0, 0);
-        }else if (outtake.coralLoaded()){
+        }else if (playingDefense()){
+            //When coral detected
+            new DefenseLightsCommand(led, 0, 120);
+        }
+        else if (outtake.coralLoaded()){
             //When coral detected
             led.setLEDs(0, 255, 0);
         }else if(allianceIsRed){
@@ -48,5 +52,17 @@ public class LEDDefaultCommand extends Command {
     private boolean climbAligned(){
         double yCoordinate = drivetrain.getPose().getY();
         return Math.abs(yCoordinate - climbYCoordinate) < 0.03;
+    }
+
+    private boolean playingDefense(){
+        double xCoordinate = drivetrain.getPose().getX();
+        double xCoordinateHalfway = 50;
+        if (allianceIsRed){
+            return xCoordinate > xCoordinateHalfway;
+        }
+        else if (!allianceIsRed) {
+            return xCoordinate < xCoordinateHalfway;
+        }
+        return false;
     }
 }

@@ -86,7 +86,7 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     public void configureControls() {
         if (led != null){
             //TODO: get unused triggers for this
-            driver.get(PS5Button.RB).and(driver.get(PS5Button.LB).onTrue(
+            driver.get(PS5Button.RIGHT_JOY).and(driver.get(PS5Button.LEFT_JOY).onTrue(
                 new DefenseLightsCommand(led, 0, 66)
             ).onFalse(new InstantCommand(()->{}, led))
             );
