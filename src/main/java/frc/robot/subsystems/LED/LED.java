@@ -19,6 +19,11 @@ public class LED extends SubsystemBase {
     public static final int stripLength = 132;
 
     private final CANdleConfiguration config = new CANdleConfiguration();
+    config.stripType = LEDStripType.GRB;
+    config.brightnessScalar = 1.0;
+    config.vBatOutputMode = VBatOutputMode.On;
+    config.numLEDs = stripLength; 
+
     private int defenseCounter = 0;
     private int strobeCounter = 0;
 
@@ -30,6 +35,8 @@ public class LED extends SubsystemBase {
     // Constructor
     public LED() {
         this.candle = new CANdle(IdConstants.CANDLE_ID, "CANivore");
+
+        System.out.println("Max strip length = " + candle.getMaxLEDs());
 
         candle.configAllSettings(config);
 
