@@ -34,7 +34,7 @@ public class LEDDefaultCommand extends Command {
             //flash if camera disconnected
             led.setStrobeLights(255, 0, 0);
         }else if (playingDefense()){
-            //When coral detected
+            //When playing defense
             led.defenseLights();
         }
         else if (outtake.coralLoaded()){
