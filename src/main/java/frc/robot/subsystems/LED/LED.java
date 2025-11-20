@@ -16,7 +16,7 @@ import com.ctre.phoenix.led.Animation;
 
 public class LED extends SubsystemBase {
     private CANdle candle;
-    public static final int stripLength = 132;
+    public static final int stripLength = 532;
 
     private final CANdleConfiguration config = new CANdleConfiguration();
     private int defenseCounter = 0;
