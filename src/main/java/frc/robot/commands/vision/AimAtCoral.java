@@ -57,7 +57,8 @@ public class AimAtCoral extends DefaultDriveCommand {
             cachedObject = object;
         }
 
-        // System.out.println("objangle " + object.getAngle());
+        System.out.println("curangle " + swerve.getPose().getRotation().getDegrees());
+        System.out.println("objangle " + object.getAngle());
         swerve.driveHeading(
                 speeds.vxMetersPerSecond,
                 speeds.vyMetersPerSecond,
