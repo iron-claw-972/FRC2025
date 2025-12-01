@@ -78,7 +78,12 @@ public class DriveToPose extends Command {
     // Enable continuous input for theta controller
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    addRequirements(drive, led);
+    if (led != null) {
+        addRequirements(drive, led);
+    }
+    else {
+        addRequirements(drive);
+    }
   }
 
   public DriveToPose(
@@ -91,9 +96,9 @@ public class DriveToPose extends Command {
     this.omegaFF = omegaFF;
   }
 
-  // public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
-  //   this(drive, target, null);
-  // }
+  public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
+    this(drive, target, null);
+  }
 
   @Override
   public void initialize() {
