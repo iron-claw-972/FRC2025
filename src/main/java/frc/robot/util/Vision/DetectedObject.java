@@ -309,7 +309,9 @@ public class DetectedObject {
     public double getAngle(){
         Pose2d drivePose = drive.getPose();
         // System.out.println("pose:(" + pose.getX() + ", " + pose.getY() + "); drive:(" + drivePose.getX() + ", " + drivePose.getY() + ")");
-        return Math.atan2(pose.getY()-drivePose.getY(), pose.getX()-drivePose.getX());
+        // return Math.atan2(pose.getY()-drivePose.getY(), pose.getX()-drivePose.getX());
+        return Math.atan2(-pose.getY()+drivePose.getY(), -pose.getX()+drivePose.getX());
+
     }
 
     /**
