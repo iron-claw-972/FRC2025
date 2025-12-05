@@ -11,6 +11,7 @@ import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.util.Vision.DetectedObject;
+import frc.robot.util.Vision.DetectedObject.ObjectType;
 
 public class AcquireGamePiece extends SequentialCommandGroup {
     /**
@@ -23,6 +24,6 @@ public class AcquireGamePiece extends SequentialCommandGroup {
      * @param arm The arm
      */
     public AcquireGamePiece(Supplier<DetectedObject> gamePiece, Drivetrain drive, Intake intake, Indexer indexer, Elevator elevator, Outtake outtake, Arm arm){
-        addCommands(new IntakeCoral(intake, indexer, elevator, outtake, arm).deadlineFor(new DriveToCoral(gamePiece, drive)));
+        addCommands(new IntakeCoral(intake, indexer, elevator, outtake, arm).deadlineFor(new DriveToGamePiece(gamePiece, drive, ObjectType.CORAL)));
     }
 }
