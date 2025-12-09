@@ -25,11 +25,10 @@ import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
-import frc.robot.commands.vision.AimAtAlgae;
-import frc.robot.commands.vision.AimAtCoral;
-import frc.robot.commands.vision.DriveToAlgae;
-import frc.robot.commands.vision.DriveToCoral;
+import frc.robot.commands.vision.AimAtGamePiece;
+import frc.robot.commands.vision.DriveToGamePiece;
 import frc.robot.commands.vision.LogVision;
+import frc.robot.util.Vision.DetectedObject.ObjectType;
 // import frc.robot.commands.gpm.StartStationIntake;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
@@ -69,10 +68,10 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   public GameControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer,
       Outtake outtake, Climb climb, Arm arm, Vision vision) {
     super(drive);
-    SmartDashboard.putData(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
-    SmartDashboard.putData(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
-    SmartDashboard.putData(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
-    SmartDashboard.putData(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
+    SmartDashboard.putData(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.CORAL));
+    SmartDashboard.putData(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.CORAL));
+    SmartDashboard.putData(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.ALGAE));
+    SmartDashboard.putData(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.ALGAE));
     SmartDashboard.putData(new LogVision(() -> {return vision.getBestGamePiece(Math.PI, true);}));
     this.elevator = elevator;
     this.intake = intake;
@@ -255,10 +254,10 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       CommandScheduler.getInstance().cancelAll();
     })); */
 
-    kDriver.get(Button.A).toggleOnTrue(new DriveToCoral(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
-    kDriver.get(Button.X).toggleOnTrue(new AimAtCoral(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
-    kDriver.get(Button.B).toggleOnTrue(new AimAtAlgae(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true)));
-    kDriver.get(Button.Y).toggleOnTrue(new DriveToAlgae(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain()));
+    kDriver.get(Button.A).toggleOnTrue(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.CORAL));
+    kDriver.get(Button.X).toggleOnTrue(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.CORAL));
+    kDriver.get(Button.B).toggleOnTrue(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.ALGAE));
+    kDriver.get(Button.Y).toggleOnTrue(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.ALGAE));
 
   }
 

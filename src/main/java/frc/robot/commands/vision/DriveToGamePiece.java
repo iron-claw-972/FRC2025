@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Moves toward the detected object
  * <p>Only works with the front camera
  */
-public class DriveToCoral extends DriveToPose {
+public class DriveToGamePiece extends DriveToPose {
   private static boolean constantUpdate = true;
   private static int ticksSinceLastObject;
   private static DetectedObject cachedObject;
@@ -27,10 +27,11 @@ public class DriveToCoral extends DriveToPose {
    * Moves toward the detected object
    * @param detectedObject The supplier for the detected object to use
    * @param drive The drivetrain
+   * @param targetType The type of object to drive to (CORAL or ALGAE)
    */
-  public DriveToCoral(Supplier<DetectedObject> detectedObject, Drivetrain drive) {
+  public DriveToGamePiece(Supplier<DetectedObject> detectedObject, Drivetrain drive, ObjectType targetType) {
     super(drive,
-      () -> getPose(detectedObject, drive)
+      () -> getPose(detectedObject, drive, targetType)
     );
     updateTarget = constantUpdate;
     SmartDashboard.putBoolean("constantUpdate", constantUpdate);
@@ -42,9 +43,9 @@ public class DriveToCoral extends DriveToPose {
     super.initialize();
   }
 
-  public static Pose2d getPose(Supplier<DetectedObject> supplier, Drivetrain drive){
+  public static Pose2d getPose(Supplier<DetectedObject> supplier, Drivetrain drive, ObjectType targetType){
     DetectedObject object = supplier.get();
-    if(object == null || object.type != ObjectType.CORAL) {
+    if(object == null || object.type != targetType) {
       if (ticksSinceLastObject <= VisionConstants.MAX_EMPTY_TICKS && cachedObject != null) {
         object = cachedObject;
       } else {
@@ -62,3 +63,4 @@ public class DriveToCoral extends DriveToPose {
     return new Pose2d(translation, rotation);
   }
 }
+
