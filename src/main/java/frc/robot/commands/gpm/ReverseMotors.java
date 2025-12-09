@@ -22,7 +22,7 @@ public class ReverseMotors extends Command {
 
     @Override
     public void initialize() {
-        intake.setSpeed(-.5);
+        intake.setSpeed(.6);
         indexer.reverse();
         if(outtake != null){
             outtake.reverse();

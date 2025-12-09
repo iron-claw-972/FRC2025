@@ -9,19 +9,19 @@
       "prevControl": null,
       "nextControl": {
         "x": 6.407825499545448,
-        "y": 6.604711060638581
+        "y": 6.60471106063858
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.9713092,
-        "y": 5.1909832
+        "x": 5.094774590163934,
+        "y": 5.33765368852459
       },
       "prevControl": {
-        "x": 5.219865265045828,
-        "y": 5.45233035754469
+        "x": 5.760558198478665,
+        "y": 6.031726466482178
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "backdrive",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -75,7 +75,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 150.0
   },
   "reversed": false,

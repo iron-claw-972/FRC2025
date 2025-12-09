@@ -91,7 +91,7 @@ public class Indexer extends SubsystemBase {
 	 * 
 	 * @return the distance, in millimeters
 	 */
-	private int getSensorValue() {
+	public int getSensorValue() {
 		return inputs.sensorDistance;
 	}
 
@@ -103,7 +103,7 @@ public class Indexer extends SubsystemBase {
 	*/
 	@AutoLogOutput(key = "Intake/isIndexerClear")
 	public boolean isIndexerClear() {
-		return getSensorValue() > IndexerConstants.MEASUREMENT_THRESHOLD;
+		return true;
 	}
 
 	@Override

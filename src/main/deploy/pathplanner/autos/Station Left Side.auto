@@ -42,15 +42,16 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Drive To Left Station Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Station Intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Station Intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -91,15 +92,16 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Drive To Left Station Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Station Intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Station Intake"
+                }
+              }
+            ]
           }
         },
         {

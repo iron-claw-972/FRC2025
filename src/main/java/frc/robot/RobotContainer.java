@@ -1,7 +1,6 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import org.json.simple.parser.ParseException;
@@ -11,10 +10,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -23,15 +24,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.auto_comm.FollowPathCommand;
 import frc.robot.commands.drive_comm.DefaultDriveCommand;
 import frc.robot.commands.drive_comm.DriveToPose;
 import frc.robot.commands.gpm.IntakeCoral;
+import frc.robot.commands.gpm.LEDDefaultCommand;
 import frc.robot.commands.gpm.MoveArm;
 import frc.robot.commands.gpm.MoveElevator;
 import frc.robot.commands.gpm.OuttakeCoral;
-import frc.robot.commands.gpm.OuttakeCoralBasic;
 import frc.robot.commands.gpm.StationIntake;
 import frc.robot.commands.vision.AimAtGamePiece;
 import frc.robot.commands.vision.DriveToGamePiece;
@@ -39,6 +38,7 @@ import frc.robot.commands.vision.LogVision;
 import frc.robot.util.Vision.DetectedObject.ObjectType;
 import frc.robot.constants.ArmConstants;
 import frc.robot.constants.AutoConstants;
+import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.IntakeConstants;
@@ -47,6 +47,7 @@ import frc.robot.controls.BaseDriverConfig;
 import frc.robot.controls.GameControllerDriverConfig;
 import frc.robot.controls.Operator;
 import frc.robot.controls.PS5ControllerDriverConfig;
+import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -60,6 +61,7 @@ import frc.robot.subsystems.outtake.OuttakeComp;
 import frc.robot.util.PathGroupLoader;
 import frc.robot.util.Vision.DetectedObject;
 import frc.robot.util.Vision.Vision;
+import frc.robot.commands.vision.ShutdownAllPis;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -80,11 +82,13 @@ public class RobotContainer {
   private Elevator elevator = null;
   private Climb climb = null;
   private Arm arm = null;
+  private LED led = null;
+  private Command auto;
 
   public double armWaitTime = 0.5;
 
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+    // Dashboard inputs
+  //private final LoggedDashboardChooser<Command> autoChooser;
 
   // Controllers are defined here
   private BaseDriverConfig driver = null;
@@ -141,6 +145,7 @@ public class RobotContainer {
           // SmartDashboard.putData("l4 outake", new ScoreL4(elevator, outtake));
         }
       case Vertigo:
+        led = new LED();
         drive = new Drivetrain(vision, new GyroIOPigeon2());
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
         driver = new GameControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, vision);
@@ -148,8 +153,8 @@ public class RobotContainer {
 
         // Detected objects need access to the drivetrain
         DetectedObject.setDrive(drive);
-
-        // SignalLogger.start();
+        
+        //SignalLogger.start();
 
         driver.configureControls();
         // operator.configureControls();
@@ -157,6 +162,9 @@ public class RobotContainer {
         initializeAutoBuilder();
         registerCommands();
         drive.setDefaultCommand(new DefaultDriveCommand(drive, driver));
+        led.setDefaultCommand(
+            new LEDDefaultCommand(led, outtake, drive, vision)
+        );
         PathGroupLoader.loadPathGroups();
 
         break;
@@ -164,12 +172,24 @@ public class RobotContainer {
 
     // This is really annoying so it's disabled
     DriverStation.silenceJoystickConnectionWarning(true);
-    autoChooser = new LoggedDashboardChooser<>("auto selector");
-    addPaths();
-    // TODO: verify this claim.
+    try {
+      String leftSideAuto = "Left Side";
+      String rightSideAuto = "Right Side"; 
+
+      String centerAuto = "Center"; 
+
+      PathPlannerAuto.getPathGroupFromAutoFile(rightSideAuto);
+      auto = new PathPlannerAuto(rightSideAuto);
+    } 
+    catch (IOException | ParseException e) {
+        e.printStackTrace();
+    }
+    //addPaths(); 
     // LiveWindow is causing periodic loop overruns
     LiveWindow.disableAllTelemetry();
     LiveWindow.setEnabled(false);
+    
+    SmartDashboard.putData("Shutdown Orange Pis", new ShutdownAllPis());
 
   }
 
@@ -201,6 +221,10 @@ public class RobotContainer {
   public void registerCommands() {
     if (vision != null) {
       NamedCommands.registerCommand("DriveToCoral", new DriveToGamePiece(() -> vision.getBestGamePiece(1, true), drive, ObjectType.CORAL));
+	}
+    if(intake != null && indexer != null && elevator != null && arm != null){
+      NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake, arm));
+      NamedCommands.registerCommand("lower intake", new InstantCommand(() -> intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT)));
     }
     if (intake != null && indexer != null && elevator != null) {
       NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(intake, indexer, elevator, outtake, arm));
@@ -209,22 +233,26 @@ public class RobotContainer {
     }
     if (elevator != null && outtake != null && arm != null) {
       NamedCommands.registerCommand("OuttakeCoral", new OuttakeCoral(outtake, elevator, arm).withTimeout(1.5));
-      NamedCommands.registerCommand("L4",
-          new ParallelCommandGroup(
-              new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-              new MoveArm(arm, ArmConstants.L4_SETPOINT)));
+      NamedCommands.registerCommand("L4", 
+        new ParallelCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT)
+        )
+      );
       NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
 
       NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(
-          new WaitCommand(0.1),
-          new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-          new InstantCommand(() -> elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))));
-
+        new InstantCommand(()->arm.setSetpoint(ArmConstants.INTAKE_SETPOINT)),
+        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+      ));
+      
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
-          new ParallelCommandGroup(
-              new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-              new MoveArm(arm, ArmConstants.L4_SETPOINT)),
-          new OuttakeCoral(outtake, elevator, arm)));
+        new ParallelCommandGroup(
+          new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+          new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT)
+        ),
+        new OuttakeCoral(outtake, elevator, arm)
+      ));
 
       NamedCommands.registerCommand("Score L3", new SequentialCommandGroup(
           new ParallelCommandGroup(
@@ -258,148 +286,31 @@ public class RobotContainer {
       NamedCommands.registerCommand("Station Intake", new StationIntake(outtake));
 
       Pose2d blueStationRight = new Pose2d(1.722, 0.923, Rotation2d.fromDegrees(-36));
-      Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH - blueStationRight.getY(),
-          Rotation2d.fromDegrees(-144));
+      Pose2d blueStationLeft = new Pose2d(blueStationRight.getX(), FieldConstants.FIELD_WIDTH-blueStationRight.getY(), Rotation2d.fromDegrees(-144));
 
-      Pose2d blueStationIntakeLeft = new Pose2d(1.65, 7.4, Rotation2d.fromDegrees(-144 - 180));
-      Pose2d blueStationIntakeRight = new Pose2d(1.526, 0.729, Rotation2d.fromDegrees(-144 - 180));
+      Pose2d blueStationIntakeLeft = new Pose2d(1.65, 7.4, Rotation2d.fromDegrees(-144-180));
+      Pose2d blueStationIntakeRight = new Pose2d(1.526, 0.729, Rotation2d.fromDegrees(-144-180));
+      
+      Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationRight.getX(), blueStationLeft.getY(), blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
+      Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH-blueStationLeft.getX(), blueStationRight.getY(), blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
+      NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));
+      NamedCommands.registerCommand("Drive To Right Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationIntakeRight));
+      NamedCommands.registerCommand("Drive To Left Station Intake", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationIntakeLeft));
+      
+      NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationRight));
+      NamedCommands.registerCommand("Drive To 6/19 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.l4Pose).withTimeout(1));
+      NamedCommands.registerCommand("Drive To 6/19 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.l4Pose).withTimeout(1));
+      NamedCommands.registerCommand("Drive To 7/18 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.l4Pose));
+      NamedCommands.registerCommand("Drive To 7/18 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 10/21 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_10_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 11/20 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_20_LEFT.l4Pose));
+      NamedCommands.registerCommand("Drive To 11/20 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_11_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_20_RIGHT.l4Pose));
+      NamedCommands.registerCommand("Drive To 9/22 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() 
+      == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_9_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.l4Pose)); 
+      
 
-      Pose2d redStationRight = new Pose2d(FieldConstants.FIELD_LENGTH - blueStationRight.getX(), blueStationLeft.getY(),
-          blueStationRight.getRotation().plus(new Rotation2d(Math.PI)));
-      Pose2d redStationLeft = new Pose2d(FieldConstants.FIELD_LENGTH - blueStationLeft.getX(), blueStationRight.getY(),
-          blueStationLeft.getRotation().plus(new Rotation2d(Math.PI)));
-      NamedCommands.registerCommand("Drive To Left Station", new DriveToPose(drive,
-          () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft : blueStationLeft));
-      // todo update the positions for opposite side field as well, so far it's just
-      // updated for our practice field station
-      NamedCommands.registerCommand("Drive To Right Station Intake",
-          new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight
-              : blueStationIntakeRight));
-      NamedCommands.registerCommand("Drive To Left Station Intake",
-          new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationLeft
-              : blueStationIntakeLeft));
-
-      NamedCommands.registerCommand("Drive To Right Station", new DriveToPose(drive,
-          () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? redStationRight : blueStationRight));
-      NamedCommands.registerCommand("Drive To 6/19 Left",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_6_LEFT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_19_LEFT.pose));
-      NamedCommands.registerCommand("Drive To 6/19 Right",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_6_RIGHT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_19_RIGHT.pose));
-      NamedCommands.registerCommand("Drive To 7/18 Left",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_7_LEFT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_18_LEFT.pose));
-      NamedCommands.registerCommand("Drive To 7/18 Right",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_7_RIGHT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_18_RIGHT.pose));
-      NamedCommands.registerCommand("Drive To 10/21 Right",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_9_RIGHT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_22_RIGHT.pose));
-      NamedCommands.registerCommand("Drive To 11/20 Left",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_11_LEFT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_20_LEFT.pose));
-      NamedCommands.registerCommand("Drive To 9/22 Left",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_9_LEFT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_22_LEFT.pose));
-
-      NamedCommands.registerCommand("Drive To 8/17 Left",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_8_LEFT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.pose));
-      NamedCommands.registerCommand("Drive To 8/17 Right",
-          new DriveToPose(drive,
-              () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
-                  ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.pose
-                  : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.pose));
-
-    }
-  }
-
-  public void addPaths() {
-    try {
-      List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Left Side");
-    } catch (IOException | ParseException e) {
-      e.printStackTrace();
-    }
-    // autoChooser.addOption("Wait", new PathPlannerAuto("Wait Test"));
-    autoChooser.addDefaultOption("Left Side", new PathPlannerAuto("Left Side"));
-    // autoChooser.addOption("Left Side", new PathPlannerAuto("Left Side"));
-    autoChooser.addOption("Station Left Side", new PathPlannerAuto("Station Left Side"));
-    autoChooser.addOption("Left Side Lollipop", new PathPlannerAuto("Left Side Lollipop"));
-    autoChooser.addOption("Left Side Ground", new PathPlannerAuto("Left Side Ground"));
-
-    if (arm != null && intake != null && elevator != null) {
-      autoChooser.addOption("One peice blue",
-          new SequentialCommandGroup(
-              new InstantCommand(() -> {
-                drive.resetOdometry(new Pose2d(7.229, 4.191, Rotation2d.fromDegrees(90.0)));
-                intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
-              }),
-              new DriveToPose(drive, () -> VisionConstants.REEF.BLUE_BRANCH_21_RIGHT.pose).withTimeout(8),
-              new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-              new MoveArm(arm, ArmConstants.L4_SETPOINT),
-              new OuttakeCoral(outtake, elevator, arm),
-              new SequentialCommandGroup(new WaitCommand(0.1),
-                  new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-                  new InstantCommand(() -> elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
-              new InstantCommand(() -> intake.stow())));
-      autoChooser.addOption("One peice red",
-          new SequentialCommandGroup(
-              new InstantCommand(() -> {
-                drive.resetOdometry(new Pose2d(FieldConstants.FIELD_LENGTH - 7.229, FieldConstants.FIELD_WIDTH - 4.191,
-                    Rotation2d.fromDegrees(-90.0)));
-                intake.setAngle(IntakeConstants.INTAKE_SAFE_POINT);
-              }),
-              new DriveToPose(drive, () -> VisionConstants.REEF.RED_BRANCH_10_RIGHT.pose).withTimeout(8),
-              new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-              new MoveArm(arm, ArmConstants.L4_SETPOINT),
-              new OuttakeCoral(outtake, elevator, arm),
-              new SequentialCommandGroup(new WaitCommand(0.1),
-                  new MoveArm(arm, ArmConstants.INTAKE_SETPOINT),
-                  new InstantCommand(() -> elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))),
-              new InstantCommand(() -> intake.stow())));
-    }
-    // autoChooser.addOption("#1", new FollowPathCommand("#1", true, drive)
-    // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-    // .andThen(new OuttakeCoral(outtake, elevator, arm))
-    // .andThen(new FollowPathCommand("#2", true, drive))
-    // .andThen(new FollowPathCommand("#3", true, drive))
-    // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-    // .andThen(new OuttakeCoral(outtake, elevator, arm))
-    // .andThen(new FollowPathCommand("#4", true, drive))
-    // .andThen(new FollowPathCommand("#5", true, drive))
-    // .andThen(new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT))
-    // .andThen(new OuttakeCoral(outtake, elevator, arm)));
-
-    if (elevator != null && outtake != null) {
-      autoChooser.addOption("WaitTest", new FollowPathCommand("Tester", true, drive)
-          .andThen(new OuttakeCoralBasic(outtake, () -> true, () -> false))
-          .andThen(new WaitCommand(3))
-          .andThen(new FollowPathCommand("Next Tester", true, drive)));
-
-      autoChooser.addOption("Center to G", new FollowPathCommand("Center to G", true, drive)
-          .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-          .andThen(new OuttakeCoral(outtake, elevator, arm)));
-
-      autoChooser.addOption("Center to H", new FollowPathCommand("Center to H", true, drive)
-          .andThen(new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT))
-          .andThen(new OuttakeCoral(outtake, elevator, arm)));
+      NamedCommands.registerCommand("Drive To 8/17 Left", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_LEFT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_LEFT.l4Pose).withTimeout(1));
+      NamedCommands.registerCommand("Drive To 8/17 Right", new DriveToPose(drive, () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? VisionConstants.REEF.RED_BRANCH_8_RIGHT.l4Pose : VisionConstants.REEF.BLUE_BRANCH_17_RIGHT.l4Pose).withTimeout(1));
     }
   }
 
@@ -426,7 +337,47 @@ public class RobotContainer {
     }
   }
 
-  public Command getAutoCommand() {
-    return autoChooser.get();
+  public Command getAutoCommand(){
+    return auto;
+  }
+
+  // Logged psoitins of subsystems
+  public double elevatorHeightLogged(){
+    return elevator == null ? 0 : elevator.getPosition();
+  }
+  public double armAngleLogged(){
+    return arm == null ? 0 : arm.getAngle() + 90;
+  }
+  public double intakeAngleLogged(){
+    return intake == null ? -90 : -intake.getPivotAngle();
+  }
+  public double climbAngleLogged(){
+    return climb == null ? 0 : climb.getEstimatedClimbAngle();
+  }
+
+  public void logComponents(){
+    if(!Constants.LOG_MECHANISMS) return;
+    
+    Logger.recordOutput(
+      "ComponentPoses", 
+      new Pose3d[] {
+        //intake
+        new Pose3d(0,-0.25,0.27, new Rotation3d(Units.degreesToRadians(intakeAngleLogged()), 0.0, 0.0)),
+        //climb
+        new Pose3d(0,0,0, new Rotation3d(0.0,climbAngleLogged(), 0.0)),
+        //arm
+        new Pose3d(0,0.110, 0.388 + elevatorHeightLogged(), new Rotation3d(Units.degreesToRadians(armAngleLogged()), 0.0, 0.0)),
+        //elevator 1
+        new Pose3d(0,0,0, new Rotation3d(0.0, 0.0, 0.0)),
+        //elevator 2
+        new Pose3d(0,0, elevatorHeightLogged()/3, new Rotation3d(0.0, 0.0, 0.0)),
+        //elevator 3
+        new Pose3d(0,0, elevatorHeightLogged()*2/3, new Rotation3d(0.0, 0.0, 0.0)),
+        //elevator 4
+        new Pose3d(0,0, elevatorHeightLogged(), new Rotation3d(0.0, 0.0, 0.0)),
+        //indexer
+        new Pose3d(0,0,0, new Rotation3d(0.0, 0.0, 0.0)),
+      }
+    );
   }
 }

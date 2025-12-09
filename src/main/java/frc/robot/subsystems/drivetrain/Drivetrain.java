@@ -72,7 +72,6 @@ public class Drivetrain extends SubsystemBase {
     // Vision
     private final Vision vision;
 
-
     // PID Controllers for chassis movement
     private final PIDController xController;
     private final PIDController yController;
@@ -166,7 +165,6 @@ public class Drivetrain extends SubsystemBase {
 
         modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
         
-
         PathPlannerLogging.setLogActivePathCallback(
             (activePath) -> {
             Logger.recordOutput(
@@ -178,7 +176,7 @@ public class Drivetrain extends SubsystemBase {
             });
 
         //PPLibTelemetry.enableCompetitionMode();
-        }
+    }
 
     public void close() {
         // close each of the modules
@@ -198,7 +196,7 @@ public class Drivetrain extends SubsystemBase {
         odometryLock.unlock();
             // Update odometry
         double[] sampleTimestamps =
-            modules[0].getOdometryTimestamps(); // All signals are sampled together
+            gyroInputs.odometryYawTimestamps; // All signals are sampled together
         int sampleCount = sampleTimestamps.length;
         for (int i = 0; i < sampleCount; i++) {
             // Read wheel positions and deltas from each module

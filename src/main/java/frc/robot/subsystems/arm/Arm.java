@@ -104,13 +104,12 @@ public class Arm extends SubsystemBase implements ArmIO {
     @Override
     public void periodic() {
         double setpoint2 = setpoint;
-        if(elevatorStowed == null || elevatorStowed.getAsBoolean()){
+        if(elevatorStowed == null || elevatorStowed.getAsBoolean() && Math.abs(setpoint2-ArmConstants.L1_SETPOINT) > 0.0001){
             setpoint2 = ArmConstants.START_ANGLE;
         }
         double setpointRotations = Units.degreesToRotations(setpoint2) * ArmConstants.GEAR_RATIO;
         motor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(feedforward.calculate(Units.degreesToRadians(getAngle()), 0)));
         updateInputs();
-        Logger.recordOutput("Arm/Atsetpoint",atSetpoint());
     }
 
     @Override
@@ -140,6 +139,7 @@ public class Arm extends SubsystemBase implements ArmIO {
         return inputs.measuredAngle;
     }
 
+    //didn't use this
     public void resetAbsolute(){
         if(RobotBase.isSimulation()){
             motor.setPosition(Units.degreesToRotations(ArmConstants.START_ANGLE)*ArmConstants.GEAR_RATIO);
@@ -154,7 +154,7 @@ public class Arm extends SubsystemBase implements ArmIO {
     }
 
     public boolean canMoveElevator() {
-        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < 5;
+        return Math.abs(getAngle() - ArmConstants.START_ANGLE) < 5 || Math.abs(getAngle() - ArmConstants.L1_SETPOINT) < 5;
     }
 
     @Override
@@ -164,6 +164,6 @@ public class Arm extends SubsystemBase implements ArmIO {
 
         Logger.processInputs("Arm", inputs);
         Logger.recordOutput("Arm/setpointDeg", setpoint);
-
+        Logger.recordOutput("Arm/Atsetpoint",atSetpoint());
     }
 }

@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -26,16 +27,16 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.util.GeomUtil;
 
 public class DriveToPose extends Command {
-  protected boolean updateTarget = false;
-  private static final double drivekP = 1.0;
+  protected static boolean updateTarget = false;
+  private static final double drivekP = 5.0;
   private static final double drivekD = 0.0;
   private static final double thetakP = 1.0;
   private static final double thetakD = 0.0;
 //   private static final double driveMaxVelocity = DriveConstants.MAX_SPEED;
   private static final double driveMaxVelocity = DriveConstants.MAX_SPEED;
-  private static final double driveMaxAcceleration = 4;
-  private static final double thetaMaxVelocity = 5;
-  private static final double thetaMaxAcceleration = 5;
+  private static final double driveMaxAcceleration = 2.6;
+  private static final double thetaMaxVelocity = 5.0;
+  private static final double thetaMaxAcceleration = 5.0;
   private static final double driveTolerance = 0.015;
   private static final double thetaTolerance = Units.degreesToRadians(1.0);
   private static final double ffMinRadius = 0.05;
@@ -47,10 +48,20 @@ public class DriveToPose extends Command {
 
   private final ProfiledPIDController driveController =
       new ProfiledPIDController(
-          drivekP, 0.0, drivekD, new TrapezoidProfile.Constraints(driveMaxVelocity, driveMaxAcceleration), Constants.LOOP_TIME);
+          drivekP, 
+          0.0, 
+          drivekD, 
+          new TrapezoidProfile.Constraints(driveMaxVelocity, driveMaxAcceleration), 
+          Constants.LOOP_TIME
+        );
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          thetakP, 0.0, thetakD, new TrapezoidProfile.Constraints(thetaMaxVelocity, thetaMaxAcceleration), Constants.LOOP_TIME);
+          thetakP, 
+          0.0, 
+          thetakD, 
+          new TrapezoidProfile.Constraints(thetaMaxVelocity, thetaMaxAcceleration), 
+          Constants.LOOP_TIME
+        );
 
   private Translation2d lastSetpointTranslation = new Translation2d();
   private double driveErrorAbs = 0.0;
@@ -60,6 +71,8 @@ public class DriveToPose extends Command {
 
   private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
   private DoubleSupplier omegaFF = () -> 0.0;
+
+  private Debouncer debouncer = new Debouncer(0.2);
 
   public DriveToPose(Drivetrain drive, Supplier<Pose2d> target) {
     this.drive = drive;
@@ -97,8 +110,9 @@ public class DriveToPose extends Command {
         new Translation2d(fieldVelocity.vxMetersPerSecond, fieldVelocity.vyMetersPerSecond);
     
     thetaController.reset(
-        currentPose.getRotation().getRadians(), fieldVelocity.omegaRadiansPerSecond);
-        lastSetpointTranslation = currentPose.getTranslation();
+        currentPose.getRotation().getRadians(), fieldVelocity.omegaRadiansPerSecond
+        );
+    lastSetpointTranslation = currentPose.getTranslation();
     
     if(targetPose != null){
         driveController.reset(
@@ -200,6 +214,6 @@ public class DriveToPose extends Command {
 
   @Override
   public boolean isFinished(){
-    return withinTolerance(driveTolerance, new Rotation2d(thetaTolerance));
+    return debouncer.calculate(withinTolerance(driveTolerance, new Rotation2d(thetaTolerance)));
   }
 }

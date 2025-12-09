@@ -3,40 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0073368,
-        "y": 5.1909832
+        "x": 3.98,
+        "y": 2.81
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.968207499307818,
-        "y": 5.761044720256515
+        "x": 3.661208032083275,
+        "y": 2.7146988994001573
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.239,
-        "y": 5.843
+        "x": 1.722,
+        "y": 0.921
       },
       "prevControl": {
-        "x": 1.9968631781709456,
-        "y": 5.892619841156129
+        "x": 1.2995983363740153,
+        "y": 0.5281644353113872
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3291032261499149,
+      "rotationDegrees": -32.65592295916657
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5537930782710281,
+      "minWaypointRelativePos": 0.5509790681971605,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 0.5,
-        "maxAcceleration": 2.0,
+        "maxVelocity": 1.5,
+        "maxAcceleration": 1.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -48,7 +53,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.40029835137795283,
+      "waypointRelativePos": 0.11073598919649108,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -59,8 +64,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -68,13 +73,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -89.24717948106847
+    "rotation": -35.0
   },
   "reversed": false,
-  "folder": "Lollipop Path",
+  "folder": "Ground LSide",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -150.80983238234546
+    "rotation": -29.999999999999996
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

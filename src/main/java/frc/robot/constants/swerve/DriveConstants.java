@@ -88,8 +88,8 @@ public class DriveConstants {
 
     public static double STEER_OFFSET_FRONT_LEFT = 302.646;
     public static double STEER_OFFSET_FRONT_RIGHT = 103.039+180;
-    public static double STEER_OFFSET_BACK_LEFT = 155.646;
-    public static double STEER_OFFSET_BACK_RIGHT = 255.46-180;
+    public static double STEER_OFFSET_BACK_LEFT = 165.49+90;
+    public static double STEER_OFFSET_BACK_RIGHT = 73.563;
 
     // Heading PID.
     // public static final double HEADING_P = 5.5;
@@ -187,7 +187,8 @@ public class DriveConstants {
 
     public static final boolean INVERT_GYRO = false; // Make sure gyro is CCW+ CW-
 
-    public static final double SLOW_DRIVE_FACTOR = 0.2;
+    public static final double SLOW_DRIVE_FACTOR = 0.1;
+    //Changed from 0.2 to 0.1 (only used for barge outtake)
     public static final double SLOW_ROT_FACTOR = 0.1;
 
     public static final ModuleLimits MODULE_LIMITS = new ModuleLimits(MAX_SPEED, MAX_DRIVE_ACCEL, COSF, Units.rotationsPerMinuteToRadiansPerSecond(Constants.MAX_RPM / STEER_GEAR_RATIO));
@@ -197,6 +198,7 @@ public class DriveConstants {
      */
     public static void update(RobotId robotId) {
         if(robotId == RobotId.BetaBot) {
+            //AAA: how is this calculated?
             STEER_OFFSET_FRONT_LEFT = 193.884-180;
             STEER_OFFSET_FRONT_RIGHT = 110.914;
             STEER_OFFSET_BACK_LEFT = 128.054+180;

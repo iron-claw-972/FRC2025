@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.224,
-        "y": 4.023
+        "x": 1.356,
+        "y": 7.331
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9751816342630288,
-        "y": 4.332334397903094
+        "x": 2.334068287037036,
+        "y": 6.521408420138889
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.923609664351851,
-        "y": 4.208198061342593
+        "x": 3.666,
+        "y": 5.122185271626888
       },
       "prevControl": {
-        "x": 2.412264463822535,
-        "y": 4.184931100328749
+        "x": 2.836426070601852,
+        "y": 5.99030882486763
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Elevator",
-      "waypointRelativePos": 0.402936988901869,
+      "name": "MoveElevator",
+      "waypointRelativePos": 0.6806256151574805,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -53,14 +53,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.5,
-    "rotation": -89.04406269082419
+    "velocity": 0.0,
+    "rotation": -149.28470582855732
   },
   "reversed": false,
-  "folder": "Lollipop Path",
+  "folder": "Station Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -43.54279799705628
+    "rotation": 36.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.hal.I2CJNI;
 import frc.robot.constants.IdConstants;
 
 public class OuttakeComp extends Outtake {
@@ -16,7 +17,7 @@ public class OuttakeComp extends Outtake {
     private double power;
 
     /** Coral detected before the rollers */
-    private final ColorSensorV3 colorSensor = new ColorSensorV3(IdConstants.i2cPort);
+    private ColorSensorV3 colorSensor = new ColorSensorV3(IdConstants.i2cPort);
 
     OuttakeIOIntakesAutoLogged inputs = new OuttakeIOIntakesAutoLogged();
 
@@ -40,6 +41,8 @@ public class OuttakeComp extends Outtake {
 
         inputs.motorVelocity = motor.getVelocity().getValueAsDouble();
         Logger.processInputs("Outtake", inputs);
+        //Logger.recordOutput("Outtake/Sensor", getProximity());
+        //Logger.recordOutput("Outtake/SensorConnected", colorSensor.isConnected());
     }
 
     /** Set the motor power to move the coral */
@@ -66,7 +69,15 @@ public class OuttakeComp extends Outtake {
     }
 
     public int getProximity() {
-        return inputs.proximity = colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
+        inputs.proximity = colorSensor.getProximity();
+        if (inputs.proximity > 0){
+            return inputs.proximity;
+        }
+        else{
+            I2CJNI.i2CClose(1);
+            colorSensor = new ColorSensorV3(IdConstants.i2cPort);
+            return inputs.proximity = colorSensor.getProximity();  // Returns 0 (far) to ~2047 (very close)
+        }
     }
 
     // coral detection from color sensor

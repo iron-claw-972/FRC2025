@@ -37,7 +37,7 @@ public class Elevator extends SubsystemBase {
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
   private double maxVelocity = 3.6; // m/s 3.68
-  private double maxAcceleration = 8; // m/s 8
+  private double maxAcceleration = 14; // m/s 8
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -53,9 +53,17 @@ public class Elevator extends SubsystemBase {
     // This increases both the time and memory efficiency of the code when running
     // on a real robot; do not remove this if statement
     if (RobotBase.isSimulation()) {
-      sim = new AngledElevatorSim(ElevatorConstants.MOTOR, ElevatorConstants.GEARING, ElevatorConstants.CARRIAGE_MASS,
-        ElevatorConstants.DRUM_RADIUS, ElevatorConstants.MIN_HEIGHT, ElevatorConstants.MAX_HEIGHT, true,
-        ElevatorConstants.START_HEIGHT, ElevatorConstants.ANGLE, ElevatorConstants.SPRING_FORCE);
+      sim = new AngledElevatorSim(
+        ElevatorConstants.MOTOR, 
+        ElevatorConstants.GEARING, 
+        ElevatorConstants.CARRIAGE_MASS,
+        ElevatorConstants.DRUM_RADIUS, 
+        ElevatorConstants.MIN_HEIGHT, 
+        ElevatorConstants.MAX_HEIGHT, 
+        true,
+        ElevatorConstants.START_HEIGHT, 
+        ElevatorConstants.ANGLE, ElevatorConstants.SPRING_FORCE
+      );
       double width = ElevatorConstants.MAX_HEIGHT * Math.sin(ElevatorConstants.ANGLE);
       double height = ElevatorConstants.MAX_HEIGHT * Math.cos(ElevatorConstants.ANGLE);
       double size = Math.max(width, height);
@@ -180,5 +188,4 @@ public class Elevator extends SubsystemBase {
   public double getCenterOfMassHeight(){
     return (getPosition()-ElevatorConstants.MIN_HEIGHT)/(ElevatorConstants.MAX_HEIGHT-ElevatorConstants.MIN_HEIGHT)*(ElevatorConstants.CENTER_OF_MASS_HEIGHT_EXTENDED-ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED)+ElevatorConstants.CENTER_OF_MASS_HEIGHT_STOWED;
   }
-
 }

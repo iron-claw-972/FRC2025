@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P  1"
+            "pathName": "P  1 - Align After"
           }
         },
         {
@@ -38,57 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Gronud  P2"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To Left Station"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "P 5"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Drive To 6/19 Left"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Lower Elevator"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Lollipop 1"
+            "pathName": "Official Lollipop 1"
           }
         },
         {
@@ -141,7 +91,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Drive To 7/18 Left"
+                  "name": "Drive To 6/19 Right"
                 }
               },
               {

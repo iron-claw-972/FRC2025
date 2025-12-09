@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.commands.DoNothing;
@@ -36,6 +38,7 @@ import frc.robot.constants.ArmConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climb.Climb;
@@ -55,8 +58,12 @@ import lib.controllers.PS5Controller.PS5Button;
  */
 public class PS5ControllerDriverConfig extends BaseDriverConfig {
     public static final boolean singleAlignmentButton = true;
-    // public static final boolean slowModeSupplier = true;
+    private final BooleanSupplier slowModeSupplier = () -> {return true;};
+    // private final BooleanSupplier slowModeSupplier = ()->false;
+    // private boolean slowMode = false;
 
+    private final boolean autoOuttake = true;
+    private BooleanSupplier menuIsOn = () -> false; 
     private final PS5Controller driver = new PS5Controller(Constants.DRIVER_JOY);
     private final Elevator elevator;
     private final Intake intake;
@@ -65,9 +72,12 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     private final Climb climb;
     private final Arm arm;
     private final Vision vision;
-    private final BooleanSupplier slowModeSupplier = () -> {return true;};
     private int alignmentDirection = 0;
     private Pose2d alignmentPose = null;
+    // 0 == not selected, -1 == left, 1 == right
+    private byte selectedDirection = 0;
+
+    boolean coralIntakeToggle = true;
 
     public PS5ControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer, Outtake outtake, Climb climb, Arm arm, Vision vision) {
         super(drive);
@@ -81,49 +91,190 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
     }
 
     public void configureControls() {
-        Trigger menu = driver.get(PS5Button.LEFT_JOY);
-
+        Trigger menu = driver.get(DPad.UP);
         // Elevator setpoints
-        if(elevator != null && arm != null) {
-            driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(
+        if(elevator != null && arm != null && outtake != null) {
+            //L1 setpoint
+            driver.get(PS5Button.CROSS).and(menu.negate()).onTrue(
                 new SequentialCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
-                    new MoveArm(arm, ArmConstants.L1_SETPOINT)
+                    new InstantCommand(()->setAlignmentPose(false, true)),
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L1_SETPOINT),
+                            new MoveArm(arm, ArmConstants.L1_SETPOINT),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // idt this comment is accurate kyle
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L1_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L1_SETPOINT);
+                        }),
+                        ()->selectedDirection != 0
+                    ),
+                    new ConditionalCommand(
+                        new SequentialCommandGroup(
+                            new OuttakeCoral(outtake, elevator, arm),
+                            new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+                            new InstantCommand(()->{
+                                elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                                arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                                alignmentPose = null;
+                                selectedDirection = 0;
+                            }, elevator, arm)
+                        ),
+                        new DoNothing(),
+                        () -> selectedDirection != 0 && autoOuttake
+                    )
                 )
             );
 
-            driver.get(PS5Button.LEFT_TRIGGER).onTrue(
+            driver.get(PS5Button.TRIANGLE).onTrue(
                 new SequentialCommandGroup(
-                    new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
-                    new MoveArm(arm, ArmConstants.L4_SETPOINT)
+                    new InstantCommand(()->setAlignmentPose(true)),
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L4_SETPOINT),
+                            new ConditionalCommand(
+                                new MoveArm(arm, ArmConstants.L4_SETPOINT_RIGHT),
+                                new MoveArm(arm, ArmConstants.L4_SETPOINT_LEFT),
+                                () -> selectedDirection >= 0
+                            ),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L4_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L4_SETPOINT_RIGHT);
+                        }),
+                        ()->selectedDirection != 0
+                    ),
+                    new ConditionalCommand(
+                        new WaitCommand(0.5),
+                        new DoNothing(),
+                        () -> selectedDirection < 0
+                    ),
+                    new ConditionalCommand(
+                        new OuttakeCoral(outtake, elevator, arm)
+                        .andThen(new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                            arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                            alignmentPose = null;
+                            selectedDirection = 0;
+                        }, elevator, arm)),
+                        new DoNothing(),
+                        () -> selectedDirection != 0 && autoOuttake
+                    )
                 )
             );
 
             Command l2Coral = new SequentialCommandGroup(
-                new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
-                new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+                new SequentialCommandGroup(
+                    new InstantCommand(()->setAlignmentPose(false)),
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L2_SETPOINT),
+                            new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L2_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L2_L3_SETPOINT);
+                        }),
+                        ()->selectedDirection != 0
+                    ),
+                    new ConditionalCommand(
+                        new SequentialCommandGroup(new OuttakeCoral(outtake, elevator, arm), new WaitCommand(.25))
+                        .andThen(new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                            arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                            alignmentPose = null;
+                            selectedDirection = 0;
+                        }, elevator, arm)),
+                        new DoNothing(),
+                        () -> selectedDirection != 0 && autoOuttake
+                    )
+                )
             );
             Command l3Coral = new SequentialCommandGroup(
-                new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
-                new MoveArm(arm, ArmConstants.L2_L3_SETPOINT)
+                new SequentialCommandGroup(
+                    new InstantCommand(()->setAlignmentPose(false)),
+                    new ConditionalCommand(
+                        new ParallelCommandGroup(
+                            new MoveElevator(elevator, ElevatorConstants.L3_SETPOINT),
+                            new MoveArm(arm, ArmConstants.L2_L3_SETPOINT),
+                            new DriveToPose(getDrivetrain(), ()->alignmentPose)
+                        ),
+                        // This is instant so it doesn't requre the drivetrain for more than 1 frame
+                        new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.L3_SETPOINT);
+                            arm.setSetpoint(ArmConstants.L2_L3_SETPOINT);
+                        }),
+                        ()->selectedDirection != 0
+                    ),
+                    new ConditionalCommand(
+                        new SequentialCommandGroup(new OuttakeCoral(outtake, elevator, arm), new WaitCommand(.25))
+                        .andThen(new InstantCommand(()->{
+                            elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                            arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                            alignmentPose = null;
+                            selectedDirection = 0;
+                        }, elevator, arm)),
+                        new DoNothing(),
+                        () -> selectedDirection != 0 && autoOuttake
+                    )
+                )
             );
+
             Command l2Algae = new ParallelCommandGroup(
                 new MoveElevator(elevator, ElevatorConstants.BOTTOM_ALGAE_SETPOINT),
                 new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake));
             Command l3Algae = new ParallelCommandGroup(
                 new MoveElevator(elevator, ElevatorConstants.TOP_ALGAE_SETPOINT),
                 new MoveArm(arm, ArmConstants.ALGAE_SETPOINT)).andThen(new IntakeAlgaeArm(outtake));
-            driver.get(PS5Button.RB).whileTrue(new ConditionalCommand(l2Algae, new InstantCommand(l2Coral::schedule), menu));
-            driver.get(PS5Button.LB).whileTrue(new ConditionalCommand(l3Algae, new InstantCommand(l3Coral::schedule), menu));
-    
-            //Processor setpoint
-            // driver.get(PS5Button.TRIANGLE).and(menu.negate()).onTrue(
+            
+            // Not sure if menuIsOn will get set back to false because l2Algae will never end, instead I will put them into a parallel command group 
+            // (it was sequential before)
+            // driver.get(PS5Button.SQUARE).whileTrue(new ConditionalCommand(
             //     new ParallelCommandGroup(
-            //         new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.001),
-            //         new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
-            //     )
-            // );
-            driver.get(DPad.UP).onTrue(new NetSetpoint(elevator, arm, getDrivetrain()));
+            //         l2Algae, 
+            //         new InstantCommand(()-> menuIsOn = ()-> false)
+            //     ),
+            //      new InstantCommand(l2Coral::schedule), 
+            //     menuIsOn));
+            // driver.get(PS5Button.CIRCLE).whileTrue(new ConditionalCommand(
+            //     new ParallelCommandGroup(
+            //         l3Algae,
+            //         new InstantCommand(()-> menuIsOn = ()-> false)), 
+            //     new InstantCommand(l3Coral::schedule), 
+            //     menuIsOn));
+            
+            // Make so when letting go of square or circle, arm should remain in the same point 
+            driver.get(PS5Button.SQUARE).whileTrue(new ConditionalCommand(
+                l2Algae,
+                new InstantCommand(l2Coral::schedule),
+                menu
+            ));
+            driver.get(PS5Button.CIRCLE).whileTrue(new ConditionalCommand(
+                l3Algae,
+                new InstantCommand(l3Coral::schedule),
+                menu
+            ));
+
+            //Processor setpoint
+            driver.get(DPad.DOWN).and(menu.negate()).onTrue(
+                new ParallelCommandGroup(
+                    new MoveElevator(elevator, ElevatorConstants.SAFE_SETPOINT + 0.001),
+                    new MoveArm(arm, ArmConstants.PROCESSOR_SETPOINT)
+                )
+            );
+
+            //barge setpoint
+            driver.get(PS5Button.TOUCHPAD).onTrue(new ParallelCommandGroup(
+                new NetSetpoint(elevator, arm, getDrivetrain())
+                // new InstantCommand(() -> slowMode = true)
+            ));
         }
 
         // Intake/outtake
@@ -169,6 +320,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             //             startIntake.cancel();
             //         }
             // }));
+
+            // Do we ever use this?? 
             driver.get(PS5Button.CROSS).and(r3).onTrue(
             new SequentialCommandGroup(
             new MoveElevator(elevator, ElevatorConstants.STATION_INTAKE_SETPOINT),
@@ -190,62 +343,128 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
 
         if(intake != null && outtake != null && arm != null && elevator != null){
-            driver.get(DPad.DOWN).and(menu).onTrue(new SequentialCommandGroup(
+            Command algae = new SequentialCommandGroup(
                 new OuttakeAlgae(outtake, intake),
-                new InstantCommand(()->{
-                    arm.setSetpoint(ArmConstants.START_ANGLE);
-                    elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
-                    getDrivetrain().setIsAlign(false);
-                }, elevator)
+                // Only move the arm and elevator in sequence when scoring in the net
+                new ConditionalCommand(
+                    new SequentialCommandGroup(
+                        new MoveArm(arm, ArmConstants.ALGAE_STOW_SETPOINT),
+                        new InstantCommand(()-> elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT)),
+                        new WaitCommand(0.25),
+                        new InstantCommand(()-> arm.setSetpoint(ArmConstants.INTAKE_SETPOINT))
+                    ),
+                    new InstantCommand(()->{
+                        elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT);
+                        arm.setSetpoint(ArmConstants.INTAKE_SETPOINT);
+                    }),
+                    // 1 meter is in between L3 and net setpoints
+                    () -> elevator.getSetpoint() > 1
+                )
+            );
+            Command coral = new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()-> getDrivetrain().setDesiredPose(()->null)))
+                .andThen(
+                    new ConditionalCommand(
+                        new SequentialCommandGroup(
+                            new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), 
+                            new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT), 
+                            new InstantCommand(()->selectedDirection = 0)
+                        ),
+                        new DoNothing(),
+                        // Returns true if arm is within 5 deg of start angle or L1 angle
+                        ()->!arm.canMoveElevator()
+                    ));
+            Command cancelAlign = new InstantCommand(()->{}, getDrivetrain());
+
+            // Coral Outtake
+            Command outtakeCoral = new InstantCommand(() -> {
+                if (outtake.coralLoaded()) {
+                    coral.schedule();
+                }
+                cancelAlign.schedule();
+            });
+
+            //Right trigger - intake/outtake for coral & outtake for algae
+            Command intakeCoral = new IntakeCoral(intake, indexer, elevator, outtake, arm);
+
+            //Intake coral toggle
+            Command intakeCoralToggle = new InstantCommand(() -> {
+                if (coralIntakeToggle) {
+                    if (intakeCoral.isScheduled()) {
+                        intakeCoral.cancel();
+                    } else {
+                        intakeCoral.schedule();
+                    }
+                } else {
+                    intakeCoral.schedule();
+                }
+            });
+
+            // Intake/Outtake Coral 
+            driver.get(PS5Button.RIGHT_TRIGGER).onTrue(new InstantCommand(() -> {
+                if (!outtake.coralLoaded()) {
+                    intakeCoralToggle.schedule();
+                } 
+                else {
+                    outtakeCoral.schedule();
+                }
+            })).onFalse(new InstantCommand(() -> {
+                if (!coralIntakeToggle) {
+                    intakeCoral.cancel();
+                }
+            }));
+
+            // Outtake Algae 
+            driver.get(PS5Button.LEFT_TRIGGER).onTrue(new ParallelCommandGroup(
+                new InstantCommand(() -> {
+                algae.schedule(); 
+                }),
+                new InstantCommand(() -> slowMode = false)
             ));
         }
-        if(outtake != null && elevator != null && arm != null){
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new OuttakeCoral(outtake, elevator, arm).alongWith(new InstantCommand(()->getDrivetrain().setDesiredPose(()->null))).
-            andThen(new SequentialCommandGroup(new MoveArm(arm, ArmConstants.INTAKE_SETPOINT), new MoveElevator(elevator, ElevatorConstants.STOW_SETPOINT))));}
-            driver.get(DPad.DOWN).and(menu.negate()).onTrue(new InstantCommand(()->{}, getDrivetrain()));
+
+        //Reverse Motors
         if(intake != null && indexer != null && outtake != null){
-            //driver.get(PS5Button.CIRCLE).and(menu.negate()).whileTrue(new ReverseMotors(intake, indexer, outtake));
+            driver.get(PS5Button.OPTIONS).and(menu.negate()).whileTrue(new SequentialCommandGroup(
+                new InstantCommand(()->intake.setAngle(45)),
+                new ReverseMotors(intake, indexer, outtake)
+                )).onFalse(new InstantCommand(()->intake.setAngle(IntakeConstants.STOW_SETPOINT)));
         }
 
         // Climb
         if(climb != null){
-            // driver.get(PS5Button.SQUARE).and(menu.negate()).toggleOnTrue(new StartEndCommand(()->climb.extend(), ()->climb.climb(), climb));
-            // if(intake != null){
-            //     driver.get(PS5Button.SQUARE).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
-            // }
-            driver.get(PS5Button.PS).and(menu).whileTrue(new ResetClimb(climb));
-            driver.get(PS5Button.RIGHT_TRIGGER).and(menu).onTrue(new InstantCommand(()->climb.stow(), climb));
+            driver.get(PS5Button.LB).and(menu.negate()).toggleOnTrue(new StartEndCommand(()->climb.extend(), ()->climb.climb(), climb));
+            if(intake != null){
+                driver.get(PS5Button.LB).and(menu.negate()).onTrue(new InstantCommand(()->intake.setAngle(65), intake));
+            }
+            // TODO: test later, idk if this will work 
+            driver.get(PS5Button.PS).and(menu).whileTrue(new SequentialCommandGroup(
+                new InstantCommand(()->intake.setAngle(65), intake), 
+                new ResetClimb(climb))).onFalse(new InstantCommand(()->intake.setAngle(IntakeConstants.STOW_SETPOINT)));
+            driver.get(PS5Button.LB).and(menu).onTrue(new InstantCommand(()->climb.stow(), climb));
         }
 
         // Alignment
-        if(singleAlignmentButton){
-            driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(()->{
-                setAlignmentDirection();
-                setAlignmentPose(false, true);
-            }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
-            driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(()->{
-                setAlignmentDirection();
-                setAlignmentPose(false, false);
-            }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
-        }else{
-            driver.get(DPad.LEFT).onTrue(new InstantCommand(()->setAlignmentPose(false, true))
-                .andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
-            driver.get(DPad.RIGHT).onTrue(new InstantCommand(()->setAlignmentPose(false, false))
-                .andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
-        }
-        driver.get(PS5Button.TOUCHPAD).toggleOnTrue(new InstantCommand(()->{
-            setAlignmentDirection();
-            setAlignmentPose(true, false);
-        }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
+        driver.get(DPad.LEFT).toggleOnTrue(new InstantCommand(()->{
+            selectedDirection = -1;
+        }));
+        driver.get(DPad.RIGHT).toggleOnTrue(new InstantCommand(()->{
+            selectedDirection = 1;
+        }));
+        //what is this for?
+        // driver.get(PS5Button.TOUCHPAD).toggleOnTrue(new InstantCommand(()->{
+        //     setAlignmentPose(true, false, false, false);
+        // }).andThen(new DriveToPose(getDrivetrain(), ()->alignmentPose)));
 
         // Reset the yaw. Mainly useful for testing/driver practice
-        driver.get(PS5Button.OPTIONS).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
+        driver.get(PS5Button.CREATE).and(menu.negate()).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
                 new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI)
         )));
-
+        driver.get(PS5Button.CREATE).and(menu).onTrue(new InstantCommand(() -> getDrivetrain().setYaw(
+                new Rotation2d(Robot.getAlliance() == Alliance.Blue ? Math.PI*5/6 : -Math.PI/6)
+        )));
 
         // Cancel commands
-        driver.get(PS5Button.RIGHT_TRIGGER).and(menu.negate()).onTrue(new InstantCommand(()->{
+        driver.get(PS5Button.RB).and(menu.negate()).onTrue(new InstantCommand(()->{
             if(elevator != null){
                 if(outtake != null && outtake.coralLoaded()){
                     elevator.setSetpoint(ElevatorConstants.INTAKE_STOW_SETPOINT);
@@ -275,19 +494,36 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             }
             getDrivetrain().setIsAlign(false);
             getDrivetrain().setDesiredPose(()->null);
+            alignmentPose = null;
+            selectedDirection = 0;
             CommandScheduler.getInstance().cancelAll();
         }));
-
+    
+        //Straighten wheels
         driver.get(PS5Button.MUTE).and(menu).onTrue(new FunctionalCommand(
             ()->getDrivetrain().setStateDeadband(false),
             getDrivetrain()::alignWheels,
             interrupted->getDrivetrain().setStateDeadband(true),
             ()->false, getDrivetrain()).withTimeout(2));
+
+        //Slow mode
+        // driver.get(PS5Button.TOUCHPAD).toggleOnTrue(
+        //     new InstantCommand(() -> slowMode = !slowMode)
+        // );
+
+        // Only use this if you want TOGGLE for menu 
+        // driver.get(DPad.UP).whileTrue(new InstantCommand(() -> menuIsOn = () -> false));
     }
 
-    private void setAlignmentDirection(){
+    /**
+     * Sets the drivetrain's alignmetn pose to the nearest reef branch or algae location
+     * @param isAlgae True for algae, false for branches
+     * @param isTrue for left branch, false for right, ignored for algae
+     * @param l4 If the robot should align to the L4 scoring pose
+     */
+    private void setAlignmentPose(boolean isAlgae, boolean isLeft, boolean l4, boolean l1){
         Translation2d drivePose = getDrivetrain().getPose().getTranslation();
-        int closestDirection = 0;
+        int closestId = 0;
         double closestDist = 20;
         boolean isRed = Robot.getAlliance() == Alliance.Red;
         int start = isRed ? 5 : 16;
@@ -295,30 +531,42 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             double dist = FieldConstants.APRIL_TAGS.get(start+i).pose.toPose2d().getTranslation().getDistance(drivePose);
             if(dist < closestDist){
                 closestDist = dist;
-                closestDirection = i;
+                closestId = start+i+1;
             }
         }
-        if(isRed){
-            closestDirection = (8-closestDirection) % 6;
+        if(isAlgae){
+            alignmentPose = VisionConstants.REEF.fromAprilTagIdAlgae(closestId).pose;
+        }else{
+            if(l4){
+                alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).l4Pose;
+            }else if(l1){
+                alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).l1Pose;
+            }else{
+                alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(closestId, isLeft).pose;
+            }
         }
-        alignmentDirection = closestDirection;
     }
 
     /**
-     * Sets the drivetrain's alignment pose to the selected position
-     * @param isAlgae True for algae, false for branches
-     * @param isLeft True for left branch, false for right, ignored for algae
+     * Sets the drivetrain's alignmetn pose to the nearest reef branch with the selected direction
+     * @param l4 If the robot should align to the L4 scoring pose
+     * @param l1 If the robot should align to the L1 scoring pose
      */
-    private void setAlignmentPose(boolean isAlgae, boolean isLeft){
-        int id = Robot.getAlliance() == Alliance.Blue ? alignmentDirection + 17
-            : (8-alignmentDirection) % 6 + 6;
-        if(isAlgae){
-            alignmentPose = VisionConstants.REEF.fromAprilTagIdAlgae(id).pose;
-        }else{
-            alignmentPose = VisionConstants.REEF.fromAprilTagIdAndPose(id, isLeft).pose;
+    private void setAlignmentPose(boolean l4, boolean l1){
+        if(selectedDirection == 0){
+            alignmentPose = null;
+            return;
         }
+        setAlignmentPose(false, selectedDirection < 0, l4, l1);
     }
-
+    /**
+     * Sets the drivetrain's alignmetn pose to the nearest reef branch with the selected direction
+     * @param l4 If the robot should align to the L4 scoring pose
+     */
+    private void setAlignmentPose(boolean l4){
+        setAlignmentPose(l4, false);
+    }
+    
     @Override
     public double getRawSideTranslation() {
         return driver.get(PS5Axis.LEFT_X);
@@ -346,7 +594,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
 
     @Override
     public boolean getIsSlowMode() {
-        return slowModeSupplier.getAsBoolean();
+        //return slowMode;
+        return false;
     }
 
     @Override
