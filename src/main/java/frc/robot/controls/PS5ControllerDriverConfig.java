@@ -30,6 +30,7 @@ import frc.robot.commands.gpm.NetSetpoint;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.StationIntake;
+import frc.robot.commands.gpm.ReverseMotors;
 import frc.robot.commands.vision.AimAtGamePiece;
 import frc.robot.commands.vision.DriveToGamePiece;
 import frc.robot.commands.vision.LogVision;
@@ -417,8 +418,8 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             driver.get(PS5Button.LEFT_TRIGGER).onTrue(new ParallelCommandGroup(
                 new InstantCommand(() -> {
                 algae.schedule(); 
-                }),
-                new InstantCommand(() -> slowMode = false)
+                })
+                // new InstantCommand(() -> slowMode = false)
             ));
         }
 

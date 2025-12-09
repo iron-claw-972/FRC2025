@@ -229,7 +229,6 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       driver.get(DPad.RIGHT).onTrue(new InstantCommand(() -> setAlignmentPose(false, false))
           .andThen(new DriveToPose(getDrivetrain(), () -> alignmentPose)));
     }
-    */
     // Reset yaw to be away from driver
     driver.get(Button.START).onTrue(new InstantCommand(() -> super.getDrivetrain().setYaw(
         new Rotation2d(Robot.getAlliance() == Alliance.Blue ? 0 : Math.PI))));
@@ -268,10 +267,10 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
       CommandScheduler.getInstance().cancelAll();
     })); */
 
-    kDriver.get(Button.A).toggleOnTrue(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.CORAL));
-    kDriver.get(Button.X).toggleOnTrue(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.CORAL));
-    kDriver.get(Button.B).toggleOnTrue(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.ALGAE));
-    kDriver.get(Button.Y).toggleOnTrue(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.ALGAE));
+    driver.get(Button.A).toggleOnTrue(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.CORAL));
+    driver.get(Button.X).toggleOnTrue(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.CORAL));
+    driver.get(Button.B).toggleOnTrue(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.ALGAE));
+    driver.get(Button.Y).toggleOnTrue(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.ALGAE));
 
   }
 
