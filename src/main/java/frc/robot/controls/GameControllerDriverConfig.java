@@ -27,6 +27,7 @@ import frc.robot.commands.gpm.OuttakeAlgae;
 import frc.robot.commands.gpm.OuttakeCoral;
 import frc.robot.commands.gpm.ResetClimb;
 import frc.robot.commands.gpm.ReverseMotors;
+import frc.robot.commands.vision.AcquireGamePiece;
 import frc.robot.commands.vision.AimAtGamePiece;
 import frc.robot.commands.vision.DriveToGamePiece;
 import frc.robot.commands.vision.LogVision;
@@ -72,10 +73,11 @@ public class GameControllerDriverConfig extends BaseDriverConfig {
   public GameControllerDriverConfig(Drivetrain drive, Elevator elevator, Intake intake, Indexer indexer,
       Outtake outtake, Climb climb, Arm arm, Vision vision) {
     super(drive);
-    SmartDashboard.putData(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.CORAL));
-    SmartDashboard.putData(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.CORAL));
-    SmartDashboard.putData(new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.ALGAE));
-    SmartDashboard.putData(new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.ALGAE));
+    SmartDashboard.putData("Drive to coral", new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.CORAL));
+    SmartDashboard.putData("Aim at coral", new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.CORAL));
+    SmartDashboard.putData("Drive to algae",new DriveToGamePiece(()->vision.getBestGamePiece(Math.PI, true),getDrivetrain(), ObjectType.ALGAE));
+    SmartDashboard.putData("Aim at algae", new AimAtGamePiece(getDrivetrain(), this, ()->vision.getBestGamePiece(Math.PI, true), ObjectType.ALGAE));
+    SmartDashboard.putData("Intake coral", new AcquireGamePiece(()->vision.getBestGamePiece(Math.PI, true), getDrivetrain(), intake, indexer, elevator, outtake, arm));
     SmartDashboard.putData(new LogVision(() -> {return vision.getBestGamePiece(Math.PI, true);}));
     this.elevator = elevator;
     this.intake = intake;

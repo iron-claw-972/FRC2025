@@ -27,7 +27,7 @@ public class VisionConstants {
     /**
      * If April tag vision is enabled on the robot
      */
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
 
     /**
      * If object detection should be enabled
@@ -182,8 +182,8 @@ public class VisionConstants {
     
     public static final ArrayList<Transform3d> OBJECT_DETECTION_CAMERAS = new ArrayList<>(List.of(
             new Transform3d(
-                    new Translation3d(Units.inchesToMeters(-3), Units.inchesToMeters(10), Units.inchesToMeters(39)),
-                    new Rotation3d(0, Units.degreesToRadians(40), Math.PI/2))));
+                    new Translation3d(Units.inchesToMeters(3), Units.inchesToMeters(-5), Units.inchesToMeters(34)),
+                    new Rotation3d(0, Units.degreesToRadians(27), -Math.PI/2))));
 
     // Poses to potentially align to
     public static final Pose2d RED_PROCESSOR_POSE = new Pose2d(
