@@ -161,6 +161,11 @@ public class Drivetrain extends SubsystemBase {
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
         rotationController.setTolerance(Units.degreesToRadians(0.25), Units.degreesToRadians(0.25));
 
+        // PID for rotationController
+        SmartDashboard.putNumber("P", DriveConstants.HEADING_P);
+        SmartDashboard.putNumber("I", 0.0);
+        SmartDashboard.putNumber("D", DriveConstants.HEADING_D);
+
         PhoenixOdometryThread.getInstance().start();
 
         modulePoses = new SwerveModulePose(this, DriveConstants.MODULE_LOCATIONS);
@@ -241,7 +246,15 @@ public class Drivetrain extends SubsystemBase {
      * @param fieldRelative whether the provided x and y speeds are relative to the field
      */
     public void driveHeading(double xSpeed, double ySpeed, double heading, boolean fieldRelative) {
-        double rot = rotationController.calculate(getYaw().getRadians(), heading);
+
+        double p = SmartDashboard.getNumber("P", DriveConstants.HEADING_P);
+        double i = SmartDashboard.getNumber("I", 0.0);
+        double d = SmartDashboard.getNumber("D", DriveConstants.HEADING_D);
+        rotationController.setPID(p, i, d);
+
+        double currentHeading = getYaw().getRadians();
+        double rot = rotationController.calculate(currentHeading, heading);
+
         ChassisSpeeds speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
         if(fieldRelative){
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getYaw());
