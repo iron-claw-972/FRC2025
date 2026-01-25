@@ -234,10 +234,10 @@ public class RobotContainer {
       );
       NamedCommands.registerCommand("backdrive", new InstantCommand(() -> outtake.setMotor(0.02)));
 
-      NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(
-        new InstantCommand(()->arm.setSetpoint(ArmConstants.INTAKE_SETPOINT)),
-        new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
-      ));
+      // NamedCommands.registerCommand("Lower Elevator", new SequentialCommandGroup(
+      //   new InstantCommand(()->arm.setSetpoint(ArmConstants.INTAKE_SETPOINT)),
+      //   new InstantCommand(()->elevator.setSetpoint(ElevatorConstants.STOW_SETPOINT))
+      // ));
       
       NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
         new ParallelCommandGroup(

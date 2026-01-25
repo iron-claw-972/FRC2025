@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -92,6 +93,7 @@ public class Elevator extends SubsystemBase {
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
     leftMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
     
+
     updateInputs();
     PhoenixUtil.tryUntilOk(100, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
     SmartDashboard.putNumber("Position", getPosition());
@@ -110,13 +112,17 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     double setpoint2 = setpoint;
+    System.out.println(setpoint);
+    System.out.println(setpoint2);
     double setpointRotations = ElevatorConstants.GEARING * setpoint2 / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
+    System.out.println(setpointRotations);
     rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.4));
     leftMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.4));
     updateInputs();
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("Elevator/Setpoint", getSetpoint());
     Logger.recordOutput("Elevator/AtSetpoint", atSetpoint());
+    System.out.println(rightMotor.getPosition());
   }
 
   @Override
@@ -136,7 +142,6 @@ public class Elevator extends SubsystemBase {
       leftMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
     }
   }
-
   public void updateInputs(){
     inputs.measuredPosition = rightMotor.getPosition().getValueAsDouble() / ElevatorConstants.GEARING
     * (2 * Math.PI * ElevatorConstants.DRUM_RADIUS);
