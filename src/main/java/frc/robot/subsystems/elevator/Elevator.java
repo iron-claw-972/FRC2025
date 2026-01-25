@@ -22,22 +22,24 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.IdConstants;
+import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.util.AngledElevatorSim;
 import frc.robot.util.PhoenixUtil;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
 
-  private double setpoint = ElevatorConstants.INTAKE_SETPOINT;
+  private double setpoint = 0;
   
   private MotionMagicVoltage voltageRequest = new MotionMagicVoltage(0);
 
-  private double maxVelocity = 3.6; // m/s 3.68
-  private double maxAcceleration = 14; // m/s 8
+  private double maxVelocity = 0.3; // m/s 3.68
+  private double maxAcceleration = 3; // m/s 8
         
   // Sim variables
   private AngledElevatorSim sim;
@@ -76,7 +78,7 @@ public class Elevator extends SubsystemBase {
     slot0Configs.kS = 0.15; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
     slot0Configs.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0Configs.kP = 0.75; // A position error of 2.5 rotations results in 12 V output
+    slot0Configs.kP = 12; // A position error of 2.5 rotations results in 12 V output
     slot0Configs.kI = 0; // no output for integrated error
     slot0Configs.kD = 0; // A velocity error of 1 rps results in 0.1 V output
 
@@ -86,8 +88,15 @@ public class Elevator extends SubsystemBase {
     motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.GEARING * maxAcceleration/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target acceleration 
     rightMotor.getConfigurator().apply(talonFXConfigs);
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    
     updateInputs();
     PhoenixUtil.tryUntilOk(100, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
+    SmartDashboard.putNumber("Position", getPosition());
+    SmartDashboard.putNumber("Setgpoint", getSetpoint());
+    SmartDashboard.putData("Set Setpoint 1", new InstantCommand(()-> setSetpoint(1)));
+    SmartDashboard.putData("Set Setpoint 0", new InstantCommand(()-> setSetpoint(0)));
+    SmartDashboard.putData("Set Setpoint 2", new InstantCommand(()-> setSetpoint(2)));
+    rightMotor.setPosition(0);
   }
 
   public void setArmStowed(BooleanSupplier armStowed){
@@ -97,9 +106,6 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     double setpoint2 = setpoint;
-    if(setpoint2 < ElevatorConstants.SAFE_SETPOINT && (armStowed == null || !armStowed.getAsBoolean())){
-      setpoint2 = ElevatorConstants.SAFE_SETPOINT;
-    }
     double setpointRotations = ElevatorConstants.GEARING * setpoint2 / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.4));
     updateInputs();

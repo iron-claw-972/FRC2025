@@ -122,35 +122,37 @@ public class RobotContainer {
 
       default:
       case SwerveCompetition:
-        outtake = new OuttakeComp();
+        //outtake = new OuttakeComp();
         elevator = new Elevator();
-        climb = new Climb();
-        arm = new Arm();
+        //climb = new Climb();
+        //arm = new Arm();
         // Arm can move if the elevator is within tolerance of its safe setpoint or higher
-        arm.setElevatorStowed(() -> elevator.getPosition() < ElevatorConstants.SAFE_SETPOINT - 0.025);
+        //arm.setElevatorStowed(() -> elevator.getPosition() < ElevatorConstants.SAFE_SETPOINT - 0.025);
         // Elevator can only move down if the arm is in the intake setpoint
         elevator.setArmStowed(() -> arm.canMoveElevator());
 
       case BetaBot:
-        indexer = new Indexer();
-        intake = new Intake();
+        //indexer = new Indexer();
+        //intake = new Intake();
         //SmartDashboard.putData("commadn schedule", CommandScheduler.getInstance());
-        vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
+        //vision = new Vision(VisionConstants.APRIL_TAG_CAMERAS);
         // fall-through
         //  SmartDashboard.putData("RunIntakeAndIndexer", new RunIntakeAndIndexer(intake, indexer));
 
       case Vivace:
       case Phil:
         if (robotId == RobotId.Phil) {
-          outtake = new OuttakeAlpha();
+          //outtake = new OuttakeAlpha();
         }
         if (outtake != null) {
           //SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
           // SmartDashboard.putData("OuttakeCoralBasic", new OutakeMotors(intake, outtake));
           // SmartDashboard.putData("l4 outake", new ScoreL4(elevator, outtake));
         }
+        elevator = new Elevator();
+        break;
       case Vertigo:
-        led = new LED();
+        //led = new LED();
         drive = new Drivetrain(vision, new GyroIOPigeon2());
         driver = new PS5ControllerDriverConfig(drive, elevator, intake, indexer, outtake, climb, arm, led);
         //operator = new Operator(drive, elevator, intake, indexer, outtake, climb);

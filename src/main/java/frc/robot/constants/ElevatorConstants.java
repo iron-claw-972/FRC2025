@@ -13,7 +13,7 @@ public class ElevatorConstants {
     public static final DCMotor MOTOR = DCMotor.getKrakenX60(1);
     public static final int NUMBER_OF_STAGES = 3;
     public static final double GEARING = 8.333/NUMBER_OF_STAGES;
-    public static final double MIN_HEIGHT = 0.0; // meters
+    public static final double MIN_HEIGHT = 0; // meters
     public static final double MAX_HEIGHT = Units.inchesToMeters(66);//Units.inchesToMeters(48); // meters
     public static final double START_HEIGHT = MIN_HEIGHT; // meters
     public static final double CARRIAGE_MASS = 3; // kilograms 2.49475803
