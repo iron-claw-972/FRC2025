@@ -33,6 +33,7 @@ import frc.robot.util.PhoenixUtil;
 
 public class Elevator extends SubsystemBase {
   private TalonFX rightMotor = new TalonFX(IdConstants.ELEVATOR_RIGHT_MOTOR, Constants.CANIVORE_CAN);
+  private TalonFX leftMotor = new TalonFX(IdConstants.ELEVATOR_LEFT_MOTOR, Constants.CANIVORE_CAN);
 
   private double setpoint = 0;
   
@@ -87,7 +88,9 @@ public class Elevator extends SubsystemBase {
     motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorConstants.GEARING * maxVelocity/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target cruise velocity 
     motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.GEARING * maxAcceleration/ElevatorConstants.DRUM_RADIUS/Math.PI/2; // Target acceleration 
     rightMotor.getConfigurator().apply(talonFXConfigs);
+    leftMotor.getConfigurator().apply(talonFXConfigs);
     rightMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    leftMotor.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
     
     updateInputs();
     PhoenixUtil.tryUntilOk(100, ()-> rightMotor.setNeutralMode(NeutralModeValue.Brake));
@@ -97,6 +100,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putData("Set Setpoint 0", new InstantCommand(()-> setSetpoint(0)));
     SmartDashboard.putData("Set Setpoint 2", new InstantCommand(()-> setSetpoint(2)));
     rightMotor.setPosition(0);
+    leftMotor.setPosition(0);
   }
 
   public void setArmStowed(BooleanSupplier armStowed){
@@ -108,6 +112,7 @@ public class Elevator extends SubsystemBase {
     double setpoint2 = setpoint;
     double setpointRotations = ElevatorConstants.GEARING * setpoint2 / ElevatorConstants.DRUM_RADIUS/Math.PI/2;
     rightMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.4));
+    leftMotor.setControl(voltageRequest.withPosition(setpointRotations).withFeedForward(0.4));
     updateInputs();
     Logger.processInputs("Elevator", inputs);
     Logger.recordOutput("Elevator/Setpoint", getSetpoint());
@@ -128,6 +133,7 @@ public class Elevator extends SubsystemBase {
     // code does nothing anyway on sim (it sets the position to itself)
     if (RobotBase.isReal()) {
       rightMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
+      leftMotor.setPosition(height / (2 * Math.PI * ElevatorConstants.DRUM_RADIUS) * ElevatorConstants.GEARING);
     }
   }
 
