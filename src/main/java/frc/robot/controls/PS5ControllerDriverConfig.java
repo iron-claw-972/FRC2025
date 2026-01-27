@@ -94,6 +94,15 @@ public class PS5ControllerDriverConfig extends BaseDriverConfig {
             );
         }
 
+        if(elevator != null){
+            driver.get(PS5Button.RB).onTrue(
+                new InstantCommand(()->elevator.setSetpoint(1.5))
+            );
+            driver.get(PS5Button.RIGHT_TRIGGER).onTrue(
+                new InstantCommand(()->elevator.setSetpoint(1.2))
+            );
+        }
+
         Trigger menu = driver.get(DPad.UP);
         // Elevator setpoints
         if(elevator != null && arm != null && outtake != null) {
